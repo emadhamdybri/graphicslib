@@ -16,17 +16,23 @@
 class GPCore;
 #include <list>
 
-typedef struct 
+typedef struct GPPixelSize
 {
-  int height, width, originX, originY;
-}GPScreenResolution;
+  int x,y;
+  GPPixelSize()
+  {
+    x = y = 0;
+  }
+}GPPixelSize;
 
-typedef std::list<GPScreenResolution> GPScreenResolutionList;
+typedef std::list<GPPixelSize> GPScreenResolutionList;
 
 typedef struct GPScreenDescriptor
 {
   GPScreenResolutionList    resoultions;
   bool			    primary;
+  GPPixelSize		    desktopRes;
+  GPPixelSize		    desktopOffset;
   void*			    osParam;
 
   GPScreenDescriptor()

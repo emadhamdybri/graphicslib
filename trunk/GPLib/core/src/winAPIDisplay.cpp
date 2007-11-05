@@ -14,32 +14,6 @@
 #include "winAPIDisplay.h"
 #include <windows.h>
 
-// this gets called once for each display, fill out a screen record for each one
-
-BOOL CALLBACK MonitorEnumProc( HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData );
-{
-  GPScreenDescriptor	screen;
-  GPScreenDescriptorList *screenList = (GPScreenDescriptorList*)dwData;
-  if (!screenList)
-    return FALSE
-
-  MONITORINFOEX	monitorInfo;
-  monitorInfo.cbSize = sizeof(MONITORINFOEX);
-  GetMonitorInfo(hMonitor,&monitorInfo);
-
-  GPScreenResolution	desktopRes;
-  desktopRes.height = monitorInfo.rcMonitor.bottom-monitorInfo.rcMonitor.top;
-  desktopRes.width = monitorInfo.rcMonitor.right-monitorInfo.rcMonitor.left;
-  desktopRes.originX = monitorInfo.rcMonitor.left;
-  desktopRes.originY = height-monitorInfo.rcMonitor.bottom;
-  
-  if ( monitorInfo.dwFlags |= MONITORINFOF_PRIMARY)
-  {
-  }
-
-  return TRUE:
-
-}
 
 void WinAPIDisplay::getCaps ( GPCaps *caps )
 {
@@ -60,27 +34,31 @@ void WinAPIDisplay::getCaps ( GPCaps *caps )
       GPScreenDescriptor	screen;
       screen.osParam = (void*)displayID;
 
-      DWORD displayMode = 0;
       DEVMODE modeInfo;
+      modeInfo.dmSize = sizeof(DEVMODE);
+
+      while (EnumDisplaySettings(displayInfo.DeviceName,ENUM_CURRENT_SETTINGS,&modeInfo))
+      {
+	screen.desktopOffset.x = modeInfo.dmPosition.x;
+	screen.desktopOffset.y = modeInfo.dmPosition.y;
+	screen.primary = screen.desktopOffset.x ==0 && screen.desktopOffset.y == 0;
+      }
+
+      GPPixelSize	enumedRes;
+
+      DWORD displayMode = 0;
       while (EnumDisplaySettings(NULL,displayMode,&modeInfo))
       {
-	GPScreenResolution	desktopRes;
-
-	r.width = modeInfo.dmPelsWidth;
-	r.height = modeInfo.dmPelsHeight;
-	r.refresh = modeInfo.dmDisplayFrequency;
-	r.depth = modeInfo.dmBitsPerPel;
+	enumedRes.x = modeInfo.dmPelsWidth;
+	enumedRes.y = modeInfo.dmPelsHeight;
+	screen.resoultions.push_back(enumedRes);
 
 	displayMode++;
       }
-
       if (screen.resoultions.size())
 	caps->screens.push_back(screen);
       displayID++;
     }
-
-    EnumDisplayMonitors(NULL,NULL,MonitorEnumProc,(void*)&caps->screens);
-
   }
 }
 
