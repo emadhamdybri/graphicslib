@@ -3,6 +3,10 @@ Classes:
 GPCore:
 	The one singleton for the instance. handles platform capabilities, driver picking, and all the common stuff
 	Hands out all the other sub classes.
+
+GPCaps:
+	Generated and filled out by the GPCore. Contains all the capabilities of the current platform. The class
+	is passed to each platform subsystem and it fills out the respective sections.
 	
 GPDisplay:
 	Abstract Display class, represents something that can be drawn on. Usualy a window ( fullscreen or not ), but may be a
