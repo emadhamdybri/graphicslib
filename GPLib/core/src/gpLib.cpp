@@ -22,7 +22,7 @@ GPCore::~GPCore()
 
 GPDisplay* GPCore::newDisplay ( void )
 {
-  return new GPDisplay(*this);
+  return new GPDisplay();
 }
 
 const GPCaps& GPCore::getCapabilities ( void )
