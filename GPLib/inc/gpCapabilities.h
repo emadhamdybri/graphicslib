@@ -25,19 +25,29 @@ typedef struct GPPixelSize
   }
 }GPPixelSize;
 
-typedef std::list<GPPixelSize> GPScreenResolutionList;
+typedef struct GPScreenResolution
+{
+  GPPixelSize resolution;
+  int	      bitsPerPixel;
+  GPScreenResolution()
+  {
+    bitsPerPixel = -1;
+  }
+}GPScreenResolution;
+
+typedef std::list<GPScreenResolution> GPScreenResolutionList;
 
 typedef struct GPScreenDescriptor
 {
   GPScreenResolutionList    resoultions;
   bool			    primary;
-  GPPixelSize		    desktopRes;
+  GPScreenResolution	    desktopRes;
   GPPixelSize		    desktopOffset;
-  void*			    osParam;
+  int			    osParam[2];// just to make sure it's big enough to hold a 64 bit pointer
 
   GPScreenDescriptor()
   {
-    osParam = NULL;
+    osParam[0] = osParam[1] = 0;
     primary = false;
   }
 }GPScreenDescriptor;

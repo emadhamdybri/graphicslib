@@ -32,7 +32,7 @@ void WinAPIDisplay::getCaps ( GPCaps *caps )
     while ( EnumDisplayDevices(NULL,displayID,&displayInfo,0) )
     {
       GPScreenDescriptor	screen;
-      screen.osParam = (void*)displayID;
+      screen.osParam[0] = displayID;
 
       DEVMODE modeInfo;
       modeInfo.dmSize = sizeof(DEVMODE);
@@ -42,19 +42,24 @@ void WinAPIDisplay::getCaps ( GPCaps *caps )
 	screen.desktopOffset.x = modeInfo.dmPosition.x;
 	screen.desktopOffset.y = modeInfo.dmPosition.y;
 	screen.primary = screen.desktopOffset.x ==0 && screen.desktopOffset.y == 0;
+	screen.desktopRes.resolution.x = modeInfo.dmPelsWidth;
+	screen.desktopRes.resolution.y = modeInfo.dmPelsHeight;
+	screen.desktopRes.bitsPerPixel = modeInfo.dmBitsPerPel;
       }
 
-      GPPixelSize	enumedRes;
+      GPScreenResolution	enumedRes;
 
       DWORD displayMode = 0;
       while (EnumDisplaySettings(NULL,displayMode,&modeInfo))
       {
-	enumedRes.x = modeInfo.dmPelsWidth;
-	enumedRes.y = modeInfo.dmPelsHeight;
+	enumedRes.resolution.x = modeInfo.dmPelsWidth;
+	enumedRes.resolution.y = modeInfo.dmPelsHeight;
+	enumedRes.bitsPerPixel = modeInfo.dmBitsPerPel;
 	screen.resoultions.push_back(enumedRes);
 
 	displayMode++;
       }
+
       if (screen.resoultions.size())
 	caps->screens.push_back(screen);
       displayID++;
