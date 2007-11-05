@@ -1,0 +1,16 @@
+Classes:
+
+GPCore:
+	The one singleton for the instance. handles platform capabilities, driver picking, and all the common stuff
+	Hands out all the other sub classes.
+	
+GPDisplay:
+	Abstract Display class, represents something that can be drawn on. Usualy a window ( fullscreen or not ), but may be a
+	single display device ( caps will say that multiple displays are not allowed ).
+	Handles all of the non OS specific OpenGL setup code.
+	Virtualised so it can be derived from by client code.
+	
+GPDisplayBase:
+	OS Specific pure virtual class. Handles the platform specific stuff dealing with displays. Does all the OS specific GL
+	setup as well. Should have one of these per platform.
+	

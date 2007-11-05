@@ -1,0 +1,23 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPCore", "GPCore.vcproj", "{2FCFF0F8-F359-44F9-9583-01EFEF8A7025}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{2FCFF0F8-F359-44F9-9583-01EFEF8A7025}.Debug.ActiveCfg = Debug|Win32
+		{2FCFF0F8-F359-44F9-9583-01EFEF8A7025}.Debug.Build.0 = Debug|Win32
+		{2FCFF0F8-F359-44F9-9583-01EFEF8A7025}.Release.ActiveCfg = Release|Win32
+		{2FCFF0F8-F359-44F9-9583-01EFEF8A7025}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
