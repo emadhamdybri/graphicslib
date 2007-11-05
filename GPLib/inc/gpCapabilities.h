@@ -16,6 +16,8 @@
 class GPCore;
 #include <list>
 
+#define _GP_NO_DISPLAY_LIMIT -1
+
 typedef struct GPPixelSize
 {
   int x,y;
@@ -60,8 +62,7 @@ public:
 
   // display related caps
   int	  maxDisplays;
-  bool	  canFullScreen;
-  int	  maxRes[2];
+  bool	  canWindow;
 
   GPScreenDescriptorList	screens;
 

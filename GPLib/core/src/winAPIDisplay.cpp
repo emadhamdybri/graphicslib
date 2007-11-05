@@ -19,9 +19,8 @@ void WinAPIDisplay::getCaps ( GPCaps *caps )
 {
   if (caps)
   {
-    caps->canFullScreen = true;
-    caps->maxDisplays = -1;
-    caps->maxRes[0] = caps->maxRes[1] = 1;
+    caps->canWindow = true;
+    caps->maxDisplays = _GP_NO_DISPLAY_LIMIT;
 
     caps->screens.clear();
 
@@ -66,7 +65,6 @@ void WinAPIDisplay::getCaps ( GPCaps *caps )
     }
   }
 }
-
 
 WinAPIDisplay::WinAPIDisplay()
 {
