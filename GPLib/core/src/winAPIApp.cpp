@@ -10,29 +10,26 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#ifndef _WINAPI_DISPLAY_H_
-#define _WINAPI_DISPLAY_H_
+#include "gpLib.h"
+#include "winAPIApp.h"
+#include <windows.h>
 
-#include "gpDisplayBase.h"
-#include <Windows.h>
-
-class WinAPIDisplay : public GPDisplayBase
+WinAPIApp::WinAPIApp()
 {
-public:
-  virtual void init ( const GPDisplayParams &params );
 
-  static void getCaps ( GPCaps *caps );
+}
 
-protected:
-  friend GPDisplay;
+WinAPIApp::~WinAPIApp()
+{
+}
 
-  WinAPIDisplay();
-  virtual~WinAPIDisplay();
+bool WinAPIApp:update ( void )
+{
+  return false;
+}
 
 
-};
 
-#endif _WINAPI_DISPLAY_H_
 
 // Local Variables: ***
 // mode:C++ ***

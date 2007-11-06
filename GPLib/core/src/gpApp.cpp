@@ -10,29 +10,58 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#ifndef _WINAPI_DISPLAY_H_
-#define _WINAPI_DISPLAY_H_
+#include "gpApp.h"
 
-#include "gpDisplayBase.h"
-#include <Windows.h>
+#ifdef _WIN32
+#include "winAPIApp.h"
+#else
 
-class WinAPIDisplay : public GPDisplayBase
+#endif
+
+
+GPApp::GPApp()
 {
-public:
-  virtual void init ( const GPDisplayParams &params );
+  base = NULL;
+}
 
-  static void getCaps ( GPCaps *caps );
+GPApp::~GPApp()
+{
+  if (base)
+    delete(base);
+}
 
-protected:
-  friend GPDisplay;
+void GPApp::init ( void )
+{
+  if (base)
+    delete(base);
 
-  WinAPIDisplay();
-  virtual~WinAPIDisplay();
+#ifdef _WIN32
+  base = new WinAPIApp;
+#else
+#endif
 
+  setup();
+}
 
-};
+void GPApp::run ( void )
+{
+  bool done = false;
+  while (!done)
+  {
+    if (!base)
+      done = true;
+    else
+    {
+     done = base->update();
+     if (!done)
+     {
+       handleEvent();
+       doFrame();
+     }
+    }
+  }
+}
 
-#endif _WINAPI_DISPLAY_H_
 
 // Local Variables: ***
 // mode:C++ ***
