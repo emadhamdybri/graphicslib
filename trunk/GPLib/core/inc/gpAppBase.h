@@ -10,29 +10,29 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#ifndef _WINAPI_DISPLAY_H_
-#define _WINAPI_DISPLAY_H_
+#ifndef _GP_APP_BASE_H_
+#define _GP_APP_BASE_H_
 
-#include "gpDisplayBase.h"
-#include <Windows.h>
+#include "gpApp.h"
 
-class WinAPIDisplay : public GPDisplayBase
+/* GPAppBase base is the core class that
+    each application (event) platform derives from.
+    It only does the OS specific parts of
+    events setup, and picks the input classes.
+*/
+
+class GPAppBase 
 {
 public:
-  virtual void init ( const GPDisplayParams &params );
-
-  static void getCaps ( GPCaps *caps );
+  virtual bool update ( void );
 
 protected:
-  friend GPDisplay;
+  friend GPApp;
 
-  WinAPIDisplay();
-  virtual~WinAPIDisplay();
-
-
+  virtual ~GPAppBase(){};
 };
 
-#endif _WINAPI_DISPLAY_H_
+#endif //_GP_APP_BASE_H_
 
 // Local Variables: ***
 // mode:C++ ***

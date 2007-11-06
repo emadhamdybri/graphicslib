@@ -99,6 +99,9 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\core\src\gpApp.cpp">
+			</File>
+			<File
 				RelativePath="..\..\core\src\gpDisplay.cpp">
 			</File>
 			<File
@@ -107,6 +110,9 @@
 			<Filter
 				Name="WinAPI"
 				Filter="">
+				<File
+					RelativePath="..\..\core\src\winAPIApp.cpp">
+				</File>
 				<File
 					RelativePath="..\..\core\src\winAPIDisplay.cpp">
 				</File>
@@ -129,6 +135,9 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\inc\gpApp.h">
+			</File>
+			<File
 				RelativePath="..\..\inc\gpCapabilities.h">
 			</File>
 			<File
@@ -140,6 +149,9 @@
 			<Filter
 				Name="WinAPI"
 				Filter="">
+				<File
+					RelativePath="..\..\core\inc\winAPIApp.h">
+				</File>
 				<File
 					RelativePath="..\..\core\inc\winAPIDisplay.h">
 				</File>
@@ -155,6 +167,9 @@
 			<Filter
 				Name="Platform Base Classes"
 				Filter="">
+				<File
+					RelativePath="..\..\core\inc\gpAppBase.h">
+				</File>
 				<File
 					RelativePath="..\..\core\inc\gpDisplayBase.h">
 				</File>
