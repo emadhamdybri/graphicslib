@@ -12,20 +12,57 @@
 
 #include "gpLib.h"
 #include "winAPIApp.h"
-#include <windows.h>
 
 WinAPIApp::WinAPIApp()
 {
+  // get our instance handle
+  hInstance = (HINSTANCE)GetModuleHandle(NULL);
 
+  // init the common controlls, we may need them
+  INITCOMMONCONTROLSEX InitCtrls;
+  InitCtrls.dwICC = ICC_LISTVIEW_CLASSES;
+  InitCtrls.dwSize = sizeof(INITCOMMONCONTROLSEX);
+  InitCommonControlsEx(&InitCtrls);
 }
 
 WinAPIApp::~WinAPIApp()
 {
 }
 
-bool WinAPIApp:update ( void )
+bool WinAPIApp::update ( void )
 {
+  MSG msg;
+
+  if (GetMessage(&msg, NULL, 0, 0)) 
+  {
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
+  }
+  else
+    return true;
+
+  // we didn't bail, so here check for any events that were passed back to us by the
+  // various window procs
+  WindowsEventList::iterator itr = pendingWindowsEvents.begin();
+
+  while (itr != pendingWindowsEvents.end())
+  {
+    // parse the event here
+    itr++;
+  }
+
+  pendingWindowsEvents.clear();
   return false;
+}
+
+void WinAPIApp::winProcCall ( WinAPIDisplay *display, unsigned int message, WPARAM wParam, LPARAM lParam )
+{
+  WindowsEventRecord  record;
+  record.display = display;
+  record.message = message;
+  record.wParam = wParam;
+  record.lParam = lParam;
+  pendingWindowsEvents.push_back(record);
 }
 
 

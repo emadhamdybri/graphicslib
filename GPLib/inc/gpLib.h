@@ -15,6 +15,7 @@
 
 #include "gpDisplay.h"
 #include "gpCapabilities.h"
+#include "gpApp.h"
 
 class GPCore
 {
@@ -30,12 +31,16 @@ public:
   // retuns a GPCaps filled out with the current capabilities
   const GPCaps& getCapabilities ( void );
 
+  void setApp ( GPApp *_app ){app = _app;}
+  GPApp* getApp ( void ) { return app; }
+
 protected:
   GPCore();
   ~GPCore();
 
 private:
   GPCaps  caps;
+  GPApp	  *app;
 };
 
 #endif //_GPLIB_H_

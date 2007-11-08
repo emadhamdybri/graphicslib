@@ -14,6 +14,7 @@
 
 GPCore::GPCore()
 {
+  app = NULL;
 }
 
 GPCore::~GPCore()

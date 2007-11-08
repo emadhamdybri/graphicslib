@@ -14,7 +14,6 @@
 #include "winAPIDisplay.h"
 #include <windows.h>
 
-
 void WinAPIDisplay::getCaps ( GPCaps *caps )
 {
   if (caps)

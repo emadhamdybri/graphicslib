@@ -14,18 +14,41 @@
 #define _WINAPI_APP_H_
 
 #include "gpAPPBase.h"
-#include <Windows.h>
+#include "winAPIDisplay.h"
+
+#define _WIN32_WINNT 0x0500
+#include <windows.h>
+#include <commctrl.h>
+#include <commoncontrols.h>
+
+#include <list>
 
 class WinAPIApp : public GPAppBase
 {
 public:
-  virtual bool update ( void );
-
-protected:
-  friend GPApp;
-
   WinAPIApp();
   virtual ~WinAPIApp();
+
+  virtual bool update ( void );
+
+  void winProcCall ( WinAPIDisplay *display, unsigned int message, WPARAM wParam, LPARAM lParam );
+
+protected:
+
+private:
+  HINSTANCE hInstance;
+
+  typedef struct
+  {
+    WinAPIDisplay	      *display;
+    unsigned int	      message;
+    WPARAM	      wParam;
+    LPARAM	      lParam;
+  }WindowsEventRecord;
+
+  typedef std::list<WindowsEventRecord> WindowsEventList;
+
+  WindowsEventList pendingWindowsEvents;
 };
 
 #endif _WINAPI_DISPLAY_H_
