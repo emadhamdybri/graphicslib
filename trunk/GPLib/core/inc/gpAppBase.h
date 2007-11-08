@@ -13,7 +13,7 @@
 #ifndef _GP_APP_BASE_H_
 #define _GP_APP_BASE_H_
 
-#include "gpApp.h"
+class GPApp;
 
 /* GPAppBase base is the core class that
     each application (event) platform derives from.

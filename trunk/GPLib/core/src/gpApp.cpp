@@ -11,6 +11,7 @@
 */
 
 #include "gpApp.h"
+#include "gpLib.h"
 
 #ifdef _WIN32
 #include "winAPIApp.h"
@@ -22,6 +23,7 @@
 GPApp::GPApp()
 {
   base = NULL;
+  GPCore::instance().setApp(this);
 }
 
 GPApp::~GPApp()
@@ -38,6 +40,7 @@ void GPApp::init ( void )
 #ifdef _WIN32
   base = new WinAPIApp;
 #else
+  base = NULL;
 #endif
 
   setup();
