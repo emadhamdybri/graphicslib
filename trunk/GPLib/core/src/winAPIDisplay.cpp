@@ -12,7 +12,25 @@
 
 #include "gpLib.h"
 #include "winAPIDisplay.h"
-#include <windows.h>
+
+LRESULT CALLBACK _WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+  WinAPIDisplay* display = (WinAPIDisplay*)GetWindowLong(hWnd,GWLP_USERDATA);
+
+  if (message == WM_CREATE) 
+    display = (WinAPIDisplay*)(((CREATESTRUCT*)lParam)->lpCreateParams);
+
+  if (display)
+    return display->wndProc(hWnd, message, wParam, lParam);
+
+  return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+static bool gWinClassRegistered = false;
+static TCHAR gWindowClass[512];
+
+
+#define _WIN_CLASS_NAME "gpWinAPIDisplayClass"
 
 void WinAPIDisplay::getCaps ( GPCaps *caps )
 {
@@ -67,14 +85,62 @@ void WinAPIDisplay::getCaps ( GPCaps *caps )
 
 WinAPIDisplay::WinAPIDisplay()
 {
+  hwnd = NULL;
+  app = (WinAPIApp*)GPCore::instance().getApp()->base;
 }
 
 WinAPIDisplay::~WinAPIDisplay()
 {
+  if (hwnd)
+    DestroyWindow(hwnd);
 }
 
 void WinAPIDisplay::init ( const GPDisplayParams &params )
 {
+  if (!app)
+    return;
+
+  if (!gWinClassRegistered)
+    registerWindowClass();
+
+  hwnd = CreateWindow(gWindowClass, params.name.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
+    CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, app->hInstance, (int*)this);
+
+  if (!hwnd)
+    return;
+
+  SetWindowLong(hwnd,GWLP_USERDATA,(LONG)this);
+  ShowWindow(hwnd, SW_SHOW);
+  UpdateWindow(hwnd);
+}
+
+void WinAPIDisplay::registerWindowClass ( void )
+{
+  strcpy(gWindowClass,_WIN_CLASS_NAME);
+
+  WNDCLASSEX wcex;
+
+  wcex.cbSize	    = sizeof(WNDCLASSEX); 
+  wcex.style	    = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+  wcex.lpfnWndProc  = (WNDPROC)_WndProc;
+  wcex.cbClsExtra   = 0;
+  wcex.cbWndExtra   = sizeof(WinAPIDisplay*);
+  wcex.hInstance    = app->hInstance;
+  wcex.hIcon	    = NULL;//LoadIcon(hInstance, (LPCTSTR)IDI_MAPEDIT);
+  wcex.hCursor	    = LoadCursor(NULL, IDC_ARROW);
+  wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
+  wcex.lpszMenuName   = NULL;//(LPCTSTR)IDC_MAPEDIT;
+  wcex.lpszClassName  = gWindowClass;
+  wcex.hIconSm	      = NULL;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
+
+  gWinClassRegistered = RegisterClassEx(&wcex) != 0;
+}
+
+LRESULT WinAPIDisplay::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+  // check for anything like a resize here and do what ya gotta do
+  app->winProcCall(this,message,wParam,lParam);
+  return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 
