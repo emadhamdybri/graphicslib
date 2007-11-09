@@ -28,6 +28,8 @@ MyApp::MyApp() : GPApp()
 // first method called wti
 void MyApp::setup ( void )
 {
+  display = GPCore::instance().newDisplay();
+  display->init();
 }
 
 void MyApp::handleEvent ( void )
