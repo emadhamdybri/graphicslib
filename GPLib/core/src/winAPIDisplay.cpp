@@ -103,8 +103,43 @@ void WinAPIDisplay::init ( const GPDisplayParams &params )
   if (!gWinClassRegistered)
     registerWindowClass();
 
-  hwnd = CreateWindow(gWindowClass, params.name.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-    CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, app->hInstance, (int*)this);
+  DWORD  style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+  int	size[4] = {CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT,CW_USEDEFAULT};
+  if ( params.fullscreen )
+  {
+    setScreenResolution ( params );
+    size[0] = 0;
+    size[1] = 0;
+    size[2] = params.width;
+    size[3] = params.height;
+  }
+  else
+  {
+    if ( !params.caption )
+      style |= WS_POPUP;
+    else
+    {
+      if( params.systemMenus)
+	style |= WS_OVERLAPPEDWINDOW;
+      else
+	style |= WS_CAPTION;
+    }
+
+    if ( params.resizeable )
+      style |= WS_THICKFRAME;
+
+    if (params.x > 0)
+      size[0] = params.x;
+    if (params.y > 0)
+      size[1] = params.y;
+
+    if (params.width > 0)
+      size[2] = params.width;
+    if (params.height > 0)
+      size[3] = params.height;
+  }
+
+  hwnd = CreateWindow(gWindowClass, params.name.c_str(), style, size[0], size[1], size[2], size[3], NULL, NULL, app->hInstance, (int*)this);
 
   if (!hwnd)
     return;
@@ -134,6 +169,10 @@ void WinAPIDisplay::registerWindowClass ( void )
   wcex.hIconSm	      = NULL;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 
   gWinClassRegistered = RegisterClassEx(&wcex) != 0;
+}
+
+void WinAPIDisplay::setScreenResolution ( const GPDisplayParams &params )
+{
 }
 
 LRESULT WinAPIDisplay::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

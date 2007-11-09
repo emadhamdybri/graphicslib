@@ -15,6 +15,13 @@
 
 class GPAppBase;
 
+typedef enum
+{
+  eNullEvent = 0,
+  eAppQuitEvent,
+  eLastEvent
+}EventTYpes;
+
 class GPApp
 {
 public:
@@ -23,6 +30,7 @@ public:
 
   void init ( void );
   void run ( void );
+  void quit ( void );
 
   virtual void setup ( void ) = 0;
   virtual void handleEvent ( void ) = 0;
@@ -32,6 +40,7 @@ public:
 protected:
 
 private:
+  bool done;
 };
 
 #endif //_GPAPP_H_

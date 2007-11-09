@@ -48,7 +48,7 @@ void GPApp::init ( void )
 
 void GPApp::run ( void )
 {
-  bool done = false;
+  done = false;
   while (!done)
   {
     if (!base)
@@ -64,6 +64,12 @@ void GPApp::run ( void )
     }
   }
 }
+
+void GPApp::quit ( void )
+{
+  done = true;
+}
+
 
 
 // Local Variables: ***
