@@ -23,7 +23,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -36,7 +36,9 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir ..\..\lib\debug\
+copy Core_Debug\*.lib ..\..\lib\debug\*.lib"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -61,7 +63,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -74,7 +76,9 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir ..\..\lib\release\
+copy Core_RElease\*.lib ..\..\lib\release\*.lib"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -145,6 +149,9 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\gpLib.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\gpMain.h">
 			</File>
 			<Filter
 				Name="WinAPI"

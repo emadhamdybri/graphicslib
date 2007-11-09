@@ -10,29 +10,34 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#ifndef _GP_APP_BASE_H_
-#define _GP_APP_BASE_H_
+#ifndef _GPMAIN_H_
+#define _GPMAIN_H_
 
-class GPApp;
+#include "gpLib.h"
+#include "gpApp.h"
 
-/* GPAppBase base is the core class that
-    each application (event) platform derives from.
-    It only does the OS specific parts of
-    events setup, and picks the input classes.
-*/
-
-class GPAppBase 
+#ifdef _WIN32
+#include <windows.h>
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
-public:
-  virtual bool update ( void ) = 0;
+  GPApp *app = GPCore::instance().getApp();
+  // app->setcommandline(lpCmdLine);
 
-protected:
-  friend GPApp;
+#else
+int main ( int argc, char *argv[] )
+{
+  GPApp *app = GPCore::instance().getApp();
+  // app->setcommandline(argc,argv);
+#endif
+  
+  if (!app)
+    return -1;
+  app->init();
+  app->run();
+  return 0;
+}
 
-  virtual ~GPAppBase(){};
-};
-
-#endif //_GP_APP_BASE_H_
+#endif //_GPMAIN_H_
 
 // Local Variables: ***
 // mode:C++ ***
