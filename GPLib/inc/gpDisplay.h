@@ -30,7 +30,7 @@ public:
 
   bool	fullscreen;
   int	screen;
-  bool	bitsPerPixel;
+  int	bitsPerPixel;
 
   bool	resizeable;
   bool	caption;
