@@ -13,6 +13,8 @@
 #ifndef _GPDISPLAY_H_
 #define _GPDISPLAY_H_
 
+#include <string>
+
 class GPCore;
 class GPCaps;
 
@@ -26,6 +28,8 @@ public:
   bool	noBorder;
   int	height, width;
   int	screen;
+
+  std::string name;
 
   GPDisplayParams()
   {

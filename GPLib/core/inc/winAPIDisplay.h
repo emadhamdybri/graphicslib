@@ -14,6 +14,7 @@
 #define _WINAPI_DISPLAY_H_
 
 #include "gpDisplayBase.h"
+#include "winAPIApp.h"
 #include <Windows.h>
 
 class WinAPIDisplay : public GPDisplayBase
@@ -23,13 +24,19 @@ public:
 
   static void getCaps ( GPCaps *caps );
 
+  LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 protected:
   friend GPDisplay;
 
   WinAPIDisplay();
   virtual~WinAPIDisplay();
 
+private:
+  HWND	hwnd;
 
+  void registerWindowClass ( void );
+
+  WinAPIApp *app;
 };
 
 #endif _WINAPI_DISPLAY_H_

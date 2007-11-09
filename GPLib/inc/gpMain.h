@@ -21,13 +21,13 @@
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
   GPApp *app = GPCore::instance().getApp();
-  // app->setcommandline(lpCmdLine);
+  // app->setCommandline(lpCmdLine);
 
 #else
 int main ( int argc, char *argv[] )
 {
   GPApp *app = GPCore::instance().getApp();
-  // app->setcommandline(argc,argv);
+  // app->setCommandline(argc,argv);
 #endif
   
   if (!app)

@@ -12,6 +12,8 @@
 
 #include "gpLib.h"
 #include "winAPIApp.h"
+#include "winAPIDisplay.h"
+
 
 WinAPIApp::WinAPIApp()
 {

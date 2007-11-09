@@ -28,10 +28,10 @@ public:
   virtual void handleEvent ( void ) = 0;
   virtual void doFrame ( void ) = 0;
 
+  GPAppBase *base;
 protected:
 
 private:
-  GPAppBase *base;
 };
 
 #endif //_GPAPP_H_

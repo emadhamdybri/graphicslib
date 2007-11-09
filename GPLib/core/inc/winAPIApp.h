@@ -14,7 +14,6 @@
 #define _WINAPI_APP_H_
 
 #include "gpAPPBase.h"
-#include "winAPIDisplay.h"
 
 #define _WIN32_WINNT 0x0500
 #include <windows.h>
@@ -22,6 +21,8 @@
 #include <commoncontrols.h>
 
 #include <list>
+
+class WinAPIDisplay;
 
 class WinAPIApp : public GPAppBase
 {
@@ -33,10 +34,10 @@ public:
 
   void winProcCall ( WinAPIDisplay *display, unsigned int message, WPARAM wParam, LPARAM lParam );
 
+  HINSTANCE hInstance;
 protected:
 
 private:
-  HINSTANCE hInstance;
 
   typedef struct
   {
