@@ -17,6 +17,8 @@
 
 WinAPIApp::WinAPIApp()
 {
+  app = GPCore::instance().getApp();
+
   // get our instance handle
   hInstance = (HINSTANCE)GetModuleHandle(NULL);
 
@@ -50,6 +52,12 @@ bool WinAPIApp::update ( void )
   while (itr != pendingWindowsEvents.end())
   {
     // parse the event here
+    WindowsEventRecord &event = *itr;
+    switch(event.message)
+    {
+      default:
+	break;
+    }
     itr++;
   }
 
@@ -57,7 +65,7 @@ bool WinAPIApp::update ( void )
   return false;
 }
 
-void WinAPIApp::winProcCall ( WinAPIDisplay *display, unsigned int message, WPARAM wParam, LPARAM lParam )
+void WinAPIApp::winProcCall ( GPDisplay *display, unsigned int message, WPARAM wParam, LPARAM lParam )
 {
   WindowsEventRecord  record;
   record.display = display;

@@ -38,7 +38,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir ..\..\lib\debug\
-copy Core_Debug\*.lib ..\..\lib\debug\*.lib"/>
+copy Core_Debug\*.lib ..\..\lib\debug\*.lib
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -78,7 +79,8 @@ copy Core_Debug\*.lib ..\..\lib\debug\*.lib"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="mkdir ..\..\lib\release\
-copy Core_RElease\*.lib ..\..\lib\release\*.lib"/>
+copy Core_RElease\*.lib ..\..\lib\release\*.lib
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -140,6 +142,9 @@ copy Core_RElease\*.lib ..\..\lib\release\*.lib"/>
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\inc\gpApp.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\gpAppEvents.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\gpCapabilities.h">

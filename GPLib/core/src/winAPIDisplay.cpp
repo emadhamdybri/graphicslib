@@ -83,7 +83,7 @@ void WinAPIDisplay::getCaps ( GPCaps *caps )
   }
 }
 
-WinAPIDisplay::WinAPIDisplay()
+WinAPIDisplay::WinAPIDisplay() : GPDisplayBase()
 {
   hwnd = NULL;
   app = (WinAPIApp*)GPCore::instance().getApp()->base;
@@ -178,7 +178,13 @@ void WinAPIDisplay::setScreenResolution ( const GPDisplayParams &params )
 LRESULT WinAPIDisplay::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   // check for anything like a resize here and do what ya gotta do
-  app->winProcCall(this,message,wParam,lParam);
+  switch(message)
+  {
+    case WM_CLOSE:
+      display->closed();
+      return 0;
+  }
+  app->winProcCall(display,message,wParam,lParam);
   return DefWindowProc(hWnd, message, wParam, lParam);
 }
 

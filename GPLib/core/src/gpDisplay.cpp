@@ -36,6 +36,7 @@ GPDisplay::GPDisplay( void ) : core(GPCore::instance())
   base = new WinAPIDisplay;
 #endif //_WIN32
 
+  base->display = this;
 }
 
 GPDisplay::~GPDisplay()
@@ -51,6 +52,36 @@ void GPDisplay::init ( const GPDisplayParams &params )
 
   base->init(params);
 }
+
+void GPDisplay::setQuitOnClose ( bool quit )
+{
+  quitOnClose = quit;
+}
+
+
+void GPDisplay::closed ( void )
+{
+  delete(base);
+  base = NULL;
+
+  if (quitOnClose)
+    core.getApp()->quit();
+}
+
+void GPDisplay::resized ( int x, int y )
+{
+
+}
+
+void GPDisplay::moved ( int x, int y )
+{
+
+}
+
+void GPDisplay::invalidated ( void )
+{
+}
+
 
 
 // Local Variables: ***

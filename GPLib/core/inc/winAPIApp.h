@@ -22,7 +22,7 @@
 
 #include <list>
 
-class WinAPIDisplay;
+class GPDisplay;
 
 class WinAPIApp : public GPAppBase
 {
@@ -32,19 +32,20 @@ public:
 
   virtual bool update ( void );
 
-  void winProcCall ( WinAPIDisplay *display, unsigned int message, WPARAM wParam, LPARAM lParam );
+  void winProcCall ( GPDisplay *display, unsigned int message, WPARAM wParam, LPARAM lParam );
 
   HINSTANCE hInstance;
 protected:
 
 private:
+  GPApp			    *app;
 
   typedef struct
   {
-    WinAPIDisplay	      *display;
+    GPDisplay		     *display;
     unsigned int	      message;
-    WPARAM	      wParam;
-    LPARAM	      lParam;
+    WPARAM		      wParam;
+    LPARAM		      lParam;
   }WindowsEventRecord;
 
   typedef std::list<WindowsEventRecord> WindowsEventList;

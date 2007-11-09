@@ -10,37 +10,37 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#ifndef _WINAPI_DISPLAY_H_
-#define _WINAPI_DISPLAY_H_
+#ifndef _GPAPP_EVENTS_H_
+#define _GPAPP_EVENTS_H_
 
-#include "gpDisplayBase.h"
-#include "winAPIApp.h"
-#include <Windows.h>
+// temp defines for pointers we'll need
+// every event falls into this structure
+typedef enum
+{
+  eNullEvent = 0,
+  eAppQuitEvent,
+  eLastEvent
+}GPAppEventType;
 
-class WinAPIDisplay : public GPDisplayBase
+class GPAppEvent
 {
 public:
-  virtual void init ( const GPDisplayParams &params );
-
-  static void getCaps ( GPCaps *caps );
-
-  LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-protected:
-  friend GPDisplay;
- 
-  WinAPIDisplay();
-  virtual~WinAPIDisplay();
-
-private:
-  HWND	hwnd;
-
-  void registerWindowClass ( void );
-  void setScreenResolution ( const GPDisplayParams &params );
-
-  WinAPIApp *app;
+  GPAppEventType event;
+  virtual ~GPAppEvent(){};
 };
 
-#endif _WINAPI_DISPLAY_H_
+class GPAppQuitEvent : public GPAppEvent
+{
+public:
+  GPAppQuitEvent()
+  {
+    event = eAppQuitEvent;
+  }
+  virtual ~GPAppQuitEvent(){};
+};
+
+
+#endif //_GPAPP_EVENTS_H_
 
 // Local Variables: ***
 // mode:C++ ***

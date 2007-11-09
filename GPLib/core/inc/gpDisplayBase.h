@@ -36,6 +36,9 @@ public:
 protected:
   friend GPDisplay;
 
+  GPDisplay *display;
+
+  GPDisplayBase(){display = NULL;}
   virtual ~GPDisplayBase(){};
 };
 
