@@ -35,6 +35,7 @@ private:
   HWND	hwnd;
 
   void registerWindowClass ( void );
+  void setScreenResolution ( const GPDisplayParams &params );
 
   WinAPIApp *app;
 };

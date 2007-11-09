@@ -18,16 +18,23 @@
 class GPCore;
 class GPCaps;
 
-#define  _GP_ANY_SCREEN -1
+#define	_GP_ANY_SCREEN -1
+#define _GP_ANY_BIT_DEPTH -1
+#define _GP_DEFAULT_POSTION -1
 
 class GPDisplayParams
 {
 public:
-  bool	fullscreen;
-  bool	resizeable;
-  bool	noBorder;
   int	height, width;
+  int	x, y;
+
+  bool	fullscreen;
   int	screen;
+  bool	bitsPerPixel;
+
+  bool	resizeable;
+  bool	caption;
+  bool	systemMenus;
 
   std::string name;
 
@@ -36,9 +43,13 @@ public:
     screen = _GP_ANY_SCREEN;
     fullscreen = false;
     resizeable = false;
-    noBorder = false;
-    width = 1024;
-    height = 768;
+    caption = true;
+    systemMenus = true;
+    width = _GP_DEFAULT_POSTION;
+    height = _GP_DEFAULT_POSTION;
+    x = _GP_DEFAULT_POSTION;
+    y = _GP_DEFAULT_POSTION;
+    bitsPerPixel = _GP_ANY_BIT_DEPTH;
   }
 };
 
