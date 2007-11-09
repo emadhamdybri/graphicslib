@@ -25,7 +25,7 @@ public:
   MyApp();
 
   virtual void setup ( void );
-  virtual void handleEvent ( void );
+
   virtual void doFrame ( void );
 
 protected:

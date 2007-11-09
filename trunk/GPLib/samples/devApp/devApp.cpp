@@ -29,12 +29,8 @@ MyApp::MyApp() : GPApp()
 void MyApp::setup ( void )
 {
   display = GPCore::instance().newDisplay();
+  display->setQuitOnClose(true);
   display->init();
-}
-
-void MyApp::handleEvent ( void )
-{
-
 }
 
 void MyApp::doFrame ( void )
