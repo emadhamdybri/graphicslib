@@ -13,14 +13,9 @@
 #ifndef _GPAPP_H_
 #define _GPAPP_H_
 
-class GPAppBase;
+#include "gpAppEvents.h"
 
-typedef enum
-{
-  eNullEvent = 0,
-  eAppQuitEvent,
-  eLastEvent
-}EventTYpes;
+class GPAppBase;
 
 class GPApp
 {
@@ -33,7 +28,7 @@ public:
   void quit ( void );
 
   virtual void setup ( void ) = 0;
-  virtual void handleEvent ( void ) = 0;
+  virtual void event ( const GPAppEvent &eventData ){};
   virtual void doFrame ( void ) = 0;
 
   GPAppBase *base;

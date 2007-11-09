@@ -63,15 +63,26 @@ public:
   // fill out the caps
   static void getCaps ( GPCaps *caps );
 
+  void setQuitOnClose ( bool quit );
+
 protected:
   friend GPCore;
 
   GPDisplay( );
   virtual ~GPDisplay();
 
+public:
+  // events called by the base back into the display class
+  virtual void closed ( void );
+  virtual void resized ( int x, int y );
+  virtual void moved ( int x, int y );
+  virtual void invalidated ( void );
+
 private:
   GPCore  &core;
   GPDisplayBase	*base;
+
+  bool		quitOnClose;
 };
 
 #endif //_GPLIB_H_

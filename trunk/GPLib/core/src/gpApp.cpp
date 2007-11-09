@@ -13,7 +13,7 @@
 #include "gpApp.h"
 #include "gpLib.h"
 #include "gpAppBase.h"
-
+#include "gpAppEvents.h"
 
 #ifdef _WIN32
 #include "winAPIApp.h"
@@ -55,22 +55,30 @@ void GPApp::run ( void )
       done = true;
     else
     {
-     done = base->update();
-     if (!done)
-     {
-       handleEvent();
-       doFrame();
-     }
+      // let the platform update itself
+      // and call any events
+      if (base->update())
+	done = true;
+
+      // if we are going to keep going then check for any pump events from other systems
+      if (!done)
+      {
+	  // do other events here (joysitck polls, etc)
+      }
+
+      if (!done)    // if we aren't going to quit yet, then call the frame
+	doFrame();
     }
   }
 }
 
+// kill the main loop
+// and fire off the event that we are quiting.
 void GPApp::quit ( void )
 {
   done = true;
+  event(GPAppQuitEvent());
 }
-
-
 
 // Local Variables: ***
 // mode:C++ ***
