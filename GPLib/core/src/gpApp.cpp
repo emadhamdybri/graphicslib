@@ -12,13 +12,13 @@
 
 #include "gpApp.h"
 #include "gpLib.h"
+#include "gpAppBase.h"
+
 
 #ifdef _WIN32
 #include "winAPIApp.h"
 #else
-
 #endif
-
 
 GPApp::GPApp()
 {

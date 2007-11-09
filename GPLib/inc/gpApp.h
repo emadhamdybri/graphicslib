@@ -10,29 +10,31 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#ifndef _GP_APP_BASE_H_
-#define _GP_APP_BASE_H_
+#ifndef _GPAPP_H_
+#define _GPAPP_H_
 
-class GPApp;
+class GPAppBase;
 
-/* GPAppBase base is the core class that
-    each application (event) platform derives from.
-    It only does the OS specific parts of
-    events setup, and picks the input classes.
-*/
-
-class GPAppBase 
+class GPApp
 {
 public:
-  virtual bool update ( void ) = 0;
+  GPApp();
+  ~GPApp();
+
+  void init ( void );
+  void run ( void );
+
+  virtual void setup ( void ) = 0;
+  virtual void handleEvent ( void ) = 0;
+  virtual void doFrame ( void ) = 0;
 
 protected:
-  friend GPApp;
 
-  virtual ~GPAppBase(){};
+private:
+  GPAppBase *base;
 };
 
-#endif //_GP_APP_BASE_H_
+#endif //_GPAPP_H_
 
 // Local Variables: ***
 // mode:C++ ***
