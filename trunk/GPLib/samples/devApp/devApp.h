@@ -27,6 +27,9 @@ public:
   virtual void setup ( void );
   virtual void handleEvent ( void );
   virtual void doFrame ( void );
+
+protected:
+  GPDisplay *display;
 };
 
 #endif //_DEV_APP
