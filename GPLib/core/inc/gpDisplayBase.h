@@ -31,6 +31,11 @@ class GPDisplayBase
 public:
   virtual void init ( const GPDisplayParams &params ) = 0;
 
+  virtual void setCurrent ( void ) = 0;
+  virtual void resize ( int x, int y ) = 0;
+  virtual void beginGL ( void ) = 0;
+  virtual void displayGL ( void ) = 0;
+
   static void getCaps ( GPCaps *caps ){};
 
 protected:
