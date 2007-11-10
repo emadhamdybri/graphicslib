@@ -144,7 +144,7 @@ void WinAPIDisplay::init ( const GPDisplayParams &params )
   if (!hwnd)
     return;
 
-  SetWindowLong(hwnd,GWLP_USERDATA,(LONG)this);
+  SetWindowLongPtr(hwnd,GWLP_USERDATA,(LONG)this);
   ShowWindow(hwnd, SW_SHOW);
   UpdateWindow(hwnd);
 }
@@ -168,7 +168,7 @@ void WinAPIDisplay::displayGL ( void )
 
 void WinAPIDisplay::registerWindowClass ( void )
 {
-  strcpy(gWindowClass,_WIN_CLASS_NAME);
+  strncpy(gWindowClass,_WIN_CLASS_NAME,sizeof(_WIN_CLASS_NAME));
 
   WNDCLASSEX wcex;
 
