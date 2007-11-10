@@ -24,6 +24,11 @@ public:
 
   static void getCaps ( GPCaps *caps );
 
+  virtual void setCurrent ( void );
+  virtual void resize ( int x, int y );
+  virtual void beginGL ( void );
+  virtual void displayGL ( void );
+
   LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 protected:
   friend GPDisplay;

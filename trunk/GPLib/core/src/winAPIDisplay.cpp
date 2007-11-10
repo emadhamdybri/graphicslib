@@ -149,6 +149,23 @@ void WinAPIDisplay::init ( const GPDisplayParams &params )
   UpdateWindow(hwnd);
 }
 
+void WinAPIDisplay::setCurrent ( void )
+{
+}
+
+void WinAPIDisplay::resize ( int x, int y )
+{
+}
+
+void WinAPIDisplay::beginGL ( void )
+{
+}
+
+void WinAPIDisplay::displayGL ( void )
+{
+
+}
+
 void WinAPIDisplay::registerWindowClass ( void )
 {
   strcpy(gWindowClass,_WIN_CLASS_NAME);
