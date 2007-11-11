@@ -37,10 +37,15 @@ protected:
   virtual~WinAPIDisplay();
 
 private:
-  HWND	hwnd;
+  HWND	    hwnd;
+  HDC	    hdc;
+  HGLRC	    hglrc;
+  HPALETTE  hpalette;
 
   void registerWindowClass ( void );
   void setScreenResolution ( const GPDisplayParams &params );
+
+  void createWindow ( void );
 
   WinAPIApp *app;
 };

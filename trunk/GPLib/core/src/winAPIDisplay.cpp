@@ -87,6 +87,9 @@ WinAPIDisplay::WinAPIDisplay() : GPDisplayBase()
 {
   hwnd = NULL;
   app = (WinAPIApp*)GPCore::instance().getApp()->base;
+  hdc = NULL;
+  hglrc = NULL;
+  hpalette = NULL;
 }
 
 WinAPIDisplay::~WinAPIDisplay()
@@ -192,11 +195,30 @@ void WinAPIDisplay::setScreenResolution ( const GPDisplayParams &params )
 {
 }
 
+void WinAPIDisplay::createWindow ( void )
+{
+  if (!hwnd)
+    return;
+
+  if (hdc)
+    ReleaseDC(hwnd,hdc);
+
+  hdc = GetDC(hwnd);
+  if (!hdc)
+    return;
+
+}
+
+
 LRESULT WinAPIDisplay::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   // check for anything like a resize here and do what ya gotta do
   switch(message)
   {
+    case WM_CREATE:
+      createWindow();
+      return 0;
+
     case WM_CLOSE:
       display->closed();
       return 0;
