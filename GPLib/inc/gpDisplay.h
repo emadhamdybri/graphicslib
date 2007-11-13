@@ -84,7 +84,7 @@ public:
   virtual void setupGL ( void );
 
   GLViewportInfo  viewportInfo;
-  GLBufferInfo	  bufferInfo;
+  GLContextInfo	  contextInfo;
 
 private:
   GPCore  &core;

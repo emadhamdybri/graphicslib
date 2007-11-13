@@ -217,6 +217,7 @@ void WinAPIDisplay::createWindow ( void )
   setupPalette();
   hglrc = wglCreateContext (hdc);
   wglMakeCurrent(hdc, hglrc);
+  display->setupGL();
 }
 
 LRESULT WinAPIDisplay::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -328,14 +329,14 @@ void WinAPIDisplay::setupPixelFormat ( void )
       PFD_DRAW_TO_WINDOW |                        // Flags
       PFD_SUPPORT_OPENGL |
       PFD_DOUBLEBUFFER ,
-      display->bufferInfo.mode,                              // RGBA pixel values
-      display->bufferInfo.frame,                             // 24-bit color
+      display->contextInfo.mode,                              // RGBA pixel values
+      display->contextInfo.frame,                             // 24-bit color
       0, 0, 0, 0, 0, 0,                           // Don't care about these
-      display->bufferInfo.alpha, 0,                          // No alpha buffer
+      display->contextInfo.alpha, 0,                          // No alpha buffer
       0, 0, 0, 0, 0,                              // No accumulation buffer
-      display->bufferInfo.depth,                             // 32-bit depth buffer
-      display->bufferInfo.stencel,                           // No stencil buffer
-      display->bufferInfo.aux,                               // No auxiliary buffers
+      display->contextInfo.depth,                             // 32-bit depth buffer
+      display->contextInfo.stencel,                           // No stencil buffer
+      display->contextInfo.aux,                               // No auxiliary buffers
       PFD_MAIN_PLANE,                             // Layer type
       0,                                          // Reserved (must be 0)
       0, 0, 0                                     // No layer masks
@@ -348,12 +349,12 @@ void WinAPIDisplay::setupPixelFormat ( void )
 
   DescribePixelFormat (hdc, nPixelFormat, sizeof (PIXELFORMATDESCRIPTOR),&pfd);
 
-  display->bufferInfo.mode = pfd.iPixelType;
-  display->bufferInfo.depth = pfd.cDepthBits;
-  display->bufferInfo.depth = pfd.cColorBits;
-  display->bufferInfo.stencel = pfd.cStencilBits;
-  display->bufferInfo.alpha = pfd.cAlphaBits;
-  display->bufferInfo.aux = pfd.cAuxBuffers; 
+  display->contextInfo.mode = pfd.iPixelType;
+  display->contextInfo.depth = pfd.cDepthBits;
+  display->contextInfo.depth = pfd.cColorBits;
+  display->contextInfo.stencel = pfd.cStencilBits;
+  display->contextInfo.alpha = pfd.cAlphaBits;
+  display->contextInfo.aux = pfd.cAuxBuffers; 
 
   if (pfd.dwFlags & PFD_NEED_PALETTE)
   {
