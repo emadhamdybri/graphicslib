@@ -78,9 +78,10 @@ protected:
   float color[4];
 };
 
-class GLBufferInfo
+class GLContextInfo
 {
 public:
+  // buffer sizes
   int	frame;
   int	depth;
   int	stencel;
@@ -88,7 +89,20 @@ public:
   int	aux;
   int	mode;
 
-  GLBufferInfo()
+  // state info
+  bool	depthTests;
+  bool	ccwWindings;
+  bool	flatShaded;
+
+  typedef enum
+  {
+    noCull = 0,
+    backFace,
+    frontFace
+  }CullingMode;
+  CullingMode cullingMode;
+
+  GLContextInfo()
   {
     frame = 0;
     depth = 0;
@@ -96,6 +110,11 @@ public:
     alpha = 0;
     aux = 0;
     mode = 0;
+
+    depthTests = true;
+    cullingMode = backFace;
+    ccwWindings = true;
+    flatShaded = false;
   }
 };
 
@@ -118,9 +137,7 @@ public:
     farZ = 0;
     nearZ = 0;
   }
-
 };
-
 
 #endif //_GL_OPENGL_H_
 

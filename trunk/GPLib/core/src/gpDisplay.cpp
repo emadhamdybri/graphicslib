@@ -81,6 +81,16 @@ void GPDisplay::invalidated ( void )
 {
 }
 
+bool setGLOption ( GLenum option, bool set )
+{
+  if (set)
+    glEnable(option);
+  else
+    glDisable(option);
+
+  return set;
+}
+
 void GPDisplay::setupGL ( void )
 {
   glClearColor (background.R(),background.G(),background.B(), 1.0);
@@ -88,23 +98,22 @@ void GPDisplay::setupGL ( void )
   // make everything look it's best not fastest.
   glHint(GL_PERSPECTIVE_CORRECTION_HINT ,GL_NICEST);
 
-  // we want a z buffer
-  glEnable (GL_DEPTH_TEST);
+  setGLOption (GL_DEPTH_TEST,contextInfo.depthTests);
 
-  // we want back face culling
-  glEnable (GL_CULL_FACE);
-  glCullFace(GL_BACK);
+  // enable culling if we are doing front or back
+  if(setGLOption(GL_CULL_FACE,contextInfo.cullingMode != GLContextInfo::noCull))
+    glCullFace(contextInfo.cullingMode == GLContextInfo::backFace ? GL_BACK  : GL_FRONT);
 
-  glFrontFace(GL_CCW);
+  glFrontFace(contextInfo.ccwWindings ? GL_CCW : GL_CW);
 
   // we want smooth filled polies
-  glShadeModel (GL_SMOOTH);
+  glShadeModel (contextInfo.flatShaded ? GL_FLAT : GL_SMOOTH);
+
+  // these are so common that we just set them
+  // if the client app wants outlines they can set the mode elsewhere.
   glPolygonMode (GL_FRONT, GL_FILL);
-
+  glPolygonMode (GL_BACK, GL_FILL);
 }
-
-
-
 
 // Local Variables: ***
 // mode:C++ ***
