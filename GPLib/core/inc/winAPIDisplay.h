@@ -15,7 +15,7 @@
 
 #include "gpDisplayBase.h"
 #include "winAPIApp.h"
-#include <Windows.h>
+#include "gpOpenGL.h"
 
 class WinAPIDisplay : public GPDisplayBase
 {
@@ -41,11 +41,21 @@ private:
   HDC	    hdc;
   HGLRC	    hglrc;
   HPALETTE  hpalette;
+  RECT	    rClientRect;
 
   void registerWindowClass ( void );
   void setScreenResolution ( const GPDisplayParams &params );
 
   void createWindow ( void );
+
+  // core GL setup code
+  void setupPalette ( void );
+  void setupPixelFormat ( void );
+  void redoPalette ( void );
+  void queryNewPallet ( void );
+  void pallChanged ( void );
+
+
 
   WinAPIApp *app;
 };

@@ -15,7 +15,7 @@
 
 LRESULT CALLBACK _WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  WinAPIDisplay* display = (WinAPIDisplay*)GetWindowLong(hWnd,GWLP_USERDATA);
+  WinAPIDisplay* display = (WinAPIDisplay*)GetWindowLongPtr(hWnd,GWLP_USERDATA);
 
   if (message == WM_CREATE) 
     display = (WinAPIDisplay*)(((CREATESTRUCT*)lParam)->lpCreateParams);
@@ -154,6 +154,7 @@ void WinAPIDisplay::init ( const GPDisplayParams &params )
 
 void WinAPIDisplay::setCurrent ( void )
 {
+  wglMakeCurrent(hdc, hglrc);
 }
 
 void WinAPIDisplay::resize ( int x, int y )
@@ -207,8 +208,16 @@ void WinAPIDisplay::createWindow ( void )
   if (!hdc)
     return;
 
-}
+  GetClientRect(hwnd,&rClientRect);
 
+  display->viewportInfo.x = rClientRect.right-rClientRect.left;
+  display->viewportInfo.y = rClientRect.top-rClientRect.bottom;
+
+  setupPixelFormat();
+  setupPalette();
+  hglrc = wglCreateContext (hdc);
+  wglMakeCurrent(hdc, hglrc);
+}
 
 LRESULT WinAPIDisplay::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -219,12 +228,165 @@ LRESULT WinAPIDisplay::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
       createWindow();
       return 0;
 
+    case WM_ERASEBKGND:
+      return 1;
+
+    case WM_PALETTECHANGED:
+      pallChanged();
+      return 0;
+
+    case WM_QUERYNEWPALETTE:
+      queryNewPallet();
+       return 0;
+
     case WM_CLOSE:
       display->closed();
       return 0;
   }
   app->winProcCall(display,message,wParam,lParam);
   return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+// basic GL setup stuf
+
+void WinAPIDisplay::queryNewPallet ( void )
+{
+  if (hglrc && hpalette) 
+    redoPalette ();
+}
+
+void WinAPIDisplay::pallChanged ( void )
+{
+  redoPalette ();
+}
+
+void WinAPIDisplay::redoPalette ( void )
+{
+  UnrealizeObject (hpalette);
+  SelectPalette (hdc, hpalette, false);
+  RealizePalette (hdc);
+}
+
+void WinAPIDisplay::setupPalette ( void )
+{
+  int pixelFormat = GetPixelFormat(hdc);
+  PIXELFORMATDESCRIPTOR pfd;
+  LOGPALETTE* pPal;
+  int paletteSize;
+
+  DescribePixelFormat(hdc, pixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+
+  if (pfd.dwFlags & PFD_NEED_PALETTE)
+    paletteSize = 1 << pfd.cColorBits;
+  else 
+    return;
+
+  pPal = (LOGPALETTE*)malloc(sizeof(LOGPALETTE) + paletteSize * sizeof(PALETTEENTRY));
+  pPal->palVersion = 0x300;
+  pPal->palNumEntries = paletteSize;
+
+  // build a simple RGB color palette 
+  {
+    int redMask = (1 << pfd.cRedBits) - 1;
+    int greenMask = (1 << pfd.cGreenBits) - 1;
+    int blueMask = (1 << pfd.cBlueBits) - 1;
+    int i;
+
+    for (i=0; i<paletteSize; ++i)
+    {
+      pPal->palPalEntry[i].peRed =
+	(((i >> pfd.cRedShift) & redMask) * 255) / redMask;
+      pPal->palPalEntry[i].peGreen =
+	(((i >> pfd.cGreenShift) & greenMask) * 255) / greenMask;
+      pPal->palPalEntry[i].peBlue =
+	(((i >> pfd.cBlueShift) & blueMask) * 255) / blueMask;
+      pPal->palPalEntry[i].peFlags = 0;
+    }
+  }
+
+  hpalette = (HPALETTE)CreatePalette(pPal);
+  free(pPal);
+
+  if (hpalette)
+  {
+    SelectPalette(hdc, hpalette, false);
+    RealizePalette(hdc);
+  }
+}
+
+void WinAPIDisplay::setupPixelFormat ( void )
+{
+  HANDLE hHeap;
+  int nColors, i;
+  LPLOGPALETTE lpPalette;
+  BYTE byRedMask, byGreenMask, byBlueMask;
+
+  static PIXELFORMATDESCRIPTOR pfd = 
+  {
+    sizeof (PIXELFORMATDESCRIPTOR),             // Size of this structure
+      1,                                          // Version number
+      PFD_DRAW_TO_WINDOW |                        // Flags
+      PFD_SUPPORT_OPENGL |
+      PFD_DOUBLEBUFFER ,
+      display->bufferInfo.mode,                              // RGBA pixel values
+      display->bufferInfo.frame,                             // 24-bit color
+      0, 0, 0, 0, 0, 0,                           // Don't care about these
+      display->bufferInfo.alpha, 0,                          // No alpha buffer
+      0, 0, 0, 0, 0,                              // No accumulation buffer
+      display->bufferInfo.depth,                             // 32-bit depth buffer
+      display->bufferInfo.stencel,                           // No stencil buffer
+      display->bufferInfo.aux,                               // No auxiliary buffers
+      PFD_MAIN_PLANE,                             // Layer type
+      0,                                          // Reserved (must be 0)
+      0, 0, 0                                     // No layer masks
+  };
+
+  int nPixelFormat;
+
+  nPixelFormat = ChoosePixelFormat (hdc, &pfd);
+  SetPixelFormat (hdc, nPixelFormat, &pfd);
+
+  DescribePixelFormat (hdc, nPixelFormat, sizeof (PIXELFORMATDESCRIPTOR),&pfd);
+
+  display->bufferInfo.mode = pfd.iPixelType;
+  display->bufferInfo.depth = pfd.cDepthBits;
+  display->bufferInfo.depth = pfd.cColorBits;
+  display->bufferInfo.stencel = pfd.cStencilBits;
+  display->bufferInfo.alpha = pfd.cAlphaBits;
+  display->bufferInfo.aux = pfd.cAuxBuffers; 
+
+  if (pfd.dwFlags & PFD_NEED_PALETTE)
+  {
+    nColors = 1 << pfd.cColorBits;
+    hHeap = GetProcessHeap ();
+
+    (LPLOGPALETTE) lpPalette = (LPLOGPALETTE)HeapAlloc (hHeap, 0,
+      sizeof (LOGPALETTE) + (nColors * sizeof (PALETTEENTRY)));
+
+    lpPalette->palVersion = 0x300;
+    lpPalette->palNumEntries = nColors;
+
+    byRedMask = (1 << pfd.cRedBits) - 1;
+    byGreenMask = (1 << pfd.cGreenBits) - 1;
+    byBlueMask = (1 << pfd.cBlueBits) - 1;
+
+    for (i=0; i<nColors; i++)
+    {
+      lpPalette->palPalEntry[i].peRed = (((i >> pfd.cRedShift) & byRedMask) * 255) / byRedMask;
+      lpPalette->palPalEntry[i].peGreen = (((i >> pfd.cGreenShift) & byGreenMask) * 255) / byGreenMask;
+      lpPalette->palPalEntry[i].peBlue = (((i >> pfd.cBlueShift) & byBlueMask) * 255) / byBlueMask;
+      lpPalette->palPalEntry[i].peFlags = 0;
+    }
+
+    hpalette = CreatePalette (lpPalette);
+    HeapFree (hHeap, 0, lpPalette);
+
+    if (hpalette != NULL)
+    {
+      SelectPalette (hdc, hpalette, FALSE);
+      RealizePalette (hdc);
+    }
+  }
 }
 
 

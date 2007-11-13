@@ -13,6 +13,7 @@
 #ifndef _GPDISPLAY_H_
 #define _GPDISPLAY_H_
 
+#include "gpOpenGL.h"
 #include <string>
 
 class GPCore;
@@ -78,9 +79,18 @@ public:
   virtual void moved ( int x, int y );
   virtual void invalidated ( void );
 
+  // functions called by the display base to do
+  // common GL setup that is not platform specific 
+  virtual void setupGL ( void );
+
+  GLViewportInfo  viewportInfo;
+  GLBufferInfo	  bufferInfo;
+
 private:
   GPCore  &core;
   GPDisplayBase	*base;
+
+  GLColor	background;
 
   bool		quitOnClose;
 };
