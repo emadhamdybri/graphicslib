@@ -16,6 +16,12 @@
   #include <windows.h>
   #include <GL/gl.h>
   #include <GL/glu.h>
+
+#ifndef _SUPRESS_AUTO_GL_LIB
+  #pragma comment(lib, "opengl32.lib")
+  #pragma comment(lib, "glu32.lib")
+#endif
+
 #else
   #ifdef __APPLE__
     #include <Carbon/Carbon.h>
