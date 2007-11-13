@@ -16,6 +16,7 @@
 #include "gpDisplay.h"
 #include "gpCapabilities.h"
 #include "gpApp.h"
+#include "gpOpenGL.h"
 
 // utility functions to help windows
 // apps link in the libs they need
