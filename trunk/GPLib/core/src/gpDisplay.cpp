@@ -58,7 +58,6 @@ void GPDisplay::setQuitOnClose ( bool quit )
   quitOnClose = quit;
 }
 
-
 void GPDisplay::closed ( void )
 {
   delete(base);
@@ -81,6 +80,29 @@ void GPDisplay::moved ( int x, int y )
 void GPDisplay::invalidated ( void )
 {
 }
+
+void GPDisplay::setupGL ( void )
+{
+  glClearColor (background.R(),background.G(),background.B(), 1.0);
+
+  // make everything look it's best not fastest.
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT ,GL_NICEST);
+
+  // we want a z buffer
+  glEnable (GL_DEPTH_TEST);
+
+  // we want back face culling
+  glEnable (GL_CULL_FACE);
+  glCullFace(GL_BACK);
+
+  glFrontFace(GL_CCW);
+
+  // we want smooth filled polies
+  glShadeModel (GL_SMOOTH);
+  glPolygonMode (GL_FRONT, GL_FILL);
+
+}
+
 
 
 

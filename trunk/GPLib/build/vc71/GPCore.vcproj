@@ -113,6 +113,9 @@ copy Core_RElease\*.lib ..\..\lib\release\*.lib
 			<File
 				RelativePath="..\..\core\src\gpLib.cpp">
 			</File>
+			<File
+				RelativePath="..\..\core\src\gpOpenGL.cpp">
+			</File>
 			<Filter
 				Name="WinAPI"
 				Filter="">
@@ -157,6 +160,9 @@ copy Core_RElease\*.lib ..\..\lib\release\*.lib
 			</File>
 			<File
 				RelativePath="..\..\inc\gpMain.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\gpOpenGL.h">
 			</File>
 			<Filter
 				Name="WinAPI"
