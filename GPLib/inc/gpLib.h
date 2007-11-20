@@ -34,11 +34,17 @@ public:
     return core;
   }
 
+  // display
   GPDisplay* newDisplay ( void );
+  void deleteDisplay ( GPDisplay* display );
 
+  GPDisplay* getCurrentDisplay ( void );
+
+  // capabilities
   // retuns a GPCaps filled out with the current capabilities
   const GPCaps& getCapabilities ( void );
 
+  // appplication
   void setApp ( GPApp *_app ){app = _app;}
   GPApp* getApp ( void ) { return app; }
 
@@ -46,9 +52,17 @@ protected:
   GPCore();
   ~GPCore();
 
+  friend GPDisplay;
+  GPDisplayPointerList	displays;
+  GPDisplay *currentDisplay;
+
+  void setCurrentContext ( GPDisplay *display );
+
 private:
   GPCaps  caps;
   GPApp	  *app;
+
+  bool	  gotCaps;
 };
 
 #endif //_GPLIB_H_

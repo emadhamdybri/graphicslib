@@ -156,6 +156,9 @@ copy Core_RElease\*.lib ..\..\lib\release\*.lib
 				RelativePath="..\..\inc\gpDisplay.h">
 			</File>
 			<File
+				RelativePath="..\..\inc\gpFile.h">
+			</File>
+			<File
 				RelativePath="..\..\inc\gpLib.h">
 			</File>
 			<File
