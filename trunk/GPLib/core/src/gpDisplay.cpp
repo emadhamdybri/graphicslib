@@ -67,6 +67,13 @@ void GPDisplay::closed ( void )
     core.getApp()->quit();
 }
 
+void GPDisplay::setCurrent ( void )
+{
+  if(base)
+    base->setCurrent();
+  core.setCurrentContext(this);
+}
+
 void GPDisplay::resized ( int x, int y )
 {
 
@@ -93,6 +100,8 @@ bool setGLOption ( GLenum option, bool set )
 
 void GPDisplay::setupGL ( void )
 {
+  setCurrent();
+
   glClearColor (background.R(),background.G(),background.B(), 1.0);
 
   // make everything look it's best not fastest.

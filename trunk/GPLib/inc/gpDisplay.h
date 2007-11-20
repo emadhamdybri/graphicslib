@@ -15,6 +15,7 @@
 
 #include "gpOpenGL.h"
 #include <string>
+#include <vector>
 
 class GPCore;
 class GPCaps;
@@ -79,6 +80,8 @@ public:
   virtual void moved ( int x, int y );
   virtual void invalidated ( void );
 
+  virtual void setCurrent ( void );
+
   // functions called by the display base to do
   // common GL setup that is not platform specific 
   virtual void setupGL ( void );
@@ -94,6 +97,8 @@ private:
 
   bool		quitOnClose;
 };
+
+typedef std::vector<GPDisplay*> GPDisplayPointerList;
 
 #endif //_GPLIB_H_
 
