@@ -111,6 +111,9 @@ copy Core_RElease\*.lib ..\..\lib\release\*.lib
 				RelativePath="..\..\core\src\gpDisplay.cpp">
 			</File>
 			<File
+				RelativePath="..\..\core\src\gpFile.cpp">
+			</File>
+			<File
 				RelativePath="..\..\core\src\gpLib.cpp">
 			</File>
 			<File
