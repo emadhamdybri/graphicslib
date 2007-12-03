@@ -22,5 +22,8 @@ GPApp:
 	Core class for events. This one is registered with GPCore. It has virtual functions that the end user must create.
 	If the end user is using GPMain, then they have to provide a function that returns a pointer to a GPApp, if not we die.
 	If they arn't using GPMAin, then that need to register the app wtih the core. The Apps base class will call the
-	platform specific GPAppBase class to do the low level dirty work.
+	platform specific GPAppBase class to do the low level dirty 
+
+GPFileSystem:
+	Singleton for the entire virtual file system.
 	
