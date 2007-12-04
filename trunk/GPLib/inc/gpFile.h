@@ -19,6 +19,8 @@
 
 class GPFileSystemProvider;
 
+#define GP_NATIVE_FILE_SYSTEM "native"
+
 class GPFile
 {
 public:
@@ -100,7 +102,8 @@ public:
 
   bool closeFile ( GPFile* file );
 
-  void addFileSystemProvider ( GPFileSystemProvider *provider );
+  void addFileSystemProvider ( GPFileSystemProvider *provider, const char *insertBefore = NULL );
+  void addFileSystemProvider ( GPFileSystemProvider *provider, const std::string &insertBefore ) {addFileSystemProvider(provider,insertBefore.c_str());}
   std::vector<std::string> getFileSystemProviderList ( void );
 
   std::set<std::string> getFileList ( const char* path, bool recursive = false, const char* filter = NULL, const char* provider = NULL );
