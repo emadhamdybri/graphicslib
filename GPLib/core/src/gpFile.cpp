@@ -17,6 +17,7 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <shlobj.h>
 #endif
 
 // utils everyone needs.
@@ -100,7 +101,7 @@ public:
 
   virtual bool closeFile ( GPFile* file );
 
-  virtual std::string getName ( void ){return std::string("native");}
+  virtual std::string getName ( void ){return std::string(GP_NATIVE_FILE_SYSTEM);}
   
   virtual void closeAllFiles ( void );
 
@@ -161,10 +162,24 @@ bool GPFileSystem::closeFile ( GPFile* file )
   return open;
 }
 
-void GPFileSystem::addFileSystemProvider ( GPFileSystemProvider *provider )
+void GPFileSystem::addFileSystemProvider ( GPFileSystemProvider *provider, const char *insertBefore )
 {
   if (provider && provider->getName().size())
+  {
+    if (insertBefore)
+    {
+      for (int i = 0; i < (int)fileSystemList.size(); i++)
+      {
+	if ( fileSystemList[i]->getName() == insertBefore )
+	{
+	  fileSystemList.insert(fileSystemList.begin()+i,provider);
+	  return;
+	}
+      }
+    }
+    // ether it can't be found, or we don't care, so just slap it at the end.
     fileSystemList.push_back(provider);
+  }
 }
 
 std::vector<std::string> GPFileSystem::getFileSystemProviderList ( void )
@@ -181,7 +196,7 @@ GPFileSystem::GPFileSystem()
 {
   //the base disk file system is
   static GPDiskFileSystemProvider diskFileSystem;
-  addFileSystemProvider(&diskFileSystem);
+  addFileSystemProvider(&diskFileSystem,NULL);
 }
 
 GPFileSystem::~GPFileSystem()
@@ -282,19 +297,35 @@ const char* GPFileSystem::getUserDir ( void )
   std::string userPath;
 #ifdef _WIN32
   char temp[MAX_PATH+1] = {0};
-  HRESULT hr;
   if (SUCCEEDED(SHGetFolderPath(NULL,CSIDL_APPDATA,NULL,SHGFP_TYPE_CURRENT,temp)))
   {
-    appPath = temp;
+    userPath = temp;
   }
   else
-    appPath = ".\\";
+    userPath = ".\\";
 #else
   // get some nix and mac code here to find the home dir or something
 #endif
 
-  return convertPathFromNative(appPath).c_str();
+  return convertPathFromNative(userPath).c_str();
 }
+
+const char* GPFileSystem::getTempDir ( void )
+{
+  std::string tempPath;
+#ifdef _WIN32
+  char temp[MAX_PATH+1] = {0};
+  if (GetTempPath(MAX_PATH,temp))
+    tempPath = temp;
+  else
+    tempPath = ".\\";
+#else
+  // get some nix and mac code here to find the home dir or something
+#endif
+
+  return convertPathFromNative(tempPath).c_str();
+}
+
 
 const char* GPFileSystem::convertPathFromNative ( const char* path )
 {
@@ -309,7 +340,7 @@ const char* GPFileSystem::convertPathToNative ( const char* path )
 const char* GPFileSystem::getFullPath ( const char *file )
 {
   static std::string fullPath = rootPath + convertPathToNative(file);
-  return fullPath;
+  return fullPath.c_str();
 }
 
 //-----------------GPDiskFile---------------//
@@ -363,7 +394,7 @@ bool GPDiskFile::open ( bool w , bool text, bool append  )
   }
 
   file = fopen(filePath.c_str(),mode.c_str());
-  return file;
+  return file != NULL;
 }
 
 // reading 
@@ -422,65 +453,80 @@ std::vector<std::string> GPDiskFile::getFileLines ( bool leaveNativeEndings )
 
 std::string GPDiskFile::getText ( bool leaveNativeEndings )
 {
-  if (!filePointer || writeAccess )
-    return false;
+  std::string text;
 
-  std::vector<std::string> lines;
+ if (!file || writeAccess )
+    return text;
+
   if (!file || writeAccess )
-    return lines;
+    return text;
 
   std::string line = getLine(leaveNativeEndings);
   while ( line.size() )
   {
-    lines.push_back(line);
+    text += line;
+    if (!leaveNativeEndings)
+      text += "\n";
     line = getLine(leaveNativeEndings);
   }
-
-  return lines;
-
+  return text;
 }
 
 bool GPDiskFile::read ( void * data, size_t size, unsigned int count )
 {
-  if (!filePointer || writeAccess )
+  if (!file || writeAccess )
     return false;
+
+  return false;
 }
 
 // writing
 bool GPDiskFile::putLine ( const std::string &data, bool nativeLineEnding )
 {
-  if (!filePointer || !writeAccess )
-   return false;
+  if (!file || !writeAccess )
+    return false;
+
+  return false;
 }
 
 bool GPDiskFile::putLine ( const char *data, bool nativeLineEnding )
 {
-  if (!filePointer || !writeAccess )
+  if (!file || !writeAccess )
     return false;
+
+  return false;
 }
 
 bool GPDiskFile::petFileLines ( const std::vector<std::string> &data,  bool nativeLineEnding )
 {
-  if (!filePointer || !writeAccess )
+  if (!file || !writeAccess )
     return false;
+
+  return false;
 }
 
 bool GPDiskFile::putText ( const std::string &data, bool nativeLineEnding )
 {
-  if (!filePointer || !writeAccess )
+  if (!file || !writeAccess )
     return false;
+
+  return false;
 }
 
 bool GPDiskFile::putText ( const char *data, bool nativeLineEnding )
 {
-  if (!filePointer || !writeAccess )
+  if (!file || !writeAccess )
     return false;
+
+  return false;
 }
 
 bool GPDiskFile::write ( void *data, size_t size, unsigned int count)
 {
-  if (!filePointer || !writeAccess )
+  if (!file || !writeAccess )
     return false;
+
+  return false;
 }
 
 std::string GPDiskFile::name ( void )
@@ -493,11 +539,11 @@ size_t GPDiskFile::size ( void )
   if (!file)
     return 0;
 
-  size_t  pos = ftell(file);
+  long  pos = ftell(file);
   fseek(file,0,SEEK_END);
-  size_t s = ftell(file);
+  long s = ftell(file);
   fseek(file,pos,SEEK_SET);
-  return s;
+  return (size_t)s;
 }
 
 bool GPDiskFile::valid ( void )
