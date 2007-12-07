@@ -719,7 +719,7 @@ std::set<std::string> GPDiskFileSystemProvider::getFileList ( const char* path, 
   std::vector<std::string> rawList;
   _ADDFILESTACK(getFullPath(path),filter,recursive,rawList,false);
   for ( size_t i = 0; i < rawList.size(); i++ )
-    files.insert(rawList[i]);
+    files.insert(std::string(standardPath(rawList[i])));
 
   return files;
 }
@@ -731,7 +731,7 @@ std::set<std::string> GPDiskFileSystemProvider::getDirList ( const char* path, b
   std::vector<std::string> rawList;
   _ADDFILESTACK(getFullPath(path),NULL,recursive,rawList,true);
   for ( size_t i = 0; i < rawList.size(); i++ )
-    dirs.insert(rawList[i]);
+    dirs.insert(std::string(standardPath(rawList[i])));
 
   return dirs;
 }
@@ -779,7 +779,7 @@ bool WindowsAddFileStack ( const char *path, const char* fileMask, bool recursiv
 	FilePath += "\\";
 	FilePath += fileInfo.name;
 
-	if (justDirs && (fileInfo.attrib & _A_SUBDIR ))	// we neever do just dirs recrusively
+	if (justDirs && (fileInfo.attrib & _A_SUBDIR ))	// we never do just dirs recursively
 	  list.push_back(FilePath);
 	else if (!justDirs)
 	{
@@ -787,7 +787,7 @@ bool WindowsAddFileStack ( const char *path, const char* fileMask, bool recursiv
 	    WindowsAddFileStack(FilePath.c_str(),fileMask,recursive,list);
 	  else if (!(fileInfo.attrib & _A_SUBDIR) )
 	  {
-	    if (recursive && fileMask)	// if we are recusive we need to check extension manualy, so we get dirs and stuf
+	    if (recursive && fileMask)	// if we are reclusive we need to check extension manually, so we get dirs and stuff
 	    {
 	      if (strrchr(FilePath.c_str(),'.'))
 	      {
