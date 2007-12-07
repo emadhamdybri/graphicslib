@@ -141,6 +141,8 @@ private:
  
   std::string rootPath;
   FileSystemProviderList    fileSystemList;
+
+  GPFileSystemProvider	*nativeFileSystem;
 };
 
 

@@ -18,13 +18,6 @@
 #include "gpApp.h"
 #include "gpOpenGL.h"
 
-// utility functions to help windows
-// apps link in the libs they need
-#ifdef _WIN32
-#pragma comment(lib, "comctl32.lib")
-#pragma comment(lib, "GPCore.lib")
-#endif
-
 class GPCore
 {
 public:

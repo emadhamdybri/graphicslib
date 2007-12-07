@@ -12,27 +12,18 @@
 #ifndef _GL_OPENGL_H_
 #define _GL_OPENGL_H_
 
-#ifdef _WIN32 // this file only has windows stuff
-  #include <windows.h>
+// GL is dependent on the WindowsAPI on Windows
+#include "gpWinAPI.h"
+
+#ifdef __APPLE__
+  #include <Carbon/Carbon.h>
+  #include <AGL/agl.h>
+  #include <AGL/gl.h>
+  #include <AGL/glu.h>
+#else	// everyone else because they use the standard
   #include <GL/gl.h>
   #include <GL/glu.h>
-
-#ifndef _SUPRESS_AUTO_GL_LIB
-  #pragma comment(lib, "opengl32.lib")
-  #pragma comment(lib, "glu32.lib")
 #endif
-
-#else
-  #ifdef __APPLE__
-    #include <Carbon/Carbon.h>
-    #include <AGL/agl.h>
-    #include <AGL/gl.h>
-    #include <AGL/glu.h>
-  #else	// linux
-    #include <GL/gl.h>
-    #include <GL/glu.h>
-  #endif
-#endif // _WIN32
 
 #include <map>
 #include <vector>
