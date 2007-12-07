@@ -45,6 +45,15 @@ const char* standardPath ( std::string &path )
   return path.c_str();
 }
 
+bool writeLineEnding ( FILE *fp, bool native = false )
+{
+#ifdef _WIN32
+  if (native)
+    return fprintf(fp,"\r\n") > 0;
+#endif
+  return fprintf(fp,"\n") > 0;
+}
+
 // defines for the disk based file system file system
 class GPDiskFileSystemProvider;
 
@@ -66,7 +75,7 @@ public:
   // writing
   bool putLine ( const std::string &data, bool nativeLineEnding = true );
   bool putLine ( const char *data, bool nativeLineEnding = true );
-  bool petFileLines ( const std::vector<std::string> &data,  bool nativeLineEnding = true );
+  bool putFileLines ( const std::vector<std::string> &data,  bool nativeLineEnding = true );
   bool putText ( const std::string &data, bool nativeLineEnding = true );
   bool putText ( const char *data, bool nativeLineEnding = true );
 
@@ -170,11 +179,11 @@ void GPFileSystem::addFileSystemProvider ( GPFileSystemProvider *provider, const
     {
       for (int i = 0; i < (int)fileSystemList.size(); i++)
       {
-	if ( fileSystemList[i]->getName() == insertBefore )
-	{
-	  fileSystemList.insert(fileSystemList.begin()+i,provider);
-	  return;
-	}
+		if ( fileSystemList[i]->getName() == insertBefore )
+		{
+			fileSystemList.insert(fileSystemList.begin()+i,provider);
+			return;
+		}
       }
     }
     // ether it can't be found, or we don't care, so just slap it at the end.
@@ -326,7 +335,6 @@ const char* GPFileSystem::getTempDir ( void )
   return convertPathFromNative(tempPath).c_str();
 }
 
-
 const char* GPFileSystem::convertPathFromNative ( const char* path )
 {
   return standardPath(std::string(path));
@@ -388,9 +396,9 @@ bool GPDiskFile::open ( bool w , bool text, bool append  )
   else
   {
     if ( text )
-	mode = "rt";
+      mode = "rt";
     else
-	mode = "rb";
+      mode = "rb";
   }
 
   file = fopen(filePath.c_str(),mode.c_str());
@@ -477,7 +485,8 @@ bool GPDiskFile::read ( void * data, size_t size, unsigned int count )
   if (!file || writeAccess )
     return false;
 
-  return false;
+  size_t r = fread(data,size,count,file);
+  return r == size*count;
 }
 
 // writing
@@ -486,39 +495,61 @@ bool GPDiskFile::putLine ( const std::string &data, bool nativeLineEnding )
   if (!file || !writeAccess )
     return false;
 
-  return false;
+  size_t r = fwrite(data.c_str(),data.size(),1,file);
+  return writeLineEnding(file,nativeLineEnding) && (r == data.size());
 }
 
 bool GPDiskFile::putLine ( const char *data, bool nativeLineEnding )
 {
-  if (!file || !writeAccess )
+  if (!file || !writeAccess ||!data)
     return false;
 
-  return false;
+  size_t l = strlen(data);
+  size_t r = fwrite(data,l,1,file);
+  return writeLineEnding(file,nativeLineEnding) && (r == l);
 }
 
-bool GPDiskFile::petFileLines ( const std::vector<std::string> &data,  bool nativeLineEnding )
+bool GPDiskFile::putFileLines ( const std::vector<std::string> &data,  bool nativeLineEnding )
 {
   if (!file || !writeAccess )
     return false;
 
-  return false;
+  for ( size_t i = 0; i < data.size(); i++ )
+  {  
+    if (!putLine(data[i],nativeLineEnding))
+      return false;
+  }
+  return true;
 }
 
 bool GPDiskFile::putText ( const std::string &data, bool nativeLineEnding )
 {
-  if (!file || !writeAccess )
-    return false;
-
-  return false;
+  return putText(data.c_str(),nativeLineEnding);
 }
 
 bool GPDiskFile::putText ( const char *data, bool nativeLineEnding )
 {
-  if (!file || !writeAccess )
+  if (!file || !writeAccess  ||!data)
     return false;
 
-  return false;
+  size_t l = strlen(data);
+  
+  for (size_t i = 0; i < l; i++)
+  {
+    char c = data[i];
+    if ( c != '\n')
+    {
+      if (!fwrite(&c,1,1,file))
+	return false;
+    }
+    else
+    {
+      if (!writeLineEnding(file,nativeLineEnding))
+	return false;
+    }
+  }
+
+  return true;
 }
 
 bool GPDiskFile::write ( void *data, size_t size, unsigned int count)
@@ -526,7 +557,7 @@ bool GPDiskFile::write ( void *data, size_t size, unsigned int count)
   if (!file || !writeAccess )
     return false;
 
-  return false;
+  return fwrite(data,size,count,file) != size*count;
 }
 
 std::string GPDiskFile::name ( void )
