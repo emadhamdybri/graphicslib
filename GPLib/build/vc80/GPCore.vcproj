@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../core/inc; ../../inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_SUPRESS_AUTO_GP_LIB;_SUPRESS_AUTO_GL_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_SUPRESS_AUTO_GP_LIB;_SUPRESS_AUTO_GL_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -170,6 +170,10 @@
 			</File>
 			<File
 				RelativePath="..\..\core\src\gpOpenGL.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\inc\gpWinAPI.h"
 				>
 			</File>
 			<Filter

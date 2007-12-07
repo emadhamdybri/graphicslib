@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../core/inc; ../../inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_SUPRESS_AUTO_GP_LIB;_SUPRESS_AUTO_GL_LIB"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -63,7 +63,7 @@ copy Core_Debug\*.lib ..\..\lib\debug\*.lib
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_SUPRESS_AUTO_GP_LIB;_SUPRESS_AUTO_GL_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -169,6 +169,9 @@ copy Core_RElease\*.lib ..\..\lib\release\*.lib
 			</File>
 			<File
 				RelativePath="..\..\inc\gpOpenGL.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\gpWinAPI.h">
 			</File>
 			<Filter
 				Name="WinAPI"

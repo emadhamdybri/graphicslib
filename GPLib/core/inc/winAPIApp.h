@@ -14,11 +14,7 @@
 #define _WINAPI_APP_H_
 
 #include "gpAPPBase.h"
-
-#define _WIN32_WINNT 0x0500
-#include <windows.h>
-#include <commctrl.h>
-#include <commoncontrols.h>
+#include "gpWinAPI.h"
 
 #include <list>
 
