@@ -39,7 +39,7 @@ public:
   // writing
   virtual bool putLine ( const std::string &data, bool nativeLineEnding = true ) = 0;
   virtual bool putLine ( const char *data, bool nativeLineEnding = true ) = 0;
-  virtual bool petFileLines ( const std::vector<std::string> &data,  bool nativeLineEnding = true ) = 0;
+  virtual bool putFileLines ( const std::vector<std::string> &data,  bool nativeLineEnding = true ) = 0;
   virtual bool putText ( const std::string &data, bool nativeLineEnding = true ) = 0;
   virtual bool putText ( const char *data, bool nativeLineEnding = true ) = 0;
 
