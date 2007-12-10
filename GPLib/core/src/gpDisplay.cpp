@@ -30,7 +30,7 @@ void GPDisplay::getCaps ( GPCaps *caps )
 GPDisplay::GPDisplay( void ) : core(GPCore::instance())
 {
   base = NULL;
-// the big long place where we pick the backends
+// the big long place where we pick the back ends
 
 #ifdef _WIN32
   base = new WinAPIDisplay;
