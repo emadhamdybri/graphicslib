@@ -14,6 +14,7 @@
 #define _GPDISPLAY_H_
 
 #include "gpOpenGL.h"
+#include "gpTexture.h"
 #include <string>
 #include <vector>
 

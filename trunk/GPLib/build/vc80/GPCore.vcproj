@@ -173,6 +173,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\core\src\gpTexture.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\inc\gpWinAPI.h"
 				>
 			</File>
@@ -236,6 +240,10 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\gpOpenGL.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\inc\gpTexture.h"
 				>
 			</File>
 			<Filter
