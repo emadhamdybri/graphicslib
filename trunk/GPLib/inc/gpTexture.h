@@ -30,13 +30,13 @@ typedef unsigned int GPTextureID;
 class GPTexturePatamaters
 {
 public:
-	virtual ~GPTexturePatamaters(){};
+  virtual ~GPTexturePatamaters(){};
 
-	virtual GLenum getSWrap ( void * param ){return GL_REPEAT;}
-	virtual GLenum getTWrap ( void * param ){return getSWrap(param);} 
-	virtual GLenum getMagFilter ( void * param ){return GL_LINEAR_MIPMAP_LINEAR;}
-	virtual GLenum getMinFilter ( void * param ){return getSWrap(param);}  
-	virtual GLenum getPerspeciveHint ( void * param ){return GL_NICEST;}  
+  virtual GLenum getSWrap ( void * param ){return GL_REPEAT;}
+  virtual GLenum getTWrap ( void * param ){return getSWrap(param);} 
+  virtual GLenum getMagFilter ( void * param ){return GL_LINEAR_MIPMAP_LINEAR;}
+  virtual GLenum getMinFilter ( void * param ){return getSWrap(param);}  
+  virtual GLenum getPerspeciveHint ( void * param ){return GL_NICEST;}  
 };
 
 extern GPTexturePatamaters defaultTextureParams;
@@ -44,34 +44,34 @@ extern GPTexturePatamaters defaultTextureParams;
 class GPTexture
 {
 public:
-	GPTextureID	id;
-	GPPixelSize	size;
-	unsigned char bitsPerPixel;
+  GPTextureID	id;
+  GPPixelSize	size;
+  unsigned char bitsPerPixel;
 
-	virtual size_t	getDataSize ( void ) = 0;
-	virtual char* getData ( void ) = 0;
-	virtual void releaseData ( char* data ) = 0;
+  virtual size_t	getDataSize ( void ) = 0;
+  virtual char* getData ( void ) = 0;
+  virtual void releaseData ( char* data ) = 0;
 
-	void bind ( void );
-	void unbind ( void );
+  void bind ( void );
+  void unbind ( void );
 
 protected:
-	friend GPTextureProvider;
-	GPTexture( GPTexturePatamaters *func, void *param );
-	virtual ~GPTexture();
+  friend GPTextureProvider;
+  GPTexture( GPTexturePatamaters *func, void *param );
+  virtual ~GPTexture();
 
-	GPTexturePatamaters *paramsCallback;
-	void				*paramParam;
-	GLuint boundID;
+  GPTexturePatamaters *paramsCallback;
+  void				*paramParam;
+  GLuint boundID;
 };
 
 class GPTextureProvider
 {
 public:
-	virtual ~GPTextureProvider(){};
+  virtual ~GPTextureProvider(){};
 
-	virtual GPTexture* getTexture ( const char *name, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL ) = 0;
-	virtual GPTexture* getTexture ( const std::string &name, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL ) = 0;
+  virtual GPTexture* getTexture ( const char *name, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL ) = 0;
+  virtual GPTexture* getTexture ( const std::string &name, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL ) = 0;
 };
 
 class GPTextureSystem
@@ -79,62 +79,71 @@ class GPTextureSystem
 public:
 
 protected:
-	friend GPDisplay;
+  friend GPDisplay;
 
-	GPTextureSystem (GPDisplay *d);
-	virtual GPTextureSystem();
+  GPTextureSystem (GPDisplay *d);
+  virtual GPTextureSystem();
 
-	//Adds new textures to the system.
-	//textures loaded by name will come from the texture provider
-	//If an existing texture has been loaded with the same parameters, then the old ID will be returned.
-	GPTextureID	addTexture ( const char	*name, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL );
-	GPTextureID	addTexture ( const std::string &name, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL );
-	GPTextureID addTexture ( const char * name, GPTexture* texture, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL );
-	GPTextureID addTexture ( const std::string &name, GPTexture* texture, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL );
+  //Adds new textures to the system.
+  //textures loaded by name will come from the texture provider
+  //If an existing texture has been loaded with the same parameters, then the old ID will be returned.
+  GPTextureID	addTexture ( const char	*name, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL );
+  GPTextureID	addTexture ( const std::string &name, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL );
+  GPTextureID addTexture ( const char * name, GPTexture* texture, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL );
+  GPTextureID addTexture ( const std::string &name, GPTexture* texture, GPTexturePatamaters *func = &defaultTextureParams, void *param = NULL );
 
-	// aliasing
-	void setTextureAlias ( GPTextureID id, const char* alias );
-	void setTextureAlias ( GPTextureID id, std::string &alias );
-	
-	GPTextureID getAliasedID ( const char* alias );
-	GPTextureID getAliasedID ( std::string &alias );
+  // aliasing
+  void setTextureAlias ( GPTextureID id, const char* alias );
+  void setTextureAlias ( GPTextureID id, std::string &alias );
 
-	// info method to get the actual texture data ( for info )
-	const GPTexture* getTexture ( const char *name );
-	const GPTexture* getTexture ( const std::string &name );
+  GPTextureID getAliasedID ( const char* alias );
+  GPTextureID getAliasedID ( std::string &alias );
 
-	GPTextureID removeTexture ( GPTextureID id );
+  // info method to get the actual texture data ( for info )
+  const GPTexture* getTexture ( const char *name );
+  const GPTexture* getTexture ( const std::string &name );
 
-	void releaseContext ( void );
-	void setContext ( void );
+  GPTextureID removeTexture ( GPTextureID id );
 
-	void setProvider ( GPTextureProvider *p );
+  void releaseContext ( void );
+  void setContext ( void );
+
+  void setProvider ( GPTextureProvider *p );
 
 private:
-	GPDisplay *display;
-	GPTextureProvider *provier;
+  GPDisplay *display;
+  GPTextureProvider *provier;
 
-	std::map<std::string,GPTextureID> textureAliases;
+  std::map<std::string,GPTextureID> textureAliases;
 
-	typedef struct  
-	{	
-		GPTextureID	id;
-		GPTexture*	texture;
-		std::string name;
-		std::string alias;
-		bool		managed;
-		GPTexturePatamaters *func;
-		void *param;
-	}TexureRecord;
+  typedef struct  
+  {	
+    GPTextureID	id;
+    GPTexture*	texture;
+    std::string name;
+    std::string alias;
+    bool		managed;
+    GPTexturePatamaters *func;
+    void *param;
+  }TexureRecord;
 
-	std::map<GPTextureID,TexureRecord>	textures;
+  std::map<GPTextureID,TexureRecord>	textures;
 
-	GPTextureID lastTextureID;
+  GPTextureID lastTextureID;
 
-	size_t findTexturesOfName ( const std::string &name, std::vector<TexureRecord*> &records );
+  size_t findTexturesOfName ( const std::string &name, std::vector<TexureRecord*> &records );
 
-	std::map<std::string,GPTextureID> textureAliases;
-	GPTextureID findTexturesByAlias( const std::string &alias );
+  std::map<std::string,GPTextureID> textureAliases;
+  GPTextureID findTexturesByAlias( const std::string &alias );
 };
 
 #endif //_GPTEXTURE_H_
+
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
