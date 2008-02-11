@@ -120,6 +120,9 @@ copy Core_RElease\*.lib ..\..\lib\release\*.lib
 				RelativePath="..\..\core\src\gpOpenGL.cpp">
 			</File>
 			<File
+				RelativePath="..\..\core\src\gpPNG.cpp">
+			</File>
+			<File
 				RelativePath="..\..\core\src\gpTexture.cpp">
 			</File>
 			<Filter
@@ -172,6 +175,9 @@ copy Core_RElease\*.lib ..\..\lib\release\*.lib
 			</File>
 			<File
 				RelativePath="..\..\inc\gpOpenGL.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\gpPNG.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\gpTexture.h">
