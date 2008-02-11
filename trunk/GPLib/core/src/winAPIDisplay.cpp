@@ -53,7 +53,7 @@ void WinAPIDisplay::getCaps ( GPCaps *caps )
       DEVMODE modeInfo;
       modeInfo.dmSize = sizeof(DEVMODE);
 
-      while (EnumDisplaySettings(displayInfo.DeviceName,ENUM_CURRENT_SETTINGS,&modeInfo))
+      if (EnumDisplaySettings(displayInfo.DeviceName,ENUM_CURRENT_SETTINGS,&modeInfo))
       {
 	screen.desktopOffset.x = modeInfo.dmPosition.x;
 	screen.desktopOffset.y = modeInfo.dmPosition.y;
