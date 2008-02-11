@@ -18,7 +18,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
   GPApp *app = GPCore::instance().getApp();
   // app->setCommandline(lpCmdLine);
