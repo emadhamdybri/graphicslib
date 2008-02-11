@@ -52,7 +52,6 @@ void GPTexture::bind ( void )
 
     gluBuild2DMipmaps(GL_TEXTURE_2D,bitsPerPixel,size.x,size.y,eFormat,GL_UNSIGNED_BYTE,d);
 
-
     releaseData(d);
   }
 }

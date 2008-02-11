@@ -82,7 +82,7 @@ protected:
   friend GPDisplay;
 
   GPTextureSystem (GPDisplay *d);
-  virtual GPTextureSystem();
+  virtual ~GPTextureSystem();
 
   //Adds new textures to the system.
   //textures loaded by name will come from the texture provider
