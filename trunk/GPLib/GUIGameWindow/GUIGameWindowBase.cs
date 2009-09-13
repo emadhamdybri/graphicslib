@@ -10,6 +10,7 @@ using System.Diagnostics;
 
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Platform;
 
 namespace GUIGameWindow
 {
@@ -23,6 +24,69 @@ namespace GUIGameWindow
         Stopwatch stopwatch = new Stopwatch();
         double lastUpdateTime = 0;
         double lastFrameTime = 0;
+
+      
+        public KeyboardDevice   Keyboard;
+        public MouseDevice      Mouse;
+
+        public class UpdateFrameArgs : EventArgs
+        {
+            private double timeDelta;
+            private double time;
+
+            /// <summary>
+            /// Gets the Time elapsed between frame updates, in seconds.
+            /// </summary>
+            public double Time
+            {
+                get { return time; }
+                internal set { time = value; }
+            }
+
+            public double TimeDelta
+            {
+                get { return timeDelta; }
+                internal set { timeDelta = value; }
+            }
+
+        }
+
+        public class RenderFrameArgs : EventArgs
+        {
+            private double time;
+            private double timeDelta;
+            private double scale_factor;
+
+            /// <summary>
+            /// Gets the Time elapsed between frame updates, in seconds.
+            /// </summary>
+            public double Time
+            {
+                get { return time; }
+                internal set { time = value; }
+            }
+
+            public double TimeDelta
+            {
+                get { return timeDelta; }
+                internal set { timeDelta = value; }
+            }
+
+            public double ScaleFactor
+            {
+                get
+                {
+                    return scale_factor;
+                }
+                internal set
+                {
+                    if (value != 0.0 && !Double.IsNaN(value))
+                        scale_factor = value;
+                    else
+                        scale_factor = 1.0;
+                }
+            }
+        }
 
         public GUIGameWindowBase()
         {
@@ -38,8 +102,15 @@ namespace GUIGameWindow
             InitEvents();
         }
 
+        public void Exit ()
+        {
+            Application.Exit();
+        }
+
         protected void InitEvents ()
         {
+            Keyboard = new KeyboardDevice(this);
+            Mouse = new MouseDevice(this);
             Application.Idle += new EventHandler(OnApplicationIdle);
         }
 
@@ -65,6 +136,7 @@ namespace GUIGameWindow
             glControl1.Size = this.Size;
             SetViewPort();
             base.OnResizeEnd(e);
+            Resized(e);
             if (!FixedFrameRate)
                 Draw();
         }
@@ -75,6 +147,7 @@ namespace GUIGameWindow
             glControl1.Size = this.Size;
             SetViewPort();
             base.OnResize(e);
+            Resized(e);
             if (!FixedFrameRate)
                 Draw();
         }
@@ -84,8 +157,14 @@ namespace GUIGameWindow
             glControl1.Size = this.Size;
             SetViewPort();
             base.OnResizeBegin(e);
+            Resized(e);
             if (!FixedFrameRate)
                 Draw();
+        }
+
+        protected virtual void Resized (EventArgs e)
+        {
+
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -103,7 +182,6 @@ namespace GUIGameWindow
             base.OnLoad(e);
             glControl1_Load(this, e);
         }
-
         private void glControl1_Load(object sender, EventArgs e)
         {
             if (Loaded)
@@ -128,16 +206,22 @@ namespace GUIGameWindow
             if (!Loaded)
                 return;
 
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
 
             double now = stopwatch.ElapsedMilliseconds * 0.001f;
 
-            DrawMainView(now, now - lastFrameTime);
+            RenderFrameArgs args = new RenderFrameArgs();
+            args.Time = now;
+            args.TimeDelta = now - lastFrameTime;
+            OnRenderFrame(args);
 
             lastFrameTime = now;
 
+        }
+
+        public void SwapBuffers ()
+        {
             glControl1.SwapBuffers();
         }
 
@@ -161,11 +245,11 @@ namespace GUIGameWindow
         {
         }
 
-        protected virtual void UpdateGame(double time, double delta)
+        public virtual void OnUpdateFrame(UpdateFrameArgs e)
         {
         }
 
-        protected virtual void DrawMainView(double time, double delta)
+        public virtual void OnRenderFrame(RenderFrameArgs e)
         {
         }
 
@@ -176,7 +260,11 @@ namespace GUIGameWindow
 
             double now = stopwatch.ElapsedMilliseconds * 0.001f;
 
-            UpdateGame(now, now - lastUpdateTime);
+            UpdateFrameArgs args = new UpdateFrameArgs();
+            args.Time = now;
+            args.TimeDelta = now - lastUpdateTime;
+            OnUpdateFrame(args);
+
             lastUpdateTime = now;
             if (FixedFrameRate && !Focused)
                 Draw();
