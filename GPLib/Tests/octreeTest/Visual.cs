@@ -73,11 +73,11 @@ namespace octreeTest
 
             // setup light 0
             Vector4 lightInfo = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-            GL.Lightv(LightName.Light0, LightParameter.Ambient, lightInfo);
+            GL.Light(LightName.Light0, LightParameter.Ambient, lightInfo);
 
             lightInfo = new Vector4(0.7f, 0.7f, 0.7f, 1.0f);
-            GL.Lightv(LightName.Light0, LightParameter.Diffuse, lightInfo);
-            GL.Lightv(LightName.Light0, LightParameter.Specular, lightInfo);
+            GL.Light(LightName.Light0, LightParameter.Diffuse, lightInfo);
+            GL.Light(LightName.Light0, LightParameter.Specular, lightInfo);
 
             camera.set(new Vector3(1, 1, 2), 0, 0);
 
@@ -403,7 +403,7 @@ namespace octreeTest
                 clipingFrustum = new DebugableVisibleFrustum(camera.ViewFrustum);
 
             GL.Enable(EnableCap.Light0);
-            GL.Lightv(LightName.Light0, LightParameter.Position, new Vector4(10, 15, 10, 1.0f));
+            GL.Light(LightName.Light0, LightParameter.Position, new Vector4(10, 15, 10, 1.0f));
 
             world.drawGround();
 

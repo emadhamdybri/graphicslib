@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DE4517F6-5B9F-425E-A4C7-BE67B0740188}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -33,11 +33,11 @@
   <ItemGroup>
     <Reference Include="OpenTK, Version=0.9.7.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\opentk\Binaries\Release\OpenTK.dll</HintPath>
+      <HintPath>..\..\OpenTK\Binaries\Release\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK.Utilities, Version=0.9.6.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\opentk\Binaries\Release\OpenTK.Utilities.dll</HintPath>
+      <HintPath>..\..\OpenTK\Binaries\Release\OpenTK.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -77,15 +77,15 @@
     <Compile Include="Visual.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\common\Drawables\Drawables.csproj">
+    <ProjectReference Include="..\..\Drawables\Drawables.csproj">
       <Project>{71452148-876E-4B8E-9244-A8F014CF72E6}</Project>
       <Name>Drawables</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\common\Math\Math3D.csproj">
+    <ProjectReference Include="..\..\Math\Math3D.csproj">
       <Project>{0BC4671F-FF72-4D3E-9889-44382F6C64F2}</Project>
       <Name>Math3D</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\common\World\World.csproj">
+    <ProjectReference Include="..\..\World\World.csproj">
       <Project>{D5EC63EC-B662-4C70-8C34-6E6AE3661D07}</Project>
       <Name>World</Name>
     </ProjectReference>
