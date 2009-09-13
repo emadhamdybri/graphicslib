@@ -1,0 +1,32 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "devApp", "devApp.vcproj", "{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2FCFF0F8-F359-44F9-9583-01EFEF8A7025} = {2FCFF0F8-F359-44F9-9583-01EFEF8A7025}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPCore", "..\..\..\..\build\vc71\GPCore.vcproj", "{2FCFF0F8-F359-44F9-9583-01EFEF8A7025}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Debug.ActiveCfg = Debug|Win32
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Debug.Build.0 = Debug|Win32
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Release.ActiveCfg = Release|Win32
+		{CE707C2B-C9A7-4CEC-BF62-3D5F8A6CB6AF}.Release.Build.0 = Release|Win32
+		{2FCFF0F8-F359-44F9-9583-01EFEF8A7025}.Debug.ActiveCfg = Debug|Win32
+		{2FCFF0F8-F359-44F9-9583-01EFEF8A7025}.Debug.Build.0 = Debug|Win32
+		{2FCFF0F8-F359-44F9-9583-01EFEF8A7025}.Release.ActiveCfg = Release|Win32
+		{2FCFF0F8-F359-44F9-9583-01EFEF8A7025}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
