@@ -59,12 +59,5 @@ namespace GUIGameWindow.Properties {
                 resourceCulture = value;
             }
         }
-        
-        internal static System.Drawing.Bitmap UI_Test1 {
-            get {
-                object obj = ResourceManager.GetObject("UI_Test1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }
