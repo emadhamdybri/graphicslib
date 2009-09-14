@@ -13,6 +13,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Math;
 using Math3D;
+using Grids;
 
 namespace portalTest
 {
@@ -21,23 +22,10 @@ namespace portalTest
         Camera camera = new Camera();
         
         DebugableVisibleFrustum clipingFrustum = null;
-        BoundingBox clippingBox = new BoundingBox();
 
-        bool drawAll = false;
-        bool drawTreeNodes = false;
-        bool cullToFrustum = false;
-        bool snapshotFrustum = true;
-        bool clipToCamera = false;
-
-        bool exactCulling = true;
-
-        int drawnObjects = 0;
-
-        bool done = false;
+        DebugablePortalWorld world = null;
 
         float[] viewMat = new float[16];
-
-        Vector3 cullBoxPos = new Vector3();
 
         TextPrinter printer = new TextPrinter(TextQuality.High);
         Font sans_serif = new Font(FontFamily.GenericSansSerif, 16.0f);
@@ -75,6 +63,8 @@ namespace portalTest
             GL.Light(LightName.Light0, LightParameter.Specular, lightInfo);
 
             camera.set(new Vector3(1, 1, 2), 0, 0);
+
+            clipingFrustum = new DebugableVisibleFrustum(camera.SnapshotFrusum());
         }
 
         void Mouse_Move(object sender, MouseEventArgs e)
@@ -82,10 +72,17 @@ namespace portalTest
             int i = e.X;
         }
 
+        protected override void InitGame()
+        {
+            world = new DebugablePortalWorld();
+            // build it and stuff
+        }
+
         protected override void Resized(EventArgs e)
         {
             camera.Resize(Width, Height);
         }
+
         protected bool doInput(UpdateFrameArgs e)
         {
             if (Keyboard[Keys.Escape])
@@ -102,44 +99,7 @@ namespace portalTest
                 camera.turn(-turnSpeed, 0);
             if (Keyboard[Keys.Down])
                 camera.turn(turnSpeed, 0);
-
-            if (Keyboard[Keys.F1])
-                drawAll = true;
-            if (Keyboard[Keys.F2])
-                drawAll = false;
-
-            if (Keyboard[Keys.F3])
-            {
-                if (clipToCamera)
-                    snapshotFrustum = true;
-
-                cullToFrustum = true;
-                clipToCamera = false;
-            }
-            if (Keyboard[Keys.F4])
-            {
-                cullToFrustum = false;
-                clipToCamera = false;
-            }
-            if (Keyboard[Keys.F8])
-            {
-                cullToFrustum = true;
-                clipToCamera = true;
-            }
-
-            if (Keyboard[Keys.F5])
-                snapshotFrustum = true;
-
-            if (Keyboard[Keys.F6])
-                drawTreeNodes = true;
-            if (Keyboard[Keys.F7])
-                drawTreeNodes = false;
-
-            if (Keyboard[Keys.F9])
-                exactCulling = true;
-            if (Keyboard[Keys.F10])
-                exactCulling = false;
-
+           
             Vector3 forward = new Vector3(camera.Heading());
             Vector3 leftward = new Vector3(forward);
             leftward.X = -forward.Y;
@@ -148,7 +108,7 @@ namespace portalTest
             Vector2 movement = new Vector2();
 
             float speed = 15.0f;
-            speed *= (float)e.Time;
+            speed *= (float)e.TimeDelta;
 
             if (Keyboard[Keys.A])
                 movement.X = 1;
@@ -169,22 +129,6 @@ namespace portalTest
             incremnt += leftward * movement.X * speed;
 
             camera.move(incremnt);
-
-            // cullbox
-
-            if (Keyboard[Keys.NumPad8])
-                cullBoxPos.Y += speed;
-            if (Keyboard[Keys.NumPad2])
-                cullBoxPos.Y -= speed;
-            if (Keyboard[Keys.NumPad4])
-                cullBoxPos.X -= speed;
-            if (Keyboard[Keys.NumPad6])
-                cullBoxPos.X += speed;
-            if (Keyboard[Keys.NumPad9])
-                cullBoxPos.Z += speed;
-            if (Keyboard[Keys.NumPad3])
-                cullBoxPos.Z -= speed;
-
             return false;
         }
 
@@ -204,27 +148,78 @@ namespace portalTest
 
             camera.Execute();
 
-            if (snapshotFrustum)
-            {
-                clipingFrustum = new DebugableVisibleFrustum(camera.SnapshotFrusum());
-                snapshotFrustum = false;
-            }
-            else if (clipToCamera && cullToFrustum)
-                clipingFrustum = new DebugableVisibleFrustum(camera.ViewFrustum);
-
             GL.Enable(EnableCap.Light0);
             GL.Light(LightName.Light0, LightParameter.Position, new Vector4(10, 15, 10, 1.0f));
 
-            //drawWorld();
+            if (clipingFrustum != null)
+                clipingFrustum.drawFrustum();
+            
+            drawWorld();
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
 
             SwapBuffers();
         }
 
+        public void drawWorld()
+        {
+            if (world != null)
+            {
+                world.drawGround();
+                world.draw();
+            }
+        }
+
     }
 
-     public class DebugableVisibleFrustum : VisibleFrustum
+    public class DebugablePortalWorld
+    {
+        Grid grid = new Grid();
+        float groundSize = 100f;
+
+        public void FinalizeWorld()
+        {
+        }
+
+        public float Size
+        {
+            get { return groundSize; }
+        }
+
+        public void Setup(float ground, float majorSpace, float minorSpace)
+        {
+            groundSize = ground;
+
+            grid.gridSize = groundSize;
+            grid.majorSpacing = majorSpace;
+            grid.minorSpacing = minorSpace;
+            grid.alpha = 0.5f;
+        }
+
+        public void drawGround()
+        {
+            GL.Color3(System.Drawing.Color.LightGreen);
+
+            GL.Begin(BeginMode.Quads);
+            GL.Normal3(0, 0, 1);
+            GL.Vertex3(groundSize, groundSize, -0.01f);
+            GL.Vertex3(-groundSize, groundSize, -0.01f);
+            GL.Vertex3(-groundSize, -groundSize, -0.01f);
+            GL.Vertex3(groundSize, -groundSize, -0.01f);
+            GL.End();
+
+            GL.Disable(EnableCap.Lighting);
+            grid.Exectute();
+            GL.Enable(EnableCap.Lighting);
+        }
+
+        public int draw()
+        {
+            return 0;
+        }
+    }
+
+    public class DebugableVisibleFrustum : VisibleFrustum
     {
         public DebugableVisibleFrustum ( VisibleFrustum val ) : base(val)
         {
