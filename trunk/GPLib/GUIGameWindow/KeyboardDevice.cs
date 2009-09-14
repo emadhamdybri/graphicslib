@@ -15,7 +15,6 @@ namespace GUIGameWindow
         public event KeyUpEvent KeyUp;
         public event KeyDownEvent KeyDown;
 
-
         public bool this[Keys key]
         {
             get 
@@ -27,22 +26,24 @@ namespace GUIGameWindow
             }
         }
 
-        public KeyboardDevice(Form form)
+        public KeyboardDevice(Control ctl)
         {
-            form.KeyDown += new KeyEventHandler(InternalDown);
-            form.KeyUp += new KeyEventHandler(InternalUp);
+            ctl.KeyDown += new KeyEventHandler(InternalDown);
+            ctl.KeyUp += new KeyEventHandler(InternalUp);
         }
 
         protected void InternalDown(Object sender, KeyEventArgs args)
         {
             keymap[args.KeyCode] = true;
-            KeyDown(this, args.KeyCode);
+            if (KeyDown != null)
+                KeyDown(this, args.KeyCode);
         }
 
         protected void InternalUp(Object sender, KeyEventArgs args)
         {
             keymap[args.KeyCode] = false;
-            KeyUp(this, args.KeyCode);
+            if (KeyUp != null)
+                KeyUp(this, args.KeyCode);
         }
     }
 

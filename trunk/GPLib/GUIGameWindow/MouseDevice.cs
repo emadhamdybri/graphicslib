@@ -162,22 +162,28 @@ namespace GUIGameWindow
         {
             get { return lastPoint.X; }
         }
-
         public int Y
         {
             get { return lastPoint.Y; }
         }
-
         public int XDelta
         {
             get { return lastDelta.X; }
         }
-
         public int YDelta
         {
             get { return lastDelta.Y; }
         }
 
+        public int NumberOfButtons
+        {
+            get { return 5; }
+        }
+
+        public int NumberOfWheels
+        {
+            get { return 1; }
+        }
 
         Point lastPoint = new Point(0, 0);
         Point lastDelta = new Point(0, 0);
@@ -186,25 +192,27 @@ namespace GUIGameWindow
         int wheelCount = 0;
         int lastWheelDelta = 0;
 
-        public MouseDevice(Form form)
+        public MouseDevice(Control ctl)
         {
-            form.MouseDown += new MouseEventHandler(InternalDown);
-            form.MouseUp+= new MouseEventHandler(InternalUp);
+            ctl.MouseDown += new MouseEventHandler(InternalDown);
+            ctl.MouseUp += new MouseEventHandler(InternalUp);
 
-            form.MouseMove += new MouseEventHandler(InternalMove);
-            form.MouseWheel += new MouseEventHandler(InternalWheel);
+            ctl.MouseMove += new MouseEventHandler(InternalMove);
+            ctl.MouseWheel += new MouseEventHandler(InternalWheel);
         }
 
         protected void InternalDown(Object sender, MouseEventArgs args)
         {
             buttonMap[args.Button] = true;
-            ButtonDown(this, new MouseButtonEventArgs(args.Button,true,args.Location));
+            if (ButtonDown != null)
+                ButtonDown(this, new MouseButtonEventArgs(args.Button, true, args.Location));
         }
 
         protected void InternalUp(Object sender, MouseEventArgs args)
         {
             buttonMap[args.Button] = false;
-            ButtonUp(this, new MouseButtonEventArgs(args.Button, false, args.Location));
+            if (ButtonUp != null)
+                ButtonUp(this, new MouseButtonEventArgs(args.Button, false, args.Location));
         }
 
         protected void InternalMove(Object sender, MouseEventArgs args)
@@ -212,10 +220,11 @@ namespace GUIGameWindow
             if (lastPointSet)
             {
                 lastDelta = new Point(args.Location.X - lastPoint.X,args.Location.Y - lastPoint.Y);
-                Move(this, new MouseMoveEventArgs(args.Location.X, args.Location.Y, lastDelta.X, lastDelta.Y));
+                if (Move != null)
+                    Move(this, new MouseMoveEventArgs(args.Location.X, args.Location.Y, lastDelta.X, lastDelta.Y));
             }
 
-            lastPoint = args.Location;
+            lastPoint = new Point(args.Location.X,args.Location.Y);
             lastPointSet = true;
         }
 
@@ -225,10 +234,11 @@ namespace GUIGameWindow
             wheelCount += args.Delta;
 
             lastDelta = new Point(args.Location.X - lastPoint.X, args.Location.Y - lastPoint.Y);
-            lastPoint = args.Location;
+            lastPoint = new Point(args.Location.X, args.Location.Y);
             lastPointSet = true;
             
-            WheelChanged(this,new MouseWheelEventArgs(args.Location.X,args.Location.Y,wheelCount,args.Delta));
+            if (WheelChanged != null)
+                WheelChanged(this,new MouseWheelEventArgs(args.Location.X,args.Location.Y,wheelCount,args.Delta));
         }
     }
 }

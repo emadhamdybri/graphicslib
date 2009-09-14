@@ -109,8 +109,8 @@ namespace GUIGameWindow
 
         protected void InitEvents ()
         {
-            Keyboard = new KeyboardDevice(this);
-            Mouse = new MouseDevice(this);
+            Keyboard = new KeyboardDevice(glControl1);
+            Mouse = new MouseDevice(glControl1);
             Application.Idle += new EventHandler(OnApplicationIdle);
         }
 
