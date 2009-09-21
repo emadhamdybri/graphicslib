@@ -195,9 +195,9 @@ namespace PortalEdit
 
     public class Polygon
     {
-        Point[] verts;
-        Color color = Color.FromArgb(128,Color.OliveDrab);
-        Color outlineColor = Color.FromArgb(192, Color.Black);
+        public Point[] verts;
+        public Color color = Color.FromArgb(128, Color.OliveDrab);
+        public Color outlineColor = Color.FromArgb(192, Color.Black);
 
         public Polygon ( List<Point> points )
         {
