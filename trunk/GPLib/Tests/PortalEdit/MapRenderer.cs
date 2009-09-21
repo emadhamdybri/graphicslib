@@ -5,6 +5,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 
+using OpenTK.Math;
+
 namespace PortalEdit
 {
     public delegate void NewPolygonHandler ( object sender, Polygon polygon );
@@ -202,6 +204,19 @@ namespace PortalEdit
         public Polygon ( List<Point> points )
         {
             verts = points.ToArray();
+        }
+
+        public float GetNormalDepth ()
+        {
+            Vector3 v1 = new Vector3(verts[1].X - verts[0].X, verts[1].Y - verts[0].Y, 0);
+            Vector3 v2 = new Vector3(verts[1].X - verts[2].X, verts[1].Y - verts[2].Y, 0);
+
+            return Vector3.Cross(v1, v2).Z;
+        }
+
+        public void Reverse ()
+        {
+            Array.Reverse(verts);
         }
 
         public void Paint ( Graphics graphics )

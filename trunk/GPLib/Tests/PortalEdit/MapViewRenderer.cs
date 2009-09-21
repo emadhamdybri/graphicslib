@@ -17,7 +17,9 @@ namespace PortalEdit
         GLControl control;
         PortalMap map;
 
-        Camera camera = new Camera();
+        Vector3 offset = new Vector3(0,0,1);
+        Vector2 rotation = new Vector2(0,0);
+        float pullback = 10f;
 
         Point lastMouse = Point.Empty;
 
@@ -26,7 +28,6 @@ namespace PortalEdit
             map = m;
             control = ctl;
             SetupGL();
-            camera.set(new Vector3(1, 1, 2), 0, 0);
             
             SetViewPort();
             Render3dView();
@@ -34,24 +35,35 @@ namespace PortalEdit
             ctl.Paint += new System.Windows.Forms.PaintEventHandler(ctl_Paint);
             ctl.Resize += new EventHandler(ctl_Resize);
             ctl.MouseMove += new MouseEventHandler(ctl_MouseMove);
+            ctl.MouseWheel += new MouseEventHandler(ctl_MouseWheel);
+        }
+
+        void ctl_MouseWheel(object sender, MouseEventArgs e)
+        {
+            float zoomSpeed = 0.5f;
+            pullback += ((float)e.Delta / 120f) * zoomSpeed;
+            if (pullback < 0)
+                pullback = 0;
+            Render3dView();
         }
 
         void ctl_MouseMove(object sender, MouseEventArgs e)
         {
             float rotSpeed = 0.1f;
-            float moveSpeed = 0.5f;
+            float moveSpeed = 0.05f;
 
             if (e.Button == MouseButtons.Right)
             {
-                camera.turn((e.Y - lastMouse.Y) * rotSpeed, (e.X - lastMouse.X) * rotSpeed);
-                Render3dView();
+                rotation.X -= (e.X - lastMouse.X) * rotSpeed;
+                rotation.Y += (e.Y - lastMouse.Y) * rotSpeed;
             }
 
             if (e.Button == MouseButtons.Middle)
             {
-                camera.move(0,(e.Y - lastMouse.Y) * moveSpeed, (e.X - lastMouse.X) * moveSpeed);
-                Render3dView();
+                offset.X -= (e.X - lastMouse.X) * moveSpeed;
+                offset.Y += (e.Y - lastMouse.Y) * moveSpeed;
             }
+            Render3dView();
 
             lastMouse = new Point(e.X,e.Y);
         }
@@ -80,23 +92,25 @@ namespace PortalEdit
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Enable(EnableCap.ColorMaterial);
             GL.Enable(EnableCap.LineSmooth);
-          //  GL.LightModel(LightModelParameter.LightModelColorControl, 1);
 
             // setup light 0
-//             Vector4 lightInfo = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-//             GL.Light(LightName.Light0, LightParameter.Ambient, lightInfo);
-// 
-//             lightInfo = new Vector4(0.7f, 0.7f, 0.7f, 1.0f);
-//             GL.Light(LightName.Light0, LightParameter.Diffuse, lightInfo);
-//             GL.Light(LightName.Light0, LightParameter.Specular, lightInfo);
+            Vector4 lightInfo = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+            GL.Light(LightName.Light0, LightParameter.Ambient, lightInfo);
 
+            lightInfo = new Vector4(0.7f, 0.7f, 0.7f, 1.0f);
+            GL.Light(LightName.Light0, LightParameter.Diffuse, lightInfo);
+            GL.Light(LightName.Light0, LightParameter.Specular, lightInfo);
         }
 
         protected virtual void SetViewPort()
         {
             GL.Viewport(0, 0, control.Width, control.Height); // Use all of the glControl painting area  
-            if (camera != null)
-                camera.Resize(control.Width, control.Height);
+
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            
+            float aspect = (float)control.Width / (float)control.Height;
+            Glu.Perspective(45/aspect, aspect, 0.1f, 10000f);
         }
 
         protected void DrawGrid ()
@@ -118,7 +132,37 @@ namespace PortalEdit
             GL.Vertex3(0, 0, 0);
             GL.Vertex3(0, 0, 20);
 
-            GL.End();
+            GL.Color4(Color.FromArgb(128, Color.Gray));
+
+            for (float i = 0; i < 100f; i += 5f )
+            {
+                GL.Vertex2(100, i);
+                GL.Vertex2(-100, i);
+
+                GL.Vertex2(100, -i);
+                GL.Vertex2(-100, -i);
+
+                GL.Vertex2(i,100);
+                GL.Vertex2(i, -100);
+
+                GL.Vertex2(-i, 100);
+                GL.Vertex2(-i, -100);
+            }
+
+                GL.End();
+            GL.Enable(EnableCap.Lighting);
+        }
+
+        protected void SetCamera ()
+        {
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+
+            GL.Translate(0, 0, -pullback);								// pull back on allong the zoom vector
+            GL.Rotate(rotation.Y, 1.0f, 0.0f, 0.0f);					// pops us to the tilt
+            GL.Rotate(-rotation.X, 0.0f, 1.0f, 0.0f);					// gets us on our rot
+            GL.Translate(-offset.X, -offset.Z, offset.Y);	// take us to the pos
+            GL.Rotate(-90, 1.0f, 0.0f, 0.0f);							// gets us into XY
         }
 
         public void Render3dView()
@@ -128,22 +172,17 @@ namespace PortalEdit
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
 
-            if (camera != null)
-            {
-               // do 3d camera
-                camera.Execute();
+            SetCamera();
 
-                // do grid
-                DrawGrid();
+            // do grid
+            DrawGrid();
 
-                // draw map
-                if (map == null)
-                    return;
-                map.Draw();
-            }
+            // draw map
+            if (map == null)
+                return;
+            map.Draw();
  
             control.SwapBuffers();
         }
-
-    }
+     }
 }
