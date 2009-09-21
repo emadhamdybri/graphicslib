@@ -22,6 +22,11 @@ namespace PortalEdit
 
         public EditorCell (Polygon poly) : base()
         {
+            float v = poly.GetNormalDepth();
+
+            if (v > 0)
+                poly.Reverse();
+
             mapPolygon = poly;
 
             // build the polygon for 3d;
@@ -54,9 +59,19 @@ namespace PortalEdit
             GL.Color3(Color.OliveDrab);
             GL.Begin(BeginMode.Polygon);
 
+            GL.Normal3(0, 0, 1);
             foreach (CellEdge edge in edges)
                 GL.Vertex3(verts[edge.end].bottom);
             GL.End();
+
+            GL.LineWidth(3);
+            GL.Color3(Color.Black);
+            GL.Begin(BeginMode.LineLoop);
+            foreach (CellEdge edge in edges)
+                GL.Vertex3(verts[edge.end].bottom);
+
+            GL.End();
+            GL.LineWidth(1);
         }
     }
 }
