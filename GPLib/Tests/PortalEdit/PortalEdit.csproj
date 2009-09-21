@@ -51,6 +51,7 @@
     <Compile Include="Cell.cs" />
     <Compile Include="EditorCell.cs" />
     <Compile Include="MapRenderer.cs" />
+    <Compile Include="MapViewRenderer.cs" />
     <Compile Include="PortalEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,6 +85,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Drawables\Drawables.csproj">
+      <Project>{71452148-876E-4B8E-9244-A8F014CF72E6}</Project>
+      <Name>Drawables</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\OpenTK\Source\OpenTK\OpenTK.csproj">
       <Project>{2C035F6B-0000-0000-0000-000000000000}</Project>
       <Name>OpenTK</Name>

@@ -38,7 +38,7 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.MousePosition = new System.Windows.Forms.ToolStripStatusLabel();
+            this.MousePositionStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -89,8 +89,6 @@
             this.GLView.Size = new System.Drawing.Size(322, 424);
             this.GLView.TabIndex = 0;
             this.GLView.VSync = false;
-            this.GLView.Paint += new System.Windows.Forms.PaintEventHandler(this.GLView_Paint);
-            this.GLView.Resize += new System.EventHandler(this.GLView_Resize);
             // 
             // CellList
             // 
@@ -140,18 +138,18 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MousePosition});
+            this.MousePositionStatus});
             this.statusStrip1.Location = new System.Drawing.Point(0, 491);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(818, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // MousePosition
+            // MousePositionStatus
             // 
-            this.MousePosition.Name = "MousePosition";
-            this.MousePosition.Size = new System.Drawing.Size(46, 17);
-            this.MousePosition.Text = "Mouse:";
+            this.MousePositionStatus.Name = "MousePositionStatus";
+            this.MousePositionStatus.Size = new System.Drawing.Size(46, 17);
+            this.MousePositionStatus.Text = "Mouse:";
             // 
             // EditFrame
             // 
@@ -166,7 +164,6 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "EditFrame";
             this.Text = "Portal Edit";
-            this.Load += new System.EventHandler(this.EditFrame_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
@@ -193,7 +190,7 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel MousePosition;
+        private System.Windows.Forms.ToolStripStatusLabel MousePositionStatus;
     }
 }
 
