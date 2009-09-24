@@ -170,6 +170,15 @@ namespace PortalEdit
             GL.Rotate(-90, 1.0f, 0.0f, 0.0f);							// gets us into XY
         }
 
+        void DrawMap ()
+        {
+            if (map == null)
+                return;
+
+            foreach(Cell cell in map.cells)
+                ((EditorCell)cell).Draw();
+        }
+
         public void Render3dView()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -183,15 +192,9 @@ namespace PortalEdit
             Vector4 lightPos = new Vector4(10, 20, 20, 0);
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
 
-        
+             DrawGrid();
 
-            // do grid
-            DrawGrid();
-
-            // draw map
-            if (map == null)
-                return;
-            map.Draw();
+             DrawMap();
  
             control.SwapBuffers();
         }

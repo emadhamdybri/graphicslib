@@ -112,7 +112,7 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // toolStrip1
@@ -134,6 +134,7 @@
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(28, 28);
             this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // statusStrip1
             // 
@@ -148,7 +149,7 @@
             // MousePositionStatus
             // 
             this.MousePositionStatus.Name = "MousePositionStatus";
-            this.MousePositionStatus.Size = new System.Drawing.Size(46, 17);
+            this.MousePositionStatus.Size = new System.Drawing.Size(42, 17);
             this.MousePositionStatus.Text = "Mouse:";
             // 
             // EditFrame

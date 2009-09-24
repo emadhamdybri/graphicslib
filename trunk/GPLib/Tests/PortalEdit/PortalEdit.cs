@@ -14,21 +14,11 @@ namespace PortalEdit
 {
     public partial class EditFrame : Form
     {
-        MapRenderer renderer;
-        PortalMap map;
+        Editor editor;
 
         public EditFrame()
         {
             InitializeComponent();
-            renderer = new MapRenderer(MapView);
-            map = new PortalMap(renderer);
-
-            renderer.MouseStatusUpdate += new MouseStatusUpdateHandler(renderer_MouseStatusUpdate);
-        }
-
-        void renderer_MouseStatusUpdate(object sender, Point position)
-        {
-            MousePositionStatus.Text = "Map:" + position.ToString();
         }
 
         protected override void OnResize(EventArgs e)
@@ -37,12 +27,21 @@ namespace PortalEdit
             base.OnResize(e);
         }
 
+        public void mapRenderer_MouseStatusUpdate(object sender, System.Drawing.Point position)
+        {
+            MousePositionStatus.Text = "Map:" + position.ToString();
+        }
+
         protected override void OnLoad(EventArgs e)
         {
-            if (map.viewRenderer == null)
-                map.viewRenderer = new MapViewRenderer(GLView, map);
-
+            if (editor == null)
+                editor = new Editor(this,MapView, GLView);
             base.OnLoad(e);
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

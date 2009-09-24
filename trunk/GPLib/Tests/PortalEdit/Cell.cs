@@ -31,5 +31,7 @@ namespace PortalEdit
         public String name;
         public List<CellVert> verts = new List<CellVert>();
         public List<CellEdge> edges = new List<CellEdge>();
+
+        public object tag;
     }
 }
