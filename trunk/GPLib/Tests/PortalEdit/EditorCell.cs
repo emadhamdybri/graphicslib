@@ -56,7 +56,7 @@ namespace PortalEdit
         public void Draw ( )
         {
             // draw the bottom
-            GL.Color3(Color.OliveDrab);
+            GL.Color3(Color.White);
             GL.Begin(BeginMode.Polygon);
 
             GL.Normal3(0, 0, 1);
