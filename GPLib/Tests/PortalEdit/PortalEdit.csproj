@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cell.cs" />
+    <Compile Include="Editor.cs" />
     <Compile Include="EditorCell.cs" />
     <Compile Include="MapRenderer.cs" />
     <Compile Include="MapViewRenderer.cs" />
