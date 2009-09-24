@@ -92,9 +92,10 @@ namespace PortalEdit
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Enable(EnableCap.ColorMaterial);
             GL.Enable(EnableCap.LineSmooth);
-
+            GL.Enable(EnableCap.DepthTest);
+            
             // setup light 0
-            Vector4 lightInfo = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+            Vector4 lightInfo = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
             GL.Light(LightName.Light0, LightParameter.Ambient, lightInfo);
 
             lightInfo = new Vector4(0.7f, 0.7f, 0.7f, 1.0f);
@@ -110,14 +111,16 @@ namespace PortalEdit
             GL.LoadIdentity();
             
             float aspect = (float)control.Width / (float)control.Height;
-            Glu.Perspective(45/aspect, aspect, 0.1f, 10000f);
+            Glu.Perspective(45/aspect, aspect, 1f, 1000f);
         }
 
         protected void DrawGrid ()
         {
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Lighting);
-
+            GL.Disable(EnableCap.LineSmooth);
+            GL.PushMatrix();
+            GL.Translate(0, 0, -0.1f);
             GL.Begin(BeginMode.Lines);
 
             GL.Color3(Color.Red);
@@ -149,7 +152,9 @@ namespace PortalEdit
                 GL.Vertex2(-i, -100);
             }
 
-                GL.End();
+            GL.End();
+            GL.Enable(EnableCap.LineSmooth);
+            GL.PopMatrix();
             GL.Enable(EnableCap.Lighting);
         }
 
@@ -173,6 +178,12 @@ namespace PortalEdit
             GL.LoadIdentity();
 
             SetCamera();
+
+            GL.Enable(EnableCap.Light0);
+            Vector4 lightPos = new Vector4(10, 20, 20, 0);
+            GL.Light(LightName.Light0, LightParameter.Position, lightPos);
+
+        
 
             // do grid
             DrawGrid();

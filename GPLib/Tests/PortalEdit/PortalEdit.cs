@@ -15,7 +15,6 @@ namespace PortalEdit
     public partial class EditFrame : Form
     {
         MapRenderer renderer;
-        MapViewRenderer mapViewRenderer;
         PortalMap map;
 
         public EditFrame()
@@ -40,8 +39,8 @@ namespace PortalEdit
 
         protected override void OnLoad(EventArgs e)
         {
-            if (mapViewRenderer == null)
-                mapViewRenderer = new MapViewRenderer(GLView, map);
+            if (map.viewRenderer == null)
+                map.viewRenderer = new MapViewRenderer(GLView, map);
 
             base.OnLoad(e);
         }

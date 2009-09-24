@@ -15,7 +15,12 @@ namespace PortalEdit
     public class MapRenderer 
     {
         List<Point> points = new List<Point>();
-        List<Polygon> polygons = new List<Polygon>();
+        public List<Polygon> polygons = new List<Polygon>();
+
+        public List<Polygon> Polygons
+        {
+            get { return polygons; }
+        }
 
         Point hoverPoint = Point.Empty;
         Control control;
@@ -126,6 +131,12 @@ namespace PortalEdit
             rubberBandPen.Dispose();
         }
 
+        protected void InvalidateAll ( )
+        {
+            if (control.Parent != null)
+                control.Parent.Invalidate(true);
+        }
+
         public void MouseWheel (object sender, MouseEventArgs e)
         {
             float zoomPerScale = 1f/snapRadius;
@@ -160,6 +171,18 @@ namespace PortalEdit
             return new Point(snapX, snapY);
         }
 
+        private void AddPolygon ( )
+        {
+            Polygon poly = new Polygon(points);
+            points = new List<Point>();
+
+            if (NewPolygon != null)
+                NewPolygon(this, poly);
+
+            polygons.Add(poly);
+            InvalidateAll();
+        }
+
         private void MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -167,14 +190,7 @@ namespace PortalEdit
             else
             {
                 if (points.Count > 2)
-                {
-                    Polygon poly = new Polygon(points);
-                    polygons.Add(poly);
-                    points = new List<Point>();
-
-                    if (NewPolygon != null)
-                        NewPolygon(this,poly);
-                }
+                    AddPolygon();
             }
             control.Invalidate(true);
         }
