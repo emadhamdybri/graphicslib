@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 
 using OpenTK;
-using OpenTK.Math;
 using Math3D;
 
 namespace World

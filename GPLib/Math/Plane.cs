@@ -33,7 +33,7 @@ SOFTWARE.
 using System;
 using System.ComponentModel;
 
-using OpenTK.Math;
+using OpenTK;
 
 namespace Math3D
 {

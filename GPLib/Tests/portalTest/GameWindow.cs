@@ -7,13 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+
 using GUIGameWindow;
 using Drawables.Cameras;
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Math;
 using Math3D;
 using Grids;
+
+#pragma warning disable 612, 618
 
 namespace portalTest
 {

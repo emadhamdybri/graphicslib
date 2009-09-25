@@ -38,7 +38,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-using OpenTK.Math;
+using OpenTK;
 
 namespace Math3D
 {

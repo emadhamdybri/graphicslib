@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Drawing;
-using OpenTK.Math;
+using OpenTK;
 
 using Drawables.Models;
 using Drawables.Materials;

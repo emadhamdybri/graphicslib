@@ -6,7 +6,6 @@ using System.Drawing;
 
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Math;
 using OpenTK.Input;
 using OpenTK.Platform;
 
@@ -15,6 +14,8 @@ using Grids;
 using World;
 using Math3D;
 using Drawables.Materials;
+
+#pragma warning disable 618, 612
 
 namespace octreeTest
 {
@@ -88,7 +89,7 @@ namespace octreeTest
                 world.Add(new BoxObject(world.Size));
             world.FinalizeWorld();
           
-            this.Mouse.Move += new MouseMoveEventHandler(Mouse_Move);
+            this.Mouse.Move +=new EventHandler<MouseMoveEventArgs>(Mouse_Move);
         }
 
         void Mouse_Move(object sender, MouseMoveEventArgs e)
@@ -101,14 +102,15 @@ namespace octreeTest
             base.OnUnload(e);
         }
 
-        protected override void OnResize(ResizeEventArgs e)
+        protected override void OnWindowInfoChanged(EventArgs e)
         {
-            base.OnResize(e);
+            base.OnWindowInfoChanged(e);
+
             GL.Viewport(0, 0, Width, Height);
             camera.Resize(Width, Height);
         }
 
-        protected bool doInput (UpdateFrameEventArgs e)
+        protected bool doInput(FrameEventArgs e)
         {
             if (Keyboard[Key.Escape])
                 return true;
@@ -210,14 +212,14 @@ namespace octreeTest
             return false;
         }
 
-        public override void OnUpdateFrame(UpdateFrameEventArgs e)
+        protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
             if (doInput(e))
                 Exit();
         }
 
-        void drawOverlay(RenderFrameEventArgs e)
+        void drawOverlay(FrameEventArgs e)
         {
             GL.Disable(EnableCap.Lighting);
             printer.Begin();
@@ -385,7 +387,7 @@ namespace octreeTest
             GL.Color4(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
-        public override void OnRenderFrame(RenderFrameEventArgs e)
+        protected override void OnRenderFrame(FrameEventArgs e)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 

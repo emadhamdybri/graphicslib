@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using OpenTK;
-using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Platform;
 
 namespace GUIGameWindow

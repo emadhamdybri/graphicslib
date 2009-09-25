@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
 
-using OpenTK.Math;
+using OpenTK;
 
 namespace Math3D
 {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 
 using OpenTK;
-using OpenTK.Math;
 
 namespace PortalEdit
 {

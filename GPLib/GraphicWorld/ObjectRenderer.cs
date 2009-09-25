@@ -6,8 +6,7 @@ using System.Text;
 using World;
 
 using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Math;
+using OpenTK.Graphics.OpenGL;
 
 using Drawables;
 using Drawables.Models;

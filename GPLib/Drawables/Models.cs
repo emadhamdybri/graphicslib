@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Math;
+using OpenTK.Graphics.OpenGL;
 using System.IO;
 
 using Drawables.Materials;

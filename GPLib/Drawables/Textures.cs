@@ -6,7 +6,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-using OpenTK.Graphics;
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using Drawables.DisplayLists;
 
 namespace Drawables.Textures
@@ -64,10 +65,10 @@ namespace Drawables.Textures
 
                 BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                
                 if (mipmap)
-                    Glu.Build2DMipmap(TextureTarget.Texture2D, (int)PixelInternalFormat.Rgba, data.Width, data.Height, OpenTK.Graphics.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-                else
-                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                    GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
                 bitmap.UnlockBits(data);
 
