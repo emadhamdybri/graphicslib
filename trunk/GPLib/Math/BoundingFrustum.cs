@@ -34,7 +34,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using OpenTK.Math;
+using OpenTK;
 
 namespace Math3D
 {

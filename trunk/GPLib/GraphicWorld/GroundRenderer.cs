@@ -9,8 +9,7 @@ using Drawables.Materials;
 using Drawables;
 
 using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Math;
+using OpenTK.Graphics.OpenGL;
 
 using World;
 

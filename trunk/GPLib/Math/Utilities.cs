@@ -1,6 +1,6 @@
 ﻿using System;
 
-using OpenTK.Math;
+using OpenTK;
 
 namespace Math3D
 {

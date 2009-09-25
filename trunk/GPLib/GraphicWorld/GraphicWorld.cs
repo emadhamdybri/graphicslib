@@ -10,7 +10,6 @@ using World;
 using Math3D;
 
 using OpenTK;
-using OpenTK.Math;
 
 namespace GraphicWorlds
 {

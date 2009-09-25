@@ -6,7 +6,6 @@ using System.Text;
 
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Math;
 
 using Drawables.Cameras;
 

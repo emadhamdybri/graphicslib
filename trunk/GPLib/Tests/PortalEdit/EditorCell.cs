@@ -7,7 +7,6 @@ using System.Drawing;
 
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Math;
 
 
 namespace PortalEdit

@@ -39,7 +39,7 @@ SOFTWARE.
 using System;
 using System.Collections.Generic;
 
-using OpenTK.Math;
+using OpenTK;
 
 namespace Math3D
 {

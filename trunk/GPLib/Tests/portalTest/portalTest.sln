@@ -11,17 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drawables", "..\..\Drawable
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\..\Utilities\Utilities.csproj", "{1CD2C5DC-F417-41D6-9704-CCC0FB501BF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTK", "..\..\OpenTK\Source\OpenTK\OpenTK.csproj", "{2C035F6B-0000-0000-0000-000000000000}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTK.Utilities", "..\..\OpenTK\Source\Utilities\OpenTK.Utilities.csproj", "{8E7A6757-0000-0000-0000-000000000000}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIGameWindow", "..\..\GUIGameWindow\GUIGameWindow.csproj", "{B1C8D04C-EE8A-4E59-ADA4-35418C101866}"
 EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
@@ -59,20 +51,6 @@ Global
 		{1CD2C5DC-F417-41D6-9704-CCC0FB501BF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CD2C5DC-F417-41D6-9704-CCC0FB501BF3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1CD2C5DC-F417-41D6-9704-CCC0FB501BF3}.Release|x86.ActiveCfg = Release|Any CPU
-		{2C035F6B-0000-0000-0000-000000000000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C035F6B-0000-0000-0000-000000000000}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C035F6B-0000-0000-0000-000000000000}.Debug|x86.ActiveCfg = Debug|x86
-		{2C035F6B-0000-0000-0000-000000000000}.Debug|x86.Build.0 = Debug|x86
-		{2C035F6B-0000-0000-0000-000000000000}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C035F6B-0000-0000-0000-000000000000}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C035F6B-0000-0000-0000-000000000000}.Release|x86.ActiveCfg = Release|x86
-		{2C035F6B-0000-0000-0000-000000000000}.Release|x86.Build.0 = Release|x86
-		{8E7A6757-0000-0000-0000-000000000000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E7A6757-0000-0000-0000-000000000000}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E7A6757-0000-0000-0000-000000000000}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8E7A6757-0000-0000-0000-000000000000}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E7A6757-0000-0000-0000-000000000000}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E7A6757-0000-0000-0000-000000000000}.Release|x86.ActiveCfg = Release|Any CPU
 		{B1C8D04C-EE8A-4E59-ADA4-35418C101866}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1C8D04C-EE8A-4E59-ADA4-35418C101866}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1C8D04C-EE8A-4E59-ADA4-35418C101866}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -82,5 +60,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal

@@ -19,13 +19,13 @@ namespace GraphicWorlds
             if (!file.Exists)
                 return false;
 
-            WorldFile worldFile;
-            if (!WorldFile.read(out worldFile, file, false))
+            OctreeWorldFile worldFile;
+            if (!OctreeWorldFile.read(out worldFile, file, false))
                 return false;
             return read(world,worldFile);
         }
 
-        public static bool read(GraphicWorld world, WorldFile file)
+        public static bool read(GraphicWorld world, OctreeWorldFile file)
         {
             world.world = file.world;
 
@@ -80,14 +80,14 @@ namespace GraphicWorlds
 
         public static bool write(GraphicWorld world, FileInfo file)
         {
-            WorldFile worldFile = new WorldFile();
+            OctreeWorldFile worldFile = new OctreeWorldFile();
             if (!write(world, worldFile))
                 return false;
 
-            return WorldFile.write(worldFile, file, false);
+            return OctreeWorldFile.write(worldFile, file, false);
         }
 
-        public static bool write(GraphicWorld world, WorldFile file)
+        public static bool write(GraphicWorld world, OctreeWorldFile file)
         {
             file.world = world.world;
 

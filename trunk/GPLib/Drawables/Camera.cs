@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Math;
+using OpenTK.Graphics.OpenGL;
 using Math3D;
 
 namespace Drawables.Cameras

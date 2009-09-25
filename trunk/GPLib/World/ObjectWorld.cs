@@ -4,7 +4,7 @@ using System.Xml;
 using System.Xml.Serialization;
 
 using Math3D;
-using OpenTK.Math;
+using OpenTK;
 
 namespace World
 {
