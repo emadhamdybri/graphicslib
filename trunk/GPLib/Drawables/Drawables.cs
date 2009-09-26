@@ -24,6 +24,80 @@ namespace Drawables
         }
     }
 
+    public class SingleListDrawableItem : IDisposable
+    {
+        public ListableEvent list = null;
+        static String defaultMatName = "SingleListDrawableItemWhite";
+        Material mat = MaterialSystem.system.getMaterial(defaultMatName);
+        int pass = DrawablesSystem.FirstPass;
+
+        public SingleListDrawableItem ( Material _mat, ListableEvent.GenerateEventHandler handler, object tag, int _pass )
+        {
+            mat = _mat;
+            pass = _pass;
+            Install(handler, tag);
+        }
+
+        public SingleListDrawableItem(Material _mat, ListableEvent.GenerateEventHandler handler, object tag)
+        {
+            mat = _mat;
+            Install(handler, tag);
+        }
+
+        public SingleListDrawableItem( ListableEvent.GenerateEventHandler handler, object tag)
+        {
+            Install(handler, tag);
+        }
+
+        public SingleListDrawableItem(ListableEvent.GenerateEventHandler handler, object tag, int _pass)
+        {
+            pass = _pass;
+            Install(handler, tag);
+        }
+
+        public SingleListDrawableItem(ListableEvent.GenerateEventHandler handler)
+        {
+            Install(handler, null);
+        }
+
+        public SingleListDrawableItem(ListableEvent.GenerateEventHandler handler, int _pass)
+        {
+            pass = _pass;
+            Install(handler, null);
+        }
+
+        protected void Install ( ListableEvent.GenerateEventHandler handler, object tag )
+        {
+            list = new ListableEvent();
+            list.Generate += handler;
+            list.tag = tag;
+            if (mat == null)
+            {
+                mat = MaterialSystem.system.newMaterial();
+                mat.name = defaultMatName;
+            }
+
+            DrawablesSystem.system.addItem(mat, ExecuteCallback, pass);
+        }
+
+        public void Dispose()
+        {
+            if (list != null)
+            {
+                list.Dispose();
+                list = null;
+                DrawablesSystem.system.removeItem(mat, ExecuteCallback, pass);
+            }
+        }
+
+        public bool ExecuteCallback(Material mat, object tag)
+        {
+            if (list != null)
+                list.Call();
+            return list != null;
+        }
+    }
+
     public class DrawablesSystem
     {
         public static DrawablesSystem system = new DrawablesSystem();

@@ -91,15 +91,24 @@ namespace Drawables.DisplayLists
             return d;
         }
 
-        public void deleteList( DisplayList d)
+        public void deleteList( DisplayList d )
         {
             displayLists.Remove(d);
         }
     }
 
-    public class ListableItem
+    public class ListableItem : IDisposable
     {
         protected DisplayList list = new DisplayList();
+
+        public void Dispose()
+        {
+            if (list != null)
+            {
+                DisplayListSystem.system.deleteList(list);
+                list = null;
+            }
+        }
 
         public void Invalidate()
         {
@@ -124,6 +133,51 @@ namespace Drawables.DisplayLists
                 Rebuild();
 
             list.Call();
+        }
+    }
+
+    public class ListableEvent : IDisposable
+    {
+        public delegate void GenerateEventHandler(object sender, DisplayList list);
+        public event GenerateEventHandler Generate;
+
+        public object tag = null;
+
+        protected DisplayList list = new DisplayList();
+
+        public void Dispose()
+        {
+            Invalidate();
+
+            if (list != null)
+            {
+                DisplayListSystem.system.deleteList(list);
+                list = null;
+            }
+
+            if (tag != null)
+                tag = null;
+        }
+
+        public void Invalidate ()
+        {
+            if (list != null)
+                list.Invalidate();
+        }
+
+        public void Call ()
+        {
+            if (Generate == null)
+                return;
+
+            if (!list.Valid())
+            {
+                list.Start(true);
+                Generate(this, list);
+                list.End();
+            }
+            else
+                list.Call();
         }
     }
 }
