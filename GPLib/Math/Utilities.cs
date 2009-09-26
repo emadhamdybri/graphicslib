@@ -18,6 +18,21 @@ namespace Math3D
         Intersecting,
     }
 
+    public class FloatHelper
+    {
+        public static float DefaultTolerance = 0.0001f;
+
+        public static bool Equals ( float f1, float f2 )
+        {
+            return Equals(f1,f2,DefaultTolerance);
+        }
+
+        public static bool Equals ( float f1, float f2, float tolerance )
+        {
+            return Math.Abs(f1 - f2) <= tolerance;
+        }
+    }
+
     public class Trig
     {
         public static double DegreeToRadian(double angle)
@@ -260,6 +275,29 @@ namespace Math3D
         public static Vector3 Subtract(Vector3 v1, Vector3 v2)
         {
             return new Vector3(v1.X-v2.X,v1.Y-v2.Y,v1.Z-v2.Z);
+        }
+    }
+
+    public class VectorHelper2
+    {
+        public static bool Equal(Vector2 v1, Vector2 v2)
+        {
+            return FloatHelper.Equals(v1.X, v2.X) && FloatHelper.Equals(v1.Y, v2.Y);
+        }
+
+        public static float Distance(Vector2 v1, Vector2 v2)
+        {
+            return (float)Math.Sqrt((v2.X - v1.X) * (v2.X - v1.X) + (v2.Y - v1.Y) * (v2.Y - v1.Y));
+        }
+
+        public static float DistanceSquared(Vector2 v1, Vector2 v2)
+        {
+            return (v2.X - v1.X) * (v2.X - v1.X) + (v2.Y - v1.Y) * (v2.Y - v1.Y);
+        }
+
+        public static Vector2 Subtract(Vector2 v1, Vector2 v2)
+        {
+            return new Vector2(v1.X - v2.X, v1.Y - v2.Y);
         }
     }
 }
