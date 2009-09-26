@@ -86,6 +86,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -103,10 +104,20 @@
       <Project>{71452148-876E-4B8E-9244-A8F014CF72E6}</Project>
       <Name>Drawables</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Forms\FormControls\FormControls.csproj">
+      <Project>{063456CE-22FC-4FDD-B1CF-828205AA695D}</Project>
+      <Name>FormControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Math\Math3D.csproj">
       <Project>{0BC4671F-FF72-4D3E-9889-44382F6C64F2}</Project>
       <Name>Math3D</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pencil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\finger.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

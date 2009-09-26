@@ -21,7 +21,17 @@ namespace PortalEdit
         {
             InitializeComponent();
 
+            MapRadioPanel.TagsAreValues = true;
+            MapRadioPanel.SelectionChanged += new FormControls.ImageRadioPanel.SelectionChangedEvent(MapRadioPanel_SelectionChanged);
             LoadSettings();
+        }
+
+        void MapRadioPanel_SelectionChanged(object sender, FormControls.ImageRadioPanel.SelectionChangedEventArgs e)
+        {
+            if (editor == null)
+                return;
+            editor.mapRenderer.EditMode = (MapEditMode)e.value;
+            Invalidate(true);
         }
 
         protected void LoadSettings()
@@ -55,7 +65,8 @@ namespace PortalEdit
             else
                 HidePortals.CheckState = CheckState.Checked;
 
-        }
+            MapRadioPanel.SelectedItem = DrawButton;
+       }
 
         protected override void OnResize(EventArgs e)
         {
@@ -118,19 +129,13 @@ namespace PortalEdit
         public void populateCellList ()
         {
             object selected = CellList.SelectedItem;
+
             CellList.Items.Clear();
 
             foreach (Cell cell in editor.map.cells)
-            {
                 CellList.Items.Add(cell);
-            }
 
             CellList.SelectedItem = selected;
-        }
-
-        private void CellList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Invalidate(true);
         }
 
         private void EditFrame_FormClosing(object sender, FormClosingEventArgs e)
@@ -167,7 +172,6 @@ namespace PortalEdit
             ShowPortals.CheckState = CheckState.Checked;
             HidePortals.CheckState = CheckState.Unchecked;
             RebuildAll();
-
         }
 
         private void HidePortals_Click(object sender, EventArgs e)
@@ -176,7 +180,25 @@ namespace PortalEdit
             HidePortals.CheckState = CheckState.Checked;
             ShowPortals.CheckState = CheckState.Unchecked;
             RebuildAll();
+        }
 
+        private void DeleteCell_Click(object sender, EventArgs e)
+        {
+            EditorCell cell = editor.GetSelectedCell();
+            CellList.SelectedItem = null;
+            editor.DeleteCell(cell);
+
+        }
+
+        private void CellList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RebuildAll();
+        }
+
+        private void Deslect_Click(object sender, EventArgs e)
+        {
+            CellList.SelectedItem = null;
+            RebuildAll();
         }
     }
 }

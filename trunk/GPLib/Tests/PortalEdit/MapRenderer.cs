@@ -12,13 +12,20 @@ namespace PortalEdit
     public delegate void NewPolygonHandler ( object sender, Polygon polygon );
     public delegate void MouseStatusUpdateHandler (object sender, Point position);
 
+    public enum MapEditMode
+    {
+        DrawMode,
+        SelectMode,
+    };
+
     public class MapRenderer 
     {
         List<Point> points = new List<Point>();
 
-        public Color cellColor = Color.FromArgb(128, Color.OliveDrab);
-        public Color outlineColor = Color.FromArgb(192, Color.Black);
-        public Color portalColor = Color.FromArgb(192, Color.DarkGoldenrod);
+        Color cellColor = Color.FromArgb(128, Color.OliveDrab);
+        Color outlineColor = Color.FromArgb(192, Color.Black);
+        Color portalColor = Color.FromArgb(192, Color.DarkGoldenrod);
+        Color selectedColor = Color.Red;
 
         Point hoverPoint = Point.Empty;
         Control control;
@@ -33,6 +40,8 @@ namespace PortalEdit
         public event MouseStatusUpdateHandler MouseStatusUpdate;
 
         public PortalMap map;
+
+        public MapEditMode EditMode { get; set; }
 
         public MapRenderer(Control ctl, PortalMap _map)
         {
@@ -118,25 +127,32 @@ namespace PortalEdit
 
             Grid(e.Graphics);
             e.Graphics.Flush();
-            Pen outlinePen = new Pen(Color.Red, 2);
+            Pen outlinePen = new Pen(Color.Blue, 2);
             outlinePen.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
 
-            Pen rubberBandPen = new Pen(Color.DarkRed, 3);
+            Pen rubberBandPen = new Pen(Color.DarkBlue, 3);
             rubberBandPen.EndCap = System.Drawing.Drawing2D.LineCap.DiamondAnchor;
 
             foreach (Cell cell in map.cells)
                 DrawCell(cell,e.Graphics);
+            DrawSelectedCell(Editor.instance.GetSelectedCell(), e.Graphics);
 
-            if (points.Count > 1)
-                e.Graphics.DrawLines(outlinePen,points.ToArray());
+            if (EditMode == MapEditMode.DrawMode)
+            {
+                if (points.Count > 1)
+                    e.Graphics.DrawLines(outlinePen, points.ToArray());
 
-            if (points.Count > 0 && hoverPoint != Point.Empty)
-                e.Graphics.DrawLine(rubberBandPen, points[points.Count - 1], hoverPoint);
-            else if (hoverPoint != Point.Empty)
-                e.Graphics.DrawEllipse(rubberBandPen, hoverPoint.X-2,hoverPoint.Y-2,4,4);
-          
-            foreach (Point p in points)
-                e.Graphics.FillRectangle(Brushes.OrangeRed, new Rectangle(p.X - 2, p.Y - 2, 5, 5));
+                if (points.Count > 0 && hoverPoint != Point.Empty)
+                    e.Graphics.DrawLine(rubberBandPen, points[points.Count - 1], hoverPoint);
+                else if (hoverPoint != Point.Empty)
+                    e.Graphics.DrawEllipse(rubberBandPen, hoverPoint.X - 2, hoverPoint.Y - 2, 4, 4);
+
+                foreach (Point p in points)
+                    e.Graphics.FillRectangle(Brushes.CadetBlue, new Rectangle(p.X - 2, p.Y - 2, 5, 5));
+            }
+            else
+                points.Clear();
+
 
             outlinePen.Dispose();
             rubberBandPen.Dispose();
@@ -156,12 +172,31 @@ namespace PortalEdit
             return new Point((int)(vert.X* snapRadius),(int)(vert.Y* snapRadius));
         }
 
+        protected void DrawSelectedCell ( Cell cell, Graphics graphics )
+        {
+            if (cell == null)
+                return;
+
+            Pen polygonPen = new Pen(selectedColor, 3);
+            polygonPen.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
+            polygonPen.EndCap = System.Drawing.Drawing2D.LineCap.RoundAnchor;
+
+            Point[] pList = GetCellPointList(cell);
+            graphics.DrawPolygon(polygonPen, pList);
+
+            foreach (Point p in pList)
+                graphics.DrawEllipse(polygonPen, p.X - 6, p.Y - 6, 12, 12);
+
+            polygonPen.Dispose();
+
+        }
+
         protected void DrawCell ( Cell cell, Graphics graphics )
         {
             Pen polygonPen = new Pen(outlineColor, 3);
+
             Pen portalPen = new Pen(portalColor, 4);
-            polygonPen.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
-            polygonPen.EndCap = System.Drawing.Drawing2D.LineCap.RoundAnchor;
+
 
             Brush brush = new SolidBrush(cellColor);
 
