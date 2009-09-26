@@ -143,7 +143,7 @@ namespace Drawables.DisplayLists
 
         public object tag = null;
 
-        protected DisplayList list = new DisplayList();
+        protected DisplayList list = DisplayListSystem.system.newList();
 
         public void Dispose()
         {
