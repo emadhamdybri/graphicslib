@@ -7,7 +7,7 @@ using System.Text;
 using OpenTK;
 using OpenTK.Graphics;
 
-using Drawables.Cameras;
+using Drawables;
 
 namespace PortalEdit
 {
@@ -16,18 +16,18 @@ namespace PortalEdit
         GLControl control;
         PortalMap map;
 
-        Vector3 offset = new Vector3(0,0,1);
-        Vector2 rotation = new Vector2(0,0);
+        Vector3 offset = new Vector3(0, 0, 1);
+        Vector2 rotation = new Vector2(0, 0);
         float pullback = 10f;
 
         Point lastMouse = Point.Empty;
 
-        public MapViewRenderer( GLControl ctl, PortalMap m )
+        public MapViewRenderer(GLControl ctl, PortalMap m)
         {
             map = m;
             control = ctl;
             SetupGL();
-            
+
             SetViewPort();
             Render3dView();
 
@@ -64,7 +64,7 @@ namespace PortalEdit
             }
             Render3dView();
 
-            lastMouse = new Point(e.X,e.Y);
+            lastMouse = new Point(e.X, e.Y);
         }
 
         void ctl_Resize(object sender, EventArgs e)
@@ -80,7 +80,7 @@ namespace PortalEdit
 
         protected virtual void SetupGL()
         {
-            GL.ClearColor(Color.Wheat);
+            GL.ClearColor(Color.LightSkyBlue);
 
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
@@ -92,7 +92,7 @@ namespace PortalEdit
             GL.Enable(EnableCap.ColorMaterial);
             GL.Enable(EnableCap.LineSmooth);
             GL.Enable(EnableCap.DepthTest);
-            
+
             // setup light 0
             Vector4 lightInfo = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
             GL.Light(LightName.Light0, LightParameter.Ambient, lightInfo);
@@ -108,12 +108,12 @@ namespace PortalEdit
 
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            
+
             float aspect = (float)control.Width / (float)control.Height;
-            Glu.Perspective(45/aspect, aspect, 1f, 1000f);
+            Glu.Perspective(45 / aspect, aspect, 1f, 1000f);
         }
 
-        protected void DrawGrid ()
+        protected void DrawGrid()
         {
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Lighting);
@@ -136,7 +136,7 @@ namespace PortalEdit
 
             GL.Color4(Color.FromArgb(128, Color.Gray));
 
-            for (float i = 0; i < 100f; i += 5f )
+            for (float i = 0; i < 100f; i += 5f)
             {
                 GL.Vertex2(100, i);
                 GL.Vertex2(-100, i);
@@ -144,7 +144,7 @@ namespace PortalEdit
                 GL.Vertex2(100, -i);
                 GL.Vertex2(-100, -i);
 
-                GL.Vertex2(i,100);
+                GL.Vertex2(i, 100);
                 GL.Vertex2(i, -100);
 
                 GL.Vertex2(-i, 100);
@@ -157,7 +157,7 @@ namespace PortalEdit
             GL.Enable(EnableCap.Lighting);
         }
 
-        protected void SetCamera ()
+        protected void SetCamera()
         {
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
@@ -169,13 +169,15 @@ namespace PortalEdit
             GL.Rotate(-90, 1.0f, 0.0f, 0.0f);							// gets us into XY
         }
 
-        void DrawMap ()
+        void DrawMap()
         {
             if (map == null)
                 return;
 
-            foreach(Cell cell in map.cells)
+            foreach (Cell cell in map.cells)
                 ((EditorCell)cell).Draw();
+
+            DrawablesSystem.system.Execute();
         }
 
         public void Render3dView()
@@ -191,11 +193,9 @@ namespace PortalEdit
             Vector4 lightPos = new Vector4(10, 20, 20, 0);
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
 
-             DrawGrid();
-
+             DrawGrid();           
              DrawMap();
- 
             control.SwapBuffers();
         }
-     }
+    }
 }
