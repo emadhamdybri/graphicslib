@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -41,6 +41,39 @@ namespace PortalEdit
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
+            editor.mapRenderer.ClearEditPolygon();
+            Invalidate(true);
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Title = "Open File";
+            ofd.Filter = "Portal Map (*.PortalMap)|*.PortalMap|All Files (*.*)|*.*";
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                if (!editor.Open(new FileInfo(ofd.FileName)))
+                    MessageBox.Show("Error reading map file");
+            }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Save File";
+            sfd.Filter = "Portal Map (*.PortalMap)|*.PortalMap";
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                if (!editor.Save(new FileInfo(sfd.FileName)))
+                    MessageBox.Show("Error saving map file");
+            }
 
         }
     }

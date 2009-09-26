@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 
-using OpenTK.Math;
+using OpenTK;
 
 namespace PortalEdit
 {
@@ -15,12 +15,10 @@ namespace PortalEdit
     public class MapRenderer 
     {
         List<Point> points = new List<Point>();
-        public List<Polygon> polygons = new List<Polygon>();
 
-        public List<Polygon> Polygons
-        {
-            get { return polygons; }
-        }
+        public Color cellColor = Color.FromArgb(128, Color.OliveDrab);
+        public Color outlineColor = Color.FromArgb(192, Color.Black);
+        public Color portalColor = Color.FromArgb(192, Color.DarkGoldenrod);
 
         Point hoverPoint = Point.Empty;
         Control control;
@@ -34,8 +32,11 @@ namespace PortalEdit
         public event NewPolygonHandler NewPolygon;
         public event MouseStatusUpdateHandler MouseStatusUpdate;
 
-        public MapRenderer(Control ctl)
+        public PortalMap map;
+
+        public MapRenderer(Control ctl, PortalMap _map)
         {
+            map = _map;
             control = ctl;
             ctl.Paint += new PaintEventHandler(Paint);
             ctl.MouseClick += new MouseEventHandler(MouseClick);
@@ -44,6 +45,16 @@ namespace PortalEdit
             ctl.Resize += new EventHandler(Resize);
 
             offset = new Point(ctl.Width / 2, ctl.Height / 2);
+        }
+
+        public void ClearEditPolygon ()
+        {
+            points.Clear();
+        }
+
+        public void Redraw ()
+        {
+            InvalidateAll();
         }
 
         void Resize(object sender, EventArgs e)
@@ -113,8 +124,8 @@ namespace PortalEdit
             Pen rubberBandPen = new Pen(Color.DarkRed, 3);
             rubberBandPen.EndCap = System.Drawing.Drawing2D.LineCap.DiamondAnchor;
 
-            foreach (Polygon poly in polygons)
-                poly.Paint(e.Graphics);
+            foreach (Cell cell in map.cells)
+                DrawCell(cell,e.Graphics);
 
             if (points.Count > 1)
                 e.Graphics.DrawLines(outlinePen,points.ToArray());
@@ -129,6 +140,50 @@ namespace PortalEdit
 
             outlinePen.Dispose();
             rubberBandPen.Dispose();
+        }
+
+        protected Point[] GetCellPointList ( Cell cell )
+        {
+            Point[] a = new Point[cell.verts.Count];
+            for ( int i = 0; i < cell.verts.Count; i++ )
+                a[i] = new Point((int)(cell.verts[i].bottom.X * snapRadius), (int)(cell.verts[i].bottom.Y * snapRadius));
+
+            return a;
+        }
+
+        protected Point VertToPoint ( Vector3 vert )
+        {
+            return new Point((int)(vert.X* snapRadius),(int)(vert.Y* snapRadius));
+        }
+
+        protected void DrawCell ( Cell cell, Graphics graphics )
+        {
+            Pen polygonPen = new Pen(outlineColor, 3);
+            Pen portalPen = new Pen(portalColor, 4);
+            polygonPen.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
+            polygonPen.EndCap = System.Drawing.Drawing2D.LineCap.RoundAnchor;
+
+            Brush brush = new SolidBrush(cellColor);
+
+            Point[] pList = GetCellPointList(cell);
+
+            graphics.FillPolygon(brush, pList);
+
+            foreach (CellEdge edge in cell.edges)
+            {
+                Pen pen = polygonPen;
+                if (edge.type == CellEdgeType.ePortal)
+                    pen = portalPen;
+
+                graphics.DrawLine(pen, VertToPoint(cell.verts[edge.start].bottom), VertToPoint(cell.verts[edge.end].bottom));
+            }
+
+            foreach (Point p in pList)
+                graphics.DrawEllipse(polygonPen, p.X - 3, p.Y - 3, 6, 6);
+
+            brush.Dispose();
+            polygonPen.Dispose();
+            portalPen.Dispose();
         }
 
         protected void InvalidateAll ( )
@@ -171,7 +226,7 @@ namespace PortalEdit
             return new Point(snapX, snapY);
         }
 
-        private void AddPolygon ( )
+        private void EditAddPolygon ( )
         {
             Polygon poly = new Polygon(points);
             points = new List<Point>();
@@ -179,7 +234,14 @@ namespace PortalEdit
             if (NewPolygon != null)
                 NewPolygon(this, poly);
 
-            polygons.Add(poly);
+            InvalidateAll();
+        }
+
+        // does not call the callback, cus we assume this is from the editor
+        public void AddPolygon ( List<Point> points, object Tag )
+        {
+            Polygon poly = new Polygon(points);
+            poly.tag = Tag;
             InvalidateAll();
         }
 
@@ -190,7 +252,7 @@ namespace PortalEdit
             else
             {
                 if (points.Count > 2)
-                    AddPolygon();
+                    EditAddPolygon();
             }
             control.Invalidate(true);
         }
@@ -213,6 +275,8 @@ namespace PortalEdit
 
     public class Polygon
     {
+        public object tag;
+
         public Point[] verts;
         public Color color = Color.FromArgb(128, Color.OliveDrab);
         public Color outlineColor = Color.FromArgb(192, Color.Black);
@@ -233,24 +297,6 @@ namespace PortalEdit
         public void Reverse ()
         {
             Array.Reverse(verts);
-        }
-
-        public void Paint ( Graphics graphics )
-        {
-            Pen polygonPen = new Pen(outlineColor, 3);
-            polygonPen.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
-            polygonPen.EndCap = System.Drawing.Drawing2D.LineCap.RoundAnchor;
-
-            Brush brush = new SolidBrush(color);
-
-            graphics.FillPolygon(brush, verts);
-            graphics.DrawPolygon(polygonPen,verts);
-
-            foreach (Point p in verts)
-                graphics.DrawEllipse(polygonPen, p.X - 3, p.Y - 3, 6, 6);
-
-            brush.Dispose();
-            polygonPen.Dispose();
         }
     }
 }
