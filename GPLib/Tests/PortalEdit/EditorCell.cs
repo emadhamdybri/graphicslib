@@ -26,14 +26,16 @@ namespace PortalEdit
         public static int WallPassOffet = 50;
         public static int FloorPassOffet = 100;
 
-        Color cellColor = Color.White;
-        Color cellEdgeColor = Color.Black;
+        static Color cellColor = Color.White;
+        static Color cellEdgeColor = Color.Black;
 
-        Color wallColor = Color.WhiteSmoke;
-        Color wallEdgeColor = Color.FromArgb(128, Color.Blue);
+        static Color wallColor = Color.WhiteSmoke;
+        static Color wallEdgeColor = Color.Blue;//Color.FromArgb(128, Color.Blue);
 
-        Color portalColor = Color.FromArgb(32,Color.Gold);
-        Color portalEdgeColor = Color.FromArgb(128, Color.DarkGoldenrod);
+        static Color portalColor = Color.FromArgb(32,Color.Gold);
+        static Color portalEdgeColor = Color.FromArgb(128, Color.DarkGoldenrod);
+
+        static Color selectionColor = Color.Red;
 
         public EditorCell(): base()
         {
@@ -159,16 +161,16 @@ namespace PortalEdit
             if (wall == null || edge == null)
                 return;
 
+            if (!Settings.settings.DrawPortals && edge.type == CellEdgeType.ePortal)
+                return;
+
             if (edge.type == CellEdgeType.eWall)
                 GL.Color4(wallColor);
             else
                 GL.Color4(portalColor);
 
             if (edge.type == CellEdgeType.ePortal)
-            {
                 GL.DepthMask(false);
-                GL.DepthFunc(DepthFunction.Always);
-            }
 
             GL.Begin(BeginMode.Quads);
 
@@ -188,21 +190,24 @@ namespace PortalEdit
             else
                 GL.Color4(portalEdgeColor);
 
-            GL.DepthFunc(DepthFunction.Always);
-
+            GL.Disable(EnableCap.Lighting);
             GL.LineWidth(3);
-            GL.Begin(BeginMode.LineLoop);
-           
-            GL.Vertex3(verts[edge.end].bottom);
-            GL.Vertex3(verts[edge.start].bottom);
-            GL.Vertex3(verts[edge.start].bottom.X, verts[edge.start].bottom.Y, verts[edge.start].top);
-            GL.Vertex3(verts[edge.end].bottom.X, verts[edge.end].bottom.Y, verts[edge.end].top);
 
-            GL.End();
+            if (Settings.settings.DrawCellEdges || edge.type == CellEdgeType.ePortal)
+            {
+                GL.Begin(BeginMode.LineLoop);
+               
+                GL.Vertex3(verts[edge.end].bottom);
+                GL.Vertex3(verts[edge.start].bottom);
+                GL.Vertex3(verts[edge.start].bottom.X, verts[edge.start].bottom.Y, verts[edge.start].top);
+                GL.Vertex3(verts[edge.end].bottom.X, verts[edge.end].bottom.Y, verts[edge.end].top);
+
+                GL.End();
+            }
 
             GL.LineWidth(1);
+            GL.Enable(EnableCap.Lighting);
 
-            GL.DepthFunc(DepthFunction.Less);
         }
 
         void floorList_Generate(object sender, DisplayList list)
@@ -216,14 +221,20 @@ namespace PortalEdit
                 GL.Vertex3(verts[edge.end].bottom);
             GL.End();
 
-            GL.LineWidth(3);
-            GL.Color4(cellEdgeColor);
-            GL.Begin(BeginMode.LineLoop);
-            foreach (CellEdge edge in edges)
-                GL.Vertex3(verts[edge.end].bottom);
+            GL.Disable(EnableCap.Lighting);
 
-            GL.End();
+            if (Settings.settings.DrawCellEdges)
+            {
+                GL.LineWidth(3);
+                GL.Color4(cellEdgeColor);
+                GL.Begin(BeginMode.LineLoop);
+                foreach (CellEdge edge in edges)
+                    GL.Vertex3(verts[edge.end].bottom);
+
+                GL.End();
+            }
             GL.LineWidth(1);
+            GL.Enable(EnableCap.Lighting);
         }
 
         void roofList_Generate(object sender, DisplayList list)
@@ -232,26 +243,45 @@ namespace PortalEdit
             GL.Color4(cellColor);
             GL.Begin(BeginMode.Polygon);
 
-            GL.Normal3(0, 0, 1);
+            GL.Normal3(0, 0, -1);
             for (int i = edges.Count - 1; i >= 0; i--)
                 GL.Vertex3(verts[edges[i].end].bottom.X, verts[edges[i].end].bottom.Y, verts[edges[i].end].top);
             GL.End();
-
-            GL.LineWidth(3);
-            GL.Color4(cellEdgeColor);
-            GL.Begin(BeginMode.LineLoop);
-            foreach (CellEdge edge in edges)
-                GL.Vertex3(verts[edge.end].bottom);
-
-            GL.End();
-            GL.LineWidth(1);
         }
 
-        public void Draw ( )
+        public void DrawSelectionFrame ()
         {
-   //         floorList.Call();
-  //          foreach (ListableEvent wall in walls)
-  //              wall.Call();
+            GL.DepthMask(false);
+            GL.DepthFunc(DepthFunction.Always);
+            GL.Disable(EnableCap.Lighting);
+            GL.Color3(selectionColor);
+            GL.LineWidth(5);
+
+            GL.Begin(BeginMode.LineLoop);
+            foreach (CellVert vert in verts)
+                GL.Vertex3(vert.bottom.X, vert.bottom.Y, vert.top);
+            GL.End();
+
+            GL.Begin(BeginMode.LineLoop);
+            foreach (CellVert vert in verts)
+                GL.Vertex3(vert.bottom.X, vert.bottom.Y, vert.bottom.Z);
+            GL.End();
+
+            GL.Begin(BeginMode.Lines);
+            foreach (CellVert vert in verts)
+            {
+                GL.Vertex3(vert.bottom.X, vert.bottom.Y, vert.bottom.Z - 0.1f);
+                GL.Vertex3(vert.bottom.X, vert.bottom.Y, vert.bottom.Z +1f);
+                GL.Vertex3(vert.bottom.X, vert.bottom.Y, vert.top + 0.1f);
+                GL.Vertex3(vert.bottom.X, vert.bottom.Y, vert.top - 1f);
+            }
+
+            GL.End();
+
+            GL.LineWidth(1);
+            GL.Enable(EnableCap.Lighting);
+            GL.DepthMask(true);
+            GL.DepthFunc(DepthFunction.Less);
         }
     }
 }

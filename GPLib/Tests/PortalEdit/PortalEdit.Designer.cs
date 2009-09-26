@@ -42,6 +42,13 @@
             this.CancelEditPolygon = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MousePositionStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.CellEdgeButton = new System.Windows.Forms.ToolStripSplitButton();
+            this.ShowCellBorders = new System.Windows.Forms.ToolStripMenuItem();
+            this.HideCellBorders = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
+            this.ShowPortals = new System.Windows.Forms.ToolStripMenuItem();
+            this.HidePortals = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -75,9 +82,9 @@
             this.MapView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.MapView.Location = new System.Drawing.Point(3, 0);
+            this.MapView.Location = new System.Drawing.Point(3, 8);
             this.MapView.Name = "MapView";
-            this.MapView.Size = new System.Drawing.Size(338, 427);
+            this.MapView.Size = new System.Drawing.Size(338, 419);
             this.MapView.TabIndex = 0;
             this.MapView.TabStop = false;
             // 
@@ -87,9 +94,9 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.GLView.BackColor = System.Drawing.Color.Black;
-            this.GLView.Location = new System.Drawing.Point(3, 3);
+            this.GLView.Location = new System.Drawing.Point(3, 8);
             this.GLView.Name = "GLView";
-            this.GLView.Size = new System.Drawing.Size(322, 424);
+            this.GLView.Size = new System.Drawing.Size(322, 419);
             this.GLView.TabIndex = 0;
             this.GLView.VSync = false;
             // 
@@ -97,10 +104,11 @@
             // 
             this.CellList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.CellList.FormattingEnabled = true;
-            this.CellList.Location = new System.Drawing.Point(691, 58);
+            this.CellList.Location = new System.Drawing.Point(691, 66);
             this.CellList.Name = "CellList";
-            this.CellList.Size = new System.Drawing.Size(124, 95);
+            this.CellList.Size = new System.Drawing.Size(124, 147);
             this.CellList.TabIndex = 1;
+            this.CellList.SelectedIndexChanged += new System.EventHandler(this.CellList_SelectedIndexChanged);
             // 
             // menuStrip1
             // 
@@ -147,7 +155,11 @@
             // 
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CancelEditPolygon});
+            this.CancelEditPolygon,
+            this.toolStripSeparator1,
+            this.CellEdgeButton,
+            this.toolStripSplitButton1});
+            this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(818, 39);
@@ -180,6 +192,67 @@
             this.MousePositionStatus.Size = new System.Drawing.Size(46, 17);
             this.MousePositionStatus.Text = "Mouse:";
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 23);
+            // 
+            // CellEdgeButton
+            // 
+            this.CellEdgeButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.CellEdgeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.CellEdgeButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ShowCellBorders,
+            this.HideCellBorders});
+            this.CellEdgeButton.Image = ((System.Drawing.Image)(resources.GetObject("CellEdgeButton.Image")));
+            this.CellEdgeButton.ImageTransparentColor = System.Drawing.Color.Transparent;
+            this.CellEdgeButton.Name = "CellEdgeButton";
+            this.CellEdgeButton.Size = new System.Drawing.Size(48, 36);
+            this.CellEdgeButton.Text = "Show/Hide Cell Borders";
+            // 
+            // ShowCellBorders
+            // 
+            this.ShowCellBorders.CheckOnClick = true;
+            this.ShowCellBorders.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.ShowCellBorders.Name = "ShowCellBorders";
+            this.ShowCellBorders.Size = new System.Drawing.Size(160, 22);
+            this.ShowCellBorders.Text = "Show Cell Edges";
+            this.ShowCellBorders.Click += new System.EventHandler(this.ShowCellBorders_Click);
+            // 
+            // HideCellBorders
+            // 
+            this.HideCellBorders.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.HideCellBorders.Name = "HideCellBorders";
+            this.HideCellBorders.Size = new System.Drawing.Size(160, 22);
+            this.HideCellBorders.Text = "Hide Cell Edges";
+            this.HideCellBorders.Click += new System.EventHandler(this.HideCellBorders_Click);
+            // 
+            // toolStripSplitButton1
+            // 
+            this.toolStripSplitButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripSplitButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ShowPortals,
+            this.HidePortals});
+            this.toolStripSplitButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButton1.Image")));
+            this.toolStripSplitButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSplitButton1.Name = "toolStripSplitButton1";
+            this.toolStripSplitButton1.Size = new System.Drawing.Size(48, 36);
+            this.toolStripSplitButton1.Text = "toolStripSplitButton1";
+            // 
+            // ShowPortals
+            // 
+            this.ShowPortals.Name = "ShowPortals";
+            this.ShowPortals.Size = new System.Drawing.Size(152, 22);
+            this.ShowPortals.Text = "Show Portals";
+            this.ShowPortals.Click += new System.EventHandler(this.ShowPortals_Click);
+            // 
+            // HidePortals
+            // 
+            this.HidePortals.Name = "HidePortals";
+            this.HidePortals.Size = new System.Drawing.Size(152, 22);
+            this.HidePortals.Text = "Hide Portals";
+            this.HidePortals.Click += new System.EventHandler(this.HidePortals_Click);
+            // 
             // EditFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -193,6 +266,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "EditFrame";
             this.Text = "Portal Edit";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EditFrame_FormClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
@@ -213,7 +287,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.PictureBox MapView;
         private OpenTK.GLControl GLView;
-        private System.Windows.Forms.ListBox CellList;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip1;
@@ -223,6 +296,14 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        public System.Windows.Forms.ListBox CellList;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSplitButton CellEdgeButton;
+        private System.Windows.Forms.ToolStripMenuItem ShowCellBorders;
+        private System.Windows.Forms.ToolStripMenuItem HideCellBorders;
+        private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
+        private System.Windows.Forms.ToolStripMenuItem ShowPortals;
+        private System.Windows.Forms.ToolStripMenuItem HidePortals;
     }
 }
 
