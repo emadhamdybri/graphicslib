@@ -17,6 +17,8 @@ namespace PortalEdit
         public MapViewRenderer viewRenderer;
         public EditFrame frame;
 
+        public static Editor instance;
+
         public Editor(EditFrame _frame, Control mapctl, GLControl view)
         {
             frame = _frame;
@@ -27,6 +29,18 @@ namespace PortalEdit
 
             mapRenderer.NewPolygon += new NewPolygonHandler(mapRenderer_NewPolygon);
             mapRenderer.MouseStatusUpdate += new MouseStatusUpdateHandler(frame.mapRenderer_MouseStatusUpdate);
+        }
+
+        protected void ResetViews ()
+        {
+            frame.populateCellList();
+            mapRenderer.Redraw();
+            viewRenderer.Render3dView();
+        }
+
+        public EditorCell GetSelectedCell ( )
+        {
+            return (EditorCell)frame.CellList.SelectedItem;
         }
 
         public bool Open ( FileInfo file )
@@ -42,9 +56,7 @@ namespace PortalEdit
                 map.cells.Add(new EditorCell(cell));
 
             map.RebindCells();
-
-            mapRenderer.Redraw();
-            viewRenderer.Render3dView();
+            ResetViews();
             return true;
         }
 
@@ -60,7 +72,8 @@ namespace PortalEdit
 
             EditorCell cell = (EditorCell)polygon.tag;
             map.RemoveCell(cell);
-
+            map.RebindCells();
+            ResetViews();
             return true;
         }
 
@@ -78,7 +91,7 @@ namespace PortalEdit
             }
 
             DisplayListSystem.system.Invalidate();
-            viewRenderer.Render3dView();
+            ResetViews();
         }
     }
 }

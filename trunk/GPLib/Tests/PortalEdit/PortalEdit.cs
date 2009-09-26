@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 using OpenTK;
 using OpenTK.Graphics;
@@ -19,6 +20,41 @@ namespace PortalEdit
         public EditFrame()
         {
             InitializeComponent();
+
+            LoadSettings();
+        }
+
+        protected void LoadSettings()
+        {
+            DirectoryInfo AppSettingsDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"GPLib"));
+            if (!AppSettingsDir.Exists)
+                AppSettingsDir.Create();
+
+            DirectoryInfo appDir = AppSettingsDir.CreateSubdirectory("PortalEdit");
+
+            FileInfo prefsFile = new FileInfo(Path.Combine(appDir.FullName, "prefs.xml"));
+            if (prefsFile.Exists)
+                Settings.settings = Settings.Read(prefsFile);
+            else
+                Settings.settings.fileLoc = prefsFile;
+
+            Settings.settings.Write();
+
+            SetupSettings();
+        }
+
+        protected void SetupSettings ()
+        {
+            if (Settings.settings.DrawCellEdges)
+                ShowCellBorders.CheckState = CheckState.Checked;
+            else
+                HideCellBorders.CheckState = CheckState.Checked;
+
+            if (Settings.settings.DrawPortals)
+                ShowPortals.CheckState = CheckState.Checked;
+            else
+                HidePortals.CheckState = CheckState.Checked;
+
         }
 
         protected override void OnResize(EventArgs e)
@@ -34,8 +70,11 @@ namespace PortalEdit
 
         protected override void OnLoad(EventArgs e)
         {
-            if (editor == null)
-                editor = new Editor(this,MapView, GLView);
+            if (Editor.instance == null)
+                Editor.instance = new Editor(this, MapView, GLView);
+
+            editor = Editor.instance;
+
             base.OnLoad(e);
         }
 
@@ -74,6 +113,69 @@ namespace PortalEdit
                 if (!editor.Save(new FileInfo(sfd.FileName)))
                     MessageBox.Show("Error saving map file");
             }
+        }
+
+        public void populateCellList ()
+        {
+            object selected = CellList.SelectedItem;
+            CellList.Items.Clear();
+
+            foreach (Cell cell in editor.map.cells)
+            {
+                CellList.Items.Add(cell);
+            }
+
+            CellList.SelectedItem = selected;
+        }
+
+        private void CellList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Invalidate(true);
+        }
+
+        private void EditFrame_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Settings.settings.Write();
+        }
+
+        private void RebuildAll()
+        {
+            Drawables.DisplayLists.DisplayListSystem.system.Invalidate();
+            Settings.settings.Write();
+            Invalidate(true);
+        }
+
+        private void ShowCellBorders_Click(object sender, EventArgs e)
+        {
+            Settings.settings.DrawCellEdges = true;
+            ShowCellBorders.CheckState = CheckState.Checked;
+            HideCellBorders.CheckState = CheckState.Unchecked;
+            RebuildAll();
+        }
+
+        private void HideCellBorders_Click(object sender, EventArgs e)
+        {
+            Settings.settings.DrawCellEdges = false;
+            HideCellBorders.CheckState = CheckState.Checked;
+            ShowCellBorders.CheckState = CheckState.Unchecked;
+            RebuildAll();
+        }
+
+        private void ShowPortals_Click(object sender, EventArgs e)
+        {
+            Settings.settings.DrawPortals = true;
+            ShowPortals.CheckState = CheckState.Checked;
+            HidePortals.CheckState = CheckState.Unchecked;
+            RebuildAll();
+
+        }
+
+        private void HidePortals_Click(object sender, EventArgs e)
+        {
+            Settings.settings.DrawPortals = false;
+            HidePortals.CheckState = CheckState.Checked;
+            ShowPortals.CheckState = CheckState.Unchecked;
+            RebuildAll();
 
         }
     }

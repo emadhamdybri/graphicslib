@@ -38,6 +38,11 @@ namespace PortalEdit
         public List<CellVert> verts = new List<CellVert>();
         public List<CellEdge> edges = new List<CellEdge>();
 
+        public override string ToString()
+        {
+            return name;
+        }
+
         public Cell()
         {}
 

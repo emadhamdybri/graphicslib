@@ -18,7 +18,7 @@ namespace PortalEdit
 
         Vector3 offset = new Vector3(0, 0, 1);
         Vector2 rotation = new Vector2(0, 0);
-        float pullback = 10f;
+        float pullback = 50f;
 
         Point lastMouse = Point.Empty;
 
@@ -174,10 +174,14 @@ namespace PortalEdit
             if (map == null)
                 return;
 
-            foreach (Cell cell in map.cells)
-                ((EditorCell)cell).Draw();
-
             DrawablesSystem.system.Execute();
+
+            if (Editor.instance != null)
+            {
+                EditorCell selectedCell = Editor.instance.GetSelectedCell();
+                if (selectedCell != null)
+                    selectedCell.DrawSelectionFrame();
+            }
         }
 
         public void Render3dView()
