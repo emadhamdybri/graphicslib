@@ -33,6 +33,7 @@ namespace PortalEdit
 
         protected void ResetViews ()
         {
+            DisplayListSystem.system.Invalidate();
             frame.populateCellList();
             mapRenderer.Redraw();
             viewRenderer.Render3dView();
@@ -65,14 +66,21 @@ namespace PortalEdit
             return map.Write(file);
         }
 
-        public bool DeletePoygon(Polygon polygon)
+        void RebuildMap ()
         {
-            if (polygon.tag == null)
+            foreach(EditorCell cell in map.cells)
+                cell.CheckEdges(map);
+        }
+
+        public bool DeleteCell(EditorCell cell)
+        {
+            if (cell == null)
                 return false;
 
-            EditorCell cell = (EditorCell)polygon.tag;
+            cell.Dispose();
             map.RemoveCell(cell);
-            map.RebindCells();
+            RebuildMap();
+
             ResetViews();
             return true;
         }

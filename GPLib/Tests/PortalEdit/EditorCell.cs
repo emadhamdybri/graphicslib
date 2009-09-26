@@ -87,6 +87,11 @@ namespace PortalEdit
             return CheckEdges(map);
         }
 
+        public void Dispose ()
+        {
+            clearGeometry();
+        }
+
         public bool CheckEdges ( PortalMap map )
         {
             bool hasPortal = false;
@@ -207,7 +212,6 @@ namespace PortalEdit
 
             GL.LineWidth(1);
             GL.Enable(EnableCap.Lighting);
-
         }
 
         void floorList_Generate(object sender, DisplayList list)
