@@ -200,5 +200,15 @@ namespace PortalEdit
             CellList.SelectedItem = null;
             RebuildAll();
         }
+
+        private void MapZoomIn_Click(object sender, EventArgs e)
+        {
+            editor.mapRenderer.Zoom(Settings.settings.MapZoomTicksPerClick);
+        }
+
+        private void MapZoomOut_Click(object sender, EventArgs e)
+        {
+            editor.mapRenderer.Zoom(-Settings.settings.MapZoomTicksPerClick);
+        }
     }
 }

@@ -197,8 +197,8 @@ namespace PortalEdit
             Vector4 lightPos = new Vector4(10, 20, 20, 0);
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
 
-             DrawGrid();           
-             DrawMap();
+            DrawGrid();           
+            DrawMap();
             control.SwapBuffers();
         }
     }

@@ -29,6 +29,12 @@ namespace PortalEdit
 
             mapRenderer.NewPolygon += new NewPolygonHandler(mapRenderer_NewPolygon);
             mapRenderer.MouseStatusUpdate += new MouseStatusUpdateHandler(frame.mapRenderer_MouseStatusUpdate);
+            mapRenderer.CellSelected += new CellSelectedHander(mapRenderer_CellSelected);
+        }
+
+        void mapRenderer_CellSelected(object sender, Cell cell)
+        {
+            frame.CellList.SelectedItem= cell;
         }
 
         protected void ResetViews ()

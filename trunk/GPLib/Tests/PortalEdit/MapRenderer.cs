@@ -10,7 +10,8 @@ using OpenTK;
 namespace PortalEdit
 {
     public delegate void NewPolygonHandler ( object sender, Polygon polygon );
-    public delegate void MouseStatusUpdateHandler (object sender, Point position);
+    public delegate void CellSelectedHander(object sender, Cell cell);
+    public delegate void MouseStatusUpdateHandler(object sender, Point position);
 
     public enum MapEditMode
     {
@@ -37,11 +38,14 @@ namespace PortalEdit
         public int snapRadius = 10;
 
         public event NewPolygonHandler NewPolygon;
+        public event CellSelectedHander CellSelected;
         public event MouseStatusUpdateHandler MouseStatusUpdate;
 
         public PortalMap map;
 
-        public MapEditMode EditMode { get; set; }
+        public MapEditMode EditMode { get { return editMode; } set { editMode = value; CheckCursor(); } }
+
+        protected MapEditMode editMode = MapEditMode.DrawMode;
 
         public MapRenderer(Control ctl, PortalMap _map)
         {
@@ -53,7 +57,25 @@ namespace PortalEdit
             ctl.MouseWheel += new MouseEventHandler(MouseWheel);
             ctl.Resize += new EventHandler(Resize);
 
+            CheckCursor();
+
             offset = new Point(ctl.Width / 2, ctl.Height / 2);
+        }
+
+        protected void CheckCursor ()
+        {
+            if (control != null)
+            {
+                switch(EditMode)
+                {
+                    case MapEditMode.DrawMode:
+                        control.Cursor = Cursors.Cross;
+                        break;
+                     case MapEditMode.SelectMode:
+                        control.Cursor = Cursors.Arrow;
+                        break;
+               }
+            }
         }
 
         public void ClearEditPolygon ()
@@ -118,12 +140,17 @@ namespace PortalEdit
             gridPen.Dispose();
         }
 
+        protected void SetupGraphicsContext ( Graphics graphics )
+        {
+            graphics.TranslateTransform(0, control.Height);
+            graphics.ScaleTransform(scale, -scale);
+            graphics.TranslateTransform(offset.X * scale, offset.Y * scale);
+        }
+
         protected void Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.LightGray);
-            e.Graphics.TranslateTransform(0, control.Height);
-            e.Graphics.ScaleTransform(scale, -scale);
-            e.Graphics.TranslateTransform(offset.X * scale, offset.Y * scale);
+            SetupGraphicsContext(e.Graphics);
 
             Grid(e.Graphics);
             e.Graphics.Flush();
@@ -221,19 +248,31 @@ namespace PortalEdit
             portalPen.Dispose();
         }
 
+        protected void DrawSelectionCell(Cell cell, Color color, Graphics graphics)
+        {
+            Brush brush = new SolidBrush(color);
+            graphics.FillPolygon(brush, GetCellPointList(cell));
+            brush.Dispose();
+        }
+
         protected void InvalidateAll ( )
         {
             if (control.Parent != null)
                 control.Parent.Invalidate(true);
         }
 
-        public void MouseWheel (object sender, MouseEventArgs e)
+        public void Zoom ( int ticks )
         {
-            float zoomPerScale = 1f/snapRadius;
-            scale += zoomPerScale * (e.Delta/120);
+            float zoomPerScale = 1f / snapRadius;
+            scale += zoomPerScale * (ticks);
             if (scale < 1)
                 scale = 1;
             control.Invalidate(true);
+        }
+
+        public void MouseWheel (object sender, MouseEventArgs e)
+        {
+            Zoom(e.Delta / 120);
         }
 
         private Point GetScalePoint(int x, int y)
@@ -282,14 +321,19 @@ namespace PortalEdit
 
         private void MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-                points.Add(GetSnapPoint(GetScalePoint(e.X, e.Y)));
-            else
+            if (EditMode == MapEditMode.DrawMode)
             {
-                if (points.Count > 2)
-                    EditAddPolygon();
+                if (e.Button == MouseButtons.Left)
+                    points.Add(GetSnapPoint(GetScalePoint(e.X, e.Y)));
+                else
+                {
+                    if (points.Count > 2)
+                        EditAddPolygon();
+                }
+                control.Invalidate(true);
             }
-            control.Invalidate(true);
+            else if (EditMode == MapEditMode.SelectMode)
+                PolygonSelection(e.Location);
         }
 
         private void MouseMove(object sender, MouseEventArgs e)
@@ -305,6 +349,41 @@ namespace PortalEdit
                 MouseStatusUpdate(this, hoverPoint);
             lastMouse = new Point(e.X,e.Y);
             control.Invalidate(true);
+        }
+
+        private void PolygonSelection (Point p)
+        {
+            if (CellSelected == null)
+                return;
+
+            Bitmap bitmap = new Bitmap(control.Width, control.Height);
+            Graphics graphics = Graphics.FromImage(bitmap);
+
+            graphics.Clear(Color.White);
+            SetupGraphicsContext(graphics);
+
+            Dictionary<Color,Cell> colorMap = new Dictionary<Color,Cell>();
+
+            Random rand = new Random();
+
+            foreach (Cell cell in map.cells)
+            {
+                // compute a color
+                Color color = Color.FromArgb(255, rand.Next() % 255, rand.Next() % 255, rand.Next() % 255);
+                while (color == Color.White || colorMap.ContainsKey(color))
+                    color = Color.FromArgb(255, rand.Next(), rand.Next(), rand.Next());
+
+                colorMap.Add(color, cell);
+
+                DrawSelectionCell(cell, color, graphics);
+            }
+            graphics.Flush();
+            graphics.Dispose();
+
+            Color selectedColor = bitmap.GetPixel(p.X,p.Y);
+
+            if (colorMap.ContainsKey(selectedColor))
+                CellSelected(this,colorMap[selectedColor]);
         }
     }
 
