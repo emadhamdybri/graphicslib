@@ -30,6 +30,9 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditFrame));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.MapZoomOut = new System.Windows.Forms.Button();
+            this.MapZoomIn = new System.Windows.Forms.Button();
             this.MapRadioPanel = new FormControls.ImageRadioPanel();
             this.SelectButton = new System.Windows.Forms.Button();
             this.DrawButton = new System.Windows.Forms.Button();
@@ -54,14 +57,19 @@
             this.MousePositionStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.DeleteCell = new System.Windows.Forms.Button();
             this.Deslect = new System.Windows.Forms.Button();
+            this.ViewRadioPanel = new FormControls.ImageRadioPanel();
+            this.CellSelectButton = new System.Windows.Forms.Button();
+            this.CellFillMode = new System.Windows.Forms.Button();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.MapRadioPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapView)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.ViewRadioPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -74,15 +82,47 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.panel1);
             this.splitContainer1.Panel1.Controls.Add(this.MapRadioPanel);
             this.splitContainer1.Panel1.Controls.Add(this.MapView);
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.ViewRadioPanel);
             this.splitContainer1.Panel2.Controls.Add(this.GLView);
-            this.splitContainer1.Size = new System.Drawing.Size(676, 422);
-            this.splitContainer1.SplitterDistance = 344;
+            this.splitContainer1.Size = new System.Drawing.Size(756, 447);
+            this.splitContainer1.SplitterDistance = 384;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.MapZoomOut);
+            this.panel1.Controls.Add(this.MapZoomIn);
+            this.panel1.Location = new System.Drawing.Point(322, 1);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(59, 25);
+            this.panel1.TabIndex = 4;
+            // 
+            // MapZoomOut
+            // 
+            this.MapZoomOut.Image = global::PortalEdit.Properties.Resources.zoom_out;
+            this.MapZoomOut.Location = new System.Drawing.Point(31, 0);
+            this.MapZoomOut.Name = "MapZoomOut";
+            this.MapZoomOut.Size = new System.Drawing.Size(25, 23);
+            this.MapZoomOut.TabIndex = 1;
+            this.MapZoomOut.UseVisualStyleBackColor = true;
+            this.MapZoomOut.Click += new System.EventHandler(this.MapZoomOut_Click);
+            // 
+            // MapZoomIn
+            // 
+            this.MapZoomIn.Image = global::PortalEdit.Properties.Resources.zoom_in;
+            this.MapZoomIn.Location = new System.Drawing.Point(3, 0);
+            this.MapZoomIn.Name = "MapZoomIn";
+            this.MapZoomIn.Size = new System.Drawing.Size(25, 23);
+            this.MapZoomIn.TabIndex = 0;
+            this.MapZoomIn.UseVisualStyleBackColor = true;
+            this.MapZoomIn.Click += new System.EventHandler(this.MapZoomIn_Click);
             // 
             // MapRadioPanel
             // 
@@ -90,11 +130,12 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.MapRadioPanel.Controls.Add(this.SelectButton);
             this.MapRadioPanel.Controls.Add(this.DrawButton);
+            this.MapRadioPanel.HighlightBGColor = System.Drawing.Color.AliceBlue;
             this.MapRadioPanel.HighlightColor = System.Drawing.Color.AliceBlue;
             this.MapRadioPanel.Location = new System.Drawing.Point(3, 0);
             this.MapRadioPanel.Name = "MapRadioPanel";
             this.MapRadioPanel.SelectedItem = null;
-            this.MapRadioPanel.Size = new System.Drawing.Size(338, 26);
+            this.MapRadioPanel.Size = new System.Drawing.Size(316, 26);
             this.MapRadioPanel.TabIndex = 3;
             this.MapRadioPanel.TagsAreValues = false;
             // 
@@ -105,7 +146,7 @@
             this.SelectButton.Name = "SelectButton";
             this.SelectButton.Size = new System.Drawing.Size(25, 23);
             this.SelectButton.TabIndex = 2;
-            this.SelectButton.Tag = MapEditMode.SelectMode;
+            this.SelectButton.Tag = PortalEdit.MapEditMode.SelectMode;
             this.SelectButton.UseVisualStyleBackColor = true;
             // 
             // DrawButton
@@ -116,7 +157,7 @@
             this.DrawButton.Name = "DrawButton";
             this.DrawButton.Size = new System.Drawing.Size(25, 23);
             this.DrawButton.TabIndex = 1;
-            this.DrawButton.Tag = MapEditMode.DrawMode;
+            this.DrawButton.Tag = PortalEdit.MapEditMode.DrawMode;
             this.DrawButton.UseVisualStyleBackColor = true;
             // 
             // MapView
@@ -126,7 +167,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.MapView.Location = new System.Drawing.Point(3, 28);
             this.MapView.Name = "MapView";
-            this.MapView.Size = new System.Drawing.Size(338, 391);
+            this.MapView.Size = new System.Drawing.Size(378, 416);
             this.MapView.TabIndex = 0;
             this.MapView.TabStop = false;
             // 
@@ -136,9 +177,9 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.GLView.BackColor = System.Drawing.Color.Black;
-            this.GLView.Location = new System.Drawing.Point(3, 8);
+            this.GLView.Location = new System.Drawing.Point(3, 28);
             this.GLView.Name = "GLView";
-            this.GLView.Size = new System.Drawing.Size(322, 411);
+            this.GLView.Size = new System.Drawing.Size(362, 416);
             this.GLView.TabIndex = 0;
             this.GLView.VSync = false;
             // 
@@ -146,7 +187,7 @@
             // 
             this.CellList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.CellList.FormattingEnabled = true;
-            this.CellList.Location = new System.Drawing.Point(691, 66);
+            this.CellList.Location = new System.Drawing.Point(771, 66);
             this.CellList.Name = "CellList";
             this.CellList.Size = new System.Drawing.Size(124, 147);
             this.CellList.TabIndex = 1;
@@ -158,7 +199,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(818, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(898, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -204,7 +245,7 @@
             this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(818, 39);
+            this.toolStrip1.Size = new System.Drawing.Size(898, 39);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -283,9 +324,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MousePositionStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 491);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 516);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(818, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(898, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -298,7 +339,7 @@
             // DeleteCell
             // 
             this.DeleteCell.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteCell.Location = new System.Drawing.Point(762, 219);
+            this.DeleteCell.Location = new System.Drawing.Point(842, 219);
             this.DeleteCell.Name = "DeleteCell";
             this.DeleteCell.Size = new System.Drawing.Size(53, 23);
             this.DeleteCell.TabIndex = 5;
@@ -309,7 +350,7 @@
             // Deslect
             // 
             this.Deslect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Deslect.Location = new System.Drawing.Point(691, 219);
+            this.Deslect.Location = new System.Drawing.Point(771, 219);
             this.Deslect.Name = "Deslect";
             this.Deslect.Size = new System.Drawing.Size(68, 23);
             this.Deslect.TabIndex = 6;
@@ -317,11 +358,46 @@
             this.Deslect.UseVisualStyleBackColor = true;
             this.Deslect.Click += new System.EventHandler(this.Deslect_Click);
             // 
+            // ViewRadioPanel
+            // 
+            this.ViewRadioPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.ViewRadioPanel.Controls.Add(this.CellFillMode);
+            this.ViewRadioPanel.Controls.Add(this.CellSelectButton);
+            this.ViewRadioPanel.HighlightBGColor = System.Drawing.Color.AliceBlue;
+            this.ViewRadioPanel.HighlightColor = System.Drawing.Color.AliceBlue;
+            this.ViewRadioPanel.Location = new System.Drawing.Point(3, 0);
+            this.ViewRadioPanel.Name = "ViewRadioPanel";
+            this.ViewRadioPanel.SelectedItem = null;
+            this.ViewRadioPanel.Size = new System.Drawing.Size(316, 26);
+            this.ViewRadioPanel.TabIndex = 4;
+            this.ViewRadioPanel.TagsAreValues = false;
+            // 
+            // CellSelectButton
+            // 
+            this.CellSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("CellSelectButton.Image")));
+            this.CellSelectButton.Location = new System.Drawing.Point(3, 1);
+            this.CellSelectButton.Name = "CellSelectButton";
+            this.CellSelectButton.Size = new System.Drawing.Size(25, 23);
+            this.CellSelectButton.TabIndex = 2;
+            this.CellSelectButton.Tag = PortalEdit.MapEditMode.SelectMode;
+            this.CellSelectButton.UseVisualStyleBackColor = true;
+            // 
+            // CellFillMode
+            // 
+            this.CellFillMode.Image = ((System.Drawing.Image)(resources.GetObject("CellFillMode.Image")));
+            this.CellFillMode.Location = new System.Drawing.Point(34, 1);
+            this.CellFillMode.Name = "CellFillMode";
+            this.CellFillMode.Size = new System.Drawing.Size(25, 23);
+            this.CellFillMode.TabIndex = 3;
+            this.CellFillMode.Tag = "Fill Mode";
+            this.CellFillMode.UseVisualStyleBackColor = true;
+            // 
             // EditFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(818, 513);
+            this.ClientSize = new System.Drawing.Size(898, 538);
             this.Controls.Add(this.Deslect);
             this.Controls.Add(this.DeleteCell);
             this.Controls.Add(this.statusStrip1);
@@ -336,6 +412,7 @@
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.MapRadioPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MapView)).EndInit();
             this.menuStrip1.ResumeLayout(false);
@@ -344,6 +421,7 @@
             this.toolStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.ViewRadioPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -376,6 +454,12 @@
         private System.Windows.Forms.Button DrawButton;
         private System.Windows.Forms.Button SelectButton;
         private FormControls.ImageRadioPanel MapRadioPanel;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button MapZoomIn;
+        private System.Windows.Forms.Button MapZoomOut;
+        private FormControls.ImageRadioPanel ViewRadioPanel;
+        private System.Windows.Forms.Button CellFillMode;
+        private System.Windows.Forms.Button CellSelectButton;
     }
 }
 

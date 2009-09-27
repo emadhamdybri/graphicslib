@@ -17,6 +17,7 @@ namespace PortalEdit
 
         public bool DrawCellEdges = true;
         public bool DrawPortals = true;
+        public int MapZoomTicksPerClick = 1;
 
         public static Settings Read ( FileInfo file )
         {
