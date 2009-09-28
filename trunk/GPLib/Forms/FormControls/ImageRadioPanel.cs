@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace FormControls
 {
-    public class ImageRadioPanel :Panel
+    public class ImageRadioPanel : Panel
     {
         public class SelectionChangedEventArgs : EventArgs
         {
@@ -37,14 +37,13 @@ namespace FormControls
             set { highlightBGColor = value; }
         }
 
-
         public Button SelectedItem
         {
             get { return selectedItem; }
             set { button_Click(value, EventArgs.Empty); }
         }
 
-        protected Color highlightBGColor = Color.AliceBlue;
+        protected Color highlightBGColor = Color.DarkGoldenrod;
         protected Color highlightColor = Color.BlueViolet;
         protected Button selectedItem;
         protected Color BackgroundColor;
