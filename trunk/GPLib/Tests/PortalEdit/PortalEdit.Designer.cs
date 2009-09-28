@@ -499,6 +499,7 @@
             this.CellInfoZIsInc.TabIndex = 1;
             this.CellInfoZIsInc.Text = "Heights Are Incremental";
             this.CellInfoZIsInc.UseVisualStyleBackColor = true;
+            this.CellInfoZIsInc.CheckedChanged += new System.EventHandler(this.CellInfoZIsInc_CheckedChanged);
             // 
             // CellVertList
             // 
@@ -520,6 +521,8 @@
             this.CellVertList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.CellVertList.Size = new System.Drawing.Size(182, 147);
             this.CellVertList.TabIndex = 0;
+            this.CellVertList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellVertList_CellValueChanged);
+            this.CellVertList.SelectionChanged += new System.EventHandler(this.CellVertList_SelectionChanged);
             // 
             // Index
             // 
@@ -645,11 +648,11 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Panel CellListPanel;
         private System.Windows.Forms.Panel RightSideOuterPanel;
-        private System.Windows.Forms.DataGridView CellVertList;
         private System.Windows.Forms.DataGridViewTextBoxColumn Index;
         private System.Windows.Forms.DataGridViewTextBoxColumn ZMin;
         private System.Windows.Forms.DataGridViewTextBoxColumn ZMax;
         private System.Windows.Forms.CheckBox CellInfoZIsInc;
+        public System.Windows.Forms.DataGridView CellVertList;
     }
 }
 

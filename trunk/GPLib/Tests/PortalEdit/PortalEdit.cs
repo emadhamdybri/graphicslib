@@ -63,7 +63,6 @@ namespace PortalEdit
             ViewCheckPanel.ItemCheckChanged += new ImageCheckPanel.ItemCheckChangedEvent(ViewCheckPanel_ItemCheckChanged);
 
             LoadEditorDepths();
-
        }
 
         protected void LoadEditorDepths ( )
@@ -90,7 +89,8 @@ namespace PortalEdit
 
         public void mapRenderer_MouseStatusUpdate(object sender, System.Drawing.Point position)
         {
-            MousePositionStatus.Text = "Map:" + position.ToString();
+            Vector2 vec = new Vector2((float)position.X * EditorCell.PolygonScale, (float)position.Y * EditorCell.PolygonScale);
+            MousePositionStatus.Text = "Map:" + vec.ToString();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -173,6 +173,32 @@ namespace PortalEdit
 
             MapTree.ExpandAll();
             MapTree.SelectedNode = selectedNode;
+
+            PopulateCellInfoList();
+        }
+
+        public void PopulateCellInfoList()
+        {
+            CellVertList.Rows.Clear();
+            CellInfoZIsInc.Enabled = false;
+
+            Cell cell = editor.GetSelectedCell();
+            if (cell == null)
+                return;
+
+            CellInfoZIsInc.Enabled = true;
+            CellInfoZIsInc.Checked = cell.HeightIsIncremental;
+
+            for (int i = 0; i < cell.Verts.Count; i++)
+            {
+                CellVert vert = cell.Verts[i];
+                List<String> items = new List<String>();
+                items.Add(i.ToString());
+                items.Add(vert.Bottom.Z.ToString());
+                items.Add(vert.Top.ToString());
+
+                CellVertList.Rows.Add(items.ToArray());
+            }
         }
 
         private void EditFrame_FormClosing(object sender, FormClosingEventArgs e)
@@ -212,6 +238,7 @@ namespace PortalEdit
 
         private void MapTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            PopulateCellInfoList();
             RebuildAll();
         }
 
@@ -268,6 +295,26 @@ namespace PortalEdit
         private void EditIncZ_CheckedChanged(object sender, EventArgs e)
         {
             Editor.EditZInc = EditIncZ.Checked;
+            RebuildAll();
+        }
+
+        private void CellVertList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (editor != null)
+                editor.EditVert();
+        }
+
+        private void CellVertList_SelectionChanged(object sender, EventArgs e)
+        {
+            Invalidate(true);
+        }
+
+        private void CellInfoZIsInc_CheckedChanged(object sender, EventArgs e)
+        {
+            if (editor == null)
+                return;
+
+            editor.SetCellInZ(CellInfoZIsInc.Checked);
             RebuildAll();
         }
     }
