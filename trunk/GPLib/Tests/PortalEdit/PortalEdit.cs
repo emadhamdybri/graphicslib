@@ -10,6 +10,7 @@ using System.Diagnostics;
 
 using OpenTK;
 using OpenTK.Graphics;
+using FormControls;
 
 namespace PortalEdit
 {
@@ -55,18 +56,31 @@ namespace PortalEdit
 
         protected void SetupSettings ()
         {
-            if (Settings.settings.DrawCellEdges)
-                ShowCellBorders.CheckState = CheckState.Checked;
-            else
-                HideCellBorders.CheckState = CheckState.Checked;
-
-            if (Settings.settings.DrawPortals)
-                ShowPortals.CheckState = CheckState.Checked;
-            else
-                HidePortals.CheckState = CheckState.Checked;
-
             MapRadioPanel.SelectedItem = DrawButton;
+
+            ViewCheckPanel.CheckButton(ShowCellEdges, Settings.settings.DrawCellEdges);
+            ViewCheckPanel.CheckButton(ShowPortals, Settings.settings.DrawPortals);
+            ViewCheckPanel.ItemCheckChanged += new ImageCheckPanel.ItemCheckChangedEvent(ViewCheckPanel_ItemCheckChanged);
+
+            LoadEditorDepths();
+
        }
+
+        protected void LoadEditorDepths ( )
+        {
+            EditIncZ.Checked = Editor.EditZInc;
+            EditZMinus.Text = Editor.EditZFloor.ToString();
+            EditZPlus.Text = Editor.EditZRoof.ToString();
+        }
+
+        protected void ViewCheckPanel_ItemCheckChanged(object sender, ImageCheckPanel.ItemCheckChangedEventArgs e)
+        {
+            if (e.button == ShowCellEdges)
+                Settings.settings.DrawCellEdges = e.value;
+            if (e.button == ShowPortals)
+                Settings.settings.DrawPortals = e.value;
+            RebuildAll();
+        }
 
         protected override void OnResize(EventArgs e)
         {
@@ -85,6 +99,7 @@ namespace PortalEdit
                 Editor.instance = new Editor(this, MapView, GLView);
 
             editor = Editor.instance;
+            populateCellList();
 
             base.OnLoad(e);
         }
@@ -128,14 +143,36 @@ namespace PortalEdit
 
         public void populateCellList ()
         {
-            object selected = CellList.SelectedItem;
+            object selected = null;
+            if (MapTree.SelectedNode != null)
+                selected = MapTree.SelectedNode.Tag;
 
-            CellList.Items.Clear();
+            MapTree.Nodes.Clear();
 
-            foreach (Cell cell in editor.map.cells)
-                CellList.Items.Add(cell);
+            if (editor == null)
+                return;
 
-            CellList.SelectedItem = selected;
+            TreeNode selectedNode = null;
+
+            foreach(CellGroup group in editor.map.cellGroups)
+            {
+                TreeNode node = new TreeNode(group.Name, 0, 2);
+                node.Tag = group;
+                MapTree.Nodes.Add(node);
+                if (group == selected)
+                    selectedNode = node;
+                foreach ( Cell cell in group.Cells )
+                {
+                    TreeNode child = new TreeNode(cell.Name, 1, 3);
+                    child.Tag = cell;
+                    node.Nodes.Add(child);
+                    if (cell == selected)
+                        selectedNode = child;
+                }
+            }
+
+            MapTree.ExpandAll();
+            MapTree.SelectedNode = selectedNode;
         }
 
         private void EditFrame_FormClosing(object sender, FormClosingEventArgs e)
@@ -150,54 +187,16 @@ namespace PortalEdit
             Invalidate(true);
         }
 
-        private void ShowCellBorders_Click(object sender, EventArgs e)
-        {
-            Settings.settings.DrawCellEdges = true;
-            ShowCellBorders.CheckState = CheckState.Checked;
-            HideCellBorders.CheckState = CheckState.Unchecked;
-            RebuildAll();
-        }
-
-        private void HideCellBorders_Click(object sender, EventArgs e)
-        {
-            Settings.settings.DrawCellEdges = false;
-            HideCellBorders.CheckState = CheckState.Checked;
-            ShowCellBorders.CheckState = CheckState.Unchecked;
-            RebuildAll();
-        }
-
-        private void ShowPortals_Click(object sender, EventArgs e)
-        {
-            Settings.settings.DrawPortals = true;
-            ShowPortals.CheckState = CheckState.Checked;
-            HidePortals.CheckState = CheckState.Unchecked;
-            RebuildAll();
-        }
-
-        private void HidePortals_Click(object sender, EventArgs e)
-        {
-            Settings.settings.DrawPortals = false;
-            HidePortals.CheckState = CheckState.Checked;
-            ShowPortals.CheckState = CheckState.Unchecked;
-            RebuildAll();
-        }
-
         private void DeleteCell_Click(object sender, EventArgs e)
         {
             EditorCell cell = editor.GetSelectedCell();
-            CellList.SelectedItem = null;
+            MapTree.SelectedNode = null;
             editor.DeleteCell(cell);
-
-        }
-
-        private void CellList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            RebuildAll();
         }
 
         private void Deslect_Click(object sender, EventArgs e)
         {
-            CellList.SelectedItem = null;
+            MapTree.SelectedNode = null;
             RebuildAll();
         }
 
@@ -209,6 +208,67 @@ namespace PortalEdit
         private void MapZoomOut_Click(object sender, EventArgs e)
         {
             editor.mapRenderer.Zoom(-Settings.settings.MapZoomTicksPerClick);
+        }
+
+        private void MapTree_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            RebuildAll();
+        }
+
+        private void NewGroup_Click(object sender, EventArgs e)
+        {
+            editor.NewGroup();
+        }
+
+        private void EditLoadZFromSelection_Click(object sender, EventArgs e)
+        {
+            if (editor == null)
+                return;
+
+            Cell cell = editor.GetSelectedCell();
+            if (cell == null)
+                return;
+
+            Editor.EditZInc = cell.HeightIsIncremental;
+            Editor.EditZFloor = cell.Verts[0].Bottom.Z;
+            Editor.EditZRoof = cell.Verts[0].Top;
+
+            LoadEditorDepths();
+            RebuildAll();
+        }
+
+        private void EditZMinus_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                float.TryParse(EditZMinus.Text,out Editor.EditZFloor);
+            }
+            catch (System.Exception ex)
+            {
+                EditZMinus.Text = Editor.EditZFloor.ToString();
+            }
+
+            RebuildAll();
+        }
+
+        private void EditZPlus_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                float.TryParse(EditZPlus.Text, out Editor.EditZRoof);
+            }
+            catch (System.Exception ex)
+            {
+                EditZPlus.Text = Editor.EditZRoof.ToString();
+            }
+
+            RebuildAll();
+        }
+
+        private void EditIncZ_CheckedChanged(object sender, EventArgs e)
+        {
+            Editor.EditZInc = EditIncZ.Checked;
+            RebuildAll();
         }
     }
 }

@@ -7,6 +7,7 @@ using System.IO;
 using OpenTK;
 
 using Drawables.DisplayLists;
+using Drawables;
 
 namespace PortalEdit
 {
@@ -19,6 +20,10 @@ namespace PortalEdit
 
         public static Editor instance;
 
+        public static float EditZFloor = 0;
+        public static float EditZRoof = 10;
+        public static bool EditZInc = true;
+
         public Editor(EditFrame _frame, Control mapctl, GLControl view)
         {
             frame = _frame;
@@ -30,11 +35,51 @@ namespace PortalEdit
             mapRenderer.NewPolygon += new NewPolygonHandler(mapRenderer_NewPolygon);
             mapRenderer.MouseStatusUpdate += new MouseStatusUpdateHandler(frame.mapRenderer_MouseStatusUpdate);
             mapRenderer.CellSelected += new CellSelectedHander(mapRenderer_CellSelected);
+
+            NewGroup();
+        }
+
+        TreeNode FindSelectedNode ( object tag, TreeNode node )
+        {
+            if (node.Tag == tag)
+                return node;
+
+            foreach (TreeNode child in node.Nodes)
+            {
+                TreeNode foundNode = FindSelectedNode(tag, child);
+                if (foundNode != null)
+                    return foundNode;
+            }
+
+            return null;
         }
 
         void mapRenderer_CellSelected(object sender, Cell cell)
         {
-            frame.CellList.SelectedItem= cell;
+            SelectObject(cell);
+        }
+
+        void SelectObject ( object item )
+        {
+            TreeNode selectedNode = null;
+
+            foreach (TreeNode child in frame.MapTree.Nodes)
+            {
+                selectedNode = FindSelectedNode(item, child);
+                if (selectedNode != null)
+                    break;
+            }
+
+            frame.MapTree.SelectedNode = selectedNode;
+        }
+
+        public void NewGroup ()
+        {
+            CellGroup group = new CellGroup();
+            group.Name = map.NewGroupName();
+            map.cellGroups.Add(group);
+            ResetViews();
+            SelectObject(group);
         }
 
         protected void ResetViews ()
@@ -47,7 +92,26 @@ namespace PortalEdit
 
         public EditorCell GetSelectedCell ( )
         {
-            return (EditorCell)frame.CellList.SelectedItem;
+            if (frame.MapTree.SelectedNode == null)
+                return null;
+
+            object tag = frame.MapTree.SelectedNode.Tag;
+            if (tag.GetType() == typeof(EditorCell))
+                return (EditorCell)tag;
+
+            return null;
+        }
+
+        public CellGroup GetSelectedGroup()
+        {
+            if (frame.MapTree.SelectedNode == null)
+                return null;
+
+            object tag = frame.MapTree.SelectedNode.Tag;
+            if (tag.GetType() == typeof(CellGroup))
+                return (CellGroup)tag;
+
+            return null;
         }
 
         public bool Open ( FileInfo file )
@@ -58,9 +122,19 @@ namespace PortalEdit
 
             mapRenderer.ClearEditPolygon();
 
-            map.cells.Clear();
-            foreach(Cell cell in newMap.cells)
-                map.cells.Add(new EditorCell(cell));
+            DisplayListSystem.system.Invalidate();
+            DrawablesSystem.system.removeAll();
+            map.cellGroups.Clear();
+
+            foreach (CellGroup group in newMap.cellGroups)
+            {
+                CellGroup newGroup = new CellGroup();
+                newGroup.Name = group.Name;
+                map.cellGroups.Add(newGroup);
+
+                foreach (Cell cell in group.Cells)
+                    newGroup.Cells.Add(new EditorCell(cell));
+            }
 
             map.RebindCells();
             ResetViews();
@@ -74,8 +148,9 @@ namespace PortalEdit
 
         void RebuildMap ()
         {
-            foreach(EditorCell cell in map.cells)
-                cell.CheckEdges(map);
+            foreach (CellGroup group in map.cellGroups)
+                foreach (EditorCell cell in group.Cells)
+                    cell.CheckEdges(map);
         }
 
         public bool DeleteCell(EditorCell cell)
@@ -93,15 +168,34 @@ namespace PortalEdit
 
         void mapRenderer_NewPolygon(object sender, Polygon polygon)
         {
-            EditorCell cell = new EditorCell(polygon,map);
-            cell.tag = polygon;
+            if (map.cellGroups.Count == 0)
+                return;
 
-            map.AddCell(cell);
-
-            foreach (Cell c in map.cells )
+            CellGroup group = GetSelectedGroup();
+            if (group == null)
             {
-                EditorCell eCell = (EditorCell)c;
-                eCell.CheckEdges(map);
+                Cell selCel = GetSelectedCell();
+                if (selCel != null)
+                    group = selCel.Group;
+
+                if (group == null && selCel != null)
+                    group = map.FindGroup(selCel.GroupName);
+
+                if (group == null)
+                    group = map.cellGroups[map.cellGroups.Count - 1];
+            }
+
+            EditorCell cell = new EditorCell(polygon, map, group);
+
+            group.Cells.Add(cell);
+
+            foreach(CellGroup g in map.cellGroups)
+            {
+                foreach (Cell c in g.Cells )
+                {
+                    EditorCell eCell = (EditorCell)c;
+                    eCell.CheckEdges(map);
+                }
             }
 
             DisplayListSystem.system.Invalidate();

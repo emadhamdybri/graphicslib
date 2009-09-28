@@ -23,9 +23,10 @@ namespace PortalEdit
     {
         List<Point> points = new List<Point>();
 
-        Color cellColor = Color.FromArgb(128, Color.OliveDrab);
+        Color cellColor = Color.FromArgb(128, Color.Wheat);
         Color outlineColor = Color.FromArgb(192, Color.Black);
-        Color portalColor = Color.FromArgb(192, Color.DarkGoldenrod);
+        Color internalPortalColor = Color.FromArgb(192, Color.Snow);
+        Color externalPortalColor = Color.FromArgb(192, Color.DarkGoldenrod);
         Color selectedColor = Color.Red;
 
         Point hoverPoint = Point.Empty;
@@ -160,9 +161,20 @@ namespace PortalEdit
             Pen rubberBandPen = new Pen(Color.DarkBlue, 3);
             rubberBandPen.EndCap = System.Drawing.Drawing2D.LineCap.DiamondAnchor;
 
-            foreach (Cell cell in map.cells)
-                DrawCell(cell,e.Graphics);
-            DrawSelectedCell(Editor.instance.GetSelectedCell(), e.Graphics);
+            foreach (CellGroup group in map.cellGroups)
+            {
+                foreach (Cell cell in group.Cells)
+                    DrawCell(cell, group, e.Graphics);
+            }
+            CellGroup selectedGroup = Editor.instance.GetSelectedGroup();
+            if (selectedGroup != null)
+            {
+                foreach (Cell cell in selectedGroup.Cells)
+                    DrawSelectedCell(cell, e.Graphics);
+            }
+            else
+                DrawSelectedCell(Editor.instance.GetSelectedCell(), e.Graphics);
+
 
             if (EditMode == MapEditMode.DrawMode)
             {
@@ -187,9 +199,9 @@ namespace PortalEdit
 
         protected Point[] GetCellPointList ( Cell cell )
         {
-            Point[] a = new Point[cell.verts.Count];
-            for ( int i = 0; i < cell.verts.Count; i++ )
-                a[i] = new Point((int)(cell.verts[i].bottom.X * snapRadius), (int)(cell.verts[i].bottom.Y * snapRadius));
+            Point[] a = new Point[cell.Verts.Count];
+            for ( int i = 0; i < cell.Verts.Count; i++ )
+                a[i] = new Point((int)(cell.Verts[i].Bottom.X * snapRadius), (int)(cell.Verts[i].Bottom.Y * snapRadius));
 
             return a;
         }
@@ -218,26 +230,29 @@ namespace PortalEdit
 
         }
 
-        protected void DrawCell ( Cell cell, Graphics graphics )
+        protected void DrawCell ( Cell cell, CellGroup group, Graphics graphics )
         {
             Pen polygonPen = new Pen(outlineColor, 3);
-
-            Pen portalPen = new Pen(portalColor, 4);
-
-
+            Pen internalPortalPen = new Pen(internalPortalColor,4);
+            Pen externalPortalPen = new Pen(externalPortalColor, 4);
             Brush brush = new SolidBrush(cellColor);
 
             Point[] pList = GetCellPointList(cell);
 
             graphics.FillPolygon(brush, pList);
 
-            foreach (CellEdge edge in cell.edges)
+            foreach (CellEdge edge in cell.Edges)
             {
                 Pen pen = polygonPen;
-                if (edge.type == CellEdgeType.ePortal)
-                    pen = portalPen;
+                if (edge.EdgeType == CellEdgeType.Portal)
+                {
+                    if (edge.Destination.Group == group)
+                        pen = internalPortalPen;
+                    else
+                        pen = externalPortalPen;
+                }
 
-                graphics.DrawLine(pen, VertToPoint(cell.verts[edge.start].bottom), VertToPoint(cell.verts[edge.end].bottom));
+                graphics.DrawLine(pen, VertToPoint(cell.Verts[edge.Start].Bottom), VertToPoint(cell.Verts[edge.End].Bottom));
             }
 
             foreach (Point p in pList)
@@ -245,8 +260,9 @@ namespace PortalEdit
 
             brush.Dispose();
             polygonPen.Dispose();
-            portalPen.Dispose();
-        }
+            internalPortalPen.Dispose();
+            externalPortalPen.Dispose();
+       }
 
         protected void DrawSelectionCell(Cell cell, Color color, Graphics graphics)
         {
@@ -366,16 +382,20 @@ namespace PortalEdit
 
             Random rand = new Random();
 
-            foreach (Cell cell in map.cells)
+            foreach (CellGroup group in map.cellGroups)
             {
-                // compute a color
-                Color color = Color.FromArgb(255, rand.Next() % 255, rand.Next() % 255, rand.Next() % 255);
-                while (color == Color.White || colorMap.ContainsKey(color))
-                    color = Color.FromArgb(255, rand.Next(), rand.Next(), rand.Next());
 
-                colorMap.Add(color, cell);
+                foreach (Cell cell in group.Cells)
+                {
+                    // compute a color
+                    Color color = Color.FromArgb(255, rand.Next() % 255, rand.Next() % 255, rand.Next() % 255);
+                    while (color == Color.White || colorMap.ContainsKey(color))
+                        color = Color.FromArgb(255, rand.Next(), rand.Next(), rand.Next());
 
-                DrawSelectionCell(cell, color, graphics);
+                    colorMap.Add(color, cell);
+
+                    DrawSelectionCell(cell, color, graphics);
+                }
             }
             graphics.Flush();
             graphics.Dispose();

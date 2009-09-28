@@ -60,6 +60,20 @@ namespace PortalEdit.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap EdgeShowHideButton {
+            get {
+                object obj = ResourceManager.GetObject("EdgeShowHideButton", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap eyedropper_icon {
+            get {
+                object obj = ResourceManager.GetObject("eyedropper_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap finger {
             get {
                 object obj = ResourceManager.GetObject("finger", resourceCulture);
@@ -70,6 +84,13 @@ namespace PortalEdit.Properties {
         internal static System.Drawing.Bitmap pencil {
             get {
                 object obj = ResourceManager.GetObject("pencil", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap PortalShowHideButton {
+            get {
+                object obj = ResourceManager.GetObject("PortalShowHideButton", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
