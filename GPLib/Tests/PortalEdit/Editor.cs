@@ -114,6 +114,48 @@ namespace PortalEdit
             return null;
         }
 
+        public CellVert GetSelectedVert()
+        {
+            Cell cell = GetSelectedCell();
+            if (cell == null)
+                return null;
+
+            if (frame.CellVertList.SelectedRows.Count > 0)
+            {
+                int index = int.Parse(frame.CellVertList.SelectedRows[0].Cells[0].Value.ToString());
+                return cell.Verts[index];
+            }
+            return null;
+        }
+
+        public void EditVert ()
+        {
+            CellVert vert = GetSelectedVert();
+            if (vert == null)
+                return;
+
+            try
+            {
+                float.TryParse(frame.CellVertList.SelectedRows[0].Cells[1].Value.ToString(), out vert.Bottom.Z);
+                float.TryParse(frame.CellVertList.SelectedRows[0].Cells[2].Value.ToString(), out vert.Top);
+
+                DisplayListSystem.system.Invalidate();
+                ResetViews();
+            }
+            catch (System.Exception ex)
+            {
+            }
+        }
+
+        public void SetCellInZ ( bool inc )
+        {
+            Cell cell = GetSelectedCell();
+            if (cell == null)
+                return;
+
+            cell.HeightIsIncremental = inc;
+        }
+
         public bool Open ( FileInfo file )
         {
             PortalMap newMap = PortalMap.Read(file);

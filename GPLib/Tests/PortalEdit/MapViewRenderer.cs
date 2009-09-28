@@ -22,6 +22,8 @@ namespace PortalEdit
 
         Point lastMouse = Point.Empty;
 
+        Color SelectedVertColor = Color.FromArgb(128,Color.Magenta);
+
         public MapViewRenderer(GLControl ctl, PortalMap m)
         {
             map = m;
@@ -120,23 +122,47 @@ namespace PortalEdit
             GL.Disable(EnableCap.LineSmooth);
             GL.PushMatrix();
             GL.Translate(0, 0, -0.1f);
+            GL.LineWidth(2);
             GL.Begin(BeginMode.Lines);
 
-            GL.Color3(Color.Red);
-            GL.Vertex3(0, 0, 0);
+            GL.Color3(Color.Blue);
+            GL.Vertex3(-5, 0, 0);
             GL.Vertex3(10, 0, 0);
 
-            GL.Color3(Color.Green);
-            GL.Vertex3(0, 0, 0);
+            GL.Color3(Color.Red);
+            GL.Vertex3(0, -5, 0);
             GL.Vertex3(0, 10, 0);
 
-            GL.Color3(Color.Blue);
-            GL.Vertex3(0, 0, 0);
+            GL.Color3(Color.Green);
+            GL.Vertex3(0, 0, -5);
             GL.Vertex3(0, 0, 20);
+            GL.End();
+
+            GL.Color4(Color.FromArgb(128, Color.DarkGray));
+            GL.LineWidth(1);
+            GL.Begin(BeginMode.Lines);
+
+            for (float i = 0; i < 100f; i += 1f)
+            {
+                if ((int)i % 10 == 0)
+                    continue;
+
+                GL.Vertex2(100, i);
+                GL.Vertex2(-100, i);
+
+                GL.Vertex2(100, -i);
+                GL.Vertex2(-100, -i);
+
+                GL.Vertex2(i, 100);
+                GL.Vertex2(i, -100);
+
+                GL.Vertex2(-i, 100);
+                GL.Vertex2(-i, -100);
+            }
 
             GL.Color4(Color.FromArgb(128, Color.Gray));
-
-            for (float i = 0; i < 100f; i += 5f)
+        
+            for (float i = 0; i < 100f; i += 10f)
             {
                 GL.Vertex2(100, i);
                 GL.Vertex2(-100, i);
@@ -169,6 +195,31 @@ namespace PortalEdit
             GL.Rotate(-90, 1.0f, 0.0f, 0.0f);							// gets us into XY
         }
 
+        protected void DrawSelectedVert ( )
+        {
+            CellVert vert = Editor.instance.GetSelectedVert();
+            Cell cell = Editor.instance.GetSelectedCell();
+            if (vert == null || cell == null)
+                return;
+
+            GL.Color4(SelectedVertColor);
+            IntPtr quadric = Glu.NewQuadric();
+
+            float markSize = 1.0f;
+
+            GL.PushMatrix();
+                GL.Translate(vert.Bottom);
+                Glu.Sphere(quadric, markSize, 4, 2);
+             GL.PopMatrix();
+
+             GL.PushMatrix();
+             GL.Translate(vert.Bottom.X, vert.Bottom.Y, vert.GetTopZ(cell.HeightIsIncremental));
+            Glu.Sphere(quadric, markSize, 4, 2);
+            GL.PopMatrix();
+
+            Glu.DeleteQuadric(quadric);
+        }
+
         void DrawMap()
         {
             if (map == null)
@@ -190,6 +241,8 @@ namespace PortalEdit
                     if (selectedCell != null)
                         selectedCell.DrawSelectionFrame();
                 }
+
+                DrawSelectedVert();
             }
         }
 

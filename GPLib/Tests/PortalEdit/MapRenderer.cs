@@ -28,6 +28,7 @@ namespace PortalEdit
         Color internalPortalColor = Color.FromArgb(192, Color.Snow);
         Color externalPortalColor = Color.FromArgb(192, Color.DarkGoldenrod);
         Color selectedColor = Color.Red;
+        Color vertSelectedColor = Color.Magenta;
 
         Point hoverPoint = Point.Empty;
         Control control;
@@ -133,8 +134,8 @@ namespace PortalEdit
 
             graphics.DrawLine(XPen, 0, 0, axisSize,0);
             graphics.DrawLine(YPen, 0, 0, 0, axisSize);
-            graphics.DrawLine(XPen, 0, 0, -axisSize, 0);
-            graphics.DrawLine(YPen, 0, 0, 0, -axisSize);
+            graphics.DrawLine(XPen, 0, 0, -axisSize/2, 0);
+            graphics.DrawLine(YPen, 0, 0, 0, -axisSize/2);
 
             YPen.Dispose();
             XPen.Dispose();
@@ -175,6 +176,8 @@ namespace PortalEdit
             else
                 DrawSelectedCell(Editor.instance.GetSelectedCell(), e.Graphics);
 
+
+            DrawSelectedVert(Editor.instance.GetSelectedVert(), e.Graphics);
 
             if (EditMode == MapEditMode.DrawMode)
             {
@@ -262,7 +265,20 @@ namespace PortalEdit
             polygonPen.Dispose();
             internalPortalPen.Dispose();
             externalPortalPen.Dispose();
-       }
+        }
+
+        protected void DrawSelectedVert(CellVert vert, Graphics graphics)
+        {
+            if (vert == null)
+                return;
+
+            Pen pen = new Pen(vertSelectedColor, 3);
+
+            Point p = VertToPoint(vert.Bottom);
+            graphics.DrawEllipse(pen, p.X - 10, p.Y - 10, 20, 20);
+
+            pen.Dispose();
+        }
 
         protected void DrawSelectionCell(Cell cell, Color color, Graphics graphics)
         {

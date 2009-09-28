@@ -401,7 +401,7 @@ namespace PortalEdit
 
             GL.Begin(BeginMode.LineLoop);
             foreach (CellVert vert in Verts)
-                GL.Vertex3(vert.Bottom.X, vert.Bottom.Y, vert.Top);
+                GL.Vertex3(vert.Bottom.X, vert.Bottom.Y, vert.GetTopZ(HeightIsIncremental));
             GL.End();
 
             GL.Begin(BeginMode.LineLoop);
@@ -414,8 +414,8 @@ namespace PortalEdit
             {
                 GL.Vertex3(vert.Bottom.X, vert.Bottom.Y, vert.Bottom.Z - 0.1f);
                 GL.Vertex3(vert.Bottom.X, vert.Bottom.Y, vert.Bottom.Z +1f);
-                GL.Vertex3(vert.Bottom.X, vert.Bottom.Y, vert.Top + 0.1f);
-                GL.Vertex3(vert.Bottom.X, vert.Bottom.Y, vert.Top - 1f);
+                GL.Vertex3(vert.Bottom.X, vert.Bottom.Y, vert.GetTopZ(HeightIsIncremental) + 0.1f);
+                GL.Vertex3(vert.Bottom.X, vert.Bottom.Y, vert.GetTopZ(HeightIsIncremental) - 1f);
             }
 
             GL.End();
