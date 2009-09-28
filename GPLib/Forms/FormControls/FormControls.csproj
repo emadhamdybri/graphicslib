@@ -47,6 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImageCheckPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ImageRadioPanel.cs">
       <SubType>Component</SubType>
     </Compile>
