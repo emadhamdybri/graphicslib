@@ -178,9 +178,18 @@ namespace PortalEdit
 
             if (Editor.instance != null)
             {
-                EditorCell selectedCell = Editor.instance.GetSelectedCell();
-                if (selectedCell != null)
-                    selectedCell.DrawSelectionFrame();
+                CellGroup group = Editor.instance.GetSelectedGroup();
+                if ( group != null)
+                {
+                    foreach (EditorCell cell in group.Cells)
+                        cell.DrawSelectionFrame();
+                }
+                else
+                {
+                    EditorCell selectedCell = Editor.instance.GetSelectedCell();
+                    if (selectedCell != null)
+                        selectedCell.DrawSelectionFrame();
+                }
             }
         }
 

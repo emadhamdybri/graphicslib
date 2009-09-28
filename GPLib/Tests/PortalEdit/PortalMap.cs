@@ -12,12 +12,32 @@ namespace PortalEdit
 {
     public class PortalMap
     {
-        MapRenderer mapRenderer;
-        public List<Cell> cells = new List<Cell>();
+        public List<CellGroup> cellGroups = new List<CellGroup>();
 
-        public void AddCell ( Cell cell )
+        protected bool NameExists(String name)
         {
-            cells.Add(cell);
+            foreach (CellGroup group in cellGroups)
+            {
+                if (group.Name == name)
+                    return true;
+            }
+            return false;
+        }
+
+        public String NewGroupName()
+        {
+            int count = cellGroups.Count;
+            while (NameExists(count.ToString()))
+                count++;
+
+            return count.ToString();
+        }
+
+        public void AddCell ( Cell cell, CellGroup group )
+        {
+            cell.Group = group;
+            cell.GroupName = group.Name;
+            group.Cells.Add(cell);
         }
 
         public List<Cell> CellsThatContainEdge ( Vector2 p1, Vector2 p2 )
@@ -28,12 +48,15 @@ namespace PortalEdit
         public List<Cell> CellsThatContainEdge ( Vector2 p1, Vector2 p2, Cell ignoreCell )
         {
             List<Cell> foundCells = new List<Cell>();
-            foreach(Cell cell in cells)
+            foreach(CellGroup group in cellGroups)
             {
-                if (cell != ignoreCell)
+                foreach(Cell cell in group.Cells)
                 {
-                    if (cell.HasEdge(p1, p2))
-                        foundCells.Add(cell);
+                    if (cell != ignoreCell)
+                    {
+                        if (cell.HasEdge(p1, p2))
+                            foundCells.Add(cell);
+                    }
                 }
             }
 
@@ -43,29 +66,54 @@ namespace PortalEdit
         public void RemoveCell(Cell cell)
         {
             cell.tag = null;
-            cells.Remove(cell);
+            CellGroup group = cell.Group;
+            if (group == null)
+                group = FindGroup(cell.GroupName);
+
+            if (group != null)
+                group.Cells.Remove(cell);
         }
 
-        public Cell FindCell ( String name )
+        public CellGroup FindGroup ( String name )
         {
-            foreach( Cell cell in cells)
+            foreach (CellGroup group in cellGroups)
             {
-                if (cell.name == name)
-                    return cell;
+                if (group.Name == name)
+                    return group;
             }
+            return null;
+        }
+
+        public Cell FindCell ( String name, String groupName )
+        {
+            CellGroup group = FindGroup(groupName);
+            if (group != null)
+                return group.FindCell(name);
 
             return null;
         }
 
         public void RebindCells ( )
         {
-            // link up all the portals
-            foreach (Cell cell in cells)
+            foreach (CellGroup group in cellGroups)
             {
-                foreach (CellEdge edge in cell.edges)
+                // link up all the portals
+                foreach (Cell cell in group.Cells)
                 {
-                    if (edge.type == CellEdgeType.ePortal)
-                        edge.destination = FindCell(edge.destinationName);
+                    cell.Group = group;
+                    cell.GroupName = group.Name;
+
+                    foreach (CellEdge edge in cell.Edges)
+                    {
+                        if (edge.EdgeType == CellEdgeType.Portal)
+                        {
+                            edge.Destination.Group = FindGroup(edge.Destination.GroupName);
+                            if (edge.Destination.Group != null)
+                                edge.Destination.Cell = edge.Destination.Group.FindCell(edge.Destination.CellName);
+                            else
+                                edge.Destination.Cell = null;
+                        }
+                    }
                 }
             }
         }
@@ -104,8 +152,14 @@ namespace PortalEdit
             XmlSerializer XML = new XmlSerializer(typeof(PortalMap));
 
             PortalMap writeMap = new PortalMap();
-            foreach(Cell cell in cells)
-                writeMap.cells.Add(new Cell(cell));
+            foreach (CellGroup group in cellGroups)
+            {
+                CellGroup newGroup = new CellGroup();
+                newGroup.Name = group.Name;
+                writeMap.cellGroups.Add(newGroup);
+                foreach (Cell cell in group.Cells)
+                    newGroup.Cells.Add(new Cell(cell));
+            }
 
             try
             {
