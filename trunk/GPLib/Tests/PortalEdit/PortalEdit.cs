@@ -32,6 +32,7 @@ namespace PortalEdit
         void System_UndoStateChanged(object sender, bool available)
         {
             undoToolStripMenuItem.Enabled = available;
+            undoToolStripMenuItem.Text = "Undo " + Undo.System.Description;
         }
 
         void MapRadioPanel_SelectionChanged(object sender, FormControls.ImageRadioPanel.SelectionChangedEventArgs e)
@@ -330,6 +331,12 @@ namespace PortalEdit
             Undo.System.Apply();
             populateCellList();
             RebuildAll();
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (new SettingsDialog(Settings.settings).ShowDialog(this) == DialogResult.OK)
+                RebuildAll();
         }
     }
 }
