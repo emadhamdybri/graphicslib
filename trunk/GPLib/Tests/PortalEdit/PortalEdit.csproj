@@ -98,6 +98,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="Undo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Drawables\Drawables.csproj">

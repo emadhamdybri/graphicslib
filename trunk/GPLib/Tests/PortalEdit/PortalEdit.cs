@@ -24,7 +24,14 @@ namespace PortalEdit
 
             MapRadioPanel.TagsAreValues = true;
             MapRadioPanel.SelectionChanged += new FormControls.ImageRadioPanel.SelectionChangedEvent(MapRadioPanel_SelectionChanged);
+            Undo.System.UndoStateChanged += new UndoStateChangeEvent(System_UndoStateChanged);
+            undoToolStripMenuItem.Enabled = Undo.System.UndoAvail();
             LoadSettings();
+        }
+
+        void System_UndoStateChanged(object sender, bool available)
+        {
+            undoToolStripMenuItem.Enabled = available;
         }
 
         void MapRadioPanel_SelectionChanged(object sender, FormControls.ImageRadioPanel.SelectionChangedEventArgs e)
@@ -315,6 +322,13 @@ namespace PortalEdit
                 return;
 
             editor.SetCellInZ(CellInfoZIsInc.Checked);
+            RebuildAll();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Undo.System.Apply();
+            populateCellList();
             RebuildAll();
         }
     }
