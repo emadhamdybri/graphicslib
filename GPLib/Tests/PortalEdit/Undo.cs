@@ -7,6 +7,13 @@ namespace PortalEdit
 {
     public class UndoObject
     {
+        public String Descrioption
+        {
+            get {return descrioption;}
+        }
+
+        protected String descrioption = "Action";
+
         public virtual void Undo ( )
         {
         }
@@ -23,12 +30,32 @@ namespace PortalEdit
         public int UndoLevels = 25;
 
         protected List<UndoObject> Undos = new List<UndoObject>();
+
+        public int Count 
+        {
+            get { return Undos.Count; } 
+        }
+
+        public String Description
+        {
+            get 
+            {
+                if (Undos.Count == 0)
+                    return String.Empty;
+
+                return Undos[0].Descrioption;
+            }
+        }
  
         public void Add ( UndoObject undo )
         {
             Undos.Insert(0, undo);
+
+            if (Undos.Count > UndoLevels)
+                Undos.RemoveRange(UndoLevels, Undos.Count - UndoLevels);
+
             if (UndoStateChanged != null)
-                UndoStateChanged(this,true);
+                UndoStateChanged(this, Undos.Count > 0);
         }
 
         public bool UndoAvail ( )
@@ -55,6 +82,8 @@ namespace PortalEdit
 
         public CellDeleteUndo(EditorCell c )
         {
+            descrioption = "Delete Cell";
+
             cell = new EditorCell();
             cell.GroupName = String.Copy(cell.GroupName);
             cell.tag = c.tag;
@@ -87,6 +116,8 @@ namespace PortalEdit
 
         public CellAddUndo(EditorCell c)
         {
+            descrioption = "Add Cell";
+
             cell = String.Copy(c.Name);
             group = String.Copy(c.GroupName);
         }
@@ -114,6 +145,7 @@ namespace PortalEdit
 
         public GroupAddUndo(CellGroup c)
         {
+            descrioption = "Add Group";
             group = String.Copy(c.Name);
         }
 
@@ -146,6 +178,8 @@ namespace PortalEdit
 
         public VertexDataEditUndo(EditorCell c, int index)
         {
+            descrioption = "Edit Vertex";
+
             cellGroup = String.Copy(c.GroupName);
             cellName =  String.Copy(c.Name);
 
@@ -174,6 +208,8 @@ namespace PortalEdit
 
         public IncrementalHeightsUndo(EditorCell c)
         {
+            descrioption = "Edit Cell Data";
+
             cellGroup = String.Copy(c.GroupName);
             cellName = String.Copy(c.Name);
 
