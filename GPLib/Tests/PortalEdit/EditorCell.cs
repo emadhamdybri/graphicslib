@@ -53,6 +53,12 @@ namespace PortalEdit
             generateGeometry();
         }
 
+        public EditorCell(EditorCell cell)
+            : base(cell)
+        {
+            generateGeometry();
+        }
+
         public bool buildFromPolygon ( Polygon poly, PortalMap map )
         {
             float v = poly.GetNormalDepth();

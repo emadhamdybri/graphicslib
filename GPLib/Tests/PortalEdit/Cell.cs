@@ -18,6 +18,18 @@ namespace PortalEdit
                 return Top + Bottom.Z;
             return Top;
         }
+
+        public CellVert()
+        {
+            Bottom = new Vector3();
+            Top = 10;
+        }
+
+        public CellVert(CellVert v)
+        {
+            Bottom = new Vector3(v.Bottom);
+            Top = v.Top;
+        }
     }
 
     public enum CellEdgeType
@@ -36,6 +48,14 @@ namespace PortalEdit
 
         public String CellName = string.Empty;
         public String GroupName = string.Empty;
+
+        public PortalDestination(){}
+
+        public PortalDestination ( PortalDestination d )
+        {
+            CellName = String.Copy(d.CellName);
+            GroupName = String.Copy(d.GroupName);
+        }
     }
 
     public class CellEdge
@@ -45,7 +65,22 @@ namespace PortalEdit
 
         public PortalDestination Destination = new PortalDestination();
 
-        public Vector2 Normal;
+        public Vector2 Normal = new Vector2();
+
+        public CellEdge()
+        {
+            Start = -1;
+            End = -1;
+        }
+
+        public CellEdge( CellEdge e)
+        {
+            Start = e.Start;
+            End = e.End;
+            EdgeType = e.EdgeType;
+            Destination = new PortalDestination(e.Destination);
+            Normal = new Vector2(e.Normal);
+        }
     }
 
     public class Cell

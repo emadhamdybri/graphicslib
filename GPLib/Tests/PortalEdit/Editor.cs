@@ -36,7 +36,7 @@ namespace PortalEdit
             mapRenderer.MouseStatusUpdate += new MouseStatusUpdateHandler(frame.mapRenderer_MouseStatusUpdate);
             mapRenderer.CellSelected += new CellSelectedHander(mapRenderer_CellSelected);
 
-            NewGroup();
+            NewGroup(false);
         }
 
         TreeNode FindSelectedNode ( object tag, TreeNode node )
@@ -75,9 +75,17 @@ namespace PortalEdit
 
         public void NewGroup ()
         {
+            NewGroup(true);
+        }
+
+        public void NewGroup ( bool undo )
+        {
             CellGroup group = new CellGroup();
             group.Name = map.NewGroupName();
             map.cellGroups.Add(group);
+
+            if (undo)
+            Undo.System.Add(new GroupAddUndo(group));
             ResetViews();
             SelectObject(group);
         }
@@ -120,13 +128,26 @@ namespace PortalEdit
             if (cell == null)
                 return null;
 
+            int index = GetSelectedVertIndex();
+            if (index >= 0)
+                return cell.Verts[index];
+             return null;
+        }
+
+        public int GetSelectedVertIndex()
+        {
+            Cell cell = GetSelectedCell();
+            if (cell == null)
+                return -1;
+
             if (frame.CellVertList.SelectedRows.Count > 0)
             {
                 int index = int.Parse(frame.CellVertList.SelectedRows[0].Cells[0].Value.ToString());
-                return cell.Verts[index];
+                return index;
             }
-            return null;
+            return -1;
         }
+
 
         public void EditVert ()
         {
@@ -134,6 +155,7 @@ namespace PortalEdit
             if (vert == null)
                 return;
 
+            Undo.System.Add(new VertexDataEditUndo(GetSelectedCell(), GetSelectedVertIndex()));
             try
             {
                 float.TryParse(frame.CellVertList.SelectedRows[0].Cells[1].Value.ToString(), out vert.Bottom.Z);
@@ -149,9 +171,11 @@ namespace PortalEdit
 
         public void SetCellInZ ( bool inc )
         {
-            Cell cell = GetSelectedCell();
+            EditorCell cell = GetSelectedCell();
             if (cell == null)
                 return;
+
+            Undo.System.Add(new IncrementalHeightsUndo(cell));
 
             cell.HeightIsIncremental = inc;
         }
@@ -188,7 +212,7 @@ namespace PortalEdit
             return map.Write(file);
         }
 
-        void RebuildMap ()
+        public void RebuildMap ()
         {
             foreach (CellGroup group in map.cellGroups)
                 foreach (EditorCell cell in group.Cells)
@@ -199,6 +223,8 @@ namespace PortalEdit
         {
             if (cell == null)
                 return false;
+
+            Undo.System.Add(new CellDeleteUndo(cell));
 
             cell.Dispose();
             map.RemoveCell(cell);
@@ -239,6 +265,8 @@ namespace PortalEdit
                     eCell.CheckEdges(map);
                 }
             }
+
+            Undo.System.Add(new CellAddUndo(cell));
 
             DisplayListSystem.system.Invalidate();
             ResetViews();
