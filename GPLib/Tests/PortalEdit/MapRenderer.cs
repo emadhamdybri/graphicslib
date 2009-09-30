@@ -11,7 +11,7 @@ namespace PortalEdit
 {
     public delegate void NewPolygonHandler ( object sender, Polygon polygon );
     public delegate void CellSelectedHander(object sender, Cell cell);
-    public delegate void MouseStatusUpdateHandler(object sender, Point position);
+    public delegate void MouseStatusUpdateHandler(object sender, Vector2 position);
 
     public enum MapEditMode
     {
@@ -22,6 +22,8 @@ namespace PortalEdit
     public class MapRenderer 
     {
         List<Point> points = new List<Point>();
+        Polygon     incompletePoly = new Polygon();
+        Vector2     hoverPos = Vector2.Zero;
 
         Color cellColor = Color.FromArgb(128, Color.Wheat);
         Color outlineColor = Color.FromArgb(192, Color.Black);
@@ -34,7 +36,7 @@ namespace PortalEdit
         Control control;
 
         float scale = 1;
-        Point offset = new Point(10,10);
+        public Point offset = new Point(10,10);
         Point lastMouse = Point.Empty;
 
         public int snapRadius = 10;
@@ -82,7 +84,7 @@ namespace PortalEdit
 
         public void ClearEditPolygon ()
         {
-            points.Clear();
+            incompletePoly.Verts.Clear();
         }
 
         public void Redraw ()
@@ -102,7 +104,9 @@ namespace PortalEdit
             Pen gridPen = new Pen(Color.Gray);
             Pen gridPenMain = new Pen(Color.DarkGreen,2);
 
-            int step = snapRadius;
+            Settings settings = Settings.settings;
+
+            int step = (int)(settings.PixelsPerUnit*settings.GridSubDivisions);
             for (int x = 0; x < control.Width; x += step)
             {
                 graphics.DrawLine(gridPen, x, -control.Height * 2, x, control.Height * 2);
@@ -114,12 +118,14 @@ namespace PortalEdit
                 graphics.DrawLine(gridPen, -control.Width * 2, -y, control.Width * 2, -y);
             }
 
-            for (int x = 0; x < control.Width; x += step*10)
+            step = settings.PixelsPerUnit;
+
+            for (int x = 0; x < control.Width; x += step)
             {
                 graphics.DrawLine(gridPenMain, x, -control.Height * 2, x, control.Height * 2);
                 graphics.DrawLine(gridPenMain, -x, -control.Height * 2, -x, control.Height * 2);
             }
-            for (int y = 0; y < control.Height; y += step * 10)
+            for (int y = 0; y < control.Height; y += step)
             {
                 graphics.DrawLine(gridPenMain, -control.Width * 2, y, control.Width * 2, y);
                 graphics.DrawLine(gridPenMain, -control.Width * 2, -y, control.Width * 2, -y);
@@ -130,7 +136,7 @@ namespace PortalEdit
             XPen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;
             YPen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;
 
-            int axisSize = (int)(step * scale) * 10;
+            int axisSize = (int)settings.PixelsPerUnit*2;
 
             graphics.DrawLine(XPen, 0, 0, axisSize,0);
             graphics.DrawLine(YPen, 0, 0, 0, axisSize);
@@ -149,6 +155,38 @@ namespace PortalEdit
             graphics.TranslateTransform(offset.X * scale, offset.Y * scale);
         }
 
+        protected void DrawEditPolygon ( Graphics graphics )
+        {
+            Pen rubberBandPen = new Pen(Color.DarkBlue, 3);
+            rubberBandPen.EndCap = System.Drawing.Drawing2D.LineCap.DiamondAnchor;
+            Pen outlinePen = new Pen(Color.Blue, 2);
+
+            outlinePen.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
+
+             if (incompletePoly.Verts.Count > 1)
+             {
+                 for (int i = 1; i < incompletePoly.Verts.Count; i++)
+                     graphics.DrawLine(outlinePen,VertToPoint(incompletePoly.Verts[i-1]),VertToPoint(incompletePoly.Verts[i]));
+             }
+
+            if (incompletePoly.Verts.Count > 0 && hoverPos != Vector2.Zero)
+                graphics.DrawLine(rubberBandPen, VertToPoint(incompletePoly.Verts[incompletePoly.Verts.Count-1]), VertToPoint(hoverPos));
+            else if (hoverPoint != Point.Empty)
+            {
+                Point hoverLoc = VertToPoint(hoverPos);
+                graphics.DrawEllipse(rubberBandPen, hoverLoc.X - 2, hoverLoc.Y - 2, 4, 4);
+            }
+
+            foreach (Vector2 p in incompletePoly.Verts)
+            {
+                Point loc = VertToPoint(p);
+                graphics.FillRectangle(Brushes.CadetBlue, new Rectangle(loc.X - 2, loc.Y - 2, 5, 5));
+            }
+
+            outlinePen.Dispose();
+            rubberBandPen.Dispose();
+        }
+
         protected void Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.LightGray);
@@ -156,11 +194,6 @@ namespace PortalEdit
 
             Grid(e.Graphics);
             e.Graphics.Flush();
-            Pen outlinePen = new Pen(Color.Blue, 2);
-            outlinePen.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
-
-            Pen rubberBandPen = new Pen(Color.DarkBlue, 3);
-            rubberBandPen.EndCap = System.Drawing.Drawing2D.LineCap.DiamondAnchor;
 
             foreach (CellGroup group in map.cellGroups)
             {
@@ -176,28 +209,12 @@ namespace PortalEdit
             else
                 DrawSelectedCell(Editor.instance.GetSelectedCell(), e.Graphics);
 
-
             DrawSelectedVert(Editor.instance.GetSelectedVert(), e.Graphics);
 
             if (EditMode == MapEditMode.DrawMode)
-            {
-                if (points.Count > 1)
-                    e.Graphics.DrawLines(outlinePen, points.ToArray());
-
-                if (points.Count > 0 && hoverPoint != Point.Empty)
-                    e.Graphics.DrawLine(rubberBandPen, points[points.Count - 1], hoverPoint);
-                else if (hoverPoint != Point.Empty)
-                    e.Graphics.DrawEllipse(rubberBandPen, hoverPoint.X - 2, hoverPoint.Y - 2, 4, 4);
-
-                foreach (Point p in points)
-                    e.Graphics.FillRectangle(Brushes.CadetBlue, new Rectangle(p.X - 2, p.Y - 2, 5, 5));
-            }
+                DrawEditPolygon(e.Graphics);
             else
-                points.Clear();
-
-
-            outlinePen.Dispose();
-            rubberBandPen.Dispose();
+                incompletePoly.Verts.Clear();
         }
 
         protected Point[] GetCellPointList ( Cell cell )
@@ -211,7 +228,12 @@ namespace PortalEdit
 
         protected Point VertToPoint ( Vector3 vert )
         {
-            return new Point((int)(vert.X* snapRadius),(int)(vert.Y* snapRadius));
+            return new Point((int)(vert.X*Settings.settings.PixelsPerUnit),(int)(vert.Y*Settings.settings.PixelsPerUnit));
+        }
+
+        protected Point VertToPoint ( Vector2 vert )
+        {
+            return new Point((int)(vert.X*Settings.settings.PixelsPerUnit),(int)(vert.Y*Settings.settings.PixelsPerUnit));
         }
 
         protected void DrawSelectedCell ( Cell cell, Graphics graphics )
@@ -230,7 +252,6 @@ namespace PortalEdit
                 graphics.DrawEllipse(polygonPen, p.X - 6, p.Y - 6, 12, 12);
 
             polygonPen.Dispose();
-
         }
 
         protected void DrawCell ( Cell cell, CellGroup group, Graphics graphics )
@@ -295,7 +316,8 @@ namespace PortalEdit
 
         public void Zoom ( int ticks )
         {
-            float zoomPerScale = 1f / snapRadius;
+            float zoomPerScale = 1f / Settings.settings.PixelsPerUnit;
+
             scale += zoomPerScale * (ticks);
             if (scale < 1)
                 scale = 1;
@@ -305,6 +327,14 @@ namespace PortalEdit
         public void MouseWheel (object sender, MouseEventArgs e)
         {
             Zoom(e.Delta / 120);
+        }
+
+        private Vector2 ScreenToMap ( int x, int y)
+        {
+            float unscaledPixelX = (x / scale) - offset.X;
+            float mapX = unscaledPixelX / Settings.settings.PixelsPerUnit;
+
+            return new Vector2(mapX, 0);
         }
 
         private Point GetScalePoint(int x, int y)
@@ -334,20 +364,11 @@ namespace PortalEdit
 
         private void EditAddPolygon ( )
         {
-            Polygon poly = new Polygon(points);
-            points = new List<Point>();
-
             if (NewPolygon != null)
-                NewPolygon(this, poly);
+                NewPolygon(this, incompletePoly);
 
-            InvalidateAll();
-        }
+            incompletePoly.Verts.Clear();
 
-        // does not call the callback, cus we assume this is from the editor
-        public void AddPolygon ( List<Point> points, object Tag )
-        {
-            Polygon poly = new Polygon(points);
-            poly.tag = Tag;
             InvalidateAll();
         }
 
@@ -376,9 +397,10 @@ namespace PortalEdit
                 offset.Y -= (int)((e.Y - lastMouse.Y) / scale);
             }
             hoverPoint = GetSnapPoint(GetScalePoint(e.X, e.Y));
+            hoverPos = ScreenToMap(e.X, e.Y);
 
             if (MouseStatusUpdate != null)
-                MouseStatusUpdate(this, hoverPoint);
+                MouseStatusUpdate(this, hoverPos);
             lastMouse = new Point(e.X,e.Y);
             control.Invalidate(true);
         }
@@ -400,7 +422,6 @@ namespace PortalEdit
 
             foreach (CellGroup group in map.cellGroups)
             {
-
                 foreach (Cell cell in group.Cells)
                 {
                     // compute a color
@@ -425,28 +446,24 @@ namespace PortalEdit
 
     public class Polygon
     {
-        public object tag;
-
-        public Point[] verts;
+        public List<Vector2> Verts = new List<Vector2>();
         public Color color = Color.FromArgb(128, Color.OliveDrab);
         public Color outlineColor = Color.FromArgb(192, Color.Black);
 
-        public Polygon ( List<Point> points )
-        {
-            verts = points.ToArray();
-        }
-
         public float GetNormalDepth ()
         {
-            Vector3 v1 = new Vector3(verts[1].X - verts[0].X, verts[1].Y - verts[0].Y, 0);
-            Vector3 v2 = new Vector3(verts[1].X - verts[2].X, verts[1].Y - verts[2].Y, 0);
+            if (Verts.Count < 2)
+                return 0;
+
+            Vector3 v1 = new Vector3(Verts[1].X - Verts[0].X, Verts[1].Y - Verts[0].Y, 0);
+            Vector3 v2 = new Vector3(Verts[1].X - Verts[2].X, Verts[1].Y - Verts[2].Y, 0);
 
             return Vector3.Cross(v1, v2).Z;
         }
 
         public void Reverse ()
         {
-            Array.Reverse(verts);
+            Verts.Reverse();
         }
     }
 }

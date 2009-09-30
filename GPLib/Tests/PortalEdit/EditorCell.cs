@@ -72,15 +72,15 @@ namespace PortalEdit
 
             HeightIsIncremental = Editor.EditZInc;
 
-            foreach (Point p in poly.verts)
+            foreach (Vector2 p in poly.Verts)
             {
                 CellVert vert = new CellVert();
-                vert.Bottom = new Vector3(p.X * PolygonScale, p.Y * PolygonScale, Editor.EditZFloor);
+                vert.Bottom = new Vector3(p.X, p.Y, Editor.EditZFloor);
                 vert.Top = Editor.EditZRoof;
                 Verts.Add(vert);
             }
 
-            for (int i = 1; i < poly.verts.Length; i++)
+            for (int i = 1; i < poly.Verts.Count; i++)
             {
                 CellEdge edge = new CellEdge();
                 edge.Start = i - 1;
@@ -89,7 +89,7 @@ namespace PortalEdit
             }
 
             CellEdge lastEdge = new CellEdge();
-            lastEdge.Start = poly.verts.Length - 1;
+            lastEdge.Start = poly.Verts.Count - 1;
             lastEdge.End = 0;
             Edges.Add(lastEdge);
 
