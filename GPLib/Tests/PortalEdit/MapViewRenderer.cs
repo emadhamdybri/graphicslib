@@ -8,6 +8,7 @@ using OpenTK;
 using OpenTK.Graphics;
 
 using Drawables;
+using Drawables.DisplayLists;
 
 namespace PortalEdit
 {
@@ -18,11 +19,13 @@ namespace PortalEdit
 
         Vector3 offset = new Vector3(0, 0, 1);
         Vector2 rotation = new Vector2(0, 0);
-        float pullback = 50f;
+        float pullback = 5f;
 
         Point lastMouse = Point.Empty;
 
         Color SelectedVertColor = Color.FromArgb(128,Color.Magenta);
+
+        ListableEvent GridList;
 
         public MapViewRenderer(GLControl ctl, PortalMap m)
         {
@@ -37,6 +40,9 @@ namespace PortalEdit
             ctl.Resize += new EventHandler(ctl_Resize);
             ctl.MouseMove += new MouseEventHandler(ctl_MouseMove);
             ctl.MouseWheel += new MouseEventHandler(ctl_MouseWheel);
+
+            GridList = new ListableEvent();
+            GridList.Generate += new ListableEvent.GenerateEventHandler(GridList_Generate);
         }
 
         void ctl_MouseWheel(object sender, MouseEventArgs e)
@@ -115,7 +121,7 @@ namespace PortalEdit
             Glu.Perspective(45 / aspect, aspect, 1f, 1000f);
         }
 
-        protected void DrawGrid()
+        void GridList_Generate(object sender, DisplayList list)
         {
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Lighting);
@@ -126,55 +132,57 @@ namespace PortalEdit
             GL.Begin(BeginMode.Lines);
 
             GL.Color3(Color.Blue);
-            GL.Vertex3(-5, 0, 0);
-            GL.Vertex3(10, 0, 0);
+            GL.Vertex3(-1, 0, 0);
+            GL.Vertex3(2, 0, 0);
 
             GL.Color3(Color.Red);
-            GL.Vertex3(0, -5, 0);
-            GL.Vertex3(0, 10, 0);
+            GL.Vertex3(0, -1, 0);
+            GL.Vertex3(0, 2, 0);
 
             GL.Color3(Color.Green);
-            GL.Vertex3(0, 0, -5);
-            GL.Vertex3(0, 0, 20);
+            GL.Vertex3(0, 0, -1);
+            GL.Vertex3(0, 0, 4);
             GL.End();
 
             GL.Color4(Color.FromArgb(128, Color.DarkGray));
             GL.LineWidth(1);
             GL.Begin(BeginMode.Lines);
 
-            for (float i = 0; i < 100f; i += 1f)
+            float gridSize = Settings.settings.GridSize;
+
+            for (float i = 0; i < gridSize; i += Settings.settings.GridSubDivisions)
             {
-                if ((int)i % 10 == 0)
+                if (i -(int)i < Settings.settings.GridSubDivisions)
                     continue;
 
-                GL.Vertex2(100, i);
-                GL.Vertex2(-100, i);
+                GL.Vertex2(gridSize, i);
+                GL.Vertex2(-gridSize, i);
 
-                GL.Vertex2(100, -i);
-                GL.Vertex2(-100, -i);
+                GL.Vertex2(gridSize, -i);
+                GL.Vertex2(-gridSize, -i);
 
-                GL.Vertex2(i, 100);
-                GL.Vertex2(i, -100);
+                GL.Vertex2(i, gridSize);
+                GL.Vertex2(i, -gridSize);
 
-                GL.Vertex2(-i, 100);
-                GL.Vertex2(-i, -100);
+                GL.Vertex2(-i, gridSize);
+                GL.Vertex2(-i, -gridSize);
             }
 
             GL.Color4(Color.FromArgb(128, Color.Gray));
-        
-            for (float i = 0; i < 100f; i += 10f)
+
+            for (float i = 0; i < gridSize; i += 1f)
             {
-                GL.Vertex2(100, i);
-                GL.Vertex2(-100, i);
+                GL.Vertex2(gridSize, i);
+                GL.Vertex2(-gridSize, i);
 
-                GL.Vertex2(100, -i);
-                GL.Vertex2(-100, -i);
+                GL.Vertex2(gridSize, -i);
+                GL.Vertex2(-gridSize, -i);
 
-                GL.Vertex2(i, 100);
-                GL.Vertex2(i, -100);
+                GL.Vertex2(i, gridSize);
+                GL.Vertex2(i, -gridSize);
 
-                GL.Vertex2(-i, 100);
-                GL.Vertex2(-i, -100);
+                GL.Vertex2(-i, gridSize);
+                GL.Vertex2(-i, -gridSize);
             }
 
             GL.End();
@@ -259,7 +267,8 @@ namespace PortalEdit
             Vector4 lightPos = new Vector4(10, 20, 20, 0);
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
 
-            DrawGrid();           
+            if (GridList != null)
+                GridList.Call();           
             DrawMap();
             control.SwapBuffers();
         }

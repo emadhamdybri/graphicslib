@@ -251,6 +251,8 @@ namespace GUIGameWindow
 
         public virtual void OnRenderFrame(RenderFrameArgs e)
         {
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            SwapBuffers();
         }
 
         private void timer1_Tick(object sender, EventArgs e)

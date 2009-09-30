@@ -32,14 +32,11 @@ namespace PortalEdit
         Color selectedColor = Color.Red;
         Color vertSelectedColor = Color.Magenta;
 
-        Point hoverPoint = Point.Empty;
         Control control;
 
         float scale = 1;
         public Point offset = new Point(10,10);
         Point lastMouse = Point.Empty;
-
-        public int snapRadius = 10;
 
         public event NewPolygonHandler NewPolygon;
         public event CellSelectedHander CellSelected;
@@ -106,29 +103,31 @@ namespace PortalEdit
 
             Settings settings = Settings.settings;
 
+            int GridSize = (int)(settings.GridSize * settings.PixelsPerUnit);
+
             int step = (int)(settings.PixelsPerUnit*settings.GridSubDivisions);
-            for (int x = 0; x < control.Width; x += step)
+            for (int x = 0; x < GridSize; x += step)
             {
-                graphics.DrawLine(gridPen, x, -control.Height * 2, x, control.Height * 2);
-                graphics.DrawLine(gridPen, -x, -control.Height * 2, -x, control.Height * 2);
+                graphics.DrawLine(gridPen, x, -GridSize, x, GridSize);
+                graphics.DrawLine(gridPen, -x, -GridSize, -x, GridSize);
             }
-            for (int y = 0; y < control.Height; y += step)
+            for (int y = 0; y < GridSize; y += step)
             {
-                graphics.DrawLine(gridPen, -control.Width * 2, y, control.Width * 2, y);
-                graphics.DrawLine(gridPen, -control.Width * 2, -y, control.Width * 2, -y);
+                graphics.DrawLine(gridPen, -GridSize, y, GridSize, y);
+                graphics.DrawLine(gridPen, -GridSize, -y, GridSize, -y);
             }
 
             step = settings.PixelsPerUnit;
 
-            for (int x = 0; x < control.Width; x += step)
+            for (int x = 0; x < GridSize; x += step)
             {
-                graphics.DrawLine(gridPenMain, x, -control.Height * 2, x, control.Height * 2);
-                graphics.DrawLine(gridPenMain, -x, -control.Height * 2, -x, control.Height * 2);
+                graphics.DrawLine(gridPenMain, x, -GridSize, x, GridSize);
+                graphics.DrawLine(gridPenMain, -x, -GridSize, -x, GridSize);
             }
-            for (int y = 0; y < control.Height; y += step)
+            for (int y = 0; y < GridSize; y += step)
             {
-                graphics.DrawLine(gridPenMain, -control.Width * 2, y, control.Width * 2, y);
-                graphics.DrawLine(gridPenMain, -control.Width * 2, -y, control.Width * 2, -y);
+                graphics.DrawLine(gridPenMain, -GridSize, y, GridSize, y);
+                graphics.DrawLine(gridPenMain, -GridSize, -y, GridSize, -y);
             }
 
             Pen YPen = new Pen(Color.FromArgb(192,Color.Red),4);
@@ -171,7 +170,7 @@ namespace PortalEdit
 
             if (incompletePoly.Verts.Count > 0 && hoverPos != Vector2.Zero)
                 graphics.DrawLine(rubberBandPen, VertToPoint(incompletePoly.Verts[incompletePoly.Verts.Count-1]), VertToPoint(hoverPos));
-            else if (hoverPoint != Point.Empty)
+            else if (hoverPos != Vector2.Zero)
             {
                 Point hoverLoc = VertToPoint(hoverPos);
                 graphics.DrawEllipse(rubberBandPen, hoverLoc.X - 2, hoverLoc.Y - 2, 4, 4);
@@ -221,7 +220,7 @@ namespace PortalEdit
         {
             Point[] a = new Point[cell.Verts.Count];
             for ( int i = 0; i < cell.Verts.Count; i++ )
-                a[i] = new Point((int)(cell.Verts[i].Bottom.X * snapRadius), (int)(cell.Verts[i].Bottom.Y * snapRadius));
+                a[i] = new Point((int)(cell.Verts[i].Bottom.X * Settings.settings.PixelsPerUnit), (int)(cell.Verts[i].Bottom.Y * Settings.settings.PixelsPerUnit));
 
             return a;
         }
@@ -314,13 +313,19 @@ namespace PortalEdit
                 control.Parent.Invalidate(true);
         }
 
+        public void ResetZoom ( )
+        {
+            scale = 1;
+            control.Invalidate(true);
+        }
+
         public void Zoom ( int ticks )
         {
             float zoomPerScale = 1f / Settings.settings.PixelsPerUnit;
 
             scale += zoomPerScale * (ticks);
-            if (scale < 1)
-                scale = 1;
+            if (scale < zoomPerScale*25)
+                scale = zoomPerScale*25;
             control.Invalidate(true);
         }
 
@@ -331,35 +336,29 @@ namespace PortalEdit
 
         private Vector2 ScreenToMap ( int x, int y)
         {
-            float unscaledPixelX = (x / scale) - offset.X;
+            float unscaledPixelX = (x / scale) - offset.X*scale;
             float mapX = unscaledPixelX / Settings.settings.PixelsPerUnit;
+       
+            float unscaledPixelY = (y / scale) - offset.Y * scale;
+            float mapY = unscaledPixelY / Settings.settings.PixelsPerUnit;
 
-            return new Vector2(mapX, 0);
+            return new Vector2(mapX, mapY);
         }
 
-        private Point GetScalePoint(int x, int y)
+        private Vector2 SnapPoint ( Vector2 pos )
         {
-            // take it to the original pixel
-            int px = (int)(x / scale);
-            int py = (int)((control.Height-y) / scale);
+            float snapInMapSpace = (float)Settings.settings.SnapPixels / (float)Settings.settings.PixelsPerUnit;
 
-            int scaleX = (int)(offset.X*scale);
-            int scaleY = (int)(offset.Y * scale);
+            float xMod = 1;
+            if (pos.X != 0)
+                xMod = pos.X / Math.Abs(pos.X);
+            float yMod = 1;
+            if (pos.Y != 0)
+                yMod = pos.Y / Math.Abs(pos.Y);
+            int xSnap = (int)((pos.X + (xMod*snapInMapSpace / 2f)) / snapInMapSpace);
+            int ySnap = (int)((pos.Y + (yMod*snapInMapSpace / 2f)) / snapInMapSpace);
 
-            return new Point(px - scaleX, py - scaleY);
-        }
-
-        private Point GetSnapPoint(Point p)
-        {
-            int snapX = (p.X / snapRadius) * snapRadius;
-            if (p.X - snapX > snapRadius / 2)
-                snapX += snapRadius;
-
-            int snapY = (p.Y / snapRadius) * snapRadius;
-            if (p.Y - snapY > snapRadius / 2)
-                snapY += snapRadius;
-
-            return new Point(snapX, snapY);
+            return new Vector2(xSnap * snapInMapSpace, ySnap * snapInMapSpace);
         }
 
         private void EditAddPolygon ( )
@@ -377,10 +376,10 @@ namespace PortalEdit
             if (EditMode == MapEditMode.DrawMode)
             {
                 if (e.Button == MouseButtons.Left)
-                    points.Add(GetSnapPoint(GetScalePoint(e.X, e.Y)));
+                    incompletePoly.Verts.Add(SnapPoint(ScreenToMap(e.X, control.Height - e.Y)));
                 else
                 {
-                    if (points.Count > 2)
+                    if (incompletePoly.Verts.Count > 2)
                         EditAddPolygon();
                 }
                 control.Invalidate(true);
@@ -396,8 +395,7 @@ namespace PortalEdit
                 offset.X += (int)((e.X - lastMouse.X)/scale);
                 offset.Y -= (int)((e.Y - lastMouse.Y) / scale);
             }
-            hoverPoint = GetSnapPoint(GetScalePoint(e.X, e.Y));
-            hoverPos = ScreenToMap(e.X, e.Y);
+            hoverPos = SnapPoint(ScreenToMap(e.X, control.Height - e.Y));
 
             if (MouseStatusUpdate != null)
                 MouseStatusUpdate(this, hoverPos);
