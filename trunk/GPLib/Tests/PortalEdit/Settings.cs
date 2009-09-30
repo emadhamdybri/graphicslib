@@ -20,11 +20,18 @@ namespace PortalEdit
             InitializeComponent();
 
             MapZoomPerClick.Value = settings.MapZoomTicksPerClick;
+            PixelsPerUnit.Value = settings.PixelsPerUnit;
+            GridSubUnits.Value = (decimal)settings.GridSubDivisions;
+            SnapPixels.Value = settings.SnapPixels;
         }
 
         private void OK_Click(object sender, EventArgs e)
         {
             settings.MapZoomTicksPerClick = (int)MapZoomPerClick.Value;
+            settings.PixelsPerUnit = (int)PixelsPerUnit.Value;
+            settings.GridSubDivisions = (float)GridSubUnits.Value;
+            settings.SnapPixels = (int)SnapPixels.Value;
+
             settings.Write();
         }
     }
@@ -40,6 +47,9 @@ namespace PortalEdit
         public bool DrawCellEdges = true;
         public bool DrawPortals = true;
         public int MapZoomTicksPerClick = 1;
+        public float GridSubDivisions = 0.1f;
+        public int PixelsPerUnit = 100;
+        public int SnapPixels = 10;
 
         public static Settings Read(FileInfo file)
         {

@@ -95,10 +95,9 @@ namespace PortalEdit
             base.OnResize(e);
         }
 
-        public void mapRenderer_MouseStatusUpdate(object sender, System.Drawing.Point position)
+        public void mapRenderer_MouseStatusUpdate(object sender, Vector2 position)
         {
-            Vector2 vec = new Vector2((float)position.X * EditorCell.PolygonScale, (float)position.Y * EditorCell.PolygonScale);
-            MousePositionStatus.Text = "Map:" + vec.ToString();
+            MousePositionStatus.Text = "Map:" + position.ToString() + "Offset: " + Editor.instance.mapRenderer.offset.ToString();
         }
 
         protected override void OnLoad(EventArgs e)
