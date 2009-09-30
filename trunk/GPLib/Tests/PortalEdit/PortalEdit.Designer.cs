@@ -43,6 +43,7 @@
             this.SelectButton = new System.Windows.Forms.Button();
             this.DrawButton = new System.Windows.Forms.Button();
             this.MapZoomPanel = new System.Windows.Forms.Panel();
+            this.ResetZoom = new System.Windows.Forms.Button();
             this.MapZoomOut = new System.Windows.Forms.Button();
             this.MapZoomIn = new System.Windows.Forms.Button();
             this.MapView = new System.Windows.Forms.PictureBox();
@@ -78,7 +79,6 @@
             this.ZMax = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CellListPanel = new System.Windows.Forms.Panel();
             this.RightSideOuterPanel = new System.Windows.Forms.Panel();
-            this.ResetZoom = new System.Windows.Forms.Button();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -249,6 +249,16 @@
             this.MapZoomPanel.Size = new System.Drawing.Size(100, 25);
             this.MapZoomPanel.TabIndex = 4;
             // 
+            // ResetZoom
+            // 
+            this.ResetZoom.Location = new System.Drawing.Point(60, 0);
+            this.ResetZoom.Name = "ResetZoom";
+            this.ResetZoom.Size = new System.Drawing.Size(37, 23);
+            this.ResetZoom.TabIndex = 2;
+            this.ResetZoom.Text = "1:1";
+            this.ResetZoom.UseVisualStyleBackColor = true;
+            this.ResetZoom.Click += new System.EventHandler(this.ResetZoom_Click);
+            // 
             // MapZoomOut
             // 
             this.MapZoomOut.Image = global::PortalEdit.Properties.Resources.zoom_out;
@@ -337,7 +347,7 @@
             this.CellFillMode.Name = "CellFillMode";
             this.CellFillMode.Size = new System.Drawing.Size(25, 23);
             this.CellFillMode.TabIndex = 3;
-            this.CellFillMode.Tag = "Fill Mode";
+            this.CellFillMode.Tag = ViewEditMode.Paint;
             this.CellFillMode.UseVisualStyleBackColor = true;
             // 
             // CellSelectButton
@@ -348,7 +358,7 @@
             this.CellSelectButton.Name = "CellSelectButton";
             this.CellSelectButton.Size = new System.Drawing.Size(25, 23);
             this.CellSelectButton.TabIndex = 2;
-            this.CellSelectButton.Tag = PortalEdit.MapEditMode.SelectMode;
+            this.CellSelectButton.Tag = ViewEditMode.Select;
             this.CellSelectButton.UseVisualStyleBackColor = true;
             // 
             // GLView
@@ -382,27 +392,27 @@
             this.saveToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -413,32 +423,32 @@
             this.toolStripSeparator1,
             this.settingsToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
             // 
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.undoToolStripMenuItem.Text = "Undo";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(121, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(113, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
             // 
             // statusStrip1
@@ -454,7 +464,7 @@
             // MousePositionStatus
             // 
             this.MousePositionStatus.Name = "MousePositionStatus";
-            this.MousePositionStatus.Size = new System.Drawing.Size(42, 17);
+            this.MousePositionStatus.Size = new System.Drawing.Size(46, 17);
             this.MousePositionStatus.Text = "Mouse:";
             // 
             // DeleteCell
@@ -603,16 +613,6 @@
             this.RightSideOuterPanel.Name = "RightSideOuterPanel";
             this.RightSideOuterPanel.Size = new System.Drawing.Size(206, 456);
             this.RightSideOuterPanel.TabIndex = 11;
-            // 
-            // ResetZoom
-            // 
-            this.ResetZoom.Location = new System.Drawing.Point(60, 0);
-            this.ResetZoom.Name = "ResetZoom";
-            this.ResetZoom.Size = new System.Drawing.Size(37, 23);
-            this.ResetZoom.TabIndex = 2;
-            this.ResetZoom.Text = "1:1";
-            this.ResetZoom.UseVisualStyleBackColor = true;
-            this.ResetZoom.Click += new System.EventHandler(this.ResetZoom_Click);
             // 
             // EditFrame
             // 

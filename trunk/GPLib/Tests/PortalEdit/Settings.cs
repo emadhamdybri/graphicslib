@@ -22,7 +22,7 @@ namespace PortalEdit
             MapZoomPerClick.Value = settings.MapZoomTicksPerClick;
             PixelsPerUnit.Value = settings.PixelsPerUnit;
             GridSubUnits.Value = (decimal)settings.GridSubDivisions;
-            SnapPixels.Value = settings.SnapPixels;
+            SnapValue.Value = (decimal)settings.SnapValue;
             GridSize.Value = (decimal)settings.GridSize;
         }
 
@@ -31,7 +31,7 @@ namespace PortalEdit
             settings.MapZoomTicksPerClick = (int)MapZoomPerClick.Value;
             settings.PixelsPerUnit = (int)PixelsPerUnit.Value;
             settings.GridSubDivisions = (float)GridSubUnits.Value;
-            settings.SnapPixels = (int)SnapPixels.Value;
+            settings.SnapValue = (float)SnapValue.Value;
             settings.GridSize = (float)GridSize.Value;
 
             settings.Write();
@@ -51,7 +51,7 @@ namespace PortalEdit
         public int MapZoomTicksPerClick = 1;
         public float GridSubDivisions = 0.1f;
         public int PixelsPerUnit = 100;
-        public int SnapPixels = 10;
+        public float SnapValue = 0.1f;
         public float GridSize = 100f;
 
         public static Settings Read(FileInfo file)

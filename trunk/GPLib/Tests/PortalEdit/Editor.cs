@@ -11,6 +11,13 @@ using Drawables;
 
 namespace PortalEdit
 {
+
+    public enum ViewEditMode
+    {
+        Select,
+        Paint,
+    }
+
     class Editor
     {
         public PortalMap map;
@@ -24,6 +31,8 @@ namespace PortalEdit
         public static float EditZRoof = 2;
         public static bool EditZInc = true;
 
+        public ViewEditMode viewEditMode = ViewEditMode.Select;
+
         public Editor(EditFrame _frame, Control mapctl, GLControl view)
         {
             frame = _frame;
@@ -36,7 +45,17 @@ namespace PortalEdit
             mapRenderer.MouseStatusUpdate += new MouseStatusUpdateHandler(frame.mapRenderer_MouseStatusUpdate);
             mapRenderer.CellSelected += new CellSelectedHander(mapRenderer_CellSelected);
 
+            viewRenderer.CellClicked += new MapViewRenderer.CellClickedEventHandler(viewRenderer_CellClicked);
+
             NewGroup(false);
+        }
+
+        void viewRenderer_CellClicked(object sender, MapViewRenderer.CellClickedEventArgs e)
+        {
+            if (viewEditMode == ViewEditMode.Select)
+            {
+                SelectObject(e.cell);
+            }
         }
 
         TreeNode FindSelectedNode ( object tag, TreeNode node )
@@ -71,6 +90,7 @@ namespace PortalEdit
             }
 
             frame.MapTree.SelectedNode = selectedNode;
+            frame.Invalidate(true);
         }
 
         public void NewGroup ()

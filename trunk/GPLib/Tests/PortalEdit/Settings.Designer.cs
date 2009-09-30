@@ -38,7 +38,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.GridSize = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
-            this.SnapPixels = new System.Windows.Forms.NumericUpDown();
+            this.SnapValue = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.GridSubUnits = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
@@ -47,7 +47,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.MapZoomPerClick)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridSize)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.SnapPixels)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SnapValue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GridSubUnits)).BeginInit();
             this.SuspendLayout();
             // 
@@ -153,7 +153,7 @@
             // 
             this.groupBox2.Controls.Add(this.GridSize);
             this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.SnapPixels);
+            this.groupBox2.Controls.Add(this.SnapValue);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.GridSubUnits);
             this.groupBox2.Controls.Add(this.label3);
@@ -195,18 +195,29 @@
             this.label5.TabIndex = 8;
             this.label5.Text = "Grid Size";
             // 
-            // SnapPixels
+            // SnapValue
             // 
-            this.SnapPixels.Location = new System.Drawing.Point(91, 66);
-            this.SnapPixels.Minimum = new decimal(new int[] {
-            1,
+            this.SnapValue.DecimalPlaces = 2;
+            this.SnapValue.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.SnapValue.Location = new System.Drawing.Point(91, 66);
+            this.SnapValue.Maximum = new decimal(new int[] {
+            10,
             0,
             0,
             0});
-            this.SnapPixels.Name = "SnapPixels";
-            this.SnapPixels.Size = new System.Drawing.Size(46, 20);
-            this.SnapPixels.TabIndex = 7;
-            this.SnapPixels.Value = new decimal(new int[] {
+            this.SnapValue.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.SnapValue.Name = "SnapValue";
+            this.SnapValue.Size = new System.Drawing.Size(46, 20);
+            this.SnapValue.TabIndex = 7;
+            this.SnapValue.Value = new decimal(new int[] {
             1,
             0,
             0,
@@ -217,12 +228,13 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(6, 68);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(62, 13);
+            this.label4.Size = new System.Drawing.Size(32, 13);
             this.label4.TabIndex = 6;
-            this.label4.Text = "Snap Pixels";
+            this.label4.Text = "Snap";
             // 
             // GridSubUnits
             // 
+            this.GridSubUnits.DecimalPlaces = 2;
             this.GridSubUnits.Increment = new decimal(new int[] {
             1,
             0,
@@ -280,7 +292,7 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridSize)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.SnapPixels)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SnapValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GridSubUnits)).EndInit();
             this.ResumeLayout(false);
 
@@ -298,7 +310,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.NumericUpDown GridSubUnits;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.NumericUpDown SnapPixels;
+        private System.Windows.Forms.NumericUpDown SnapValue;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown GridSize;
         private System.Windows.Forms.Label label5;

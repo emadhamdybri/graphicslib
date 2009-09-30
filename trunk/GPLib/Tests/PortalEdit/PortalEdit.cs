@@ -24,9 +24,21 @@ namespace PortalEdit
 
             MapRadioPanel.TagsAreValues = true;
             MapRadioPanel.SelectionChanged += new FormControls.ImageRadioPanel.SelectionChangedEvent(MapRadioPanel_SelectionChanged);
+
+            ViewRadioPanel.TagsAreValues = true;
+            ViewRadioPanel.SelectionChanged += new ImageRadioPanel.SelectionChangedEvent(ViewRadioPanel_SelectionChanged);
+
             Undo.System.UndoStateChanged += new UndoStateChangeEvent(System_UndoStateChanged);
             undoToolStripMenuItem.Enabled = Undo.System.UndoAvail();
             LoadSettings();
+        }
+
+        void ViewRadioPanel_SelectionChanged(object sender, ImageRadioPanel.SelectionChangedEventArgs e)
+        {
+            if (editor == null)
+                return;
+            editor.viewEditMode = (ViewEditMode)e.value;
+            Invalidate(true);
         }
 
         void System_UndoStateChanged(object sender, bool available)
@@ -65,6 +77,7 @@ namespace PortalEdit
         protected void SetupSettings ()
         {
             MapRadioPanel.SelectedItem = DrawButton;
+            ViewRadioPanel.SelectedItem = CellSelectButton;
 
             ViewCheckPanel.CheckButton(ShowCellEdges, Settings.settings.DrawCellEdges);
             ViewCheckPanel.CheckButton(ShowPortals, Settings.settings.DrawPortals);
