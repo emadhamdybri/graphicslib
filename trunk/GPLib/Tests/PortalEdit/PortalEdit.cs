@@ -243,6 +243,12 @@ namespace PortalEdit
             editor.mapRenderer.Zoom(-Settings.settings.MapZoomTicksPerClick);
         }
 
+        private void ResetZoom_Click(object sender, EventArgs e)
+        {
+            if (editor != null)
+                editor.mapRenderer.ResetZoom();
+        }
+
         private void MapTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             PopulateCellInfoList();

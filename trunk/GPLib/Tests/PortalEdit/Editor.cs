@@ -21,7 +21,7 @@ namespace PortalEdit
         public static Editor instance;
 
         public static float EditZFloor = 0;
-        public static float EditZRoof = 10;
+        public static float EditZRoof = 2;
         public static bool EditZInc = true;
 
         public Editor(EditFrame _frame, Control mapctl, GLControl view)

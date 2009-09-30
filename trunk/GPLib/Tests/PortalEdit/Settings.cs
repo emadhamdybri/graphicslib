@@ -23,6 +23,7 @@ namespace PortalEdit
             PixelsPerUnit.Value = settings.PixelsPerUnit;
             GridSubUnits.Value = (decimal)settings.GridSubDivisions;
             SnapPixels.Value = settings.SnapPixels;
+            GridSize.Value = (decimal)settings.GridSize;
         }
 
         private void OK_Click(object sender, EventArgs e)
@@ -31,6 +32,7 @@ namespace PortalEdit
             settings.PixelsPerUnit = (int)PixelsPerUnit.Value;
             settings.GridSubDivisions = (float)GridSubUnits.Value;
             settings.SnapPixels = (int)SnapPixels.Value;
+            settings.GridSize = (float)GridSize.Value;
 
             settings.Write();
         }
@@ -50,6 +52,7 @@ namespace PortalEdit
         public float GridSubDivisions = 0.1f;
         public int PixelsPerUnit = 100;
         public int SnapPixels = 10;
+        public float GridSize = 100f;
 
         public static Settings Read(FileInfo file)
         {
@@ -75,6 +78,7 @@ namespace PortalEdit
         {
             XmlSerializer XML = new XmlSerializer(typeof(Settings));
 
+            fileLoc.Delete();
             FileStream stream = fileLoc.OpenWrite();
             XML.Serialize(stream, this);
             stream.Close();
