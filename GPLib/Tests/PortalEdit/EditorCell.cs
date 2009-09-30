@@ -35,6 +35,9 @@ namespace PortalEdit
 
         static Color selectionColor = Color.Red;
 
+        static float outlineLineWidth = 2;
+        static float selectedLineWidht = 3;
+
         public EditorCell(): base()
         {
         }
@@ -176,7 +179,7 @@ namespace PortalEdit
             return Verts[index].GetTopZ(HeightIsIncremental);
         }
 
-        void generateWall(CellEdge edge )
+        public void generateWall(CellEdge edge )
         {
             GL.Color4(wallColor);
 
@@ -192,7 +195,7 @@ namespace PortalEdit
             GL.Color4(wallEdgeColor);
 
             GL.Disable(EnableCap.Lighting);
-            GL.LineWidth(3);
+            GL.LineWidth(outlineLineWidth);
 
             if (Settings.settings.DrawCellEdges)
             {
@@ -210,8 +213,19 @@ namespace PortalEdit
             GL.Enable(EnableCap.Lighting);
         }
 
-        void generatePortalBottomGap ( CellVert sp, CellVert ep, float topSP, float topEP, Vector2 normal )
+        public void generatePortalBottomGap ( CellEdge edge )
         {
+            Cell dest = edge.Destination.Cell;
+            CellVert sp = Verts[edge.Start];
+            CellVert ep = Verts[edge.End];
+
+            CellVert spMatch = dest.MatchingVert(sp.Bottom);
+            CellVert epMatch = dest.MatchingVert(ep.Bottom);
+
+            float topSP = spMatch.Bottom.Z;
+            float topEP = epMatch.Bottom.Z;
+            Vector2 normal = edge.Normal; 
+            
             GL.Color4(wallColor);
 
             GL.Begin(BeginMode.Quads);
@@ -226,7 +240,7 @@ namespace PortalEdit
             GL.Color4(wallEdgeColor);
 
             GL.Disable(EnableCap.Lighting);
-            GL.LineWidth(3);
+            GL.LineWidth(outlineLineWidth);
 
             if (Settings.settings.DrawCellEdges)
             {
@@ -244,8 +258,19 @@ namespace PortalEdit
             GL.Enable(EnableCap.Lighting);
         }
 
-        void generatePortalTopGap(CellVert sp, CellVert ep, float bottomSP, float bottomEP, Vector2 normal)
+        public void generatePortalTopGap(CellEdge edge)
         {
+            Cell dest = edge.Destination.Cell;
+            CellVert sp = Verts[edge.Start];
+            CellVert ep = Verts[edge.End];
+
+            CellVert spMatch = dest.MatchingVert(sp.Bottom);
+            CellVert epMatch = dest.MatchingVert(ep.Bottom);
+
+            float bottomSP = spMatch.GetTopZ(dest.HeightIsIncremental);
+            float bottomEP = epMatch.GetTopZ(dest.HeightIsIncremental);
+            Vector2 normal = edge.Normal;
+
             GL.Color4(wallColor);
 
             GL.Begin(BeginMode.Quads);
@@ -260,7 +285,7 @@ namespace PortalEdit
             GL.Color4(wallEdgeColor);
 
             GL.Disable(EnableCap.Lighting);
-            GL.LineWidth(3);
+            GL.LineWidth(outlineLineWidth);
 
             if (Settings.settings.DrawCellEdges)
             {
@@ -277,9 +302,23 @@ namespace PortalEdit
             GL.Enable(EnableCap.Lighting);
         }
 
-        void generatePortalEdges (CellEdge edge)
+        public bool PortalHasTopFace (CellEdge edge)
         {
-            // check the lower bounds
+            Cell dest = edge.Destination.Cell;
+
+            CellVert sp = Verts[edge.Start];
+            CellVert ep = Verts[edge.End];
+
+            CellVert spMatch = dest.MatchingVert(sp.Bottom);
+            CellVert epMatch = dest.MatchingVert(ep.Bottom);
+
+            if (sp.GetTopZ(HeightIsIncremental) > spMatch.GetTopZ(dest.HeightIsIncremental) || ep.GetTopZ(HeightIsIncremental) > epMatch.GetTopZ(dest.HeightIsIncremental))
+                return true;
+            return false;
+        }
+
+        public bool PortalHasBottomFace(CellEdge edge)
+        {
             Cell dest = edge.Destination.Cell;
 
             CellVert sp = Verts[edge.Start];
@@ -289,10 +328,17 @@ namespace PortalEdit
             CellVert epMatch = dest.MatchingVert(ep.Bottom);
 
             if (sp.Bottom.Z < spMatch.Bottom.Z || ep.Bottom.Z < epMatch.Bottom.Z)
-                generatePortalBottomGap(sp, ep, spMatch.Bottom.Z, epMatch.Bottom.Z,edge.Normal);
+                return true;
+            return false;
+        }
 
-            if (sp.GetTopZ(HeightIsIncremental) > spMatch.GetTopZ(dest.HeightIsIncremental) || ep.GetTopZ(HeightIsIncremental) > epMatch.GetTopZ(dest.HeightIsIncremental))
-                generatePortalTopGap(sp, ep, spMatch.GetTopZ(dest.HeightIsIncremental), epMatch.GetTopZ(dest.HeightIsIncremental), edge.Normal);
+        void generatePortalEdges (CellEdge edge)
+        {
+            if (PortalHasBottomFace(edge))
+                generatePortalBottomGap(edge);
+
+            if (PortalHasTopFace(edge))
+                generatePortalTopGap(edge);
         }
 
         void generatePortal(CellEdge edge)
@@ -324,7 +370,7 @@ namespace PortalEdit
             GL.Color4(portalEdgeColor);
 
             GL.Disable(EnableCap.Lighting);
-            GL.LineWidth(3);
+            GL.LineWidth(outlineLineWidth);
 
             GL.Begin(BeginMode.LineLoop);
 
@@ -353,7 +399,7 @@ namespace PortalEdit
                 generatePortal(edge);           
         }
 
-        void floorList_Generate(object sender, DisplayList list)
+        public void floorList_Generate(object sender, DisplayList list)
         {
             // draw the bottom
             GL.Color4(cellColor);
@@ -368,7 +414,7 @@ namespace PortalEdit
 
             if (Settings.settings.DrawCellEdges)
             {
-                GL.LineWidth(3);
+                GL.LineWidth(outlineLineWidth);
                 GL.Color4(cellEdgeColor);
                 GL.Begin(BeginMode.LineLoop);
                 foreach (CellEdge edge in Edges)
@@ -380,7 +426,7 @@ namespace PortalEdit
             GL.Enable(EnableCap.Lighting);
         }
 
-        void roofList_Generate(object sender, DisplayList list)
+        public void roofList_Generate(object sender, DisplayList list)
         {
             // draw the bottom
             GL.Color4(cellColor);
@@ -403,7 +449,7 @@ namespace PortalEdit
             GL.DepthFunc(DepthFunction.Always);
             GL.Disable(EnableCap.Lighting);
             GL.Color3(selectionColor);
-            GL.LineWidth(5);
+            GL.LineWidth(selectedLineWidht);
 
             GL.Begin(BeginMode.LineLoop);
             foreach (CellVert vert in Verts)

@@ -347,7 +347,7 @@ namespace PortalEdit
 
         private Vector2 SnapPoint ( Vector2 pos )
         {
-            float snapInMapSpace = (float)Settings.settings.SnapPixels / (float)Settings.settings.PixelsPerUnit;
+            float snapInMapSpace = Settings.settings.SnapValue;
 
             float xMod = 1;
             if (pos.X != 0)
