@@ -13,6 +13,38 @@ using Drawables;
 
 namespace PortalEdit
 {
+    public class WallGeometry : IDisposable
+    {
+        SingleListDrawableItem item;
+
+        Cell cell;
+        CellEdge edge;
+
+        float[] upperZ = new float[2];
+        float[] lowerZ = new float[2];
+        
+        public WallGeometry ( Cell c, CellEdge e, float uSP, float uEP, float lSP, float lEP)
+        {
+            cell = c;
+            edge = e;
+            upperZ[0] = uSP;
+            upperZ[1] = uEP;
+            lowerZ[0] = lSP;
+            lowerZ[1] = lEP;
+
+            item = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(Generate));
+        }
+
+        public void Generate ( object sender, DisplayList list)
+        {
+        }
+
+        public void Dispose ()
+        {
+            item.Dispose();
+        }
+    }
+
     public class EditorCell : Cell
     {
         SingleListDrawableItem floorList;
@@ -110,10 +142,7 @@ namespace PortalEdit
             foreach (CellEdge edge in Edges)
             {
                 edge.EdgeType = CellEdgeType.Wall;
-                edge.Destination.Cell = null;
-                edge.Destination.CellName = string.Empty;
-                edge.Destination.Group = null;
-                edge.Destination.GroupName = string.Empty;
+                edge.Destinations.Clear();
 
                 edge.Normal = new Vector2(Verts[edge.Start].Bottom.Y - Verts[edge.End].Bottom.Y, -1f * (Verts[edge.Start].Bottom.X - Verts[edge.End].Bottom.X));
                 edge.Normal.Normalize();
@@ -129,10 +158,12 @@ namespace PortalEdit
                         if (cell != this)
                         {
                             edge.EdgeType = CellEdgeType.Portal;
-                            edge.Destination.Cell = cell;
-                            edge.Destination.Group = cell.Group;
-                            edge.Destination.CellName = cell.Name;
-                            edge.Destination.GroupName = cell.GroupName;
+                            PortalDestination dest = new PortalDestination();
+                            dest.Cell = cell;
+                            dest.Group = cell.Group;
+                            dest.CellName = cell.Name;
+                            dest.GroupName = cell.GroupName;
+                            edge.Destinations.Add(dest);
                             hasPortal = true;
                             break;
                         }
@@ -215,7 +246,7 @@ namespace PortalEdit
 
         public void generatePortalBottomGap ( CellEdge edge )
         {
-            Cell dest = edge.Destination.Cell;
+            Cell dest = edge.Destinations[0].Cell;
             CellVert sp = Verts[edge.Start];
             CellVert ep = Verts[edge.End];
 
@@ -260,7 +291,7 @@ namespace PortalEdit
 
         public void generatePortalTopGap(CellEdge edge)
         {
-            Cell dest = edge.Destination.Cell;
+            Cell dest = edge.Destinations[0].Cell;
             CellVert sp = Verts[edge.Start];
             CellVert ep = Verts[edge.End];
 
@@ -304,7 +335,7 @@ namespace PortalEdit
 
         public bool PortalHasTopFace (CellEdge edge)
         {
-            Cell dest = edge.Destination.Cell;
+            Cell dest = edge.Destinations[0].Cell;
 
             CellVert sp = Verts[edge.Start];
             CellVert ep = Verts[edge.End];
@@ -319,7 +350,7 @@ namespace PortalEdit
 
         public bool PortalHasBottomFace(CellEdge edge)
         {
-            Cell dest = edge.Destination.Cell;
+            Cell dest = edge.Destinations[0].Cell;
 
             CellVert sp = Verts[edge.Start];
             CellVert ep = Verts[edge.End];
@@ -348,7 +379,7 @@ namespace PortalEdit
             if (!Settings.settings.DrawPortals && edge.EdgeType == CellEdgeType.Portal)
                 return;
 
-            if (edge.EdgeType == CellEdgeType.Portal && edge.Destination.Group == Group)
+            if (edge.EdgeType == CellEdgeType.Portal && edge.Destinations[0].Group == Group)
                 return;
 
             GL.Color4(portalColor);

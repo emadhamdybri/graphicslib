@@ -107,11 +107,14 @@ namespace PortalEdit
                     {
                         if (edge.EdgeType == CellEdgeType.Portal)
                         {
-                            edge.Destination.Group = FindGroup(edge.Destination.GroupName);
-                            if (edge.Destination.Group != null)
-                                edge.Destination.Cell = edge.Destination.Group.FindCell(edge.Destination.CellName);
-                            else
-                                edge.Destination.Cell = null;
+                            foreach(PortalDestination dest in edge.Destinations)
+                            {
+                                dest.Group = FindGroup(dest.GroupName);
+                                if (dest.Group != null)
+                                    dest.Cell = dest.Group.FindCell(dest.CellName);
+                                else
+                                    dest.Cell = null;
+                            }
                         }
                     }
                 }

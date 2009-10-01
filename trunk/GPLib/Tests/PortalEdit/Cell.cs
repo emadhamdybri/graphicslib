@@ -58,12 +58,25 @@ namespace PortalEdit
         }
     }
 
+    public class CellWallGeometry
+    {
+        public float[] LowerZ = new float[2];
+        public float[] UpperZ = new float[2];
+
+        public String Material = String.Empty;
+
+        public Vector2 UVScale = Vector2.One;
+        public Vector2 UVShift = Vector2.Zero;
+    }
+
     public class CellEdge
     {
         public int Start, End;
         public CellEdgeType EdgeType = CellEdgeType.Wall;
 
-        public PortalDestination Destination = new PortalDestination();
+        public List<PortalDestination> Destinations = new List<PortalDestination>();
+
+        public List<CellWallGeometry> Geometry = new List<CellWallGeometry>();
 
         public Vector2 Normal = new Vector2();
 
@@ -78,7 +91,8 @@ namespace PortalEdit
             Start = e.Start;
             End = e.End;
             EdgeType = e.EdgeType;
-            Destination = new PortalDestination(e.Destination);
+            foreach(PortalDestination dest in e.Destinations)
+                Destinations.Add(new PortalDestination(dest));
             Normal = new Vector2(e.Normal);
         }
     }

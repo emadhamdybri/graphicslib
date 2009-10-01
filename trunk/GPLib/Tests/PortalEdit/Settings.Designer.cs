@@ -42,6 +42,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.GridSubUnits = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
+            this.MinimalSelection = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PixelsPerUnit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapZoomPerClick)).BeginInit();
@@ -82,7 +83,7 @@
             this.groupBox1.Controls.Add(this.MapZoomPerClick);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(147, 103);
+            this.groupBox1.Size = new System.Drawing.Size(147, 71);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Map View";
@@ -269,6 +270,16 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "Grid Sub Units";
             // 
+            // MinimalSelection
+            // 
+            this.MinimalSelection.AutoSize = true;
+            this.MinimalSelection.Location = new System.Drawing.Point(15, 89);
+            this.MinimalSelection.Name = "MinimalSelection";
+            this.MinimalSelection.Size = new System.Drawing.Size(138, 17);
+            this.MinimalSelection.TabIndex = 4;
+            this.MinimalSelection.Text = "Show Minimal Selection";
+            this.MinimalSelection.UseVisualStyleBackColor = true;
+            // 
             // SettingsDialog
             // 
             this.AcceptButton = this.OK;
@@ -276,6 +287,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.Cancel;
             this.ClientSize = new System.Drawing.Size(323, 162);
+            this.Controls.Add(this.MinimalSelection);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.Cancel);
@@ -295,6 +307,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.SnapValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GridSubUnits)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -314,5 +327,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown GridSize;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox MinimalSelection;
     }
 }
