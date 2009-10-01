@@ -24,6 +24,7 @@ namespace PortalEdit
             GridSubUnits.Value = (decimal)settings.GridSubDivisions;
             SnapValue.Value = (decimal)settings.SnapValue;
             GridSize.Value = (decimal)settings.GridSize;
+            MinimalSelection.Checked = settings.ShowLowestSelection;
         }
 
         private void OK_Click(object sender, EventArgs e)
@@ -33,6 +34,7 @@ namespace PortalEdit
             settings.GridSubDivisions = (float)GridSubUnits.Value;
             settings.SnapValue = (float)SnapValue.Value;
             settings.GridSize = (float)GridSize.Value;
+            settings.ShowLowestSelection = MinimalSelection.Checked;
 
             settings.Write();
         }
@@ -53,6 +55,7 @@ namespace PortalEdit
         public int PixelsPerUnit = 100;
         public float SnapValue = 0.1f;
         public float GridSize = 100f;
+        public bool ShowLowestSelection = true;
 
         public static Settings Read(FileInfo file)
         {

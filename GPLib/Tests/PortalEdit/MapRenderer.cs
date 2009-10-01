@@ -199,14 +199,33 @@ namespace PortalEdit
                 foreach (Cell cell in group.Cells)
                     DrawCell(cell, group, e.Graphics);
             }
-            CellGroup selectedGroup = Editor.instance.GetSelectedGroup();
-            if (selectedGroup != null)
+
+            if (Settings.settings.ShowLowestSelection)
             {
-                foreach (Cell cell in selectedGroup.Cells)
-                    DrawSelectedCell(cell, e.Graphics);
+                Cell selectedCell = Editor.instance.GetSelectedCell();
+                if (selectedCell != null)
+                    DrawSelectedCell(selectedCell, e.Graphics);
+                else
+                {
+                    CellGroup selectedGroup = Editor.instance.GetSelectedGroup();
+                    if (selectedGroup != null)
+                    {
+                        foreach (Cell cell in selectedGroup.Cells)
+                            DrawSelectedCell(cell, e.Graphics);
+                    }
+                }
             }
             else
-                DrawSelectedCell(Editor.instance.GetSelectedCell(), e.Graphics);
+            {
+                CellGroup selectedGroup = Editor.instance.GetSelectedGroup();
+                if (selectedGroup != null)
+                {
+                    foreach (Cell cell in selectedGroup.Cells)
+                        DrawSelectedCell(cell, e.Graphics);
+                }
+                else
+                    DrawSelectedCell(Editor.instance.GetSelectedCell(), e.Graphics);
+            }
 
             DrawSelectedVert(Editor.instance.GetSelectedVert(), e.Graphics);
 
@@ -269,10 +288,15 @@ namespace PortalEdit
                 Pen pen = polygonPen;
                 if (edge.EdgeType == CellEdgeType.Portal)
                 {
-                    if (edge.Destination.Group == group)
-                        pen = internalPortalPen;
-                    else
+                    bool externalPortal = false;
+
+                    foreach (PortalDestination dest in edge.Destinations)
+                        if (dest.Group == group)
+                            externalPortal = true;
+                    if (externalPortal)
                         pen = externalPortalPen;
+                    else
+                        pen = internalPortalPen;
                 }
 
                 graphics.DrawLine(pen, VertToPoint(cell.Verts[edge.Start].Bottom), VertToPoint(cell.Verts[edge.End].Bottom));
