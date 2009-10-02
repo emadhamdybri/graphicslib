@@ -177,7 +177,7 @@ namespace PortalEdit
         void ctl_MouseMove(object sender, MouseEventArgs e)
         {
             float rotSpeed = 0.1f;
-            float moveSpeed = 0.05f;
+            float moveSpeed = 0.002f;
 
             if (e.Button == MouseButtons.Right)
             {
@@ -187,8 +187,26 @@ namespace PortalEdit
 
             if (e.Button == MouseButtons.Middle)
             {
-                offset.X -= (e.X - lastMouse.X) * moveSpeed;
-                offset.Y += (e.Y - lastMouse.Y) * moveSpeed;
+                float deg2Rad = (float)Math.PI/180.0f;
+                float x = 0;
+                float y = 0;
+
+                float XDelta = (e.X - lastMouse.X) * moveSpeed * pullback;
+                float YDelta = (e.Y - lastMouse.Y) * moveSpeed * pullback;
+
+                x = (float)Math.Cos(rotation.X * deg2Rad) * XDelta;
+                y = -(float)Math.Sin(rotation.X * deg2Rad) * XDelta;
+
+                offset.X -= x;
+                offset.Y += y;
+
+
+                x = -(float)Math.Cos((rotation.X+90) * deg2Rad) * YDelta;
+                y = (float)Math.Sin((rotation.X + 90) * deg2Rad) * YDelta;
+
+                offset.X -= x;
+                offset.Y += y;
+
             }
             Render3dView();
 

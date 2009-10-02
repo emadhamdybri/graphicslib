@@ -60,21 +60,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cell.cs" />
-    <Compile Include="Editor.cs" />
-    <Compile Include="EditorCell.cs" />
-    <Compile Include="MapRenderer.cs" />
-    <Compile Include="MapViewRenderer.cs" />
-    <Compile Include="PortalEdit.cs">
+    <Compile Include="Map\Cell.cs" />
+    <Compile Include="Editor\Editor.cs" />
+    <Compile Include="Editor\EditorCell.cs" />
+    <Compile Include="Views\MapRenderer.cs" />
+    <Compile Include="Views\MapViewRenderer.cs" />
+    <Compile Include="Editor\PortalEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PortalEdit.Designer.cs">
+    <Compile Include="Editor\PortalEdit.Designer.cs">
       <DependentUpon>PortalEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="PortalMap.cs" />
+    <Compile Include="Map\PortalMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="PortalEdit.resx">
+    <EmbeddedResource Include="Editor\PortalEdit.resx">
       <DependentUpon>PortalEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -83,7 +83,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Settings.resx">
+    <EmbeddedResource Include="Forms\Settings.resx">
       <DependentUpon>Settings.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -101,13 +101,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Settings.cs">
+    <Compile Include="Forms\Settings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Settings.Designer.cs">
+    <Compile Include="Forms\Settings.Designer.cs">
       <DependentUpon>Settings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Undo.cs" />
+    <Compile Include="Editor\Undo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Drawables\Drawables.csproj">
