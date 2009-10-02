@@ -111,6 +111,9 @@ namespace PortalEdit
         public List<CellVert> Verts = new List<CellVert>();
         public List<CellEdge> Edges = new List<CellEdge>();
 
+        public Vector3 FloorNormal = new Vector3(0, 0, 1);
+        public Vector3 RoofNormal = new Vector3(0, 0, -1);
+
         public bool HeightIsIncremental = true;
 
         public override string ToString()
