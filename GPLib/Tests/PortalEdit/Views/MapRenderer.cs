@@ -21,8 +21,7 @@ namespace PortalEdit
 
     public class MapRenderer 
     {
-        List<Point> points = new List<Point>();
-        Polygon     incompletePoly = new Polygon();
+        public Polygon     incompletePoly = new Polygon();
         Vector2     hoverPos = Vector2.Zero;
 
         Color cellColor = Color.FromArgb(128, Color.Wheat);
@@ -410,7 +409,7 @@ namespace PortalEdit
             if (NewPolygon != null)
                 NewPolygon(this, incompletePoly);
 
-            incompletePoly.Verts.Clear();
+            incompletePoly = new Polygon();
 
             InvalidateAll();
         }
@@ -420,7 +419,10 @@ namespace PortalEdit
             if (EditMode == MapEditMode.DrawMode)
             {
                 if (e.Button == MouseButtons.Left)
+                {
+                    Undo.System.Add(new MapVertAddUndo(incompletePoly));
                     incompletePoly.Verts.Add(SnapPoint(ScreenToMap(e.X, control.Height - e.Y)));
+                }
                 else
                 {
                     if (incompletePoly.Verts.Count > 2)
@@ -505,9 +507,11 @@ namespace PortalEdit
             return Vector3.Cross(v1, v2).Z;
         }
 
-        public void Reverse ()
+        public List<Vector2> Reverse ()
         {
-            Verts.Reverse();
+            List<Vector2> v = new List<Vector2>(Verts);
+            v.Reverse();
+            return v;
         }
     }
 }

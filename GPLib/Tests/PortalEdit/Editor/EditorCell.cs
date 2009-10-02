@@ -216,8 +216,10 @@ namespace PortalEdit
         {
             float v = poly.GetNormalDepth();
 
+            List<Vector2> polyVerts = poly.Verts;
+
             if (v > 0)
-                poly.Reverse();
+                polyVerts = poly.Reverse();
 
             // build the polygon for 3d;
             Verts.Clear();
@@ -225,7 +227,7 @@ namespace PortalEdit
 
             HeightIsIncremental = Editor.EditZInc;
 
-            foreach (Vector2 p in poly.Verts)
+            foreach (Vector2 p in polyVerts)
             {
                 CellVert vert = new CellVert();
                 vert.Bottom = new Vector3(p.X, p.Y, Editor.EditZFloor);
@@ -233,7 +235,7 @@ namespace PortalEdit
                 Verts.Add(vert);
             }
 
-            for (int i = 1; i < poly.Verts.Count; i++)
+            for (int i = 1; i < polyVerts.Count; i++)
             {
                 CellEdge edge = new CellEdge();
                 edge.Start = i - 1;
@@ -242,7 +244,7 @@ namespace PortalEdit
             }
 
             CellEdge lastEdge = new CellEdge();
-            lastEdge.Start = poly.Verts.Count - 1;
+            lastEdge.Start = polyVerts.Count - 1;
             lastEdge.End = 0;
             Edges.Add(lastEdge);
 
