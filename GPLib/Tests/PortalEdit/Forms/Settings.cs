@@ -65,9 +65,13 @@ namespace PortalEdit
         public bool Show3dOrigin = true;
         public int UndoLevels = 25;
 
+
         public Point NormalLoc = Point.Empty;
         public Size NormalSize = Size.Empty;
         public bool Maximized = false;
+
+        public int RecentFilesLimit = 10;
+        public List<String> RecentFiles = new List<string>();
 
         public static Settings Read(FileInfo file)
         {

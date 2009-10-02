@@ -58,6 +58,7 @@ namespace PortalEdit
  
         public void Add ( UndoObject undo )
         {
+            Editor.SetDirty();
             Undos.Insert(0, undo);
 
             CullUndos();

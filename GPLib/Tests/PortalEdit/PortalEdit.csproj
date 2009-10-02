@@ -63,6 +63,7 @@
     <Compile Include="Map\Cell.cs" />
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Editor\EditorCell.cs" />
+    <Compile Include="Editor\MRU.cs" />
     <Compile Include="Views\MapRenderer.cs" />
     <Compile Include="Views\MapViewRenderer.cs" />
     <Compile Include="Editor\PortalEdit.cs">

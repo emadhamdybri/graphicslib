@@ -34,6 +34,15 @@ namespace PortalEdit
 
         MapViewRenderer.CellClickedEventArgs lastSelectionArgs = null;
 
+        public String FileName = string.Empty;
+
+        public bool Dirty = false;
+
+        public static void SetDirty()
+        {
+            instance.Dirty = true;
+        }
+
         public Editor(EditFrame _frame, Control mapctl, GLControl view)
         {
             frame = _frame;
@@ -235,8 +244,22 @@ namespace PortalEdit
             cell.HeightIsIncremental = inc;
         }
 
+        public void New ()
+        {
+            FileName = string.Empty;
+            mapRenderer.ClearEditPolygon();
+
+            DisplayListSystem.system.Invalidate();
+            DrawablesSystem.system.removeAll();
+            map.cellGroups.Clear();
+
+            Dirty = false;
+            ResetViews();
+        }
+
         public bool Open ( FileInfo file )
         {
+            FileName = file.FullName;
             PortalMap newMap = PortalMap.Read(file);
             if (newMap == null)
                 return false;
@@ -259,11 +282,15 @@ namespace PortalEdit
 
             map.RebindCells();
             ResetViews();
+            Dirty = false;
             return true;
         }
 
         public bool Save(FileInfo file)
         {
+            Dirty = false;
+
+            FileName = file.FullName;
             return map.Write(file);
         }
 
