@@ -11,6 +11,7 @@ using System.Diagnostics;
 using OpenTK;
 using OpenTK.Graphics;
 using FormControls;
+using Drawables.DisplayLists;
 
 namespace PortalEdit
 {
@@ -243,7 +244,8 @@ namespace PortalEdit
         private void Deslect_Click(object sender, EventArgs e)
         {
             MapTree.SelectedNode = null;
-            RebuildAll();
+            editor.SelectMapItem(null);
+            Invalidate(true);
         }
 
         private void MapZoomIn_Click(object sender, EventArgs e)
@@ -264,8 +266,13 @@ namespace PortalEdit
 
         private void MapTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            if (MapTree.SelectedNode != null)
+                editor.SelectMapItem(MapTree.SelectedNode.Tag);
+            else
+                editor.SelectMapItem(null);
+
             PopulateCellInfoList();
-            RebuildAll();
+            Invalidate(true);
         }
 
         private void NewGroup_Click(object sender, EventArgs e)
@@ -287,7 +294,7 @@ namespace PortalEdit
             Editor.EditZRoof = cell.Verts[0].Top;
 
             LoadEditorDepths();
-            RebuildAll();
+            Settings.settings.Write();
         }
 
         private void EditZMinus_TextChanged(object sender, EventArgs e)
@@ -301,7 +308,7 @@ namespace PortalEdit
                 EditZMinus.Text = Editor.EditZFloor.ToString();
             }
 
-            RebuildAll();
+            Settings.settings.Write();
         }
 
         private void EditZPlus_TextChanged(object sender, EventArgs e)
@@ -315,13 +322,13 @@ namespace PortalEdit
                 EditZPlus.Text = Editor.EditZRoof.ToString();
             }
 
-            RebuildAll();
+            Settings.settings.Write();
         }
 
         private void EditIncZ_CheckedChanged(object sender, EventArgs e)
         {
             Editor.EditZInc = EditIncZ.Checked;
-            RebuildAll();
+            Settings.settings.Write();
         }
 
         private void CellVertList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -354,7 +361,11 @@ namespace PortalEdit
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (new SettingsDialog(Settings.settings).ShowDialog(this) == DialogResult.OK)
-                RebuildAll();
+            {
+                Settings.settings.Write();
+                DisplayListSystem.system.Invalidate();
+                Invalidate(true);
+            }
         }
     }
 }
