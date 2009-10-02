@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using OpenTK;
+
 namespace PortalEdit
 {
     public class UndoObject
@@ -27,8 +29,6 @@ namespace PortalEdit
 
         public event UndoStateChangeEvent UndoStateChanged;
 
-        public int UndoLevels = 25;
-
         protected List<UndoObject> Undos = new List<UndoObject>();
 
         public int Count 
@@ -46,13 +46,21 @@ namespace PortalEdit
                 return Undos[0].Descrioption;
             }
         }
+
+        public void CullUndos ()
+        {
+            if (Settings.settings.UndoLevels > 0)
+            {
+                if (Undos.Count > Settings.settings.UndoLevels)
+                    Undos.RemoveRange(Settings.settings.UndoLevels, Undos.Count - Settings.settings.UndoLevels);
+            }
+        }
  
         public void Add ( UndoObject undo )
         {
             Undos.Insert(0, undo);
 
-            if (Undos.Count > UndoLevels)
-                Undos.RemoveRange(UndoLevels, Undos.Count - UndoLevels);
+            CullUndos();
 
             if (UndoStateChanged != null)
                 UndoStateChanged(this, Undos.Count > 0);
@@ -113,10 +121,13 @@ namespace PortalEdit
     {
         String group;
         String cell;
+        Polygon polygon;
 
-        public CellAddUndo(EditorCell c)
+        public CellAddUndo(EditorCell c, Polygon poly)
         {
             descrioption = "Add Cell";
+
+            polygon = poly;
 
             cell = String.Copy(c.Name);
             group = String.Copy(c.GroupName);
@@ -130,6 +141,7 @@ namespace PortalEdit
                 EditorCell c = (EditorCell)g.FindCell(cell);
                 if (c != null)
                 {
+                    Editor.instance.mapRenderer.incompletePoly = polygon;
                     c.Dispose();
                     Editor.instance.map.RemoveCell(c);
                     Editor.instance.RebuildMap();
@@ -227,4 +239,21 @@ namespace PortalEdit
             }
         }
     }
+
+    public class MapVertAddUndo : UndoObject
+    {
+        List<Vector2> polyList;
+
+        public MapVertAddUndo(Polygon p)
+        {
+            descrioption = "Add Vertex";
+            polyList = new List<Vector2>(p.Verts);
+        }
+
+        public override void Undo()
+        {
+            Editor.instance.mapRenderer.incompletePoly.Verts = new List<Vector2>(polyList);
+        }
+    }
+
 }

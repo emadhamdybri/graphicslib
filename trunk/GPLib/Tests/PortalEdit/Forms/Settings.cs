@@ -26,6 +26,7 @@ namespace PortalEdit
             GridSize.Value = (decimal)settings.GridSize;
             MinimalSelection.Checked = settings.ShowLowestSelection;
             Show3DOrigin.Checked = settings.Show3dOrigin;
+            UndoLevels.Value = (decimal)settings.UndoLevels;
         }
 
         private void OK_Click(object sender, EventArgs e)
@@ -37,6 +38,9 @@ namespace PortalEdit
             settings.GridSize = (float)GridSize.Value;
             settings.ShowLowestSelection = MinimalSelection.Checked;
             settings.Show3dOrigin = Show3DOrigin.Checked;
+            settings.UndoLevels = (int)UndoLevels.Value;
+
+            Undo.System.CullUndos();
 
             settings.Write();
         }
@@ -59,6 +63,11 @@ namespace PortalEdit
         public float GridSize = 100f;
         public bool ShowLowestSelection = true;
         public bool Show3dOrigin = true;
+        public int UndoLevels = 25;
+
+        public Point NormalLoc = Point.Empty;
+        public Size NormalSize = Size.Empty;
+        public bool Maximized = false;
 
         public static Settings Read(FileInfo file)
         {

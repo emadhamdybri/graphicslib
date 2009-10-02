@@ -77,11 +77,23 @@ namespace PortalEdit
 
         protected void SetupSettings ()
         {
+            Settings settings = Settings.settings;
+
+            if (settings.NormalLoc != Point.Empty)
+            {
+                StartPosition = FormStartPosition.Manual;
+                Location = settings.NormalLoc;
+                Size = settings.NormalSize;
+
+                if (settings.Maximized)
+                    WindowState = FormWindowState.Maximized;
+            }
+
             MapRadioPanel.SelectedItem = DrawButton;
             ViewRadioPanel.SelectedItem = CellSelectButton;
 
-            ViewCheckPanel.CheckButton(ShowCellEdges, Settings.settings.DrawCellEdges);
-            ViewCheckPanel.CheckButton(ShowPortals, Settings.settings.DrawPortals);
+            ViewCheckPanel.CheckButton(ShowCellEdges, settings.DrawCellEdges);
+            ViewCheckPanel.CheckButton(ShowPortals, settings.DrawPortals);
             ViewCheckPanel.ItemCheckChanged += new ImageCheckPanel.ItemCheckChangedEvent(ViewCheckPanel_ItemCheckChanged);
 
             LoadEditorDepths();
@@ -224,6 +236,21 @@ namespace PortalEdit
 
         private void EditFrame_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Settings settings = Settings.settings;
+
+            if (this.WindowState == FormWindowState.Maximized)
+            {
+                settings.NormalLoc = RestoreBounds.Location;
+                settings.NormalSize = RestoreBounds.Size;
+                settings.Maximized = true;
+            }
+            else
+            {
+                settings.Maximized = false;
+                settings.NormalSize = Size;
+                settings.NormalLoc = Location;
+            }
+
             Settings.settings.Write();
         }
 

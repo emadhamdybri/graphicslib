@@ -309,6 +309,7 @@ namespace PortalEdit
             }
 
             EditorCell cell = new EditorCell(polygon, map, group);
+            Undo.System.Add(new CellAddUndo(cell, polygon));
 
             group.Cells.Add(cell);
 
@@ -320,8 +321,6 @@ namespace PortalEdit
                     eCell.CheckEdges(map);
                 }
             }
-
-            Undo.System.Add(new CellAddUndo(cell));
 
             DisplayListSystem.system.Invalidate();
             ResetViews();

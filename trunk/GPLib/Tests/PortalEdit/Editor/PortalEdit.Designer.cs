@@ -56,14 +56,21 @@
             this.GLView = new OpenTK.GLControl();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.forceZFloorToPlaneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MousePositionStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.DeleteCell = new System.Windows.Forms.Button();
@@ -71,7 +78,6 @@
             this.MapTree = new System.Windows.Forms.TreeView();
             this.MapTreeIcons = new System.Windows.Forms.ImageList(this.components);
             this.NewGroup = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.CellInfoZIsInc = new System.Windows.Forms.CheckBox();
             this.CellVertList = new System.Windows.Forms.DataGridView();
             this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -79,6 +85,15 @@
             this.ZMax = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CellListPanel = new System.Windows.Forms.Panel();
             this.RightSideOuterPanel = new System.Windows.Forms.Panel();
+            this.CellTabControl = new System.Windows.Forms.TabControl();
+            this.CellInfo = new System.Windows.Forms.TabPage();
+            this.VertInfo = new System.Windows.Forms.TabPage();
+            this.EdgeInfo = new System.Windows.Forms.TabPage();
+            this.FaceInfo = new System.Windows.Forms.TabPage();
+            this.CellEdgeList = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -91,10 +106,14 @@
             this.ViewRadioPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CellVertList)).BeginInit();
             this.CellListPanel.SuspendLayout();
             this.RightSideOuterPanel.SuspendLayout();
+            this.CellTabControl.SuspendLayout();
+            this.CellInfo.SuspendLayout();
+            this.VertInfo.SuspendLayout();
+            this.EdgeInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -103,7 +122,7 @@
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.splitContainer1.Location = new System.Drawing.Point(9, 27);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 27);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -138,7 +157,7 @@
             // 
             // EditLoadZFromSelection
             // 
-            this.EditLoadZFromSelection.Image = global::PortalEdit.Properties.Resources.eyedropper_icon;
+            this.EditLoadZFromSelection.Image = ((System.Drawing.Image)(resources.GetObject("EditLoadZFromSelection.Image")));
             this.EditLoadZFromSelection.Location = new System.Drawing.Point(181, 2);
             this.EditLoadZFromSelection.Name = "EditLoadZFromSelection";
             this.EditLoadZFromSelection.Size = new System.Drawing.Size(29, 28);
@@ -230,7 +249,7 @@
             // 
             this.DrawButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.DrawButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.DrawButton.Image = global::PortalEdit.Properties.Resources.pencil;
+            this.DrawButton.Image = ((System.Drawing.Image)(resources.GetObject("DrawButton.Image")));
             this.DrawButton.Location = new System.Drawing.Point(3, 1);
             this.DrawButton.Name = "DrawButton";
             this.DrawButton.Size = new System.Drawing.Size(25, 23);
@@ -261,7 +280,7 @@
             // 
             // MapZoomOut
             // 
-            this.MapZoomOut.Image = global::PortalEdit.Properties.Resources.zoom_out;
+            this.MapZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("MapZoomOut.Image")));
             this.MapZoomOut.Location = new System.Drawing.Point(31, 0);
             this.MapZoomOut.Name = "MapZoomOut";
             this.MapZoomOut.Size = new System.Drawing.Size(25, 23);
@@ -271,7 +290,7 @@
             // 
             // MapZoomIn
             // 
-            this.MapZoomIn.Image = global::PortalEdit.Properties.Resources.zoom_in;
+            this.MapZoomIn.Image = ((System.Drawing.Image)(resources.GetObject("MapZoomIn.Image")));
             this.MapZoomIn.Location = new System.Drawing.Point(3, 0);
             this.MapZoomIn.Name = "MapZoomIn";
             this.MapZoomIn.Size = new System.Drawing.Size(25, 23);
@@ -307,7 +326,7 @@
             // ShowPortals
             // 
             this.ShowPortals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowPortals.Image = global::PortalEdit.Properties.Resources.PortalShowHideButton;
+            this.ShowPortals.Image = ((System.Drawing.Image)(resources.GetObject("ShowPortals.Image")));
             this.ShowPortals.Location = new System.Drawing.Point(37, 0);
             this.ShowPortals.Name = "ShowPortals";
             this.ShowPortals.Size = new System.Drawing.Size(36, 36);
@@ -317,7 +336,7 @@
             // ShowCellEdges
             // 
             this.ShowCellEdges.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowCellEdges.Image = global::PortalEdit.Properties.Resources.EdgeShowHideButton;
+            this.ShowCellEdges.Image = ((System.Drawing.Image)(resources.GetObject("ShowCellEdges.Image")));
             this.ShowCellEdges.Location = new System.Drawing.Point(0, 0);
             this.ShowCellEdges.Name = "ShowCellEdges";
             this.ShowCellEdges.Size = new System.Drawing.Size(36, 36);
@@ -347,7 +366,7 @@
             this.CellFillMode.Name = "CellFillMode";
             this.CellFillMode.Size = new System.Drawing.Size(25, 23);
             this.CellFillMode.TabIndex = 3;
-            this.CellFillMode.Tag = ViewEditMode.Paint;
+            this.CellFillMode.Tag = PortalEdit.ViewEditMode.Paint;
             this.CellFillMode.UseVisualStyleBackColor = true;
             // 
             // CellSelectButton
@@ -358,7 +377,7 @@
             this.CellSelectButton.Name = "CellSelectButton";
             this.CellSelectButton.Size = new System.Drawing.Size(25, 23);
             this.CellSelectButton.TabIndex = 2;
-            this.CellSelectButton.Tag = ViewEditMode.Select;
+            this.CellSelectButton.Tag = PortalEdit.ViewEditMode.Select;
             this.CellSelectButton.UseVisualStyleBackColor = true;
             // 
             // GLView
@@ -388,31 +407,75 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem,
             this.openToolStripMenuItem,
+            this.toolStripSeparator4,
+            this.closeToolStripMenuItem,
+            this.toolStripSeparator3,
             this.saveToolStripMenuItem,
+            this.saveAsToolStripMenuItem,
+            this.toolStripSeparator2,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // newToolStripMenuItem
+            // 
+            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.newToolStripMenuItem.Text = "New";
+            // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
-            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.openToolStripMenuItem.Text = "Open...";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(192, 6);
+            // 
+            // closeToolStripMenuItem
+            // 
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.closeToolStripMenuItem.Text = "Close";
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(192, 6);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
-            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.saveToolStripMenuItem.Text = "Save...";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
+                        | System.Windows.Forms.Keys.S)));
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.saveAsToolStripMenuItem.Text = "Save As...";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(192, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -429,27 +492,36 @@
             // undoToolStripMenuItem
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.undoToolStripMenuItem.Text = "Undo";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(113, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.forceZFloorToPlaneToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // forceZFloorToPlaneToolStripMenuItem
+            // 
+            this.forceZFloorToPlaneToolStripMenuItem.Name = "forceZFloorToPlaneToolStripMenuItem";
+            this.forceZFloorToPlaneToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.forceZFloorToPlaneToolStripMenuItem.Text = "Force Z Floor To Plane";
             // 
             // statusStrip1
             // 
@@ -523,23 +595,10 @@
             this.NewGroup.UseVisualStyleBackColor = true;
             this.NewGroup.Click += new System.EventHandler(this.NewGroup_Click);
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.CellInfoZIsInc);
-            this.groupBox1.Controls.Add(this.CellVertList);
-            this.groupBox1.Location = new System.Drawing.Point(5, 132);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(194, 320);
-            this.groupBox1.TabIndex = 9;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Cell Info";
-            // 
             // CellInfoZIsInc
             // 
             this.CellInfoZIsInc.AutoSize = true;
-            this.CellInfoZIsInc.Location = new System.Drawing.Point(6, 172);
+            this.CellInfoZIsInc.Location = new System.Drawing.Point(6, 6);
             this.CellInfoZIsInc.Name = "CellInfoZIsInc";
             this.CellInfoZIsInc.Size = new System.Drawing.Size(139, 17);
             this.CellInfoZIsInc.TabIndex = 1;
@@ -559,13 +618,13 @@
             this.Index,
             this.ZMin,
             this.ZMax});
-            this.CellVertList.Location = new System.Drawing.Point(6, 19);
+            this.CellVertList.Location = new System.Drawing.Point(3, 6);
             this.CellVertList.MultiSelect = false;
             this.CellVertList.Name = "CellVertList";
             this.CellVertList.RowHeadersWidth = 4;
             this.CellVertList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.CellVertList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.CellVertList.Size = new System.Drawing.Size(182, 147);
+            this.CellVertList.Size = new System.Drawing.Size(191, 147);
             this.CellVertList.TabIndex = 0;
             this.CellVertList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellVertList_CellValueChanged);
             this.CellVertList.SelectionChanged += new System.EventHandler(this.CellVertList_SelectionChanged);
@@ -607,12 +666,112 @@
             // RightSideOuterPanel
             // 
             this.RightSideOuterPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.RightSideOuterPanel.Controls.Add(this.CellTabControl);
             this.RightSideOuterPanel.Controls.Add(this.CellListPanel);
-            this.RightSideOuterPanel.Controls.Add(this.groupBox1);
-            this.RightSideOuterPanel.Location = new System.Drawing.Point(799, 27);
+            this.RightSideOuterPanel.Location = new System.Drawing.Point(790, 27);
             this.RightSideOuterPanel.Name = "RightSideOuterPanel";
-            this.RightSideOuterPanel.Size = new System.Drawing.Size(206, 456);
+            this.RightSideOuterPanel.Size = new System.Drawing.Size(215, 475);
             this.RightSideOuterPanel.TabIndex = 11;
+            // 
+            // CellTabControl
+            // 
+            this.CellTabControl.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+            this.CellTabControl.Controls.Add(this.CellInfo);
+            this.CellTabControl.Controls.Add(this.VertInfo);
+            this.CellTabControl.Controls.Add(this.EdgeInfo);
+            this.CellTabControl.Controls.Add(this.FaceInfo);
+            this.CellTabControl.Location = new System.Drawing.Point(4, 132);
+            this.CellTabControl.Multiline = true;
+            this.CellTabControl.Name = "CellTabControl";
+            this.CellTabControl.SelectedIndex = 0;
+            this.CellTabControl.Size = new System.Drawing.Size(205, 339);
+            this.CellTabControl.TabIndex = 11;
+            // 
+            // CellInfo
+            // 
+            this.CellInfo.Controls.Add(this.CellInfoZIsInc);
+            this.CellInfo.Location = new System.Drawing.Point(4, 25);
+            this.CellInfo.Name = "CellInfo";
+            this.CellInfo.Padding = new System.Windows.Forms.Padding(3);
+            this.CellInfo.Size = new System.Drawing.Size(197, 310);
+            this.CellInfo.TabIndex = 0;
+            this.CellInfo.Text = "Cell";
+            this.CellInfo.UseVisualStyleBackColor = true;
+            // 
+            // VertInfo
+            // 
+            this.VertInfo.Controls.Add(this.CellVertList);
+            this.VertInfo.Location = new System.Drawing.Point(4, 25);
+            this.VertInfo.Name = "VertInfo";
+            this.VertInfo.Padding = new System.Windows.Forms.Padding(3);
+            this.VertInfo.Size = new System.Drawing.Size(197, 310);
+            this.VertInfo.TabIndex = 1;
+            this.VertInfo.Text = "Verts";
+            this.VertInfo.UseVisualStyleBackColor = true;
+            // 
+            // EdgeInfo
+            // 
+            this.EdgeInfo.Controls.Add(this.CellEdgeList);
+            this.EdgeInfo.Location = new System.Drawing.Point(4, 25);
+            this.EdgeInfo.Name = "EdgeInfo";
+            this.EdgeInfo.Size = new System.Drawing.Size(197, 310);
+            this.EdgeInfo.TabIndex = 2;
+            this.EdgeInfo.Text = "Edges";
+            this.EdgeInfo.UseVisualStyleBackColor = true;
+            // 
+            // FaceInfo
+            // 
+            this.FaceInfo.Location = new System.Drawing.Point(4, 49);
+            this.FaceInfo.Name = "FaceInfo";
+            this.FaceInfo.Size = new System.Drawing.Size(172, 79);
+            this.FaceInfo.TabIndex = 3;
+            this.FaceInfo.Text = "Faces";
+            this.FaceInfo.UseVisualStyleBackColor = true;
+            // 
+            // CellEdgeList
+            // 
+            this.CellEdgeList.AllowUserToAddRows = false;
+            this.CellEdgeList.AllowUserToDeleteRows = false;
+            this.CellEdgeList.AllowUserToResizeRows = false;
+            this.CellEdgeList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.CellEdgeList.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.CellEdgeList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.CellEdgeList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn1,
+            this.dataGridViewTextBoxColumn2,
+            this.dataGridViewTextBoxColumn3});
+            this.CellEdgeList.Location = new System.Drawing.Point(3, 3);
+            this.CellEdgeList.MultiSelect = false;
+            this.CellEdgeList.Name = "CellEdgeList";
+            this.CellEdgeList.RowHeadersWidth = 4;
+            this.CellEdgeList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.CellEdgeList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.CellEdgeList.Size = new System.Drawing.Size(191, 147);
+            this.CellEdgeList.TabIndex = 1;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.dataGridViewTextBoxColumn1.HeaderText = "#";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            this.dataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn1.Width = 20;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn2.HeaderText = "Type";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.ReadOnly = true;
+            this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn3.HeaderText = "Visible";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            this.dataGridViewTextBoxColumn3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // EditFrame
             // 
@@ -643,11 +802,15 @@
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CellVertList)).EndInit();
             this.CellListPanel.ResumeLayout(false);
             this.RightSideOuterPanel.ResumeLayout(false);
+            this.CellTabControl.ResumeLayout(false);
+            this.CellInfo.ResumeLayout(false);
+            this.CellInfo.PerformLayout();
+            this.VertInfo.ResumeLayout(false);
+            this.EdgeInfo.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -691,7 +854,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.Button EditLoadZFromSelection;
         private System.Windows.Forms.CheckBox EditIncZ;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Panel CellListPanel;
         private System.Windows.Forms.Panel RightSideOuterPanel;
         private System.Windows.Forms.DataGridViewTextBoxColumn Index;
@@ -704,6 +866,22 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.Button ResetZoom;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem forceZFloorToPlaneToolStripMenuItem;
+        private System.Windows.Forms.TabControl CellTabControl;
+        private System.Windows.Forms.TabPage CellInfo;
+        private System.Windows.Forms.TabPage VertInfo;
+        private System.Windows.Forms.TabPage EdgeInfo;
+        private System.Windows.Forms.TabPage FaceInfo;
+        public System.Windows.Forms.DataGridView CellEdgeList;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewTextBoxColumn3;
     }
 }
 
