@@ -18,6 +18,7 @@ namespace PortalEdit
     public partial class EditFrame : Form
     {
         Editor editor;
+        MRU mru;
 
         public EditFrame()
         {
@@ -78,6 +79,8 @@ namespace PortalEdit
         protected void SetupSettings ()
         {
             Settings settings = Settings.settings;
+            mru = new MRU(recentFilesToolStripMenuItem);
+            mru.Clicked += new MRUItemClicked(mru_Clicked);
 
             if (settings.NormalLoc != Point.Empty)
             {
@@ -98,6 +101,11 @@ namespace PortalEdit
 
             LoadEditorDepths();
        }
+
+        void mru_Clicked(object sender, string file)
+        {
+            OpenFile(file);
+        }
 
         protected void LoadEditorDepths ( )
         {
@@ -148,29 +156,68 @@ namespace PortalEdit
             Application.Exit();
         }
 
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Text = "New Map";
+            CheckDirtySave();
+            editor.New();
+            Invalidate(true);
+        }
+
+        private void OpenFile ( String file )
+        {
+            CheckDirtySave();
+            Text = "Portal Edit: " + Path.GetFileNameWithoutExtension(file);
+
+            if (!editor.Open(new FileInfo(file)))
+                MessageBox.Show("Error reading map file");
+        }
+
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CheckDirtySave();
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Open File";
             ofd.Filter = "Portal Map (*.PortalMap)|*.PortalMap|All Files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                if (!editor.Open(new FileInfo(ofd.FileName)))
-                    MessageBox.Show("Error reading map file");
+                OpenFile(ofd.FileName);
+                mru.AddFile(ofd.FileName);
             }
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (editor.FileName == string.Empty)
+                saveAsToolStripMenuItem_Click(sender, e);
+            else
+            {
+                if (!editor.Save(new FileInfo(editor.FileName)))
+                    MessageBox.Show("Error saving map file");
+            }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Title = "Save File";
             sfd.Filter = "Portal Map (*.PortalMap)|*.PortalMap";
+            if (editor.FileName != string.Empty)
+            {
+                sfd.FileName = Path.GetFileName(editor.FileName);
+                sfd.InitialDirectory = Path.GetDirectoryName(editor.FileName);
+            }
+            else
+                sfd.FileName = "New Map.PortalMap";
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
+                Text = "Portal Edit: " + Path.GetFileNameWithoutExtension(sfd.FileName);
                 if (!editor.Save(new FileInfo(sfd.FileName)))
                     MessageBox.Show("Error saving map file");
+                else
+                    mru.AddFile(sfd.FileName);
             }
         }
 
@@ -234,8 +281,19 @@ namespace PortalEdit
             }
         }
 
+        private void CheckDirtySave ()
+        {
+            if (editor.Dirty)
+            {
+                if (MessageBox.Show("This file has unsaved changed!\r\nDo you wish to save it now?", "Unsaved Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    saveToolStripMenuItem_Click(this, EventArgs.Empty);
+            }
+        }
+
         private void EditFrame_FormClosing(object sender, FormClosingEventArgs e)
         {
+            CheckDirtySave();
+
             Settings settings = Settings.settings;
 
             if (this.WindowState == FormWindowState.Maximized)

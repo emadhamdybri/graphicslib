@@ -89,11 +89,12 @@
             this.CellInfo = new System.Windows.Forms.TabPage();
             this.VertInfo = new System.Windows.Forms.TabPage();
             this.EdgeInfo = new System.Windows.Forms.TabPage();
-            this.FaceInfo = new System.Windows.Forms.TabPage();
             this.CellEdgeList = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.FaceInfo = new System.Windows.Forms.TabPage();
+            this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -409,6 +410,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
+            this.recentFilesToolStripMenuItem,
             this.toolStripSeparator4,
             this.closeToolStripMenuItem,
             this.toolStripSeparator3,
@@ -426,6 +428,7 @@
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
@@ -466,6 +469,7 @@
                         | System.Windows.Forms.Keys.S)));
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -493,19 +497,19 @@
             // 
             this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.undoToolStripMenuItem.Text = "Undo";
             this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(141, 6);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
@@ -719,15 +723,6 @@
             this.EdgeInfo.Text = "Edges";
             this.EdgeInfo.UseVisualStyleBackColor = true;
             // 
-            // FaceInfo
-            // 
-            this.FaceInfo.Location = new System.Drawing.Point(4, 49);
-            this.FaceInfo.Name = "FaceInfo";
-            this.FaceInfo.Size = new System.Drawing.Size(172, 79);
-            this.FaceInfo.TabIndex = 3;
-            this.FaceInfo.Text = "Faces";
-            this.FaceInfo.UseVisualStyleBackColor = true;
-            // 
             // CellEdgeList
             // 
             this.CellEdgeList.AllowUserToAddRows = false;
@@ -773,6 +768,21 @@
             this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             this.dataGridViewTextBoxColumn3.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
+            // FaceInfo
+            // 
+            this.FaceInfo.Location = new System.Drawing.Point(4, 25);
+            this.FaceInfo.Name = "FaceInfo";
+            this.FaceInfo.Size = new System.Drawing.Size(197, 310);
+            this.FaceInfo.TabIndex = 3;
+            this.FaceInfo.Text = "Faces";
+            this.FaceInfo.UseVisualStyleBackColor = true;
+            // 
+            // recentFilesToolStripMenuItem
+            // 
+            this.recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
+            this.recentFilesToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.recentFilesToolStripMenuItem.Text = "Recent Files";
+            // 
             // EditFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -785,7 +795,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(614, 450);
             this.Name = "EditFrame";
-            this.Text = "Portal Edit";
+            this.Text = "Portal Edit: New Map";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EditFrame_FormClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
@@ -882,6 +892,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewTextBoxColumn3;
+        private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
     }
 }
 
