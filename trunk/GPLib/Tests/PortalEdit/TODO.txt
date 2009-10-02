@@ -1,5 +1,6 @@
 
 ==General==
+Floor and roof normal generation
 Split outline and face drawing in 3d view
 Add image overlay
 Plane checks and plane snap
