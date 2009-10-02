@@ -168,6 +168,9 @@ namespace PortalEdit
         void ctl_MouseWheel(object sender, MouseEventArgs e)
         {
             float zoomSpeed = 0.5f;
+            if (Control.ModifierKeys == Keys.Shift)
+                zoomSpeed *= 5f;
+
             pullback += ((float)e.Delta / 120f) * zoomSpeed;
             if (pullback < 0)
                 pullback = 0;
@@ -226,7 +229,7 @@ namespace PortalEdit
 
         protected virtual void SetupGL()
         {
-            GL.ClearColor(Color.LightSkyBlue);
+            GL.ClearColor(Color.SkyBlue);
 
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
@@ -276,31 +279,25 @@ namespace PortalEdit
         {
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Lighting);
-            GL.Disable(EnableCap.LineSmooth);
-            GL.PushMatrix();
-            GL.Translate(0, 0, 0);
-            GL.LineWidth(2);
-            GL.Begin(BeginMode.Lines);
-
-            GL.Color3(Color.Blue);
-            GL.Vertex3(-1, 0, 0);
-            GL.Vertex3(2, 0, 0);
-
-            GL.Color3(Color.Red);
-            GL.Vertex3(0, -1, 0);
-            GL.Vertex3(0, 2, 0);
-
-            GL.Color3(Color.Green);
-            GL.Vertex3(0, 0, -1);
-            GL.Vertex3(0, 0, 4);
-            GL.End();
-
-            GL.Color4(Color.FromArgb(128, Color.DarkGray));
-            GL.LineWidth(1);
+            GL.Enable(EnableCap.LineSmooth);
             GL.DepthMask(false);
-            GL.Begin(BeginMode.Lines);
 
             float gridSize = Settings.settings.GridSize;
+           
+            GL.PushMatrix();
+            GL.Translate(0, 0, 0);
+            GL.Color3(Color.FromArgb(255,0x13,0x48,0x72));
+
+            GL.Begin(BeginMode.Quads);
+            GL.Vertex3(-gridSize, -gridSize, 0);
+            GL.Vertex3(gridSize, -gridSize, 0);
+            GL.Vertex3(gridSize, gridSize, 0);
+            GL.Vertex3(-gridSize, gridSize, 0);
+            GL.End();
+
+            GL.Color4(Color.FromArgb(128, Color.LightSlateGray));
+            GL.LineWidth(1);
+            GL.Begin(BeginMode.Lines);
 
             for (float i = 0; i < gridSize; i += Settings.settings.GridSubDivisions)
             {
@@ -319,8 +316,10 @@ namespace PortalEdit
                 GL.Vertex2(-i, gridSize);
                 GL.Vertex2(-i, -gridSize);
             }
-
-            GL.Color4(Color.FromArgb(128, Color.Gray));
+            GL.End();
+            GL.LineWidth(2);
+            GL.Begin(BeginMode.Lines);
+            GL.Color4(Color.FromArgb(128, Color.LightGray));
 
             for (float i = 0; i < gridSize; i += 1f)
             {
@@ -336,8 +335,48 @@ namespace PortalEdit
                 GL.Vertex2(-i, gridSize);
                 GL.Vertex2(-i, -gridSize);
             }
-
             GL.End();
+
+            GL.LineWidth(3);
+            GL.Begin(BeginMode.Lines);
+            GL.Color3(Color.Snow);
+            GL.Vertex3(-gridSize, 0, 0);
+            GL.Vertex3(gridSize, 0, 0);
+            GL.Vertex3(0, -gridSize, 0);
+            GL.Vertex3(0, gridSize, 0);
+            GL.End();
+
+            GL.Enable(EnableCap.LineSmooth);
+            GL.PopMatrix();
+            GL.Enable(EnableCap.Lighting);
+            GL.DepthMask(true);
+        }
+
+        protected void DrawGridAxisMarker ()
+        {
+            if (!Settings.settings.Show3dOrigin)
+                return;
+
+            GL.Disable(EnableCap.Texture2D);
+            GL.Disable(EnableCap.Lighting);
+            GL.Disable(EnableCap.LineSmooth);
+            
+            GL.LineWidth(2);
+            GL.Begin(BeginMode.Lines);
+
+            GL.Color3(Color.Blue);
+            GL.Vertex3(-1, 0, 0);
+            GL.Vertex3(2, 0, 0);
+
+            GL.Color3(Color.Red);
+            GL.Vertex3(0, -1, 0);
+            GL.Vertex3(0, 2, 0);
+
+            GL.Color3(Color.Green);
+            GL.Vertex3(0, 0, -1);
+            GL.Vertex3(0, 0, 4);
+            GL.End();
+
             GL.Enable(EnableCap.LineSmooth);
             GL.PopMatrix();
             GL.Enable(EnableCap.Lighting);
@@ -558,7 +597,9 @@ namespace PortalEdit
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
 
             if (GridList != null)
-                GridList.Call();           
+                GridList.Call();
+            DrawGridAxisMarker();
+
             DrawMap();
 
             GL.PopMatrix();
