@@ -16,7 +16,11 @@ namespace PortalEdit
         {
             if (incremental)
                 return Top + Bottom.Z;
-            return Top;
+
+            if (Top > Bottom.Z)
+                return Top;
+
+            return Bottom.Z;
         }
 
         public CellVert()
@@ -75,7 +79,6 @@ namespace PortalEdit
         public CellEdgeType EdgeType = CellEdgeType.Wall;
 
         public List<PortalDestination> Destinations = new List<PortalDestination>();
-
         public List<CellWallGeometry> Geometry = new List<CellWallGeometry>();
 
         public Vector2 Normal = new Vector2();
@@ -150,6 +153,11 @@ namespace PortalEdit
                     return i;
             }
             return -1;
+        }
+
+        public CellVert MatchingVert(CellVert inVert)
+        {
+            return MatchingVert(inVert.Bottom);
         }
 
         public CellVert MatchingVert(Vector3 inVert)

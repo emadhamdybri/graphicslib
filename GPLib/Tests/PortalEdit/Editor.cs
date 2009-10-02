@@ -33,6 +33,8 @@ namespace PortalEdit
 
         public ViewEditMode viewEditMode = ViewEditMode.Select;
 
+        MapViewRenderer.CellClickedEventArgs lastSelectionArgs = null;
+
         public Editor(EditFrame _frame, Control mapctl, GLControl view)
         {
             frame = _frame;
@@ -53,9 +55,9 @@ namespace PortalEdit
         void viewRenderer_CellClicked(object sender, MapViewRenderer.CellClickedEventArgs e)
         {
             if (viewEditMode == ViewEditMode.Select)
-            {
                 SelectObject(e.cell);
-            }
+        
+            lastSelectionArgs = e;
         }
 
         TreeNode FindSelectedNode ( object tag, TreeNode node )
@@ -78,6 +80,14 @@ namespace PortalEdit
             SelectObject(cell);
         }
 
+        public void SelectMapItem ( object item )
+        {
+            if (item == null || item.GetType() == typeof(CellGroup))
+                lastSelectionArgs = new MapViewRenderer.CellClickedEventArgs(null, -1, null, false, false);
+            else if (item.GetType() == typeof(EditorCell))
+                lastSelectionArgs = new MapViewRenderer.CellClickedEventArgs((Cell)item, -1, null, false, false);
+        }
+
         void SelectObject ( object item )
         {
             TreeNode selectedNode = null;
@@ -91,6 +101,8 @@ namespace PortalEdit
 
             frame.MapTree.SelectedNode = selectedNode;
             frame.Invalidate(true);
+
+            SelectMapItem(item);
         }
 
         public void NewGroup ()
@@ -120,14 +132,10 @@ namespace PortalEdit
 
         public EditorCell GetSelectedCell ( )
         {
-            if (frame.MapTree.SelectedNode == null)
+            if (lastSelectionArgs == null)
                 return null;
 
-            object tag = frame.MapTree.SelectedNode.Tag;
-            if (tag.GetType() == typeof(EditorCell))
-                return (EditorCell)tag;
-
-            return null;
+            return (EditorCell)lastSelectionArgs.cell;
         }
 
         public CellGroup GetSelectedGroup()
@@ -154,6 +162,34 @@ namespace PortalEdit
              return null;
         }
 
+        public CellEdge GetSelectedEdge()
+        {
+            if (lastSelectionArgs == null || lastSelectionArgs.cell == null || lastSelectionArgs.edge < 0)
+                return null;
+            return lastSelectionArgs.cell.Edges[lastSelectionArgs.edge];
+        }
+
+        public CellWallGeometry GetSelectedWallGeo()
+        {
+            if (lastSelectionArgs == null || lastSelectionArgs.cell == null || lastSelectionArgs.edge < 0 || lastSelectionArgs.geo == null)
+                return null;
+            return lastSelectionArgs.geo;
+        }
+
+        public bool GetFloorSelection()
+        {
+            if (lastSelectionArgs == null || lastSelectionArgs.cell == null)
+                return false;
+            return lastSelectionArgs.floor;
+        }
+
+        public bool GetRoofSelection()
+        {
+            if (lastSelectionArgs == null || lastSelectionArgs.cell == null)
+                return false;
+            return lastSelectionArgs.roof;
+        }
+
         public int GetSelectedVertIndex()
         {
             Cell cell = GetSelectedCell();
@@ -167,7 +203,6 @@ namespace PortalEdit
             }
             return -1;
         }
-
 
         public void EditVert ()
         {

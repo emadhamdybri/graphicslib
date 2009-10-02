@@ -29,17 +29,17 @@ namespace PortalEdit
 
         public class CellClickedEventArgs : EventArgs
         {
-            public CellClickedEventArgs( Cell c, int e, bool t, bool r, bool f)
+            public CellClickedEventArgs(Cell c, int e, CellWallGeometry g, bool r, bool f)
             {
                 cell = c;
                 edge = e;
-                topFace = t;
+                geo = g;
                 roof = r;
                 floor = f;
             }
             public Cell cell = null;
             public int edge = -1;
-            public bool topFace = false;
+            public CellWallGeometry geo = null;
             public bool roof = false;
             public bool floor = false;
         }
@@ -106,13 +106,13 @@ namespace PortalEdit
                     {
                         // do the floor
                         GL.LoadName(name);
-                        selectionArgs.Add(name,new CellClickedEventArgs(cell,-1,false,false,true));
+                        selectionArgs.Add(name,new CellClickedEventArgs(cell,-1,null,false,true));
                         cell.floorList_Generate(null,null);
                         name++;
 
                         // do the roof
                         GL.LoadName(name);
-                        selectionArgs.Add(name,new CellClickedEventArgs(cell,-1,false,true,false));
+                        selectionArgs.Add(name, new CellClickedEventArgs(cell, -1, null, true, false));
                         cell.roofList_Generate(null,null);
                         name++;
 
@@ -120,28 +120,14 @@ namespace PortalEdit
                         {
                             CellEdge edge = cell.Edges[i];
 
-                            if (edge.EdgeType == CellEdgeType.Wall)
+                            foreach (CellWallGeometry geo in edge.Geometry)
                             {
-                                GL.LoadName(name);
-                                selectionArgs.Add(name, new CellClickedEventArgs(cell, i, false, false, false));
-                                cell.generateWall(edge);
-                                name++;
-                            }
-                            else
-                            {
-                                if (cell.PortalHasBottomFace(edge))
+                                WallGeometry wallGeo = cell.FindWallGeo(i, geo);
+                                if (wallGeo != null)
                                 {
                                     GL.LoadName(name);
-                                    selectionArgs.Add(name, new CellClickedEventArgs(cell,i, false, false, false));
-                                    cell.generatePortalBottomGap(edge);
-                                    name++;
-                                }
-
-                                if (cell.PortalHasTopFace(edge))
-                                {
-                                    GL.LoadName(name);
-                                    selectionArgs.Add(name, new CellClickedEventArgs(cell, i, true, false, false));
-                                    cell.generatePortalTopGap(edge);
+                                    selectionArgs.Add(name, new CellClickedEventArgs(cell, i, geo, false, false));
+                                    wallGeo.Generate(null, null);
                                     name++;
                                 }
                             }
@@ -173,7 +159,7 @@ namespace PortalEdit
                 }
 
                 if (!selectionArgs.ContainsKey(selectedId))
-                    CellClicked(this, new CellClickedEventArgs(null, -1, false, false, false));
+                    CellClicked(this, new CellClickedEventArgs(null, -1, null, false, false));
                 else
                     CellClicked(this, selectionArgs[selectedId]);
             }
@@ -377,30 +363,116 @@ namespace PortalEdit
             Glu.DeleteQuadric(quadric);
         }
 
+        bool DrawGroupSelection ( CellGroup group )
+        {
+            if (group == null)
+                return false;
+
+            foreach (EditorCell cell in group.Cells)
+                cell.DrawSelectionFrame();
+
+            return true;
+        }
+
+        bool DrawCellSelection ( EditorCell cell )
+        {
+            if (cell == null)
+                return false;
+            cell.DrawSelectionFrame();
+            return true;
+        }
+
+        bool DrawCellFlatSelections(EditorCell cell)
+        {
+            Editor editor = Editor.instance;
+
+            if (cell == null)
+                return false;
+
+            if (editor.GetFloorSelection())
+            {
+                cell.DrawFloorSelectionFrame();
+                return true;
+            }
+
+            if (editor.GetRoofSelection())
+            {
+                cell.DrawRoofSelectionFrame();
+                return true;
+            }
+
+            return false;
+        }
+
+        bool DrawGeoSelection ( Cell cell, CellEdge edge, CellWallGeometry geo )
+        {
+            if (cell == null || edge == null || geo == null)
+                return false;
+
+            GL.DepthMask(false);
+            GL.DepthFunc(DepthFunction.Always);
+
+            GL.Color4(EditorCell.selectionColor);
+            GL.LineWidth(EditorCell.selectedLineWidht);
+            GL.Begin(BeginMode.LineLoop);
+
+            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.LowerZ[0]);
+            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, geo.LowerZ[1]);
+            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, geo.UpperZ[1]);
+            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.UpperZ[0]);
+
+            GL.End();
+            GL.LineWidth(1);
+
+            GL.DepthMask(true);
+            GL.DepthFunc(DepthFunction.Less);
+
+            return true;
+        }
+
+        void DrawSelections ()
+        {
+            GL.Disable(EnableCap.Lighting);
+            GL.Disable(EnableCap.Texture2D);
+
+            Editor editor = Editor.instance;
+
+            if (editor == null)
+                return;
+
+            if (Settings.settings.ShowLowestSelection)
+            {
+                if (!DrawGeoSelection(editor.GetSelectedCell(), editor.GetSelectedEdge(), editor.GetSelectedWallGeo()))
+                {
+                    if (!DrawCellFlatSelections(Editor.instance.GetSelectedCell()))
+                    {
+                        if (!DrawCellSelection(Editor.instance.GetSelectedCell()))
+                            DrawGroupSelection(editor.GetSelectedGroup());
+                    }
+                }
+            }
+            else // draw them all
+            {
+                if (!DrawGroupSelection(editor.GetSelectedGroup()))
+                    DrawCellSelection(Editor.instance.GetSelectedCell());
+
+                DrawGeoSelection(editor.GetSelectedCell(), editor.GetSelectedEdge(), editor.GetSelectedWallGeo());
+            } 
+
+            // we always draw the vert, as it's minor
+            DrawSelectedVert();
+
+            GL.Enable(EnableCap.Lighting);
+            GL.Enable(EnableCap.Texture2D);
+        }
+
         void DrawMap()
         {
             if (map == null)
                 return;
 
             DrawablesSystem.system.Execute();
-
-            if (Editor.instance != null)
-            {
-                CellGroup group = Editor.instance.GetSelectedGroup();
-                if ( group != null)
-                {
-                    foreach (EditorCell cell in group.Cells)
-                        cell.DrawSelectionFrame();
-                }
-                else
-                {
-                    EditorCell selectedCell = Editor.instance.GetSelectedCell();
-                    if (selectedCell != null)
-                        selectedCell.DrawSelectionFrame();
-                }
-
-                DrawSelectedVert();
-            }
+            DrawSelections();
         }
 
         void DrawOverlay()
