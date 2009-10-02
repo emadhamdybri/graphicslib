@@ -369,6 +369,26 @@ namespace PortalEdit
             return new Vector2(mapX, mapY);
         }
 
+        private Vector2 ClampToAxis(Vector2 vec)
+        {
+            if (Control.ModifierKeys == Keys.Shift && EditMode == MapEditMode.DrawMode && incompletePoly.Verts.Count > 0)
+            {
+                Vector2 lastVert = incompletePoly.Verts[incompletePoly.Verts.Count - 1];
+                float dx = (float)Math.Abs(hoverPos.X - lastVert.X);
+                float dy = (float)Math.Abs(hoverPos.Y - lastVert.Y);
+
+                Vector2 v = new Vector2(vec);
+                if (dx > dy)
+                    v.Y = lastVert.Y;
+                else if (dy > dx)
+                    v.X = lastVert.X;
+
+                return v;
+            }
+            else
+                return vec;
+        }
+
         private Vector2 SnapPoint ( Vector2 pos )
         {
             float snapInMapSpace = Settings.settings.SnapValue;
@@ -382,7 +402,7 @@ namespace PortalEdit
             int xSnap = (int)((pos.X + (xMod*snapInMapSpace / 2f)) / snapInMapSpace);
             int ySnap = (int)((pos.Y + (yMod*snapInMapSpace / 2f)) / snapInMapSpace);
 
-            return new Vector2(xSnap * snapInMapSpace, ySnap * snapInMapSpace);
+            return ClampToAxis(new Vector2(xSnap * snapInMapSpace, ySnap * snapInMapSpace));
         }
 
         private void EditAddPolygon ( )
@@ -412,6 +432,7 @@ namespace PortalEdit
                 PolygonSelection(e.Location);
         }
 
+
         private void MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Middle)
@@ -419,6 +440,7 @@ namespace PortalEdit
                 offset.X += (int)((e.X - lastMouse.X)/scale);
                 offset.Y -= (int)((e.Y - lastMouse.Y) / scale);
             }
+
             hoverPos = SnapPoint(ScreenToMap(e.X, control.Height - e.Y));
 
             if (MouseStatusUpdate != null)

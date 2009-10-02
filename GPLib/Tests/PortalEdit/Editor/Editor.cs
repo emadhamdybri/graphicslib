@@ -11,7 +11,6 @@ using Drawables;
 
 namespace PortalEdit
 {
-
     public enum ViewEditMode
     {
         Select,
@@ -217,6 +216,7 @@ namespace PortalEdit
                 float.TryParse(frame.CellVertList.SelectedRows[0].Cells[2].Value.ToString(), out vert.Top);
 
                 DisplayListSystem.system.Invalidate();
+                RebuildMap();
                 ResetViews();
             }
             catch (System.Exception ex)

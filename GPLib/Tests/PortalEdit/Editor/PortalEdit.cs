@@ -250,12 +250,18 @@ namespace PortalEdit
 
         private void MapZoomIn_Click(object sender, EventArgs e)
         {
-            editor.mapRenderer.Zoom(Settings.settings.MapZoomTicksPerClick);
+            if (Control.ModifierKeys == Keys.Shift)
+                editor.mapRenderer.Zoom(Settings.settings.MapZoomTicksPerClick*5);
+            else
+                editor.mapRenderer.Zoom(Settings.settings.MapZoomTicksPerClick);
         }
 
         private void MapZoomOut_Click(object sender, EventArgs e)
         {
-            editor.mapRenderer.Zoom(-Settings.settings.MapZoomTicksPerClick);
+            if (Control.ModifierKeys == Keys.Shift)
+                editor.mapRenderer.Zoom(-Settings.settings.MapZoomTicksPerClick*5);
+            else
+                editor.mapRenderer.Zoom(-Settings.settings.MapZoomTicksPerClick);
         }
 
         private void ResetZoom_Click(object sender, EventArgs e)

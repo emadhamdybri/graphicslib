@@ -25,6 +25,7 @@ namespace PortalEdit
             SnapValue.Value = (decimal)settings.SnapValue;
             GridSize.Value = (decimal)settings.GridSize;
             MinimalSelection.Checked = settings.ShowLowestSelection;
+            Show3DOrigin.Checked = settings.Show3dOrigin;
         }
 
         private void OK_Click(object sender, EventArgs e)
@@ -35,6 +36,7 @@ namespace PortalEdit
             settings.SnapValue = (float)SnapValue.Value;
             settings.GridSize = (float)GridSize.Value;
             settings.ShowLowestSelection = MinimalSelection.Checked;
+            settings.Show3dOrigin = Show3DOrigin.Checked;
 
             settings.Write();
         }
@@ -56,6 +58,7 @@ namespace PortalEdit
         public float SnapValue = 0.1f;
         public float GridSize = 100f;
         public bool ShowLowestSelection = true;
+        public bool Show3dOrigin = true;
 
         public static Settings Read(FileInfo file)
         {

@@ -43,6 +43,7 @@
             this.GridSubUnits = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.MinimalSelection = new System.Windows.Forms.CheckBox();
+            this.Show3DOrigin = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PixelsPerUnit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapZoomPerClick)).BeginInit();
@@ -56,7 +57,7 @@
             // 
             this.OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.OK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OK.Location = new System.Drawing.Point(154, 127);
+            this.OK.Location = new System.Drawing.Point(154, 173);
             this.OK.Name = "OK";
             this.OK.Size = new System.Drawing.Size(75, 23);
             this.OK.TabIndex = 0;
@@ -68,7 +69,7 @@
             // 
             this.Cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Cancel.Location = new System.Drawing.Point(236, 127);
+            this.Cancel.Location = new System.Drawing.Point(236, 173);
             this.Cancel.Name = "Cancel";
             this.Cancel.Size = new System.Drawing.Size(75, 23);
             this.Cancel.TabIndex = 1;
@@ -152,6 +153,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.Show3DOrigin);
             this.groupBox2.Controls.Add(this.GridSize);
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.SnapValue);
@@ -160,7 +162,7 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Location = new System.Drawing.Point(165, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(148, 103);
+            this.groupBox2.Size = new System.Drawing.Size(148, 122);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Grid";
@@ -280,13 +282,23 @@
             this.MinimalSelection.Text = "Show Minimal Selection";
             this.MinimalSelection.UseVisualStyleBackColor = true;
             // 
+            // Show3DOrigin
+            // 
+            this.Show3DOrigin.AutoSize = true;
+            this.Show3DOrigin.Location = new System.Drawing.Point(9, 92);
+            this.Show3DOrigin.Name = "Show3DOrigin";
+            this.Show3DOrigin.Size = new System.Drawing.Size(100, 17);
+            this.Show3DOrigin.TabIndex = 10;
+            this.Show3DOrigin.Text = "Show 3D Origin";
+            this.Show3DOrigin.UseVisualStyleBackColor = true;
+            // 
             // SettingsDialog
             // 
             this.AcceptButton = this.OK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.Cancel;
-            this.ClientSize = new System.Drawing.Size(323, 162);
+            this.ClientSize = new System.Drawing.Size(323, 208);
             this.Controls.Add(this.MinimalSelection);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -328,5 +340,6 @@
         private System.Windows.Forms.NumericUpDown GridSize;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox MinimalSelection;
+        private System.Windows.Forms.CheckBox Show3DOrigin;
     }
 }
