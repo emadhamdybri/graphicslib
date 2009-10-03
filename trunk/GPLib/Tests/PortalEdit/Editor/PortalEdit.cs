@@ -283,7 +283,7 @@ namespace PortalEdit
 
         private void CheckDirtySave ()
         {
-            if (editor.Dirty)
+            if (editor.IsDirty())
             {
                 if (MessageBox.Show("This file has unsaved changed!\r\nDo you wish to save it now?", "Unsaved Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     saveToolStripMenuItem_Click(this, EventArgs.Empty);
