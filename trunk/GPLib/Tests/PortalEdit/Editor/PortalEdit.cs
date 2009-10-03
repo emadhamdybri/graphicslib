@@ -140,9 +140,109 @@ namespace PortalEdit
                 Editor.instance = new Editor(this, MapView, GLView);
 
             editor = Editor.instance;
+            editor.MapLoaded += new MapLoadedHandler(editor_MapLoaded);
+            editor_MapLoaded(null, EventArgs.Empty);
             populateCellList();
 
             base.OnLoad(e);
+        }
+
+        void editor_MapLoaded(object sender, EventArgs args)
+        {
+            NamedDepthPresets.Items.Clear();
+            NamedDepthPresets.Items.Add("None");
+
+            PortalMapAttribute[] att = editor.map.FindAttributes("Editor:NamedDepthSet");
+            foreach ( PortalMapAttribute at in att )
+            {
+                string[] nugs = at.Value.Split(":".ToCharArray());
+                if (nugs.Length < 3)
+                    continue;
+
+                NamedDepthPresets.Items.Add(nugs[0]);
+            }
+
+            NamedDepthPresets.Items.Add("New...");
+            NamedDepthPresets.SelectedIndex = 0;
+        }
+
+        PortalMapAttribute FindDepthAttribute ( string name )
+        {
+            PortalMapAttribute[] att = editor.map.FindAttributes("Editor:NamedDepthSet");
+            foreach (PortalMapAttribute at in att)
+            {
+                string[] nugs = at.Value.Split(":".ToCharArray());
+                if (nugs.Length < 3)
+                    continue;
+
+                if (nugs[0] == name)
+                    return at;
+            }
+
+            return null;
+        }
+
+        void SaveDepthAttribute ( String name )
+        {
+            PortalMapAttribute att = FindDepthAttribute(name);
+            if (att != null)
+                editor.map.RemoveAttribute(att.Name, att.Value);
+
+            String val = name + ":" + EditZMinus.Text + ":" + EditZPlus.Text + ":" + EditIncZ.Checked.ToString();
+            editor.map.AddAttribute("Editor:NamedDepthSet", val);
+            Editor.SetDirty();
+        }
+
+        void SaveCurrentDepthAttribute ( )
+        {
+            if (NamedDepthPresets.SelectedItem == null)
+                return;
+            if (NamedDepthPresets.SelectedItem.ToString() != "None")
+                SaveDepthAttribute(NamedDepthPresets.SelectedItem.ToString());
+        }
+
+        private void NamedDepthPresets_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (NamedDepthPresets.SelectedItem == null)
+                return;
+            if (NamedDepthPresets.SelectedItem.ToString() == "New...")
+            {
+                String name = "New Item" + NamedDepthPresets.Items.Count.ToString();
+
+                DepthGroupName nameDlog = new DepthGroupName();
+                nameDlog.ItemName.Text = name;
+                if (nameDlog.ShowDialog(this) == DialogResult.OK)
+                    name = nameDlog.ItemName.Text;
+                else
+                {
+                    NamedDepthPresets.SelectedIndex = 0;
+                    return;
+                }
+                SaveDepthAttribute(name);
+
+                NamedDepthPresets.Items.Insert(1, name);
+                NamedDepthPresets.SelectedIndex = 1;
+            }
+            if (NamedDepthPresets.SelectedItem.ToString() == "None")
+            {
+            }
+            else
+            {
+                PortalMapAttribute att = FindDepthAttribute(NamedDepthPresets.SelectedItem.ToString());
+                if (att != null)
+                {
+                    string[] nugs = att.Value.Split(":".ToCharArray());
+                    if (nugs.Length < 3)
+                        return;
+
+                    if (nugs[0] == NamedDepthPresets.SelectedItem.ToString())
+                    {
+                        EditZMinus.Text = nugs[1];
+                        EditZPlus.Text = nugs[2];
+                        EditIncZ.Checked = nugs[3] == "True";
+                    }
+                }
+            }
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -398,7 +498,7 @@ namespace PortalEdit
             {
                 EditZMinus.Text = Editor.EditZFloor.ToString();
             }
-
+            SaveCurrentDepthAttribute();
             Settings.settings.Write();
         }
 
@@ -413,12 +513,14 @@ namespace PortalEdit
                 EditZPlus.Text = Editor.EditZRoof.ToString();
             }
 
+            SaveCurrentDepthAttribute();
             Settings.settings.Write();
         }
 
         private void EditIncZ_CheckedChanged(object sender, EventArgs e)
         {
             Editor.EditZInc = EditIncZ.Checked;
+            SaveCurrentDepthAttribute();
             Settings.settings.Write();
         }
 
@@ -461,12 +563,36 @@ namespace PortalEdit
 
         private void setupImageUnderlayToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MapImageSetup mis = new MapImageSetup();
-            if (mis.ShowDialog(this) == DialogResult.OK)
+            if (MapImageSetup.UP)
+                return;
+            new MapImageSetup().Show(this);
+        }
+
+        private void renameDepthGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (NamedDepthPresets.SelectedItem != null && NamedDepthPresets.SelectedItem.ToString() != "New..." && NamedDepthPresets.SelectedItem.ToString() != "None")
             {
-                editor.mapRenderer.CheckUnderlay();
-                editor.viewRenderer.CheckUnderlay();
-                Invalidate(true);
+                DepthGroupName dlg = new DepthGroupName();
+                dlg.ItemName.Text = NamedDepthPresets.SelectedItem.ToString();
+                if (dlg.ShowDialog(this)== DialogResult.OK)
+                {
+                    PortalMapAttribute attribute = FindDepthAttribute(NamedDepthPresets.SelectedItem.ToString());
+                    editor.map.RemoveAttribute(attribute.Name, attribute.Value);
+                    SaveDepthAttribute(dlg.ItemName.Text);
+                    NamedDepthPresets.SelectedItem = dlg.ItemName.Text;
+                }
+
+                NamedDepthPresets.Items.Remove(NamedDepthPresets.SelectedItem);
+                NamedDepthPresets.SelectedIndex = 0;
+            }
+        }
+
+        private void deleteDepthGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (NamedDepthPresets.SelectedItem != null && NamedDepthPresets.SelectedItem.ToString() != "New..." && NamedDepthPresets.SelectedItem.ToString() != "None")
+            {
+                NamedDepthPresets.Items.Remove(NamedDepthPresets.SelectedItem);
+                NamedDepthPresets.SelectedIndex = 0;
             }
         }
     }

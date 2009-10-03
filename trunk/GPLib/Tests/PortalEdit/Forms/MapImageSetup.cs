@@ -14,6 +14,7 @@ namespace PortalEdit
 {
     public partial class MapImageSetup : Form
     {
+        public static bool UP = false;
         public MapImageSetup()
         {
             InitializeComponent();
@@ -28,6 +29,7 @@ namespace PortalEdit
             Vector2 center = GetMapUnderlayCenter(map);
             CenterX.Value = (decimal)center.X;
             CenterY.Value = (decimal)center.Y;
+            UP = true;
         }
 
         public static String GetMapUnderlayImage ( PortalMap map )
@@ -52,7 +54,7 @@ namespace PortalEdit
                     float.TryParse(att[0].Value, out val);
                     vec.X = val;
                 }
-                catch (System.Exception ex)
+                catch (System.Exception)
                 {
                 }
             }
@@ -66,7 +68,7 @@ namespace PortalEdit
                     float.TryParse(att[0].Value, out val);
                     vec.Y = val;
                 }
-                catch (System.Exception ex)
+                catch (System.Exception)
                 {
                 }
             }
@@ -84,7 +86,7 @@ namespace PortalEdit
                 {
                     float.TryParse(att[0].Value, out ppu);
                 }
-                catch (System.Exception ex)
+                catch (System.Exception)
                 {
                 }
             }
@@ -152,6 +154,11 @@ namespace PortalEdit
             Editor.instance.mapRenderer.CheckUnderlay();
             Editor.instance.viewRenderer.CheckUnderlay();
             Editor.instance.frame.Invalidate(true);
+        }
+
+        private void MapImageSetup_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            UP = false;
         }
     }
 }
