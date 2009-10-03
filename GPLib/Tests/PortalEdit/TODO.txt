@@ -1,6 +1,5 @@
 
 ==General==
-Split outline and face drawing in 3d view
 Add image overlay
 Plane checks and plane snap
 Floor and Roof shifts and snaps
