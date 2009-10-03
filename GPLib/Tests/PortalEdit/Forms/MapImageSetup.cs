@@ -43,7 +43,7 @@ namespace PortalEdit
         {
             Vector2 vec = new Vector2(0, 0);
 
-            PortalMapAttribute[] att = map.FindAttributes("Editor:Image:Underlay:Offset::X");
+            PortalMapAttribute[] att = map.FindAttributes("Editor:Image:Underlay:Offset:X");
             if (att.Length > 0)
             {
                 try
@@ -57,7 +57,7 @@ namespace PortalEdit
                 }
             }
 
-            att = map.FindAttributes("Editor:Image:Underlay:Offset::Y");
+            att = map.FindAttributes("Editor:Image:Underlay:Offset:Y");
             if (att.Length > 0)
             {
                 try
@@ -121,7 +121,6 @@ namespace PortalEdit
             {
                 ImageFileName.Text = ofd.FileName;
             }
-
         }
 
         private void OK_Click(object sender, EventArgs e)
@@ -150,6 +149,9 @@ namespace PortalEdit
                     DialogResult = DialogResult.None;
                 }
             }
+            Editor.instance.mapRenderer.CheckUnderlay();
+            Editor.instance.viewRenderer.CheckUnderlay();
+            Editor.instance.frame.Invalidate(true);
         }
     }
 }

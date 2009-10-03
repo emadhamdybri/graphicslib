@@ -622,7 +622,7 @@ namespace PortalEdit
             SetCamera();
         }
 
-        public void DrawUnderlay()
+        public void DrawBasePlane ()
         {
             GL.Disable(EnableCap.Lighting);
             GL.DepthMask(false);
@@ -639,10 +639,31 @@ namespace PortalEdit
             GL.Vertex3(-gridSize, gridSize, 0);
             GL.End();
 
+            GL.DepthMask(true);
+            GL.DepthFunc(DepthFunction.Less);
+            GL.Disable(EnableCap.Lighting);
+        }
+
+        public void DrawUnderlay()
+        {
+           
             if (underlay != null)
             {
-                GL.Color4(Color.White);
+                GL.Disable(EnableCap.Lighting);
+                GL.Color4(Color.FromArgb((int)(255*Settings.settings.Underlay3DAlpha),Color.White));
                 GL.Enable(EnableCap.Texture2D);
+
+                if (!Settings.settings.ShowUnderlayWithDepth)
+                {
+                    GL.DepthMask(false);
+                    GL.DepthFunc(DepthFunction.Always);
+
+                }
+                else
+                {
+                    GL.Enable(EnableCap.PolygonOffsetFill);
+                    GL.PolygonOffset(10, -10);
+                }
 
                 underlay.Execute();
 
@@ -672,11 +693,12 @@ namespace PortalEdit
                 GL.PopMatrix();
 
                 GL.Disable(EnableCap.Texture2D);
+
+                GL.Disable(EnableCap.PolygonOffsetFill);
+                GL.DepthMask(true);
+                GL.DepthFunc(DepthFunction.Less);
+                GL.Disable(EnableCap.Lighting);
             }
-            
-            GL.DepthMask(true);
-            GL.DepthFunc(DepthFunction.Less);
-            GL.Disable(EnableCap.Lighting);
         }
 
         public void Render3dView()
@@ -690,7 +712,13 @@ namespace PortalEdit
             Vector4 lightPos = new Vector4(10, 20, 20, 0);
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
 
-            DrawUnderlay();
+            if (Settings.settings.ShowUnderlayWithDepth)
+                DrawUnderlay();
+            else
+            {
+                DrawBasePlane();
+                DrawUnderlay();
+            }
 
             if (GridList != null)
                 GridList.Call();
