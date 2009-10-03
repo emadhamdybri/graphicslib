@@ -241,6 +241,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "MapImageSetup";
             this.Text = "Map Image Underlay Setup";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MapImageSetup_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.PixelsPerUnit)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

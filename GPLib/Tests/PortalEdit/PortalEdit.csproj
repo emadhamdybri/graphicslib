@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{83DDDF59-B115-4513-B479-3EC8B946E998}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -60,6 +60,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\DepthGroupName.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DepthGroupName.Designer.cs">
+      <DependentUpon>DepthGroupName.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MapImageSetup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,6 +90,9 @@
     <EmbeddedResource Include="Editor\PortalEdit.resx">
       <DependentUpon>PortalEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DepthGroupName.resx">
+      <DependentUpon>DepthGroupName.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MapImageSetup.resx">
       <DependentUpon>MapImageSetup.cs</DependentUpon>

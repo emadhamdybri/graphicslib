@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditFrame));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.NamedDepthPresets = new System.Windows.Forms.ComboBox();
             this.DepthEditPanel = new System.Windows.Forms.Panel();
             this.EditLoadZFromSelection = new System.Windows.Forms.Button();
             this.EditIncZ = new System.Windows.Forms.CheckBox();
@@ -70,8 +71,9 @@
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.setupImageUnderlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.forceZFloorToPlaneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MousePositionStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.DeleteCell = new System.Windows.Forms.Button();
@@ -95,8 +97,9 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FaceInfo = new System.Windows.Forms.TabPage();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.setupImageUnderlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.renameDepthGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteDepthGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -130,6 +133,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.NamedDepthPresets);
             this.splitContainer1.Panel1.Controls.Add(this.DepthEditPanel);
             this.splitContainer1.Panel1.Controls.Add(this.MapEditToolsPanel);
             this.splitContainer1.Panel1.Controls.Add(this.MapView);
@@ -145,6 +149,17 @@
             this.splitContainer1.SplitterDistance = 398;
             this.splitContainer1.TabIndex = 0;
             // 
+            // NamedDepthPresets
+            // 
+            this.NamedDepthPresets.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.NamedDepthPresets.FormattingEnabled = true;
+            this.NamedDepthPresets.Location = new System.Drawing.Point(222, 44);
+            this.NamedDepthPresets.MaxDropDownItems = 25;
+            this.NamedDepthPresets.Name = "NamedDepthPresets";
+            this.NamedDepthPresets.Size = new System.Drawing.Size(165, 21);
+            this.NamedDepthPresets.TabIndex = 6;
+            this.NamedDepthPresets.SelectedIndexChanged += new System.EventHandler(this.NamedDepthPresets_SelectedIndexChanged);
+            // 
             // DepthEditPanel
             // 
             this.DepthEditPanel.Controls.Add(this.EditLoadZFromSelection);
@@ -155,7 +170,7 @@
             this.DepthEditPanel.Controls.Add(this.ZMinusLabel);
             this.DepthEditPanel.Location = new System.Drawing.Point(6, 38);
             this.DepthEditPanel.Name = "DepthEditPanel";
-            this.DepthEditPanel.Size = new System.Drawing.Size(216, 33);
+            this.DepthEditPanel.Size = new System.Drawing.Size(384, 33);
             this.DepthEditPanel.TabIndex = 5;
             // 
             // EditLoadZFromSelection
@@ -523,19 +538,27 @@
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(187, 6);
+            // 
+            // setupImageUnderlayToolStripMenuItem
+            // 
+            this.setupImageUnderlayToolStripMenuItem.Name = "setupImageUnderlayToolStripMenuItem";
+            this.setupImageUnderlayToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.setupImageUnderlayToolStripMenuItem.Text = "Setup Image Underlay";
+            this.setupImageUnderlayToolStripMenuItem.Click += new System.EventHandler(this.setupImageUnderlayToolStripMenuItem_Click);
+            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.forceZFloorToPlaneToolStripMenuItem});
+            this.toolStripSeparator6,
+            this.renameDepthGroupToolStripMenuItem,
+            this.deleteDepthGroupToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
-            // 
-            // forceZFloorToPlaneToolStripMenuItem
-            // 
-            this.forceZFloorToPlaneToolStripMenuItem.Name = "forceZFloorToPlaneToolStripMenuItem";
-            this.forceZFloorToPlaneToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.forceZFloorToPlaneToolStripMenuItem.Text = "Force Z Floor To Plane";
             // 
             // statusStrip1
             // 
@@ -787,17 +810,24 @@
             this.FaceInfo.Text = "Faces";
             this.FaceInfo.UseVisualStyleBackColor = true;
             // 
-            // toolStripSeparator5
+            // toolStripSeparator6
             // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(187, 6);
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(194, 6);
             // 
-            // setupImageUnderlayToolStripMenuItem
+            // renameDepthGroupToolStripMenuItem
             // 
-            this.setupImageUnderlayToolStripMenuItem.Name = "setupImageUnderlayToolStripMenuItem";
-            this.setupImageUnderlayToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.setupImageUnderlayToolStripMenuItem.Text = "Setup Image Underlay";
-            this.setupImageUnderlayToolStripMenuItem.Click += new System.EventHandler(this.setupImageUnderlayToolStripMenuItem_Click);
+            this.renameDepthGroupToolStripMenuItem.Name = "renameDepthGroupToolStripMenuItem";
+            this.renameDepthGroupToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.renameDepthGroupToolStripMenuItem.Text = "Rename Depth Group...";
+            this.renameDepthGroupToolStripMenuItem.Click += new System.EventHandler(this.renameDepthGroupToolStripMenuItem_Click);
+            // 
+            // deleteDepthGroupToolStripMenuItem
+            // 
+            this.deleteDepthGroupToolStripMenuItem.Name = "deleteDepthGroupToolStripMenuItem";
+            this.deleteDepthGroupToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.deleteDepthGroupToolStripMenuItem.Text = "Delete Depth Group";
+            this.deleteDepthGroupToolStripMenuItem.Click += new System.EventHandler(this.deleteDepthGroupToolStripMenuItem_Click);
             // 
             // EditFrame
             // 
@@ -898,7 +928,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem forceZFloorToPlaneToolStripMenuItem;
         private System.Windows.Forms.TabControl CellTabControl;
         private System.Windows.Forms.TabPage CellInfo;
         private System.Windows.Forms.TabPage VertInfo;
@@ -911,6 +940,10 @@
         private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem setupImageUnderlayToolStripMenuItem;
+        private System.Windows.Forms.ComboBox NamedDepthPresets;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem renameDepthGroupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteDepthGroupToolStripMenuItem;
     }
 }
 
