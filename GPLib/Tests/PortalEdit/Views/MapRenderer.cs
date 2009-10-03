@@ -193,7 +193,7 @@ namespace PortalEdit
             Grid(e.Graphics);
             e.Graphics.Flush();
 
-            foreach (CellGroup group in map.cellGroups)
+            foreach (CellGroup group in map.CellGroups)
             {
                 foreach (Cell cell in group.Cells)
                     DrawCell(cell, group, e.Graphics);
@@ -466,7 +466,7 @@ namespace PortalEdit
 
             Random rand = new Random();
 
-            foreach (CellGroup group in map.cellGroups)
+            foreach (CellGroup group in map.CellGroups)
             {
                 foreach (Cell cell in group.Cells)
                 {

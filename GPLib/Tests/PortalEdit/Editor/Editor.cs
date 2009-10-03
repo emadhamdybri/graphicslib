@@ -17,6 +17,8 @@ namespace PortalEdit
         Paint,
     }
 
+    public delegate void MapLoadedHandler ( object sender, EventArgs args );
+
     class Editor
     {
         public PortalMap map;
@@ -31,6 +33,8 @@ namespace PortalEdit
         public static bool EditZInc = true;
 
         public ViewEditMode viewEditMode = ViewEditMode.Select;
+
+        public event MapLoadedHandler MapLoaded;
 
         MapViewRenderer.CellClickedEventArgs lastSelectionArgs = null;
 
@@ -130,7 +134,7 @@ namespace PortalEdit
         {
             CellGroup group = new CellGroup();
             group.Name = map.NewGroupName();
-            map.cellGroups.Add(group);
+            map.CellGroups.Add(group);
 
             if (undo)
             Undo.System.Add(new GroupAddUndo(group));
@@ -259,9 +263,13 @@ namespace PortalEdit
 
             DisplayListSystem.system.Invalidate();
             DrawablesSystem.system.removeAll();
-            map.cellGroups.Clear();
+            map.CellGroups.Clear();
+            map.MapAttributes.Clear();
 
             Dirty = false;
+
+            if (MapLoaded != null)
+                MapLoaded(this, EventArgs.Empty);
             ResetViews();
         }
 
@@ -276,21 +284,28 @@ namespace PortalEdit
 
             DisplayListSystem.system.Invalidate();
             DrawablesSystem.system.removeAll();
-            map.cellGroups.Clear();
 
-            foreach (CellGroup group in newMap.cellGroups)
+            map.MapAttributes.Clear();
+            map.MapAttributes = newMap.MapAttributes;
+            map.CellGroups.Clear();
+
+            foreach (CellGroup group in newMap.CellGroups)
             {
                 CellGroup newGroup = new CellGroup();
                 newGroup.Name = group.Name;
-                map.cellGroups.Add(newGroup);
+                map.CellGroups.Add(newGroup);
 
                 foreach (Cell cell in group.Cells)
                     newGroup.Cells.Add(new EditorCell(cell));
             }
 
             map.RebindCells();
-            ResetViews();
             Dirty = false;
+
+            if (MapLoaded != null)
+                MapLoaded(this, EventArgs.Empty);
+
+            ResetViews();
             return true;
         }
 
@@ -304,7 +319,7 @@ namespace PortalEdit
 
         public void RebuildMap ()
         {
-            foreach (CellGroup group in map.cellGroups)
+            foreach (CellGroup group in map.CellGroups)
                 foreach (EditorCell cell in group.Cells)
                     cell.CheckEdges(map);
         }
@@ -327,7 +342,7 @@ namespace PortalEdit
 
         void mapRenderer_NewPolygon(object sender, Polygon polygon)
         {
-            if (map.cellGroups.Count == 0)
+            if (map.CellGroups.Count == 0)
                 return;
 
             CellGroup group = GetSelectedGroup();
@@ -341,7 +356,7 @@ namespace PortalEdit
                     group = map.FindGroup(selCel.GroupName);
 
                 if (group == null)
-                    group = map.cellGroups[map.cellGroups.Count - 1];
+                    group = map.CellGroups[map.CellGroups.Count - 1];
             }
 
             EditorCell cell = new EditorCell(polygon, map, group);
@@ -349,7 +364,7 @@ namespace PortalEdit
 
             group.Cells.Add(cell);
 
-            foreach(CellGroup g in map.cellGroups)
+            foreach(CellGroup g in map.CellGroups)
             {
                 foreach (Cell c in g.Cells )
                 {
