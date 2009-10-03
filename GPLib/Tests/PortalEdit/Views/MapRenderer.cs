@@ -87,6 +87,8 @@ namespace PortalEdit
                     underlayCenter = MapImageSetup.GetMapUnderlayCenter(map);
                 }
             }
+            else
+                underlay = null;
         }
 
         protected void CheckCursor ()
