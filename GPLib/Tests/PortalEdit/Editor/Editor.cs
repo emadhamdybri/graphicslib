@@ -36,11 +36,19 @@ namespace PortalEdit
 
         public String FileName = string.Empty;
 
-        public bool Dirty = false;
+        bool Dirty = false;
 
         public static void SetDirty()
         {
             instance.Dirty = true;
+        }
+
+        public bool IsDirty ()
+        {
+            if (!map.Valid())
+                return false;
+
+            return Dirty;
         }
 
         public Editor(EditFrame _frame, Control mapctl, GLControl view)
@@ -308,6 +316,7 @@ namespace PortalEdit
 
             Undo.System.Add(new CellDeleteUndo(cell));
 
+            SelectMapItem(null);
             cell.Dispose();
             map.RemoveCell(cell);
             RebuildMap();

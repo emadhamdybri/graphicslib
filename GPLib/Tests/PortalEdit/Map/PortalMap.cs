@@ -14,6 +14,16 @@ namespace PortalEdit
     {
         public List<CellGroup> cellGroups = new List<CellGroup>();
 
+        public bool Valid ()
+        {
+            foreach(CellGroup group in cellGroups)
+            {
+                if (group.Cells.Count > 0)
+                    return true;
+            }
+            return false;
+        }
+
         protected bool NameExists(String name)
         {
             foreach (CellGroup group in cellGroups)

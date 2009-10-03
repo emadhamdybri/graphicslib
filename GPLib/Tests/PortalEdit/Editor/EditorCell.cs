@@ -10,6 +10,7 @@ using OpenTK.Graphics.OpenGL;
 
 using Drawables.DisplayLists;
 using Drawables;
+using Math3D;
 
 namespace PortalEdit
 {
@@ -303,9 +304,26 @@ namespace PortalEdit
                 }
             }
 
-            generateWallDefs();
+            setupCellGeoData();
             generateGeometry();
             return hasPortal;
+        }
+
+        void setupCellGeoData ()
+        {
+            generateWallDefs();
+
+            // make vectors for the first 2 edges
+            Vector3 v1 = VectorHelper3.Subtract(Verts[1].Bottom, Verts[0].Bottom);
+            Vector3 v2 = VectorHelper3.Subtract(Verts[1].Bottom, Verts[2].Bottom);
+            FloorNormal = Vector3.Cross(v2, v1);
+            FloorNormal.Normalize();
+
+            v1.Z = Verts[1].GetTopZ(HeightIsIncremental) - Verts[0].GetTopZ(HeightIsIncremental);
+            v2.Z = Verts[1].GetTopZ(HeightIsIncremental) - Verts[2].GetTopZ(HeightIsIncremental);
+
+            RoofNormal = Vector3.Cross(v1, v2);
+            RoofNormal.Normalize();
         }
 
         void generateWallDefs()
@@ -366,7 +384,7 @@ namespace PortalEdit
                     if (lowestTop != null)
                     {
                         lowestSP = lowestTop.MatchingVert(thisSP);
-                        if (lowestSP.Bottom.Z < thisSP.Bottom.Z)
+                        if (lowestSP.Bottom.Z <= thisSP.Bottom.Z)
                         {
                             doBottomFace = false;
                             topDest = lowestTop;
@@ -588,7 +606,7 @@ namespace PortalEdit
             GL.Color4(cellColor);
             GL.Begin(BeginMode.Polygon);
 
-            GL.Normal3(0, 0, 1);
+            GL.Normal3(FloorNormal);
             foreach (CellEdge edge in Edges)
                 GL.Vertex3(Verts[edge.End].Bottom);
             GL.End();
@@ -615,7 +633,7 @@ namespace PortalEdit
             GL.Color4(cellColor);
             GL.Begin(BeginMode.Polygon);
 
-            GL.Normal3(0, 0, -1);
+            GL.Normal3(RoofNormal);
             for (int i = Edges.Count - 1; i >= 0; i--)
             {
                 float roof = Verts[Edges[i].End].Top;
