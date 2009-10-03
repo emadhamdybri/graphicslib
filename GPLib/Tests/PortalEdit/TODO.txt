@@ -2,6 +2,7 @@
 ==General==
 Add view option to now draw underlay
 Fix co-linar normal generation
+Height Presets
 Add Regroup
 Add Group Name Edit
 Make Group box larger (maybe add a "group cells" tab)
