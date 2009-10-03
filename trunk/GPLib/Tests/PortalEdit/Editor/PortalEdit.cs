@@ -234,7 +234,7 @@ namespace PortalEdit
 
             TreeNode selectedNode = null;
 
-            foreach(CellGroup group in editor.map.cellGroups)
+            foreach(CellGroup group in editor.map.CellGroups)
             {
                 TreeNode node = new TreeNode(group.Name, 0, 2);
                 node.Tag = group;

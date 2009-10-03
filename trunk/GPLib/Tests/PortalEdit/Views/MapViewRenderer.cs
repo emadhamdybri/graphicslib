@@ -100,7 +100,7 @@ namespace PortalEdit
                 Dictionary<int, CellClickedEventArgs> selectionArgs = new Dictionary<int,CellClickedEventArgs>();
                 int name = 1;
 
-                foreach(CellGroup group in map.cellGroups)
+                foreach(CellGroup group in map.CellGroups)
                 {
                     foreach (EditorCell cell in group.Cells)
                     {

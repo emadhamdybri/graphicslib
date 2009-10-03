@@ -175,7 +175,7 @@ namespace PortalEdit
 
                 g.Cells.Clear();
 
-                Editor.instance.map.cellGroups.Remove(g);
+                Editor.instance.map.CellGroups.Remove(g);
                 Editor.instance.RebuildMap();
             }
         }

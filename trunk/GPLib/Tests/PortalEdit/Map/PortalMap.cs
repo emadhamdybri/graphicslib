@@ -10,13 +10,77 @@ using OpenTK;
 
 namespace PortalEdit
 {
+    public class PortalMapAttribute
+    {
+        public PortalMapAttribute (String n, String v)
+        {
+            Name = n;
+            Value = v;
+        }
+
+        public String Name = String.Empty;
+        public String Value = String.Empty;
+    }
+
     public class PortalMap
     {
-        public List<CellGroup> cellGroups = new List<CellGroup>();
+        public List<CellGroup> CellGroups = new List<CellGroup>();
+        public List<PortalMapAttribute> MapAttributes = new List<PortalMapAttribute>();
+
+        public PortalMapAttribute[] FindAttributes ( String name )
+        {
+            List<PortalMapAttribute> foundItems = new List<PortalMapAttribute>();
+
+            foreach(PortalMapAttribute item in MapAttributes)
+            {
+                if (item.Name == name)
+                    foundItems.Add(item);
+            }
+
+            return foundItems.ToArray();
+        }
+
+        public void AddAttribute ( String name, String value )
+        {
+            foreach (PortalMapAttribute item in MapAttributes)
+            {
+                if (item.Name == name && item.Value == value)
+                    return;
+            }
+            MapAttributes.Add(new PortalMapAttribute(name, value));
+        }
+
+        public void RemoveAttributes(String name)
+        {
+            List<PortalMapAttribute> foundItems = new List<PortalMapAttribute>();
+
+            foreach (PortalMapAttribute item in MapAttributes)
+            {
+                if (item.Name == name)
+                    foundItems.Add(item);
+            }
+
+            foreach (PortalMapAttribute item in foundItems)
+                MapAttributes.Remove(item);
+        }
+
+        public void RemoveAttribute(String name, String value)
+        {
+            List<PortalMapAttribute> foundItems = new List<PortalMapAttribute>();
+
+            foreach (PortalMapAttribute item in MapAttributes)
+            {
+                if (item.Name == name && item.Value == value)
+                    foundItems.Add(item);
+            }
+
+            foreach (PortalMapAttribute item in foundItems)
+                MapAttributes.Remove(item);
+        }
 
         public bool Valid ()
         {
-            foreach(CellGroup group in cellGroups)
+            foreach(CellGroup group in CellGroups)
             {
                 if (group.Cells.Count > 0)
                     return true;
@@ -26,7 +90,7 @@ namespace PortalEdit
 
         protected bool NameExists(String name)
         {
-            foreach (CellGroup group in cellGroups)
+            foreach (CellGroup group in CellGroups)
             {
                 if (group.Name == name)
                     return true;
@@ -36,7 +100,7 @@ namespace PortalEdit
 
         public String NewGroupName()
         {
-            int count = cellGroups.Count;
+            int count = CellGroups.Count;
             while (NameExists(count.ToString()))
                 count++;
 
@@ -58,7 +122,7 @@ namespace PortalEdit
         public List<Cell> CellsThatContainEdge ( Vector2 p1, Vector2 p2, Cell ignoreCell )
         {
             List<Cell> foundCells = new List<Cell>();
-            foreach(CellGroup group in cellGroups)
+            foreach(CellGroup group in CellGroups)
             {
                 foreach(Cell cell in group.Cells)
                 {
@@ -86,7 +150,7 @@ namespace PortalEdit
 
         public CellGroup FindGroup ( String name )
         {
-            foreach (CellGroup group in cellGroups)
+            foreach (CellGroup group in CellGroups)
             {
                 if (group.Name == name)
                     return group;
@@ -105,7 +169,7 @@ namespace PortalEdit
 
         public void RebindCells ( )
         {
-            foreach (CellGroup group in cellGroups)
+            foreach (CellGroup group in CellGroups)
             {
                 // link up all the portals
                 foreach (Cell cell in group.Cells)
@@ -165,11 +229,13 @@ namespace PortalEdit
             XmlSerializer XML = new XmlSerializer(typeof(PortalMap));
 
             PortalMap writeMap = new PortalMap();
-            foreach (CellGroup group in cellGroups)
+            writeMap.MapAttributes = MapAttributes;
+
+            foreach (CellGroup group in CellGroups)
             {
                 CellGroup newGroup = new CellGroup();
                 newGroup.Name = group.Name;
-                writeMap.cellGroups.Add(newGroup);
+                writeMap.CellGroups.Add(newGroup);
                 foreach (Cell cell in group.Cells)
                     newGroup.Cells.Add(new Cell(cell));
             }
