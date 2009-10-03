@@ -163,9 +163,9 @@ namespace Drawables.Materials
 
             if (textureName != string.Empty)
             {
-                texture = TextureSystem.system.getTexture(textureName);
-                //execute just so we are sure it has a list before we put it in another list
-                texture.Execute();
+                texture = TextureSystem.system.GetTexture(textureName);
+				if (texture != null)
+                	texture.Execute(); //execute just so we are sure it has a list before we put it in another list
             }
             else
                 texture = null;
