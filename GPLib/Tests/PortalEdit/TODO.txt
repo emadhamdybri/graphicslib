@@ -1,5 +1,13 @@
 
 ==General==
+Add view option to now draw underlay
+Fix co-linar normal generation
+Add Regroup
+Add Group Name Edit
+Make Group box larger (maybe add a "group cells" tab)
+Add Tint option to color groups
+Keyboard shortcuts for common actions
+Option to hide cells out of a range ( or alpha them in 3d view )
 Plane checks and plane snap
 Floor and Roof shifts and snaps
 Vertex Editing
