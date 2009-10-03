@@ -16,7 +16,8 @@ namespace PortalEdit
 {
     public class WallGeometry : IDisposable
     {
-        SingleListDrawableItem item;
+        SingleListDrawableItem wallGeo;
+        SingleListDrawableItem wallOutline;
 
         public Cell cell;
         public CellEdge edge;
@@ -28,10 +29,36 @@ namespace PortalEdit
             cell = c;
             edge = e;
             geo = g;
-            item = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(Generate), DrawablesSystem.LastPass - EditorCell.WallPassOffet);
+            wallGeo = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateGeo), DrawablesSystem.LastPass - EditorCell.WallPassOffet);
+            wallOutline = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateOutline), DrawablesSystem.LastPass - EditorCell.WallPassOffet + 1);
+            wallOutline.ShouldDrawItem += new SingleListDrawableItem.ShouldDrawItemHandler(wallOutline_ShouldDrawItem);
         }
 
-        public void Generate ( object sender, DisplayList list)
+        void wallOutline_ShouldDrawItem(object sender, ref bool draw)
+        {
+            draw = Settings.settings.DrawCellEdges;
+        }
+
+        public void GenerateOutline(object sender, DisplayList list)
+        {
+            GL.Color4(EditorCell.wallEdgeColor);
+            GL.Disable(EnableCap.Lighting);
+            GL.LineWidth(EditorCell.outlineLineWidth);
+
+            GL.Begin(BeginMode.LineLoop);
+
+            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, geo.LowerZ[1]);
+            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.LowerZ[0]);
+            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.UpperZ[0]);
+            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, geo.UpperZ[1]);
+
+            GL.End();
+
+            GL.LineWidth(1);
+            GL.Enable(EnableCap.Lighting);
+        }
+
+        public void GenerateGeo(object sender, DisplayList list)
         {
             GL.Color4(EditorCell.wallColor);
 
@@ -43,37 +70,18 @@ namespace PortalEdit
             GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.UpperZ[0]);
             GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, geo.UpperZ[1]);
             GL.End();
-
-            GL.Color4(EditorCell.wallEdgeColor);
-
-            GL.Disable(EnableCap.Lighting);
-            GL.LineWidth(EditorCell.outlineLineWidth);
-
-            if (Settings.settings.DrawCellEdges)
-            {
-                GL.Begin(BeginMode.LineLoop);
-
-                GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, geo.LowerZ[1]);
-                GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.LowerZ[0]);
-                GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.UpperZ[0]);
-                GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, geo.UpperZ[1]);
-
-                GL.End();
-            }
-
-            GL.LineWidth(1);
-            GL.Enable(EnableCap.Lighting);
         }
 
         public void Dispose ()
         {
-            item.Dispose();
+            wallGeo.Dispose();
+            wallOutline.Dispose();
         }
     }
 
     public class PortalGeometry : IDisposable
     {
-        SingleListDrawableItem item;
+        SingleListDrawableItem portalGeo;
 
         Cell cell;
         CellEdge edge;
@@ -85,17 +93,18 @@ namespace PortalEdit
             cell = c;
             edge = e;
             dest = d;
-            item = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(Generate), DrawablesSystem.LastPass);
+            portalGeo = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateGeo), DrawablesSystem.LastPass);
+            portalGeo.ShouldDrawItem += new SingleListDrawableItem.ShouldDrawItemHandler(portalGeo_ShouldDrawItem);
         }
 
-        public void Generate(object sender, DisplayList list)
+        void portalGeo_ShouldDrawItem(object sender, ref bool draw)
         {
-            if (!Settings.settings.DrawPortals && edge.EdgeType == CellEdgeType.Portal)
-                return;
+            if (!Settings.settings.DrawPortals || dest.Group == cell.Group)
+                draw = false;
+        }
 
-            if (edge.EdgeType == CellEdgeType.Portal && dest.Group == cell.Group)
-                return;
-
+        public void GenerateGeo(object sender, DisplayList list)
+        {
             CellVert destSP = dest.Cell.MatchingVert(cell.Verts[edge.Start]);
             CellVert destEP = dest.Cell.MatchingVert(cell.Verts[edge.End]);
 
@@ -135,14 +144,90 @@ namespace PortalEdit
 
         public void Dispose()
         {
-            item.Dispose();
+            portalGeo.Dispose();
+        }
+    }
+
+    public class CellGeometry : IDisposable
+    {
+        SingleListDrawableItem geo;
+        SingleListDrawableItem outline;
+
+        public Cell cell;
+        public bool floor = true;
+
+        public CellGeometry(bool f, Cell c)
+        {
+            cell = c;
+            floor = f;
+
+            geo = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateGeo));
+            if (floor)
+            {
+                outline = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateOutline));
+                outline.ShouldDrawItem += new SingleListDrawableItem.ShouldDrawItemHandler(outline_ShouldDrawItem);
+            }
+        }
+
+        void outline_ShouldDrawItem(object sender, ref bool draw)
+        {
+            draw = Settings.settings.DrawCellEdges;
+        }
+
+        public void GenerateGeo(object sender, DisplayList list)
+        {
+            if (floor)
+            {
+                // draw the bottom
+                GL.Color4(EditorCell.cellColor);
+                GL.Begin(BeginMode.Polygon);
+
+                GL.Normal3(cell.FloorNormal);
+                foreach (CellEdge edge in cell.Edges)
+                    GL.Vertex3(cell.Verts[edge.End].Bottom);
+                GL.End();
+            }
+            else
+            {
+                // draw the top
+                GL.Color4(EditorCell.cellColor);
+                GL.Begin(BeginMode.Polygon);
+
+                GL.Normal3(cell.RoofNormal);
+                for (int i = cell.Edges.Count - 1; i >= 0; i--)
+                    GL.Vertex3(cell.Verts[cell.Edges[i].End].Bottom.X, cell.Verts[cell.Edges[i].End].Bottom.Y, cell.Verts[cell.Edges[i].End].GetTopZ(cell.HeightIsIncremental));
+                GL.End();
+            }
+         }
+
+        public void GenerateOutline(object sender, DisplayList list)
+        {
+            GL.Disable(EnableCap.Lighting);
+
+            GL.LineWidth(EditorCell.outlineLineWidth);
+            GL.Color4(EditorCell.cellEdgeColor);
+            GL.Begin(BeginMode.LineLoop);
+            foreach (CellEdge edge in cell.Edges)
+                GL.Vertex3(cell.Verts[edge.End].Bottom);
+
+            GL.End();
+
+            GL.LineWidth(1);
+            GL.Enable(EnableCap.Lighting);
+        }
+
+        public void Dispose()
+        {
+            geo.Dispose();
+            if (outline != null)
+                outline.Dispose();
         }
     }
 
     public class EditorCell : Cell
     {
-        SingleListDrawableItem floorList;
-        SingleListDrawableItem roofList;
+        public CellGeometry floor;
+        public CellGeometry roof;
         public List<WallGeometry> walls = new List<WallGeometry>();
         public List<PortalGeometry> portals = new List<PortalGeometry>();
 
@@ -182,13 +267,13 @@ namespace PortalEdit
         public EditorCell(Cell cell)
             : base(cell)
         {
-            generateGeometry();
+            generateDisplayGeometry();
         }
 
         public EditorCell(EditorCell cell)
             : base(cell)
         {
-            generateGeometry();
+            generateDisplayGeometry();
         }
 
         public WallGeometry FindWallGeo ( int edge, CellWallGeometry geo )
@@ -305,7 +390,7 @@ namespace PortalEdit
             }
 
             setupCellGeoData();
-            generateGeometry();
+            generateDisplayGeometry();
             return hasPortal;
         }
 
@@ -559,12 +644,13 @@ namespace PortalEdit
 
         void clearGeometry ( )
         {
-            if (floorList != null)
-                floorList.Dispose();
-            if (roofList != null)
-                roofList.Dispose();
-            floorList = null;
-            
+            if (floor != null)
+                floor.Dispose();
+            if (roof != null)
+                roof.Dispose();
+            floor = null;
+            roof = null;
+          
             foreach (WallGeometry wall in walls)
                 wall.Dispose();
 
@@ -575,12 +661,12 @@ namespace PortalEdit
             portals.Clear();
         }
 
-        void generateGeometry ( )
+        void generateDisplayGeometry ( )
         {
             clearGeometry();
         
-            floorList = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(floorList_Generate),DrawablesSystem.LastPass-FloorPassOffet);
-            roofList = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(roofList_Generate), DrawablesSystem.LastPass-FloorPassOffet);
+            floor = new CellGeometry(true,this);
+            roof = new CellGeometry(false,this);
 
             foreach (CellEdge edge in Edges)
             {
@@ -593,55 +679,6 @@ namespace PortalEdit
                         portals.Add(new PortalGeometry(this, edge, dest));
                 }
             }
-        }
-
-        float GetRoofZ ( int index )
-        {
-            return Verts[index].GetTopZ(HeightIsIncremental);
-        }
-
-        public void floorList_Generate(object sender, DisplayList list)
-        {
-            // draw the bottom
-            GL.Color4(cellColor);
-            GL.Begin(BeginMode.Polygon);
-
-            GL.Normal3(FloorNormal);
-            foreach (CellEdge edge in Edges)
-                GL.Vertex3(Verts[edge.End].Bottom);
-            GL.End();
-
-            GL.Disable(EnableCap.Lighting);
-
-            if (Settings.settings.DrawCellEdges)
-            {
-                GL.LineWidth(outlineLineWidth);
-                GL.Color4(cellEdgeColor);
-                GL.Begin(BeginMode.LineLoop);
-                foreach (CellEdge edge in Edges)
-                    GL.Vertex3(Verts[edge.End].Bottom);
-
-                GL.End();
-            }
-            GL.LineWidth(1);
-            GL.Enable(EnableCap.Lighting);
-        }
-
-        public void roofList_Generate(object sender, DisplayList list)
-        {
-            // draw the bottom
-            GL.Color4(cellColor);
-            GL.Begin(BeginMode.Polygon);
-
-            GL.Normal3(RoofNormal);
-            for (int i = Edges.Count - 1; i >= 0; i--)
-            {
-                float roof = Verts[Edges[i].End].Top;
-                if (HeightIsIncremental)
-                    roof += Verts[Edges[i].End].Bottom.Z;
-                GL.Vertex3(Verts[Edges[i].End].Bottom.X, Verts[Edges[i].End].Bottom.Y, GetRoofZ(Edges[i].End));
-            }
-            GL.End();
         }
 
         public void DrawFloorSelectionFrame ()

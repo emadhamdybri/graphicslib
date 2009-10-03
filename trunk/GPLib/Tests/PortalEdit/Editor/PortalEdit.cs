@@ -120,7 +120,7 @@ namespace PortalEdit
                 Settings.settings.DrawCellEdges = e.value;
             if (e.button == ShowPortals)
                 Settings.settings.DrawPortals = e.value;
-            RebuildAll();
+            Invalidate(true);
         }
 
         protected override void OnResize(EventArgs e)

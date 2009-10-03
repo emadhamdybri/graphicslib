@@ -107,13 +107,13 @@ namespace PortalEdit
                         // do the floor
                         GL.LoadName(name);
                         selectionArgs.Add(name,new CellClickedEventArgs(cell,-1,null,false,true));
-                        cell.floorList_Generate(null,null);
+                        cell.floor.GenerateGeo(null,null);
                         name++;
 
                         // do the roof
                         GL.LoadName(name);
                         selectionArgs.Add(name, new CellClickedEventArgs(cell, -1, null, true, false));
-                        cell.roofList_Generate(null,null);
+                        cell.roof.GenerateGeo(null, null);
                         name++;
 
                         for ( int i = 0; i < cell.Edges.Count; i++ )
@@ -127,7 +127,7 @@ namespace PortalEdit
                                 {
                                     GL.LoadName(name);
                                     selectionArgs.Add(name, new CellClickedEventArgs(cell, i, geo, false, false));
-                                    wallGeo.Generate(null, null);
+                                    wallGeo.GenerateGeo(null, null);
                                     name++;
                                 }
                             }
