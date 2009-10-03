@@ -646,7 +646,6 @@ namespace PortalEdit
 
         public void DrawUnderlay()
         {
-           
             if (underlay != null)
             {
                 GL.Disable(EnableCap.Lighting);
