@@ -12,6 +12,7 @@ namespace PortalEdit
 {
     public class PortalMapAttribute
     {
+        public PortalMapAttribute (){}
         public PortalMapAttribute (String n, String v)
         {
             Name = n;

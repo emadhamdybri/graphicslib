@@ -57,6 +57,8 @@ namespace PortalEdit
 
         public Editor(EditFrame _frame, Control mapctl, GLControl view)
         {
+            instance = this;
+
             frame = _frame;
             map = new PortalMap();
 

@@ -60,6 +60,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\MapImageSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MapImageSetup.Designer.cs">
+      <DependentUpon>MapImageSetup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Map\Cell.cs" />
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Editor\EditorCell.cs" />
@@ -77,6 +83,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Editor\PortalEdit.resx">
       <DependentUpon>PortalEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MapImageSetup.resx">
+      <DependentUpon>MapImageSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
