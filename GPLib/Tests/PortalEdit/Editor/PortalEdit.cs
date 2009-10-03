@@ -465,6 +465,7 @@ namespace PortalEdit
             if (mis.ShowDialog(this) == DialogResult.OK)
             {
                 editor.mapRenderer.CheckUnderlay();
+                editor.viewRenderer.CheckUnderlay();
                 Invalidate(true);
             }
         }
