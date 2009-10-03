@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
 
 using OpenTK;
 
@@ -47,6 +48,10 @@ namespace PortalEdit
 
         protected MapEditMode editMode = MapEditMode.DrawMode;
 
+        Image underlay;
+        Vector2 underlayCenter = Vector2.Zero;
+        float underlayScale = 0.01f;
+
         public MapRenderer(Control ctl, PortalMap _map)
         {
             map = _map;
@@ -60,6 +65,75 @@ namespace PortalEdit
             CheckCursor();
 
             offset = new Point(ctl.Width / 2, ctl.Height / 2);
+
+            Editor.instance.MapLoaded += new MapLoadedHandler(MapLoaded);
+        }
+
+        void MapLoaded(object sender, EventArgs args)
+        {
+            CheckUnderlay();
+        }
+
+        public void CheckUnderlay ()
+        {
+            string imageFile = string.Empty;
+
+            PortalMapAttribute[] att = map.FindAttributes("Editor:Image:Underlay:File");
+            if (att.Length > 0)
+                imageFile = att[0].Value;
+
+            if (imageFile != string.Empty && File.Exists(imageFile))
+            {
+                underlay = Image.FromFile(imageFile);
+                if (underlay != null)
+                {
+                    underlayScale = 0.01f; // 100 pixels per unit
+                    underlayCenter = new Vector2(0,0);
+
+                    att = map.FindAttributes("Editor:Image:Underlay:Scale");
+                    if (att.Length > 0)
+                    {
+                        float ppu = 100;
+                        try
+                        {
+                            float.TryParse(att[0].Value, out ppu);
+                        }
+                        catch (System.Exception ex)
+                        {
+                        }
+                        underlayScale = 1f / ppu;
+                    }
+
+                    att = map.FindAttributes("Editor:Image:Underlay:Offset::X");
+                    if (att.Length > 0)
+                    {
+                        float cX = 0;
+                        try
+                        {
+                            float.TryParse(att[0].Value, out cX);
+                        }
+                        catch (System.Exception ex)
+                        {
+                        }
+
+                        underlayCenter.X = cX;
+                    }
+
+                    att = map.FindAttributes("Editor:Image:Underlay:Offset::Y");
+                    if (att.Length > 0)
+                    {
+                        float cY = 0;
+                        try
+                        {
+                            float.TryParse(att[0].Value, out cY);
+                        }
+                        catch (System.Exception ex)
+                        {
+                        }
+                        underlayCenter.Y = cY;
+                    }
+                }
+            }
         }
 
         protected void CheckCursor ()
@@ -185,13 +259,38 @@ namespace PortalEdit
             rubberBandPen.Dispose();
         }
 
+        protected void DrawUnderlay ( Graphics graphics )
+        {
+            if (underlay == null)
+                return;
+
+            graphics.ScaleTransform(1, -1);
+
+            //ok figure out how big the image will be in map space
+            float imageMapX = underlay.Width * underlayScale;
+            float imageMapY = underlay.Height * underlayScale;
+
+            // now figure out how big it will be in pixel space
+            int imagePixelX = (int)(imageMapX * Settings.settings.PixelsPerUnit);
+            int imagePixelY = (int)(imageMapY * Settings.settings.PixelsPerUnit);
+
+            // now figure out where the center is in pixel Units
+            Point pos = VertToPoint(underlayCenter);
+            pos.Offset(-imagePixelX/2,-imagePixelY/2);
+
+            graphics.DrawImage(underlay,new Rectangle(pos,new Size(imagePixelX,imagePixelY)));
+
+            graphics.ScaleTransform(1, -1);
+
+        }
+
         protected void Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.LightGray);
             SetupGraphicsContext(e.Graphics);
 
+            DrawUnderlay(e.Graphics);
             Grid(e.Graphics);
-            e.Graphics.Flush();
 
             foreach (CellGroup group in map.CellGroups)
             {

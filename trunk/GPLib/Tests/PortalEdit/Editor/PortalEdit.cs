@@ -458,5 +458,15 @@ namespace PortalEdit
                 Invalidate(true);
             }
         }
+
+        private void setupImageUnderlayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MapImageSetup mis = new MapImageSetup();
+            if (mis.ShowDialog(this) == DialogResult.OK)
+            {
+                editor.mapRenderer.CheckUnderlay();
+                Invalidate(true);
+            }
+        }
     }
 }
