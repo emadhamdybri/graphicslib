@@ -31,6 +31,10 @@ namespace Drawables
         Material mat = MaterialSystem.system.getMaterial(defaultMatName);
         int pass = DrawablesSystem.FirstPass;
 
+        public delegate void ShouldDrawItemHandler(object sender, ref bool draw);
+
+        public event ShouldDrawItemHandler ShouldDrawItem;
+
         public SingleListDrawableItem ( Material _mat, ListableEvent.GenerateEventHandler handler, object tag, int _pass )
         {
             mat = _mat;
@@ -92,6 +96,12 @@ namespace Drawables
 
         public bool ExecuteCallback(Material mat, object tag)
         {
+            bool draw = true;
+            if (ShouldDrawItem != null)
+                ShouldDrawItem(this, ref draw);
+            if (!draw)
+                return false;
+
             if (list != null)
                 list.Call();
             return list != null;
