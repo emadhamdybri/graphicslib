@@ -26,8 +26,12 @@ namespace PortalEdit
             GridSize.Value = (decimal)settings.GridSize;
             MinimalSelection.Checked = settings.ShowLowestSelection;
             Show3DOrigin.Checked = settings.Show3dOrigin;
+            
+            UnderlayHasDepth.Checked = settings.ShowUnderlayWithDepth;
+            UnderlayAlpha.Value = (decimal)settings.Underlay3DAlpha;
+           
             UndoLevels.Value = (decimal)settings.UndoLevels;
-        }
+       }
 
         private void OK_Click(object sender, EventArgs e)
         {
@@ -38,8 +42,11 @@ namespace PortalEdit
             settings.GridSize = (float)GridSize.Value;
             settings.ShowLowestSelection = MinimalSelection.Checked;
             settings.Show3dOrigin = Show3DOrigin.Checked;
-            settings.UndoLevels = (int)UndoLevels.Value;
 
+            settings.ShowUnderlayWithDepth = UnderlayHasDepth.Checked;
+            settings.Underlay3DAlpha = (float)UnderlayAlpha.Value;
+
+            settings.UndoLevels = (int)UndoLevels.Value;
             Undo.System.CullUndos();
 
             settings.Write();
@@ -65,6 +72,8 @@ namespace PortalEdit
         public bool Show3dOrigin = true;
         public int UndoLevels = 25;
 
+        public bool ShowUnderlayWithDepth = true;
+        public float Underlay3DAlpha = 1.0f;
 
         public Point NormalLoc = Point.Empty;
         public Size NormalSize = Size.Empty;
