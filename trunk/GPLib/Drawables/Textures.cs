@@ -101,9 +101,14 @@ namespace Drawables.Textures
                 BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                 GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-                
+
                 if (mipmap)
+                {
+                    if (TextureSystem.UseAniso)
+                        GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)0x84FF, 2f);
+                    
                     GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+                }
 
                 bitmap.UnlockBits(data);
 
@@ -121,6 +126,7 @@ namespace Drawables.Textures
     public class TextureSystem
     {
         public static TextureSystem system = new TextureSystem();
+        public static bool UseAniso = true;
 
         public DirectoryInfo rootDir;
 
