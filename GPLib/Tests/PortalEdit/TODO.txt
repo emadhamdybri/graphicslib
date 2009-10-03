@@ -1,6 +1,5 @@
 
 ==General==
-Add image overlay
 Plane checks and plane snap
 Floor and Roof shifts and snaps
 Vertex Editing
