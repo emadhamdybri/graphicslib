@@ -76,62 +76,15 @@ namespace PortalEdit
 
         public void CheckUnderlay ()
         {
-            string imageFile = string.Empty;
-
-            PortalMapAttribute[] att = map.FindAttributes("Editor:Image:Underlay:File");
-            if (att.Length > 0)
-                imageFile = att[0].Value;
+            string imageFile = MapImageSetup.GetMapUnderlayImage(map);
 
             if (imageFile != string.Empty && File.Exists(imageFile))
             {
                 underlay = Image.FromFile(imageFile);
                 if (underlay != null)
                 {
-                    underlayScale = 0.01f; // 100 pixels per unit
-                    underlayCenter = new Vector2(0,0);
-
-                    att = map.FindAttributes("Editor:Image:Underlay:Scale");
-                    if (att.Length > 0)
-                    {
-                        float ppu = 100;
-                        try
-                        {
-                            float.TryParse(att[0].Value, out ppu);
-                        }
-                        catch (System.Exception ex)
-                        {
-                        }
-                        underlayScale = 1f / ppu;
-                    }
-
-                    att = map.FindAttributes("Editor:Image:Underlay:Offset::X");
-                    if (att.Length > 0)
-                    {
-                        float cX = 0;
-                        try
-                        {
-                            float.TryParse(att[0].Value, out cX);
-                        }
-                        catch (System.Exception ex)
-                        {
-                        }
-
-                        underlayCenter.X = cX;
-                    }
-
-                    att = map.FindAttributes("Editor:Image:Underlay:Offset::Y");
-                    if (att.Length > 0)
-                    {
-                        float cY = 0;
-                        try
-                        {
-                            float.TryParse(att[0].Value, out cY);
-                        }
-                        catch (System.Exception ex)
-                        {
-                        }
-                        underlayCenter.Y = cY;
-                    }
+                    underlayScale = 1f / MapImageSetup.GetMapUnderlayPPU(map);
+                    underlayCenter = MapImageSetup.GetMapUnderlayCenter(map);
                 }
             }
         }
@@ -281,7 +234,6 @@ namespace PortalEdit
             graphics.DrawImage(underlay,new Rectangle(pos,new Size(imagePixelX,imagePixelY)));
 
             graphics.ScaleTransform(1, -1);
-
         }
 
         protected void Paint(object sender, PaintEventArgs e)

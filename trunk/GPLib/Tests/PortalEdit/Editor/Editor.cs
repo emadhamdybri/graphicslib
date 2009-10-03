@@ -263,8 +263,8 @@ namespace PortalEdit
             FileName = string.Empty;
             mapRenderer.ClearEditPolygon();
 
-            DisplayListSystem.system.Invalidate();
-            DrawablesSystem.system.removeAll();
+            viewRenderer.UnloadMapGraphics();
+
             map.CellGroups.Clear();
             map.MapAttributes.Clear();
 
@@ -284,8 +284,7 @@ namespace PortalEdit
 
             mapRenderer.ClearEditPolygon();
 
-            DisplayListSystem.system.Invalidate();
-            DrawablesSystem.system.removeAll();
+            viewRenderer.UnloadMapGraphics();
 
             map.MapAttributes.Clear();
             map.MapAttributes = newMap.MapAttributes;

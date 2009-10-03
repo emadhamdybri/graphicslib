@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 
+using OpenTK;
+
 namespace PortalEdit
 {
     public partial class MapImageSetup : Form
@@ -19,33 +21,36 @@ namespace PortalEdit
             PixelsPerUnit.Value = 100;
 
             PortalMap map = Editor.instance.map;
-            
+
+            ImageFileName.Text = GetMapUnderlayImage(map);
+            PixelsPerUnit.Value = (decimal)GetMapUnderlayPPU(map);
+
+            Vector2 center = GetMapUnderlayCenter(map);
+            CenterX.Value = (decimal)center.X;
+            CenterY.Value = (decimal)center.Y;
+        }
+
+        public static String GetMapUnderlayImage ( PortalMap map )
+        {
             PortalMapAttribute[] att = map.FindAttributes("Editor:Image:Underlay:File");
             if (att.Length > 0)
-                ImageFileName.Text = att[0].Value;
+                return att[0].Value;
+            else
+                return String.Empty;
+        }
 
-            att = map.FindAttributes("Editor:Image:Underlay:Scale");
+        public static Vector2 GetMapUnderlayCenter ( PortalMap map )
+        {
+            Vector2 vec = new Vector2(0, 0);
+
+            PortalMapAttribute[] att = map.FindAttributes("Editor:Image:Underlay:Offset::X");
             if (att.Length > 0)
             {
                 try
                 {
-                    decimal val = 0;
-                    decimal.TryParse(att[0].Value,out val);
-                    PixelsPerUnit.Value = val;
-                }
-                catch (System.Exception ex)
-                {
-                }
-            }
-
-            att = map.FindAttributes("Editor:Image:Underlay:Offset::X");
-            if (att.Length > 0)
-            {
-                try
-                {
-                    decimal val = 0;
-                    decimal.TryParse(att[0].Value, out val);
-                    CenterX.Value = val;
+                    float val = 0;
+                    float.TryParse(att[0].Value, out val);
+                    vec.X = val;
                 }
                 catch (System.Exception ex)
                 {
@@ -57,14 +62,34 @@ namespace PortalEdit
             {
                 try
                 {
-                    decimal val = 0;
-                    decimal.TryParse(att[0].Value, out val);
-                    CenterY.Value = val;
+                    float val = 0;
+                    float.TryParse(att[0].Value, out val);
+                    vec.Y = val;
                 }
                 catch (System.Exception ex)
                 {
                 }
             }
+
+            return vec;
+        }
+
+        public static float GetMapUnderlayPPU ( PortalMap map )
+        {
+            float ppu = 100;
+            PortalMapAttribute[] att = map.FindAttributes("Editor:Image:Underlay:Scale");
+            if (att.Length > 0)
+            {
+                try
+                {
+                    float.TryParse(att[0].Value, out ppu);
+                }
+                catch (System.Exception ex)
+                {
+                }
+            }
+
+            return ppu;
         }
 
         private void ImageFileName_TextChanged(object sender, EventArgs e)
@@ -82,7 +107,7 @@ namespace PortalEdit
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Title = "Open File";
-            ofd.Filter = "Portable Network Graphics File (*.png)|*.png|Joint Photographic Experts Group File (*.jpeg)|*.jpeg|Windows Bitmap File (*.bmp)|*.bmp|All Files (*.*)|*.*";
+            ofd.Filter = "Portable Network Graphics File (*.png)|*.png|Joint Photographic Experts Group File (*.jpg)|*.jpg|Joint Photographic Experts Group File (*.jpeg)|*.jpeg|Windows Bitmap File (*.bmp)|*.bmp|All Files (*.*)|*.*";
 
             if (ImageFileName.Text != string.Empty)
             {

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Text;
+using System.IO;
 
 using OpenTK;
 using OpenTK.Graphics;
 
 using Drawables;
 using Drawables.DisplayLists;
+using Drawables.Textures;
 
 namespace PortalEdit
 {
@@ -26,6 +28,10 @@ namespace PortalEdit
         Color SelectedVertColor = Color.FromArgb(128,Color.Magenta);
 
         ListableEvent GridList;
+
+        Texture underlay;
+        Vector2 underlayCenter;
+        float   underlayScale;
 
         public class CellClickedEventArgs : EventArgs
         {
@@ -64,6 +70,45 @@ namespace PortalEdit
 
             GridList = new ListableEvent();
             GridList.Generate += new ListableEvent.GenerateEventHandler(GridList_Generate);
+
+            Editor.instance.MapLoaded += new MapLoadedHandler(MapLoaded);
+        }
+
+        public void UnloadMapGraphics ( )
+        {
+            DrawablesSystem.system.removeAll();
+            DisplayListSystem.system.Flush();
+            if(underlay != null)
+            {
+                underlay.Invalidate();
+                underlay = null;
+            }
+        }
+
+        void MapLoaded(object sender, EventArgs args)
+        {
+            CheckUnderlay();
+        }
+
+        public void CheckUnderlay ()
+        {
+            if (underlay != null)
+            {
+                underlay.Invalidate();
+                underlay = null;
+            }
+
+            string imageFile = MapImageSetup.GetMapUnderlayImage(map);
+
+            if (imageFile != string.Empty && File.Exists(imageFile))
+            {
+                underlay = TextureSystem.system.GetTexture(imageFile);
+                if (underlay != null)
+                {
+                    underlayCenter = MapImageSetup.GetMapUnderlayCenter(map);
+                    underlayScale = 1f/MapImageSetup.GetMapUnderlayPPU(map);
+                }
+            }
         }
 
         void ctl_MouseClick(object sender, MouseEventArgs e)
@@ -286,14 +331,6 @@ namespace PortalEdit
            
             GL.PushMatrix();
             GL.Translate(0, 0, 0);
-            GL.Color3(Color.FromArgb(255,0x13,0x48,0x72));
-
-            GL.Begin(BeginMode.Quads);
-            GL.Vertex3(-gridSize, -gridSize, 0);
-            GL.Vertex3(gridSize, -gridSize, 0);
-            GL.Vertex3(gridSize, gridSize, 0);
-            GL.Vertex3(-gridSize, gridSize, 0);
-            GL.End();
 
             GL.Color4(Color.FromArgb(128, Color.LightSlateGray));
             GL.LineWidth(1);
@@ -585,6 +622,63 @@ namespace PortalEdit
             SetCamera();
         }
 
+        public void DrawUnderlay()
+        {
+            GL.Disable(EnableCap.Lighting);
+            GL.DepthMask(false);
+            GL.DepthFunc(DepthFunction.Always);
+
+            float gridSize = Settings.settings.GridSize;
+
+            GL.Color3(Color.FromArgb(255, 0x13, 0x48, 0x72));
+
+            GL.Begin(BeginMode.Quads);
+            GL.Vertex3(-gridSize, -gridSize, 0);
+            GL.Vertex3(gridSize, -gridSize, 0);
+            GL.Vertex3(gridSize, gridSize, 0);
+            GL.Vertex3(-gridSize, gridSize, 0);
+            GL.End();
+
+            if (underlay != null)
+            {
+                GL.Color4(Color.White);
+                GL.Enable(EnableCap.Texture2D);
+
+                underlay.Execute();
+
+                GL.PushMatrix();
+                GL.Translate(underlayCenter.X, underlayCenter.Y, 0);
+
+                float x = underlay.Width * underlayScale * 0.5f;
+                float y = underlay.Height * underlayScale * 0.5f;
+
+                GL.Begin(BeginMode.Quads);
+
+                GL.Normal3(0, 0, 1);
+
+                GL.TexCoord2(0, 1);
+                GL.Vertex3(-x, -y, 0);
+
+                GL.TexCoord2(1, 1);
+                GL.Vertex3(x, -y, 0);
+
+                GL.TexCoord2(1, 0);
+                GL.Vertex3(x, y, 0);
+
+                GL.TexCoord2(0, 0);
+                GL.Vertex3(-x, y, 0);
+
+                GL.End();
+                GL.PopMatrix();
+
+                GL.Disable(EnableCap.Texture2D);
+            }
+            
+            GL.DepthMask(true);
+            GL.DepthFunc(DepthFunction.Less);
+            GL.Disable(EnableCap.Lighting);
+        }
+
         public void Render3dView()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -595,6 +689,8 @@ namespace PortalEdit
             GL.Enable(EnableCap.Light0);
             Vector4 lightPos = new Vector4(10, 20, 20, 0);
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
+
+            DrawUnderlay();
 
             if (GridList != null)
                 GridList.Call();
