@@ -12,14 +12,34 @@ using Drawables.DisplayLists;
 
 namespace Drawables.Textures
 {
-    public class Texture
+    public class Texture : IDisposable
     {
         DisplayList listID = new DisplayList();
         int boundID = -1;
 
+        public int Width
+        {
+            get 
+            {
+                CheckSize();
+                return imageSize.Width;
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                CheckSize();
+                return imageSize.Height;
+            }
+        }
+
         public bool mipmap = true;
 
         FileInfo file = null;
+
+        Size imageSize = Size.Empty;
 
         public Texture( FileInfo info )
         {
@@ -38,6 +58,21 @@ namespace Drawables.Textures
             if(boundID != -1)
                 GL.DeleteTexture(boundID);
             boundID = -1;
+        }
+
+        public void Dispose ()
+        {
+            Invalidate();
+        }
+
+        void CheckSize ()
+        {
+            if (imageSize == Size.Empty)
+            {
+                Image image = Image.FromFile(file.FullName);
+                if (image != null)
+                    imageSize = new Size(image.Width, image.Height);
+            }
         }
 
         public void Execute()
@@ -97,7 +132,7 @@ namespace Drawables.Textures
                 t.Value.Invalidate();
         }
 
-        public Texture getTexture(string path)
+        public Texture GetTexture(string path)
         {
             if (textures.ContainsKey(path))
                 return textures[path];
@@ -116,7 +151,7 @@ namespace Drawables.Textures
                 }
             }
             if (texture == null)
-                texture = new Texture(null);
+                return null;
 
             textures.Add(path, texture);
 
