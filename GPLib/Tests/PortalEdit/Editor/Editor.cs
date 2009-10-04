@@ -341,6 +341,54 @@ namespace PortalEdit
             return true;
         }
 
+        public void RenameGroup ( String oldName, String newName )
+        {
+            foreach (CellGroup group in map.CellGroups)
+            {
+                if (group.Name == oldName)
+                    group.Name = newName;
+
+                foreach (EditorCell cell in group.Cells)
+                {
+                    if (cell.GroupName == oldName)
+                        cell.GroupName = newName;
+
+                    foreach( CellEdge edge in cell.Edges )
+                    {
+                        foreach (PortalDestination dest in edge.Destinations)
+                        {
+                            if (dest.GroupName == oldName)
+                                dest.GroupName = newName;
+                        }
+                    }
+                }
+            }
+            Editor.SetDirty();
+            ResetViews();
+        }
+
+        public void RenameCell(EditorCell cell, String newName)
+        {
+            cell.Name = newName;
+
+            foreach (CellGroup group in map.CellGroups)
+            {
+                foreach (EditorCell tehCell in group.Cells)
+                {
+                    foreach (CellEdge edge in tehCell.Edges)
+                    {
+                        foreach (PortalDestination dest in edge.Destinations)
+                        {
+                            if (dest.Cell == cell)
+                                dest.CellName = newName;
+                        }
+                    }
+                }
+            }
+            Editor.SetDirty();
+            ResetViews();
+        }
+
         public void SetCellGroup ( String name )
         {
             EditorCell cell = GetSelectedCell();

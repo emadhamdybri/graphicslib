@@ -1,6 +1,6 @@
 ﻿namespace PortalEdit
 {
-    partial class DepthGroupName
+    partial class RenameItem
     {
         /// <summary>
         /// Required designer variable.
@@ -43,10 +43,10 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Name";
             // 
-            // Name
+            // ItemName
             // 
             this.ItemName.Location = new System.Drawing.Point(53, 17);
-            this.ItemName.Name = "Name";
+            this.ItemName.Name = "ItemName";
             this.ItemName.Size = new System.Drawing.Size(219, 20);
             this.ItemName.TabIndex = 1;
             // 
@@ -70,7 +70,7 @@
             this.Cancel.Text = "Cancel";
             this.Cancel.UseVisualStyleBackColor = true;
             // 
-            // DepthGroupName
+            // RenameItem
             // 
             this.AcceptButton = this.OK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -82,8 +82,8 @@
             this.Controls.Add(this.ItemName);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Name = "DepthGroupName";
-            this.Text = "Set Depth Group Name";
+            this.Name = "RenameItem";
+            this.Text = "Rename";
             this.ResumeLayout(false);
             this.PerformLayout();
 

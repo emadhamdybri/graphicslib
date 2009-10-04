@@ -9,9 +9,9 @@ using System.Windows.Forms;
 
 namespace PortalEdit
 {
-    public partial class DepthGroupName : Form
+    public partial class RenameItem : Form
     {
-        public DepthGroupName()
+        public RenameItem()
         {
             InitializeComponent();
         }
