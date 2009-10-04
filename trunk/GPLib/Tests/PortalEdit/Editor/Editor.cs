@@ -368,6 +368,8 @@ namespace PortalEdit
 
         public void RebuildMap ()
         {
+            Dirty = true;
+
             foreach (CellGroup group in map.CellGroups)
                 foreach (EditorCell cell in group.Cells)
                     cell.CheckEdges(map);
@@ -524,6 +526,17 @@ namespace PortalEdit
 
             }
 
+            RebuildMap();
+            ResetViews();
+        }
+
+        public void SetCellVertXY ( Vector2 pos, int vertIndex, EditorCell cell)
+        {
+            if (cell == null)
+                return;
+
+            cell.Verts[vertIndex].Bottom.X = pos.X;
+            cell.Verts[vertIndex].Bottom.Y = pos.Y;
             RebuildMap();
             ResetViews();
         }
