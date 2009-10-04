@@ -1,5 +1,6 @@
 
 ==General==
+Simplify and minimze rebuild, and keep as much geo information as possible
 Floor and Roof shifts and snaps
 Vertex Editing
 Edge hiding
