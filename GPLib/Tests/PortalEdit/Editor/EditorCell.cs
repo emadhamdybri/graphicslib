@@ -80,7 +80,9 @@ namespace PortalEdit
 
         public void GenerateOutline(object sender, DisplayList list)
         {
-            GL.Color4(EditorCell.wallEdgeColor);
+            GL.Color4(Color.White);
+
+            GL.Color3(EditorCell.GetCellOutlineColor(cell));
             GL.Disable(EnableCap.Lighting);
             GL.LineWidth(EditorCell.outlineLineWidth);
 
@@ -247,7 +249,8 @@ namespace PortalEdit
             GL.Disable(EnableCap.Lighting);
 
             GL.LineWidth(EditorCell.outlineLineWidth);
-            GL.Color4(EditorCell.cellEdgeColor);
+            GL.Color4(Color.White);
+            GL.Color3(EditorCell.GetCellOutlineColor(cell));
             GL.Begin(BeginMode.LineLoop);
             foreach (CellEdge edge in cell.Edges)
                 GL.Vertex3(cell.Verts[edge.End].Bottom);
@@ -295,6 +298,65 @@ namespace PortalEdit
         public static float selectedLineWidht = 3;
 
         public static float selectedMarkSize = 0.5f;
+
+        public static List<Color> CellGroupColors = new List<Color>();
+
+        protected static Random ColorRand = new Random();
+        public static Color GetCellOutlineColor( Cell cell )
+        {
+            if (CellGroupColors.Count == 0)
+            {
+                CellGroupColors.Add(Color.Red);
+                CellGroupColors.Add(Color.White);
+                CellGroupColors.Add(Color.Black);
+            }
+
+            if (cell.Group == null)
+                return cellEdgeColor;
+
+            Byte r = 255;
+            Byte g = 255;
+            Byte b = 255;
+
+            PortalMapAttribute[] a = cell.Group.GroupAttributes.Find("Editor:GroupHighlightColor");
+
+            if (a != null && a.Length > 0)
+            {
+                string[] nugs = a[0].Value.Split(" ".ToCharArray());
+                if (nugs.Length > 2)
+                {
+                    r = Byte.Parse(nugs[0]);
+                    g = Byte.Parse(nugs[1]);
+                    b = Byte.Parse(nugs[2]);
+
+                    return Color.FromArgb(255,r, g, b);
+                }
+                cell.Group.GroupAttributes.Remove("Editor:GroupHighlightColor");
+                a = null;
+            }
+
+            Color color = Color.White;
+
+            r = 255;
+            g = 255;
+            b = 255;
+
+            int offset = 64;
+            int mod = 64;
+
+            while (CellGroupColors.Contains(color))
+            {
+                r = (Byte)((ColorRand.Next() % mod) + offset);
+                g = (Byte)((ColorRand.Next() % mod) + offset);
+                b = (Byte)((ColorRand.Next() % mod) + offset);
+
+                color = Color.FromArgb(255,r, g, b);
+            }
+
+            CellGroupColors.Add(color);
+            cell.Group.GroupAttributes.Add("Editor:GroupHighlightColor",r.ToString() + " " + g.ToString() + " " + b.ToString());
+            return color;
+        }
 
         public EditorCell(): base()
         {
