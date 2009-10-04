@@ -80,7 +80,14 @@ namespace PortalEdit
 
         public void GenerateOutline(object sender, DisplayList list)
         {
-            GL.Color4(Color.White);
+            float alpha = 1;
+
+            if (!EditorCell.CellIsDrawn(cell))
+                alpha = Settings.settings.HiddenItemAlpha;
+            
+            Color c = EditorCell.GetCellOutlineColor(cell);
+
+            GL.Color4(c.R / 255f, c.G / 255f, c.B / 255f, alpha);
 
             GL.Color3(EditorCell.GetCellOutlineColor(cell));
             GL.Disable(EnableCap.Lighting);
@@ -101,7 +108,12 @@ namespace PortalEdit
 
         public void GenerateGeo(object sender, DisplayList list)
         {
-            GL.Color4(EditorCell.wallColor);
+            float alpha = 1;
+
+            if (!EditorCell.CellIsDrawn(cell))
+                alpha = Settings.settings.HiddenItemAlpha;
+
+            GL.Color4(EditorCell.wallColor.R / 255f, EditorCell.wallColor.G / 255f, EditorCell.wallColor.B / 255f, alpha);
 
             GL.Begin(BeginMode.Quads);
 
@@ -150,6 +162,9 @@ namespace PortalEdit
             CellVert destEP = dest.Cell.MatchingVert(cell.Verts[edge.End]);
 
             if (destSP == null || destEP == null)
+                return;
+
+            if (!EditorCell.CellIsDrawn(cell))
                 return;
 
             GL.Color4(EditorCell.portalColor);
@@ -220,10 +235,15 @@ namespace PortalEdit
 
         public void GenerateGeo(object sender, DisplayList list)
         {
+            float alpha = 1;
+
+            if (!EditorCell.CellIsDrawn(cell))
+                alpha = Settings.settings.HiddenItemAlpha;
+            
             if (floor)
             {
                 // draw the bottom
-                GL.Color4(EditorCell.cellFloorColor);
+                GL.Color4(EditorCell.cellFloorColor.R / 255f, EditorCell.cellFloorColor.G / 255f, EditorCell.cellFloorColor.B / 255f, alpha);
                 GL.Begin(BeginMode.Polygon);
 
                 GL.Normal3(cell.FloorNormal);
@@ -234,7 +254,7 @@ namespace PortalEdit
             else
             {
                 // draw the top
-                GL.Color4(EditorCell.cellRoofColor);
+                GL.Color4(EditorCell.cellRoofColor.R / 255f, EditorCell.cellRoofColor.G / 255f, EditorCell.cellRoofColor.B / 255f, alpha);
                 GL.Begin(BeginMode.Polygon);
 
                 GL.Normal3(cell.RoofNormal);
@@ -246,10 +266,16 @@ namespace PortalEdit
 
         public void GenerateOutline(object sender, DisplayList list)
         {
+            if (!EditorCell.CellIsDrawn(cell))
+                return;
+
             GL.Disable(EnableCap.Lighting);
 
             GL.LineWidth(EditorCell.outlineLineWidth);
-            GL.Color4(Color.White);
+            if (EditorCell.CellIsDrawn(cell))
+                GL.Color4(Color.White);
+            else
+                GL.Color4(1, 1, 1, Settings.settings.HiddenItemAlpha);
             GL.Color3(EditorCell.GetCellOutlineColor(cell));
             GL.Begin(BeginMode.LineLoop);
             foreach (CellEdge edge in cell.Edges)
@@ -356,6 +382,27 @@ namespace PortalEdit
             CellGroupColors.Add(color);
             cell.Group.GroupAttributes.Add("Editor:GroupHighlightColor",r.ToString() + " " + g.ToString() + " " + b.ToString());
             return color;
+        }
+
+        public static bool HideGeo = false;
+        public static float HideGeoUnder = 0;
+        public static float HideGeoOver = 10;
+
+        public static bool CellIsDrawn(Cell cell)
+        {
+            if (!HideGeo)
+                return true;
+
+            foreach (CellVert vert in cell.Verts)
+            {
+                if (vert.Bottom.Z > HideGeoOver)
+                    return false;
+
+                if (vert.GetTopZ(cell.HeightIsIncremental) < HideGeoUnder)
+                    return false;
+            }
+
+            return true;
         }
 
         public EditorCell(): base()

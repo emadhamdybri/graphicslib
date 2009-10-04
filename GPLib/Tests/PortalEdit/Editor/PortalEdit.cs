@@ -168,6 +168,12 @@ namespace PortalEdit
 
             NamedDepthPresets.Items.Add("New...");
             NamedDepthPresets.SelectedIndex = 0;
+
+            HideGeo.Checked = EditorCell.HideGeo;
+            HideBelowZ.Value = (decimal)EditorCell.HideGeoUnder;
+            HideAboveZ.Value = (decimal)EditorCell.HideGeoOver;
+
+            HideGeo_CheckedChanged(this, EventArgs.Empty);
         }
 
         PortalMapAttribute FindDepthAttribute ( string name )
@@ -699,6 +705,21 @@ namespace PortalEdit
             EditorCell cell = editor.GetSelectedCell();
             MapTree.SelectedNode = null;
             editor.DeleteCell(cell);
+        }
+
+        private void HideGeo_CheckedChanged(object sender, EventArgs e)
+        {
+            HideBelowZ.Enabled = HideGeo.Checked;
+            HideAboveZ.Enabled = HideGeo.Checked;
+            EditorCell.HideGeo = HideGeo.Checked;
+            RebuildAll();
+        }
+
+        private void HideBelowZ_ValueChanged(object sender, EventArgs e)
+        {
+            EditorCell.HideGeoUnder = (float)HideBelowZ.Value;
+            EditorCell.HideGeoOver = (float)HideAboveZ.Value;
+            RebuildAll();
         }
     }
 }

@@ -29,7 +29,8 @@ namespace PortalEdit
             
             UnderlayHasDepth.Checked = settings.ShowUnderlayWithDepth;
             UnderlayAlpha.Value = (decimal)settings.Underlay3DAlpha;
-           
+            HiddenItemAlpha.Value = (decimal)settings.HiddenItemAlpha;
+          
             UndoLevels.Value = (decimal)settings.UndoLevels;
        }
 
@@ -45,6 +46,7 @@ namespace PortalEdit
 
             settings.ShowUnderlayWithDepth = UnderlayHasDepth.Checked;
             settings.Underlay3DAlpha = (float)UnderlayAlpha.Value;
+            settings.HiddenItemAlpha = (float)HiddenItemAlpha.Value;
 
             settings.UndoLevels = (int)UndoLevels.Value;
             Undo.System.CullUndos();
@@ -74,6 +76,8 @@ namespace PortalEdit
 
         public bool ShowUnderlayWithDepth = true;
         public float Underlay3DAlpha = 1.0f;
+
+        public float HiddenItemAlpha = 1.0f;
 
         public Point NormalLoc = Point.Empty;
         public Size NormalSize = Size.Empty;
