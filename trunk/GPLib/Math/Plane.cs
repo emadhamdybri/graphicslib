@@ -42,6 +42,15 @@ namespace Math3D
     //[TypeConverter(typeof(PlaneConverter))]
     public struct Plane : IEquatable<Plane>
     {
+
+        #region Static
+
+        public static Plane Up = new Plane(0, 0, 1, 0);
+        public static Plane Down = new Plane(0, 0, -1, 0);
+
+        public static float InsersectionTolerance = 0.0001f;
+        #endregion Static
+
         #region Public Fields
 
 
@@ -161,9 +170,9 @@ namespace Math3D
         public PlaneIntersectionType Intersects(Vector3 point)
         {
             float dist = ClassifyPoint(ref point, ref this);
-            if (dist > 0)
+            if (dist > InsersectionTolerance)
                 return PlaneIntersectionType.Front;
-            if (dist < 0)
+            if (dist < -InsersectionTolerance)
                 return PlaneIntersectionType.Back;
             return PlaneIntersectionType.Intersecting;
         }
