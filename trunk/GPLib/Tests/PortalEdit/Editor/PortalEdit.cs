@@ -12,6 +12,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using FormControls;
 using Drawables.DisplayLists;
+using Math3D;
 
 namespace PortalEdit
 {
@@ -370,18 +371,18 @@ namespace PortalEdit
             PopulateCellInfoList();
         }
 
-        public void PopulateCellInfoList()
+        public void PopulateVertInfoList (EditorCell cell)
         {
-            CellVertList.Rows.Clear();
-            CellGroupDropdown.Items.Clear();
-            CellInfoZIsInc.Enabled = false;
-
-            Cell cell = editor.GetSelectedCell();
             if (cell == null)
                 return;
 
+            Plane floorPlane = cell.GetFloorPlane();
+            Plane roofPlane = cell.GetRoofPlane();
+           
             CellInfoZIsInc.Enabled = true;
             CellInfoZIsInc.Checked = cell.HeightIsIncremental;
+
+            double testTolerance = 0.0001;
 
             for (int i = 0; i < cell.Verts.Count; i++)
             {
@@ -389,11 +390,35 @@ namespace PortalEdit
                 List<String> items = new List<String>();
                 items.Add(i.ToString());
                 items.Add(vert.Bottom.Z.ToString());
+
+                if (Math.Abs(Cell.GetZInPlane(floorPlane, vert.Bottom.X, vert.Bottom.Y) - vert.Bottom.Z) < testTolerance)
+                    items.Add("True");
+                else
+                    items.Add("False");
+     
                 items.Add(vert.Top.ToString());
+
+                if (Math.Abs(Cell.GetZInPlane(roofPlane, vert.Bottom.X, vert.Bottom.Y) - cell.RoofZ(i)) < testTolerance)
+                    items.Add("True");
+                else
+                    items.Add("False");
 
                 CellVertList.Rows.Add(items.ToArray());
             }
+        }
 
+        public void PopulateCellInfoList()
+        {
+            CellVertList.Rows.Clear();
+            CellGroupDropdown.Items.Clear();
+            CellInfoZIsInc.Enabled = false;
+
+            EditorCell cell = editor.GetSelectedCell();
+            if (cell == null)
+                return;
+
+            PopulateVertInfoList(cell);
+            
             int thisGroup = -1;
 
             foreach (CellGroup group in editor.map.CellGroups)
@@ -721,5 +746,16 @@ namespace PortalEdit
             EditorCell.HideGeoOver = (float)HideAboveZ.Value;
             RebuildAll();
         }
+
+        private void zToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            editor.SetRoofVertToPlane();
+        }
+
+        private void zToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            editor.SetFloorVertToPlane();
+        }
+
     }
 }

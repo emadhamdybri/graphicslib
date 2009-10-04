@@ -9,6 +9,8 @@ using OpenTK;
 using Drawables.DisplayLists;
 using Drawables;
 
+using Math3D;
+
 namespace PortalEdit
 {
     public enum ViewEditMode
@@ -236,7 +238,7 @@ namespace PortalEdit
             try
             {
                 float.TryParse(frame.CellVertList.SelectedRows[0].Cells[1].Value.ToString(), out vert.Bottom.Z);
-                float.TryParse(frame.CellVertList.SelectedRows[0].Cells[2].Value.ToString(), out vert.Top);
+                float.TryParse(frame.CellVertList.SelectedRows[0].Cells[3].Value.ToString(), out vert.Top);
 
                 DisplayListSystem.system.Invalidate();
                 RebuildMap();
@@ -245,6 +247,49 @@ namespace PortalEdit
             catch (System.Exception ex)
             {
             }
+        }
+
+        public void SetRoofVertToPlane ()
+        {
+            EditorCell cell = GetSelectedCell();
+            CellVert vert = GetSelectedVert();
+            if (vert == null || cell == null)
+                return;
+
+            Plane plane = cell.GetRoofPlane();
+            float newZ = Cell.GetZInPlane(plane, vert.Bottom.X, vert.Bottom.Y);
+            if (newZ < vert.Bottom.Z)
+                return;
+
+            Undo.System.Add(new VertexDataEditUndo(cell, GetSelectedVertIndex()));
+
+            if (cell.HeightIsIncremental)
+                vert.Top = newZ - vert.Bottom.Z;
+            else
+                vert.Top = newZ;
+
+            DisplayListSystem.system.Invalidate();
+            RebuildMap();
+            ResetViews();
+        }
+
+        public void SetFloorVertToPlane ()
+        {
+            EditorCell cell = GetSelectedCell();
+            CellVert vert = GetSelectedVert();
+            if (vert == null || cell == null)
+                return;
+
+            Plane plane = cell.GetFloorPlane();
+            float newZ = Cell.GetZInPlane(plane, vert.Bottom.X, vert.Bottom.Y);
+
+            Undo.System.Add(new VertexDataEditUndo(cell, GetSelectedVertIndex()));
+            
+            vert.Bottom.Z = newZ;
+
+            DisplayListSystem.system.Invalidate();
+            RebuildMap();
+            ResetViews();
         }
 
         public void SetCellInZ ( bool inc )
