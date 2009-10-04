@@ -1,6 +1,5 @@
 
 ==General==
-Fix co-linar normal generation
 Add Regroup
 Add Group Name Edit
 Make Group box larger (maybe add a "group cells" tab)
