@@ -112,13 +112,19 @@
             this.CellVertList = new System.Windows.Forms.DataGridView();
             this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ZMin = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PlanarFloor = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ZMax = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PlanarRoof = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.EdgeInfo = new System.Windows.Forms.TabPage();
             this.CellEdgeList = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FaceInfo = new System.Windows.Forms.TabPage();
+            this.VertListRightMouseMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.setToPlaneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -146,6 +152,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.CellVertList)).BeginInit();
             this.EdgeInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).BeginInit();
+            this.VertListRightMouseMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainContainer
@@ -958,8 +965,11 @@
             this.CellVertList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Index,
             this.ZMin,
-            this.ZMax});
-            this.CellVertList.Location = new System.Drawing.Point(3, 6);
+            this.PlanarFloor,
+            this.ZMax,
+            this.PlanarRoof});
+            this.CellVertList.ContextMenuStrip = this.VertListRightMouseMenu;
+            this.CellVertList.Location = new System.Drawing.Point(4, 6);
             this.CellVertList.MultiSelect = false;
             this.CellVertList.Name = "CellVertList";
             this.CellVertList.RowHeadersWidth = 4;
@@ -986,12 +996,24 @@
             this.ZMin.Name = "ZMin";
             this.ZMin.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
+            // PlanarFloor
+            // 
+            this.PlanarFloor.HeaderText = "Pln";
+            this.PlanarFloor.Name = "PlanarFloor";
+            this.PlanarFloor.ReadOnly = true;
+            // 
             // ZMax
             // 
             this.ZMax.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.ZMax.HeaderText = "Z+";
             this.ZMax.Name = "ZMax";
             this.ZMax.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // PlanarRoof
+            // 
+            this.PlanarRoof.HeaderText = "Pln";
+            this.PlanarRoof.Name = "PlanarRoof";
+            this.PlanarRoof.ReadOnly = true;
             // 
             // EdgeInfo
             // 
@@ -1059,6 +1081,36 @@
             this.FaceInfo.Text = "Faces";
             this.FaceInfo.UseVisualStyleBackColor = true;
             // 
+            // VertListRightMouseMenu
+            // 
+            this.VertListRightMouseMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setToPlaneToolStripMenuItem});
+            this.VertListRightMouseMenu.Name = "VertListRightMouseMenu";
+            this.VertListRightMouseMenu.Size = new System.Drawing.Size(153, 48);
+            // 
+            // setToPlaneToolStripMenuItem
+            // 
+            this.setToPlaneToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.zToolStripMenuItem,
+            this.zToolStripMenuItem1});
+            this.setToPlaneToolStripMenuItem.Name = "setToPlaneToolStripMenuItem";
+            this.setToPlaneToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.setToPlaneToolStripMenuItem.Text = "Set To Plane";
+            // 
+            // zToolStripMenuItem
+            // 
+            this.zToolStripMenuItem.Name = "zToolStripMenuItem";
+            this.zToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.zToolStripMenuItem.Text = "Z+ (Roof)";
+            this.zToolStripMenuItem.Click += new System.EventHandler(this.zToolStripMenuItem_Click);
+            // 
+            // zToolStripMenuItem1
+            // 
+            this.zToolStripMenuItem1.Name = "zToolStripMenuItem1";
+            this.zToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.zToolStripMenuItem1.Text = "Z- (Floor)";
+            this.zToolStripMenuItem1.Click += new System.EventHandler(this.zToolStripMenuItem1_Click);
+            // 
             // EditFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1106,6 +1158,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.CellVertList)).EndInit();
             this.EdgeInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).EndInit();
+            this.VertListRightMouseMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1181,9 +1234,6 @@
         private System.Windows.Forms.TabPage VertInfo;
         private System.Windows.Forms.CheckBox CellInfoZIsInc;
         public System.Windows.Forms.DataGridView CellVertList;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Index;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ZMin;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ZMax;
         private System.Windows.Forms.TabPage EdgeInfo;
         public System.Windows.Forms.DataGridView CellEdgeList;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
@@ -1202,6 +1252,15 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox HideGeo;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Index;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ZMin;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn PlanarFloor;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ZMax;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn PlanarRoof;
+        private System.Windows.Forms.ContextMenuStrip VertListRightMouseMenu;
+        private System.Windows.Forms.ToolStripMenuItem setToPlaneToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem zToolStripMenuItem1;
     }
 }
 

@@ -209,6 +209,8 @@ namespace PortalEdit
                 if (cell != null)
                     cell.Verts[vertIndex] = vert;
             }
+
+            Editor.instance.RebuildMap();
         }
     }
 

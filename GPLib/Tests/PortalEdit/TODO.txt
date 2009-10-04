@@ -1,6 +1,5 @@
 
 ==General==
-Plane checks and plane snap
 Floor and Roof shifts and snaps
 Vertex Editing
 Edge hiding
@@ -16,3 +15,6 @@ Plug-ins
 Objects
 Geometry only normals
 Normal smothing
+
+==Bugs==
+Roof plane dosn't seem to compute right and forcing dosn't work as expected

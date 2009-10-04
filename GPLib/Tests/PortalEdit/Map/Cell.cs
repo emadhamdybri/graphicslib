@@ -179,6 +179,36 @@ namespace PortalEdit
             return null;
         }
 
+        public Vector3 FloorPoint ( int index )
+        {
+            return Verts[index].Bottom;
+        }
+
+        public Vector3 RoofPoint(int index)
+        {
+            return new Vector3(Verts[index].Bottom.X, Verts[index].Bottom.Y, RoofZ(index));
+        }
+
+        public float RoofZ(int index)
+        {
+            return Verts[index].GetTopZ(HeightIsIncremental);
+        }
+
+        public static float GetZInPlane(Plane plane, float x, float y)
+        {
+            return (plane.D - plane.Normal.X * x - plane.Normal.Y * y) / plane.Normal.Z;
+        }
+
+        public Plane GetFloorPlane()
+        {
+            return new Plane(FloorNormal, Vector3.Dot(FloorNormal, Verts[0].Bottom));
+        }
+
+        public Plane GetRoofPlane()
+        {
+            return new Plane(RoofNormal, Vector3.Dot(RoofNormal, RoofPoint(0)));
+        }
+
         public object tag;
     }
 
