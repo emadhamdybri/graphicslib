@@ -617,6 +617,7 @@ namespace PortalEdit
                     MessageBox.Show("Group name \"" + dlg.ItemName.Text + "\" already exists");
                     return;
                 }
+                Undo.System.Add(new GroupRenameUndo(group.Name, dlg.ItemName.Text));
                 editor.RenameGroup(group.Name, dlg.ItemName.Text);
                 populateCellList();
             }
@@ -645,6 +646,7 @@ namespace PortalEdit
                     MessageBox.Show("Cell name \"" + dlg.ItemName.Text + "\" already exists in this group");
                     return;
                 }
+                Undo.System.Add(new CellRenameUndo(cell,dlg.ItemName.Text));
                 editor.RenameCell(cell, dlg.ItemName.Text);
                 populateCellList();
             }

@@ -259,29 +259,78 @@ namespace PortalEdit
 
     public class CellGroupChangeUndo : UndoObject
     {
-        Cell cell;
+        String group;
+        String cell;
         String oldGroup;
 
-        public CellGroupChangeUndo(Cell c)
+        public CellGroupChangeUndo(Cell c, String newGroup)
         {
             descrioption = "Change Cell Group";
-            cell = c;
-            oldGroup = String.Copy(cell.GroupName);
+            cell = String.Copy(c.Name);
+            group =String.Copy(newGroup);
+            oldGroup = String.Copy(c.GroupName);
         }
 
         public override void Undo()
         {
-            CellGroup group = Editor.instance.map.FindGroup(oldGroup);
+            CellGroup g = Editor.instance.map.FindGroup(group);
 
-            if (group == null)
+            if (g == null)
                 return;
 
-            cell.Group.Cells.Remove(cell);
-            cell.Group = group;
-            cell.GroupName = group.Name;
+            Cell c = g.FindCell(cell);
+
+            c.Group.Cells.Remove(c);
+
+            CellGroup ng = Editor.instance.map.FindGroup(oldGroup);
+            c.Group = ng;
+            c.GroupName = ng.Name;
+            ng.Cells.Add(c);
           
             Editor.instance.RebuildMap();
         }
     }
 
+    public class GroupRenameUndo : UndoObject
+    {
+        String group;
+        String oldName;
+
+        public GroupRenameUndo(String _oldName, String _newName)
+        {
+            descrioption = "Change Group Name";
+            group = _newName;
+            oldName = String.Copy(_oldName);
+        }
+
+        public override void Undo()
+        {
+            Editor.instance.RenameGroup(group, oldName);
+        }
+    }
+
+    public class CellRenameUndo : UndoObject
+    {
+        String group;
+        String cellName;
+
+        String oldName;
+
+        public CellRenameUndo(Cell cell, String newName)
+        {
+            descrioption = "Change Cell Name";
+
+            group = String.Copy(cell.GroupName);
+            oldName = String.Copy(cell.Name);
+            cellName = String.Copy(newName);
+        }
+
+        public override void Undo()
+        {
+            CellGroup g = Editor.instance.map.FindGroup(group);
+            EditorCell c = (EditorCell)g.FindCell(cellName);
+
+            Editor.instance.RenameCell(c, oldName);
+        }
+    }
 }

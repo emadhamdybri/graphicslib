@@ -267,11 +267,14 @@ namespace PortalEdit
 
             map.CellGroups.Clear();
             map.MapAttributes.Clear();
+            NewGroup();
 
             Dirty = false;
 
             if (MapLoaded != null)
                 MapLoaded(this, EventArgs.Empty);
+
+
             ResetViews();
         }
 
@@ -399,7 +402,7 @@ namespace PortalEdit
             if (newGroup == cell.Group)
                 return;
 
-            Undo.System.Add(new CellGroupChangeUndo(cell));
+            Undo.System.Add(new CellGroupChangeUndo(cell, name));
 
             cell.Group.Cells.Remove(cell);
             newGroup.Cells.Add(cell);
