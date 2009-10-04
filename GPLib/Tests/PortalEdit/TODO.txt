@@ -1,6 +1,5 @@
 
 ==General==
-Keyboard shortcuts for common actions
 Option to hide cells out of a range ( or alpha them in 3d view )
 Plane checks and plane snap
 Floor and Roof shifts and snaps

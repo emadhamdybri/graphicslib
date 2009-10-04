@@ -81,6 +81,7 @@
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.renameGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameCellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteCellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MousePositionStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.MapTreeIcons = new System.Windows.Forms.ImageList(this.components);
@@ -110,6 +111,8 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FaceInfo = new System.Windows.Forms.TabPage();
+            this.newGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -583,8 +586,11 @@
             this.renameDepthGroupToolStripMenuItem,
             this.deleteDepthGroupToolStripMenuItem,
             this.toolStripSeparator7,
+            this.newGroupToolStripMenuItem,
             this.renameGroupToolStripMenuItem,
-            this.renameCellToolStripMenuItem});
+            this.toolStripSeparator8,
+            this.renameCellToolStripMenuItem,
+            this.deleteCellToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -592,40 +598,48 @@
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(194, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(206, 6);
             // 
             // renameDepthGroupToolStripMenuItem
             // 
             this.renameDepthGroupToolStripMenuItem.Name = "renameDepthGroupToolStripMenuItem";
-            this.renameDepthGroupToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.renameDepthGroupToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.renameDepthGroupToolStripMenuItem.Text = "Rename Depth Group...";
             this.renameDepthGroupToolStripMenuItem.Click += new System.EventHandler(this.renameDepthGroupToolStripMenuItem_Click);
             // 
             // deleteDepthGroupToolStripMenuItem
             // 
             this.deleteDepthGroupToolStripMenuItem.Name = "deleteDepthGroupToolStripMenuItem";
-            this.deleteDepthGroupToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.deleteDepthGroupToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.deleteDepthGroupToolStripMenuItem.Text = "Delete Depth Group";
             this.deleteDepthGroupToolStripMenuItem.Click += new System.EventHandler(this.deleteDepthGroupToolStripMenuItem_Click);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(194, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(206, 6);
             // 
             // renameGroupToolStripMenuItem
             // 
             this.renameGroupToolStripMenuItem.Name = "renameGroupToolStripMenuItem";
-            this.renameGroupToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.renameGroupToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.renameGroupToolStripMenuItem.Text = "Rename Group...";
             this.renameGroupToolStripMenuItem.Click += new System.EventHandler(this.renameGroupToolStripMenuItem_Click);
             // 
             // renameCellToolStripMenuItem
             // 
             this.renameCellToolStripMenuItem.Name = "renameCellToolStripMenuItem";
-            this.renameCellToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.renameCellToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.renameCellToolStripMenuItem.Text = "Rename Cell...";
             this.renameCellToolStripMenuItem.Click += new System.EventHandler(this.renameCellToolStripMenuItem_Click);
+            // 
+            // deleteCellToolStripMenuItem
+            // 
+            this.deleteCellToolStripMenuItem.Name = "deleteCellToolStripMenuItem";
+            this.deleteCellToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
+            this.deleteCellToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.deleteCellToolStripMenuItem.Text = "Delete Cell";
+            this.deleteCellToolStripMenuItem.Click += new System.EventHandler(this.DeleteCell_Click);
             // 
             // statusStrip1
             // 
@@ -932,6 +946,20 @@
             this.FaceInfo.Text = "Faces";
             this.FaceInfo.UseVisualStyleBackColor = true;
             // 
+            // newGroupToolStripMenuItem
+            // 
+            this.newGroupToolStripMenuItem.Name = "newGroupToolStripMenuItem";
+            this.newGroupToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift)
+                        | System.Windows.Forms.Keys.N)));
+            this.newGroupToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.newGroupToolStripMenuItem.Text = "New Group";
+            this.newGroupToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(206, 6);
+            // 
             // EditFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1062,6 +1090,9 @@
         private System.Windows.Forms.ContextMenuStrip MapTreeRightMouseMenu;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem deselectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteCellToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newGroupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
     }
 }
 
