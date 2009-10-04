@@ -437,9 +437,8 @@ namespace PortalEdit
             ResetViews();
         }
 
-        public void SetCellGroup ( String name )
+        public void SetCellGroup ( String name, EditorCell cell )
         {
-            EditorCell cell = GetSelectedCell();
             if (cell == null)
                 return;
 
@@ -453,6 +452,77 @@ namespace PortalEdit
             newGroup.Cells.Add(cell);
             cell.Group = newGroup;
             cell.GroupName = newGroup.Name;
+
+            RebuildMap();
+            ResetViews();
+        }
+
+        public void SetCellGroup ( String name )
+        {
+            SetCellGroup(name,GetSelectedCell());
+        }
+
+        public void SetCellFloor ( float val, bool translate, EditorCell cell )
+        {
+            if (cell == null)
+                return;
+
+            foreach( CellVert vert in cell.Verts)
+            {
+                if (translate)
+                    vert.Bottom.Z += val;
+                else
+                    vert.Bottom.Z = val;
+            }
+
+            RebuildMap();
+            ResetViews();
+        }
+
+        public void SetCellFloor ( float val, bool translate )
+        {
+            SetCellFloor(val,translate,GetSelectedCell());
+        }
+
+        public void SetCellRoof(float val, bool translate, EditorCell cell)
+        {
+            if (cell == null)
+                return;
+
+            foreach (CellVert vert in cell.Verts)
+            {
+                if (translate)
+                    vert.Top += val;
+                else
+                {
+                    if (cell.HeightIsIncremental)
+                        vert.Top = val - vert.Bottom.Z;
+                    else
+                        vert.Top = val;
+                }
+            }
+
+            RebuildMap();
+            ResetViews();
+        }
+
+        public void SetCellRoof(float val, bool translate)
+        {
+            SetCellRoof(val, translate, GetSelectedCell());
+        }
+
+        public void SetCellToPreset ( float floor, float roof, bool incZ, EditorCell cell)
+        {
+            if (cell == null)
+                return;
+
+            cell.HeightIsIncremental = incZ;
+            foreach (CellVert vert in cell.Verts)
+            {
+                vert.Bottom.Z = floor;
+                vert.Top = roof;
+
+            }
 
             RebuildMap();
             ResetViews();

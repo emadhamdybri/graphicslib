@@ -177,9 +177,9 @@ namespace PortalEdit
             HideGeo_CheckedChanged(this, EventArgs.Empty);
         }
 
-        PortalMapAttribute FindDepthAttribute ( string name )
+        public static PortalMapAttribute FindDepthAttribute ( string name )
         {
-            PortalMapAttribute[] att = editor.map.MapAttributes.Find("Editor:NamedDepthSet");
+            PortalMapAttribute[] att = Editor.instance.map.MapAttributes.Find("Editor:NamedDepthSet");
             foreach (PortalMapAttribute at in att)
             {
                 string[] nugs = at.Value.Split(":".ToCharArray());
@@ -757,5 +757,66 @@ namespace PortalEdit
             editor.SetFloorVertToPlane();
         }
 
+        private void MoveFloor_Click(object sender, EventArgs e)
+        {
+            EditorCell cell = editor.GetSelectedCell();
+            if (cell == null)
+                return;
+
+            CellZSSet dlg = new CellZSSet();
+
+            dlg.ZValue.Value = (decimal)cell.Verts[0].Bottom.Z;
+            dlg.Roof = false;
+
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                editor.SetCellFloor((float)dlg.ZValue.Value, !dlg.ForceDepth.Checked);
+                Invalidate(true);
+            }
+        }
+
+        private void MoveRoof_Click(object sender, EventArgs e)
+        {
+            EditorCell cell = editor.GetSelectedCell();
+            if (cell == null)
+                return;
+
+            CellZSSet dlg = new CellZSSet();
+
+            dlg.ZValue.Value = (decimal)cell.RoofZ(0);
+            dlg.Roof = true;
+
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                editor.SetCellRoof((float)dlg.ZValue.Value, !dlg.ForceDepth.Checked);
+                Invalidate(true);
+            }
+        }
+
+        private void SetCellToPreset_Click(object sender, EventArgs e)
+        {
+            EditorCell cell = editor.GetSelectedCell();
+            if (cell == null)
+                return;
+
+            CellZSSet dlg = new CellZSSet();
+            dlg.PresetOnly = true;
+
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                PortalMapAttribute item = FindDepthAttribute(dlg.SelectedPreset);
+                if (item != null)
+                {
+                    String[] nugs = item.Value.Split(":".ToCharArray());
+
+                    float floor = float.Parse(nugs[1]);
+                    float roof = float.Parse(nugs[2]);
+                    bool incZ = nugs[3] == "True";
+
+                    editor.SetCellToPreset(floor, roof, incZ, cell);
+                    Invalidate(true);
+                }
+            }
+        }
     }
 }
