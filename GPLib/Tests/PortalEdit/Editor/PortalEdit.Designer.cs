@@ -85,7 +85,6 @@
             this.MapTree = new System.Windows.Forms.TreeView();
             this.MapTreeIcons = new System.Windows.Forms.ImageList(this.components);
             this.NewGroup = new System.Windows.Forms.Button();
-            this.CellInfoZIsInc = new System.Windows.Forms.CheckBox();
             this.CellVertList = new System.Windows.Forms.DataGridView();
             this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ZMin = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -101,6 +100,9 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FaceInfo = new System.Windows.Forms.TabPage();
+            this.CellGroupDropdownLabel = new System.Windows.Forms.Label();
+            this.CellInfoZIsInc = new System.Windows.Forms.CheckBox();
+            this.CellGroupDropdown = new System.Windows.Forms.ComboBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -664,17 +666,6 @@
             this.NewGroup.UseVisualStyleBackColor = true;
             this.NewGroup.Click += new System.EventHandler(this.NewGroup_Click);
             // 
-            // CellInfoZIsInc
-            // 
-            this.CellInfoZIsInc.AutoSize = true;
-            this.CellInfoZIsInc.Location = new System.Drawing.Point(6, 6);
-            this.CellInfoZIsInc.Name = "CellInfoZIsInc";
-            this.CellInfoZIsInc.Size = new System.Drawing.Size(139, 17);
-            this.CellInfoZIsInc.TabIndex = 1;
-            this.CellInfoZIsInc.Text = "Heights Are Incremental";
-            this.CellInfoZIsInc.UseVisualStyleBackColor = true;
-            this.CellInfoZIsInc.CheckedChanged += new System.EventHandler(this.CellInfoZIsInc_CheckedChanged);
-            // 
             // CellVertList
             // 
             this.CellVertList.AllowUserToAddRows = false;
@@ -758,7 +749,8 @@
             // 
             // CellInfo
             // 
-            this.CellInfo.Controls.Add(this.CellInfoZIsInc);
+            this.CellInfo.Controls.Add(this.CellGroupDropdown);
+            this.CellInfo.Controls.Add(this.CellGroupDropdownLabel);
             this.CellInfo.Location = new System.Drawing.Point(4, 25);
             this.CellInfo.Name = "CellInfo";
             this.CellInfo.Padding = new System.Windows.Forms.Padding(3);
@@ -769,6 +761,7 @@
             // 
             // VertInfo
             // 
+            this.VertInfo.Controls.Add(this.CellInfoZIsInc);
             this.VertInfo.Controls.Add(this.CellVertList);
             this.VertInfo.Location = new System.Drawing.Point(4, 25);
             this.VertInfo.Name = "VertInfo";
@@ -842,6 +835,35 @@
             this.FaceInfo.Text = "Faces";
             this.FaceInfo.UseVisualStyleBackColor = true;
             // 
+            // CellGroupDropdownLabel
+            // 
+            this.CellGroupDropdownLabel.AutoSize = true;
+            this.CellGroupDropdownLabel.Location = new System.Drawing.Point(6, 9);
+            this.CellGroupDropdownLabel.Name = "CellGroupDropdownLabel";
+            this.CellGroupDropdownLabel.Size = new System.Drawing.Size(36, 13);
+            this.CellGroupDropdownLabel.TabIndex = 2;
+            this.CellGroupDropdownLabel.Text = "Group";
+            // 
+            // CellInfoZIsInc
+            // 
+            this.CellInfoZIsInc.AutoSize = true;
+            this.CellInfoZIsInc.Location = new System.Drawing.Point(3, 159);
+            this.CellInfoZIsInc.Name = "CellInfoZIsInc";
+            this.CellInfoZIsInc.Size = new System.Drawing.Size(139, 17);
+            this.CellInfoZIsInc.TabIndex = 2;
+            this.CellInfoZIsInc.Text = "Heights Are Incremental";
+            this.CellInfoZIsInc.UseVisualStyleBackColor = true;
+            // 
+            // CellGroupDropdown
+            // 
+            this.CellGroupDropdown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CellGroupDropdown.FormattingEnabled = true;
+            this.CellGroupDropdown.Location = new System.Drawing.Point(48, 6);
+            this.CellGroupDropdown.Name = "CellGroupDropdown";
+            this.CellGroupDropdown.Size = new System.Drawing.Size(139, 21);
+            this.CellGroupDropdown.TabIndex = 3;
+            this.CellGroupDropdown.SelectedIndexChanged += new System.EventHandler(this.CellGroupDropdown_SelectedIndexChanged);
+            // 
             // EditFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -878,6 +900,7 @@
             this.CellInfo.ResumeLayout(false);
             this.CellInfo.PerformLayout();
             this.VertInfo.ResumeLayout(false);
+            this.VertInfo.PerformLayout();
             this.EdgeInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).EndInit();
             this.ResumeLayout(false);
@@ -928,7 +951,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Index;
         private System.Windows.Forms.DataGridViewTextBoxColumn ZMin;
         private System.Windows.Forms.DataGridViewTextBoxColumn ZMax;
-        private System.Windows.Forms.CheckBox CellInfoZIsInc;
         public System.Windows.Forms.DataGridView CellVertList;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
@@ -958,6 +980,9 @@
         private System.Windows.Forms.ToolStripMenuItem renameDepthGroupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteDepthGroupToolStripMenuItem;
         private System.Windows.Forms.Button ShowUnderlay;
+        private System.Windows.Forms.ComboBox CellGroupDropdown;
+        private System.Windows.Forms.Label CellGroupDropdownLabel;
+        private System.Windows.Forms.CheckBox CellInfoZIsInc;
     }
 }
 

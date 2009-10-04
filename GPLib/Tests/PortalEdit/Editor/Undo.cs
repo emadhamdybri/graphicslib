@@ -257,4 +257,31 @@ namespace PortalEdit
         }
     }
 
+    public class CellGroupChangeUndo : UndoObject
+    {
+        Cell cell;
+        String oldGroup;
+
+        public CellGroupChangeUndo(Cell c)
+        {
+            descrioption = "Change Cell Group";
+            cell = c;
+            oldGroup = String.Copy(cell.GroupName);
+        }
+
+        public override void Undo()
+        {
+            CellGroup group = Editor.instance.map.FindGroup(oldGroup);
+
+            if (group == null)
+                return;
+
+            cell.Group.Cells.Remove(cell);
+            cell.Group = group;
+            cell.GroupName = group.Name;
+          
+            Editor.instance.RebuildMap();
+        }
+    }
+
 }
