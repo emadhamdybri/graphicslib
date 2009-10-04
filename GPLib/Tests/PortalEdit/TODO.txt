@@ -14,7 +14,6 @@ Light placement
 Vertex Shading
 Lightmaping
 
-
 ==System==
 Plug-ins
 Objects

@@ -53,6 +53,9 @@ namespace PortalEdit
         public String CellName = string.Empty;
         public String GroupName = string.Empty;
 
+        public List<PortalMapAttribute> DestinationAttributes = new List<PortalMapAttribute>();
+
+
         public PortalDestination(){}
 
         public PortalDestination ( PortalDestination d )
@@ -82,6 +85,8 @@ namespace PortalEdit
         public List<CellWallGeometry> Geometry = new List<CellWallGeometry>();
 
         public Vector2 Normal = new Vector2();
+
+        public List<PortalMapAttribute> EdgeAttributes = new List<PortalMapAttribute>();
 
         public CellEdge()
         {
@@ -115,6 +120,8 @@ namespace PortalEdit
         public Vector3 RoofNormal = new Vector3(0, 0, -1);
 
         public bool HeightIsIncremental = true;
+
+        public List<PortalMapAttribute> CellAttributes = new List<PortalMapAttribute>();
 
         public override string ToString()
         {
