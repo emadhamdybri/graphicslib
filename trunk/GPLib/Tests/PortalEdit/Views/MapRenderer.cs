@@ -542,29 +542,4 @@ namespace PortalEdit
                 CellSelected(this,colorMap[selectedColor]);
         }
     }
-
-    public class Polygon
-    {
-        public List<Vector2> Verts = new List<Vector2>();
-        public Color color = Color.FromArgb(128, Color.OliveDrab);
-        public Color outlineColor = Color.FromArgb(192, Color.Black);
-
-        public float GetNormalDepth ()
-        {
-            if (Verts.Count < 2)
-                return 0;
-
-            Vector3 v1 = new Vector3(Verts[1].X - Verts[0].X, Verts[1].Y - Verts[0].Y, 0);
-            Vector3 v2 = new Vector3(Verts[1].X - Verts[2].X, Verts[1].Y - Verts[2].Y, 0);
-
-            return Vector3.Cross(v1, v2).Z;
-        }
-
-        public List<Vector2> Reverse ()
-        {
-            List<Vector2> v = new List<Vector2>(Verts);
-            v.Reverse();
-            return v;
-        }
-    }
 }

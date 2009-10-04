@@ -14,6 +14,45 @@ using Math3D;
 
 namespace PortalEdit
 {
+    public class Polygon
+    {
+        public List<Vector2> Verts = new List<Vector2>();
+        public Color color = Color.FromArgb(128, Color.OliveDrab);
+        public Color outlineColor = Color.FromArgb(192, Color.Black);
+        
+        public float GetNormalDepth()
+        {
+            if (Verts.Count < 2)
+                return 0;
+
+            Vector3 v1 = new Vector3(Verts[1].X - Verts[0].X, Verts[1].Y - Verts[0].Y, 0);
+
+            v1.Normalize();
+
+            int vert = 2;
+            Vector3 v2 = new Vector3(Verts[vert].X - Verts[vert - 1].X, Verts[vert].Y - Verts[vert - 1].Y, 0);
+            v2.Normalize();
+            while (v1 == v2)
+            {
+                vert++;
+                if (vert >= Verts.Count)
+                    return 0;
+
+                v2 = new Vector3(Verts[vert].X - Verts[vert - 1].X, Verts[vert].Y - Verts[vert - 1].Y, 0);
+                v2.Normalize();
+            }
+
+            return Vector3.Cross(v1, -v2).Z;
+        }
+
+        public List<Vector2> Reverse()
+        {
+            List<Vector2> v = new List<Vector2>(Verts);
+            v.Reverse();
+            return v;
+        }
+    }
+
     public class WallGeometry : IDisposable
     {
         SingleListDrawableItem wallGeo;
@@ -400,14 +439,32 @@ namespace PortalEdit
 
             // make vectors for the first 2 edges
             Vector3 v1 = VectorHelper3.Subtract(Verts[1].Bottom, Verts[0].Bottom);
-            Vector3 v2 = VectorHelper3.Subtract(Verts[1].Bottom, Verts[2].Bottom);
-            FloorNormal = Vector3.Cross(v2, v1);
+            v1.Normalize();
+
+            int vert = 2;
+            Vector3 v2 = VectorHelper3.Subtract(Verts[vert].Bottom, Verts[vert-1].Bottom);
+            v2.Normalize();
+
+            while ( v1 == v2)
+            {
+                vert++;
+                if (vert >= Verts.Count)
+                {
+                    vert = Verts.Count - 1;
+                    break;
+                }
+
+                v2 = VectorHelper3.Subtract(Verts[vert].Bottom, Verts[vert - 1].Bottom);
+                v2.Normalize();
+            }
+
+            FloorNormal = Vector3.Cross(-v2, v1);
             FloorNormal.Normalize();
 
             v1.Z = Verts[1].GetTopZ(HeightIsIncremental) - Verts[0].GetTopZ(HeightIsIncremental);
-            v2.Z = Verts[1].GetTopZ(HeightIsIncremental) - Verts[2].GetTopZ(HeightIsIncremental);
+            v2.Z = Verts[vert].GetTopZ(HeightIsIncremental) - Verts[vert-1].GetTopZ(HeightIsIncremental);
 
-            RoofNormal = Vector3.Cross(v1, v2);
+            RoofNormal = Vector3.Cross(v1, -v2);
             RoofNormal.Normalize();
         }
 
