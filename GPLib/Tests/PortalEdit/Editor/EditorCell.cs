@@ -500,15 +500,14 @@ namespace PortalEdit
             bool hasPortal = false;
             foreach (CellEdge edge in Edges)
             {
-                edge.EdgeType = CellEdgeType.Wall;
-                edge.Destinations.Clear();
-
                 edge.Normal = new Vector2(Verts[edge.Start].Bottom.Y - Verts[edge.End].Bottom.Y, -1f * (Verts[edge.Start].Bottom.X - Verts[edge.End].Bottom.X));
                 edge.Normal.Normalize();
 
                 Vector2 p1 = new Vector2(Verts[edge.Start].Bottom.X, Verts[edge.Start].Bottom.Y);
                 Vector2 p2 = new Vector2(Verts[edge.End].Bottom.X, Verts[edge.End].Bottom.Y);
                 List<Cell> cellsWithEdge = map.CellsThatContainEdge(p1, p2,this);
+
+                bool edgeHasPortal = false;
 
                 if (cellsWithEdge.Count > 0)
                 {
@@ -529,15 +528,47 @@ namespace PortalEdit
                                 continue; // the destination is TOTALY below us, so we can't portal to it
 
                             // we know that one edge of the dest cell is inside our height range so we can portal to it
-                            edge.EdgeType = CellEdgeType.Portal;
+                           
                             PortalDestination dest = new PortalDestination();
                             dest.Cell = cell;
                             dest.Group = cell.Group;
                             dest.CellName = cell.Name;
                             dest.GroupName = cell.GroupName;
                             edge.Destinations.Add(dest);
+                            edgeHasPortal = true;
                             hasPortal = true;
                         }
+                    }
+                }
+
+                if (edgeHasPortal)
+                {
+                    if (edge.EdgeType == CellEdgeType.Portal)
+                        UpdatePortalGeo(edge);
+                    else
+                    {
+                        // it's going from wall to portal so it will get new data
+                        // save off it's first geo and use it for materials
+                        CellWallGeometry matGeo = GetFirstGeo(edge);
+                        edge.EdgeType = CellEdgeType.Portal;
+                        generateWallDef(edge);
+                        SetEdgeGeoMat(edge,matGeo);
+                    }
+                }
+                else
+                {
+                    if (edge.EdgeType == CellEdgeType.Wall)
+                        UpdateWallGeo(edge);
+                    else
+                    {
+                        // it's going from a portal to a wall so go and generate new data
+                         // save off it's first geo and use it for materials
+                        CellWallGeometry matGeo = GetFirstGeo(edge);
+
+                        edge.EdgeType = CellEdgeType.Wall;
+                        edge.Destinations.Clear();
+                        generateWallDef(edge);
+                        SetEdgeGeoMat(edge,matGeo);
                     }
                 }
             }
@@ -547,10 +578,29 @@ namespace PortalEdit
             return hasPortal;
         }
 
+        CellWallGeometry GetFirstGeo ( CellEdge edge )
+        {
+            if (edge.Geometry.Count == 0)
+                return null;
+
+            return edge.Geometry[0];
+        }
+
+        void SetEdgeGeoMat ( CellEdge edge, CellWallGeometry matGeo )
+        {
+            if (matGeo == null)
+                return;
+
+            foreach(CellWallGeometry geo in edge.Geometry)
+            {
+                geo.Material = matGeo.Material;
+                geo.UVShift = matGeo.UVShift;
+                geo.UVScale = matGeo.UVScale;
+            }
+        }
+
         void setupCellGeoData ()
         {
-            generateWallDefs();
-
             // make vectors for the first 2 edges
             Vector3 v1 = VectorHelper3.Subtract(Verts[1].Bottom, Verts[0].Bottom);
             v1.Normalize();
@@ -582,235 +632,328 @@ namespace PortalEdit
             RoofNormal.Normalize();
         }
 
-        void generateWallDefs()
+        void UpdateWallGeo ( CellEdge edge )
         {
-            foreach (CellEdge edge in Edges)
+            if (edge.Geometry.Count != 1)
+                generateWallDef(edge);
+            else
             {
-                edge.Geometry.Clear();
-                CellWallGeometry geo;
+                CellWallGeometry geo = edge.Geometry[0];
 
-                int pass = DrawablesSystem.LastPass + WallPassOffet;
-                if (edge.EdgeType == CellEdgeType.Wall)
+                float heightChange = FloorPoint(edge.Start).Z - geo.LowerZ[0];
+                float heightChangeInScaledUV = heightChange / geo.UVScale.Y;
+                geo.UVShift.Y += heightChangeInScaledUV;
+
+                geo.LowerZ[0] = FloorPoint(edge.Start).Z;
+                geo.LowerZ[1] = FloorPoint(edge.End).Z;
+                geo.UpperZ[0] = RoofZ(edge.Start);
+                geo.UpperZ[1] = RoofZ(edge.End);
+            }
+        }
+
+        CellWallGeometry FindMatchingGeo (List<CellWallGeometry> list, CellWallGeometry geo )
+        {
+            foreach (CellWallGeometry g in list)
+            {
+                if (geo.BottomCell == g.BottomCell && geo.BottomGroup == g.BottomGroup && geo.TopGroup == g.TopGroup && geo.TopCell == g.TopCell)
+                    return g;
+            }
+
+            return null;
+        }
+
+        void UpdatePortalGeo ( CellEdge edge )
+        {
+            List<CellWallGeometry> newGeo = generateWallDefs(edge);
+
+            foreach (CellWallGeometry geo in newGeo)
+            {
+                CellWallGeometry oldGeo = FindMatchingGeo(edge.Geometry, geo);
+                if (oldGeo != null)
                 {
-                    geo = new CellWallGeometry();
+                    geo.UVScale = oldGeo.UVScale;
+                    geo.UVShift = oldGeo.UVShift;
 
-                    geo.UpperZ[0] = Verts[edge.Start].GetTopZ(HeightIsIncremental);
-                    geo.UpperZ[1] = Verts[edge.End].GetTopZ(HeightIsIncremental);
+                    float heightChange = oldGeo.LowerZ[0] - geo.LowerZ[0];
+                    float heightChangeInScaledUV = heightChange / oldGeo.UVScale.Y;
+                    geo.UVShift.Y += heightChangeInScaledUV;
 
-                    geo.LowerZ[0] = Verts[edge.Start].Bottom.Z;
-                    geo.LowerZ[1] = Verts[edge.End].Bottom.Z;
-                    edge.Geometry.Add(geo);
+                    geo.Material = oldGeo.Material;
                 }
-                else
+                else if (edge.Geometry.Count > 0)
                 {
-                    CellVert thisSP = Verts[edge.Start];
-                    CellVert thisEP = Verts[edge.End];
+                    geo.Material = edge.Geometry[0].Material;
+                }
+            }
+            edge.Geometry.Clear();
+            edge.Geometry = newGeo;
+        }
 
-                    CellVert bestDestSP;
-                    CellVert bestDestEP;
-                    CellVert thisDestSP;
-                    CellVert topDestSP;
-                    CellVert topDestEP;
-                    CellVert destSP;
-                    CellVert lowestSP;
 
-                    Cell bestDest = null;
-                    Cell topDest = null;
+        void generateWallDef( CellEdge edge )
+        {
+            edge.Geometry.Clear();
+            edge.Geometry = generateWallDefs(edge);
+        }
 
-                    // find the lowest top
-                    Cell lowestTop = null;
+        List<CellWallGeometry> generateWallDefs ( CellEdge edge )
+        {
+            List<CellWallGeometry> Geometry = new List<CellWallGeometry>();
+
+            CellWallGeometry geo;
+
+            if (edge.EdgeType == CellEdgeType.Wall)
+            {
+                geo = new CellWallGeometry();
+
+                geo.UpperZ[0] = Verts[edge.Start].GetTopZ(HeightIsIncremental);
+                geo.UpperZ[1] = Verts[edge.End].GetTopZ(HeightIsIncremental);
+
+                geo.LowerZ[0] = Verts[edge.Start].Bottom.Z;
+                geo.LowerZ[1] = Verts[edge.End].Bottom.Z;
+
+                geo.BottomCell = Name;
+                geo.TopCell = Name;
+
+                Geometry.Add(geo);
+            }
+            else
+            {
+                CellVert thisSP = Verts[edge.Start];
+                CellVert thisEP = Verts[edge.End];
+
+                CellVert bestDestSP;
+                CellVert bestDestEP;
+                CellVert thisDestSP;
+                CellVert topDestSP;
+                CellVert topDestEP;
+                CellVert destSP;
+                CellVert lowestSP;
+
+                Cell bestDest = null;
+                Cell topDest = null;
+
+                // find the lowest top
+                Cell lowestTop = null;
+                foreach (PortalDestination dest in edge.Destinations)
+                {
+                    destSP = dest.Cell.MatchingVert(thisSP);
+                    if (destSP.GetTopZ(dest.Cell.HeightIsIncremental) > thisSP.Bottom.Z)
+                    {
+                        // the top is above us
+                        if (lowestTop == null)
+                            lowestTop = dest.Cell;
+                        else
+                        {
+                            lowestSP = lowestTop.MatchingVert(thisSP);
+                            if (destSP.GetTopZ(dest.Cell.HeightIsIncremental) < lowestSP.Bottom.Z)
+                                lowestTop = dest.Cell;
+                        }
+                    }
+                }
+
+                bool doBottomFace = true;
+                if (lowestTop != null)
+                {
+                    lowestSP = lowestTop.MatchingVert(thisSP);
+                    if (lowestSP.Bottom.Z <= thisSP.Bottom.Z)
+                    {
+                        doBottomFace = false;
+                        topDest = lowestTop;
+                    }
+                }
+
+                if (doBottomFace)
+                {
+                    // find the portal that has a bottom SP that is higher then our SP
+                    // this will be the wall from our bottom to the next highest portal (bottom rung)
                     foreach (PortalDestination dest in edge.Destinations)
                     {
                         destSP = dest.Cell.MatchingVert(thisSP);
-                        if (destSP.GetTopZ(dest.Cell.HeightIsIncremental) > thisSP.Bottom.Z)
+
+                        if (destSP.Bottom.Z <= thisSP.Bottom.Z)
+                            continue; // it's below us, so we ignore it, any link walls will be to our top
+
+                        if (bestDest == null)
+                            bestDest = dest.Cell;
+                        else
                         {
-                            // the top is above us
-                            if (lowestTop == null)
-                                lowestTop = dest.Cell;
+                            bestDestSP = bestDest.MatchingVert(thisSP);
+                            if (bestDestSP.Bottom.Z > destSP.Bottom.Z) // his his bottom lower then the current best
+                                bestDest = dest.Cell;
+                        }
+                    }
+                    topDest = bestDest;
+                }
+
+                if (topDest != null) // ok someone had a portal above us
+                {
+                    if (doBottomFace)
+                    {
+                        // add geo from our bottom to it's bottom
+                        geo = new CellWallGeometry();
+                        bestDestSP = topDest.MatchingVert(thisSP);
+                        bestDestEP = topDest.MatchingVert(thisSP);
+
+                        geo.UpperZ[0] = bestDestSP.Bottom.Z;
+                        geo.UpperZ[1] = bestDestEP.Bottom.Z;
+
+                        geo.LowerZ[0] = thisSP.Bottom.Z;
+                        geo.LowerZ[1] = thisSP.Bottom.Z;
+
+                        geo.BottomCell = Name;
+                        geo.TopCell = topDest.Name;
+                        geo.TopGroup = topDest.GroupName;
+
+                        Geometry.Add(geo);
+                    }
+
+                    bestDestSP = topDest.MatchingVert(thisSP);
+                    bestDestEP = topDest.MatchingVert(thisSP);
+                    // check and see if his top is below our top
+                    if (bestDestSP.GetTopZ(topDest.HeightIsIncremental) < thisSP.GetTopZ(HeightIsIncremental))
+                    {
+                        // it is, so we need to go and keep building ladders untll none are higher
+                        bool done = false;
+
+                        while (!done)
+                        {
+                            // find the portal that has a bottom above the current top and is still under our roof (next rung) 
+                            bestDest = null;
+
+                            topDestSP = topDest.MatchingVert(thisSP);
+
+                            foreach (PortalDestination dest in edge.Destinations)
+                            {
+                                if (dest.Cell == topDest)
+                                    continue;
+
+                                thisDestSP = dest.Cell.MatchingVert(thisSP);
+
+                                if (thisDestSP.Bottom.Z > topDestSP.GetTopZ(topDest.HeightIsIncremental))
+                                {
+                                    if (bestDest == null)
+                                        bestDest = dest.Cell;
+                                    else
+                                    {
+                                        bestDestSP = bestDest.MatchingVert(thisSP);
+
+                                        if (bestDestSP.Bottom.Z > thisDestSP.Bottom.Z)
+                                            bestDest = dest.Cell;
+                                    }
+                                }
+                            }
+
+                            if (bestDest == null)
+                                done = true;
                             else
                             {
-                                lowestSP = lowestTop.MatchingVert(thisSP);
-                                if (destSP.GetTopZ(dest.Cell.HeightIsIncremental) < lowestSP.Bottom.Z)
-                                    lowestTop = dest.Cell;
+                                // make a wall from the last top cell's top to the best dest cell's bottom because it's above us.
+                                geo = new CellWallGeometry();
+
+                                bestDestSP = bestDest.MatchingVert(thisSP);
+                                bestDestEP = bestDest.MatchingVert(thisEP);
+
+                                geo.UpperZ[0] = bestDestSP.Bottom.Z;
+                                geo.UpperZ[1] = bestDestEP.Bottom.Z;
+
+                                topDestSP = topDest.MatchingVert(thisSP);
+                                topDestEP = topDest.MatchingVert(thisEP);
+
+                                geo.LowerZ[0] = topDestSP.GetTopZ(topDest.HeightIsIncremental);
+                                geo.LowerZ[1] = topDestEP.GetTopZ(topDest.HeightIsIncremental);
+
+                                geo.BottomCell = topDest.Name;
+                                geo.TopCell = bestDest.Name;
+                                geo.BottomGroup = topDest.GroupName;
+                                geo.TopGroup = bestDest.GroupName;
+
+                                Geometry.Add(geo);
+
+                                // set the next cell as the "top" and do it again
+                                topDest = bestDest;
+                                topDestSP = topDest.MatchingVert(thisSP);
+
+                                if (topDestSP.GetTopZ(topDest.HeightIsIncremental) > thisSP.GetTopZ(HeightIsIncremental))
+                                    done = true; // if this guy goes outside of our cell then we are totaly done
                             }
                         }
                     }
+                }
 
-                    bool doBottomFace = true;
-                    if (lowestTop != null)
+                if (topDest == null)
+                {
+                    bestDest = null;
+                    // no portals had a bottom below us, so find one that has the highest top z above us
+                    foreach (PortalDestination dest in edge.Destinations)
                     {
-                        lowestSP = lowestTop.MatchingVert(thisSP);
-                        if (lowestSP.Bottom.Z <= thisSP.Bottom.Z)
+                        destSP = dest.Cell.MatchingVert(thisSP);
+
+                        if (destSP.GetTopZ(dest.Cell.HeightIsIncremental) < thisSP.GetTopZ(HeightIsIncremental))
                         {
-                            doBottomFace = false;
-                            topDest = lowestTop;
-                        }
-                    }
-
-                    if (doBottomFace)
-                    {
-                        // find the portal that has a bottom SP that is higher then our SP
-                        // this will be the wall from our bottom to the next highest portal (bottom rung)
-                        foreach (PortalDestination dest in edge.Destinations)
-                        {
-                            destSP = dest.Cell.MatchingVert(thisSP);
-
-                            if (destSP.Bottom.Z <= thisSP.Bottom.Z)
-                                continue; // it's below us, so we ignore it, any link walls will be to our top
-
                             if (bestDest == null)
                                 bestDest = dest.Cell;
                             else
                             {
                                 bestDestSP = bestDest.MatchingVert(thisSP);
-                                if (bestDestSP.Bottom.Z > destSP.Bottom.Z) // his his bottom lower then the current best
+                                if (bestDestSP.GetTopZ(bestDest.HeightIsIncremental) > destSP.GetTopZ(dest.Cell.HeightIsIncremental)) // his his top higher then the current best
                                     bestDest = dest.Cell;
-                            }
-                        }
-                        topDest = bestDest;
-                    }
 
-                    if (topDest != null) // ok someone had a portal above us
-                    {
-                        if (doBottomFace)
-                        {
-                            // add geo from our bottom to it's bottom
-                            geo = new CellWallGeometry();
-                            bestDestSP = topDest.MatchingVert(thisSP);
-                            bestDestEP = topDest.MatchingVert(thisSP);
-
-                            geo.UpperZ[0] = bestDestSP.Bottom.Z;
-                            geo.UpperZ[1] = bestDestEP.Bottom.Z;
-
-                            geo.LowerZ[0] = thisSP.Bottom.Z;
-                            geo.LowerZ[1] = thisSP.Bottom.Z;
-                            edge.Geometry.Add(geo);
-                        }
-
-                        bestDestSP = topDest.MatchingVert(thisSP);
-                        bestDestEP = topDest.MatchingVert(thisSP);
-                        // check and see if his top is below our top
-                        if (bestDestSP.GetTopZ(topDest.HeightIsIncremental) < thisSP.GetTopZ(HeightIsIncremental))
-                        {
-                            // it is, so we need to go and keep building ladders untll none are higher
-                            bool done = false;
-
-                            while (!done)
-                            {
-                                // find the portal that has a bottom above the current top and is still under our roof (next rung) 
-                                bestDest = null;
-
-                                topDestSP = topDest.MatchingVert(thisSP);
-
-                                foreach (PortalDestination dest in edge.Destinations)
-                                {
-                                    if (dest.Cell == topDest)
-                                        continue;
-
-                                    thisDestSP = dest.Cell.MatchingVert(thisSP);
-
-                                    if (thisDestSP.Bottom.Z > topDestSP.GetTopZ(topDest.HeightIsIncremental))
-                                    {
-                                        if (bestDest == null)
-                                            bestDest = dest.Cell;
-                                        else
-                                        {
-                                            bestDestSP = bestDest.MatchingVert(thisSP);
-
-                                            if (bestDestSP.Bottom.Z > thisDestSP.Bottom.Z)
-                                                bestDest = dest.Cell;
-                                        }
-                                    }
-                                }
-
-                                if (bestDest == null)
-                                    done = true;
-                                else
-                                {
-                                    // make a wall from the last top cell's top to the best dest cell's bottom because it's above us.
-                                    geo = new CellWallGeometry();
-
-                                    bestDestSP = bestDest.MatchingVert(thisSP);
-                                    bestDestEP = bestDest.MatchingVert(thisEP);
-
-                                    geo.UpperZ[0] = bestDestSP.Bottom.Z;
-                                    geo.UpperZ[1] = bestDestEP.Bottom.Z;
-
-                                    topDestSP = topDest.MatchingVert(thisSP);
-                                    topDestEP = topDest.MatchingVert(thisEP);
-
-                                    geo.LowerZ[0] = topDestSP.GetTopZ(topDest.HeightIsIncremental);
-                                    geo.LowerZ[1] = topDestEP.GetTopZ(topDest.HeightIsIncremental);
-
-                                    edge.Geometry.Add(geo);
-
-                                    // set the next cell as the "top" and do it again
-                                    topDest = bestDest;
-                                    topDestSP = topDest.MatchingVert(thisSP);
-
-                                    if (topDestSP.GetTopZ(topDest.HeightIsIncremental) > thisSP.GetTopZ(HeightIsIncremental))
-                                        done = true; // if this guy goes outside of our cell then we are totaly done
-                                }
                             }
                         }
                     }
-
-                    if (topDest == null)
+                    if (bestDest != null) // go from the best dest to our top
                     {
-                        bestDest = null;
-                        // no portals had a bottom below us, so find one that has the highest top z above us
-                        foreach (PortalDestination dest in edge.Destinations)
-                        {
-                            destSP = dest.Cell.MatchingVert(thisSP);
+                        geo = new CellWallGeometry();
+                        geo.UpperZ[0] = thisSP.GetTopZ(HeightIsIncremental);
+                        geo.UpperZ[1] = thisEP.GetTopZ(HeightIsIncremental);
 
-                            if (destSP.GetTopZ(dest.Cell.HeightIsIncremental) < thisSP.GetTopZ(HeightIsIncremental))
-                            {
-                                if (bestDest == null)
-                                    bestDest = dest.Cell;
-                                else
-                                {
-                                    bestDestSP = bestDest.MatchingVert(thisSP);
-                                    if (bestDestSP.GetTopZ(bestDest.HeightIsIncremental) > destSP.GetTopZ(dest.Cell.HeightIsIncremental)) // his his top higher then the current best
-                                        bestDest = dest.Cell;
+                        bestDestSP = bestDest.MatchingVert(thisSP);
+                        bestDestEP = bestDest.MatchingVert(thisSP);
 
-                                }
-                            }
-                        }
-                        if (bestDest != null) // go from the best dest to our top
-                        {
-                            geo = new CellWallGeometry();
-                            geo.UpperZ[0] = thisSP.GetTopZ(HeightIsIncremental);
-                            geo.UpperZ[1] = thisEP.GetTopZ(HeightIsIncremental);
+                        geo.LowerZ[0] = bestDestSP.GetTopZ(bestDest.HeightIsIncremental);
+                        geo.LowerZ[1] = bestDestEP.GetTopZ(bestDest.HeightIsIncremental);
 
-                            bestDestSP = bestDest.MatchingVert(thisSP);
-                            bestDestEP = bestDest.MatchingVert(thisSP);
+                        geo.BottomCell = bestDest.Name;
+                        geo.TopCell = Name;
+                        geo.BottomGroup = bestDest.GroupName;
 
-                            geo.LowerZ[0] = bestDestSP.GetTopZ(bestDest.HeightIsIncremental);
-                            geo.LowerZ[1] = bestDestEP.GetTopZ(bestDest.HeightIsIncremental);
-                            edge.Geometry.Add(geo);
-                        }
+                        Geometry.Add(geo);
                     }
-                    else
+                }
+                else
+                {
+                    topDestSP = topDest.MatchingVert(thisSP);
+
+                    if (topDestSP.GetTopZ(topDest.HeightIsIncremental) < thisSP.GetTopZ(HeightIsIncremental))
                     {
+                        // build a wall that goes from his top to our top
+                        geo = new CellWallGeometry();
                         topDestSP = topDest.MatchingVert(thisSP);
+                        topDestEP = topDest.MatchingVert(thisSP);
 
-                        if (topDestSP.GetTopZ(topDest.HeightIsIncremental) < thisSP.GetTopZ(HeightIsIncremental))
-                        {
-                            // build a wall that goes from his top to our top
-                            geo = new CellWallGeometry();
-                            topDestSP = topDest.MatchingVert(thisSP);
-                            topDestEP = topDest.MatchingVert(thisSP);
+                        geo.LowerZ[0] = topDestSP.GetTopZ(topDest.HeightIsIncremental);
+                        geo.LowerZ[1] = topDestEP.GetTopZ(topDest.HeightIsIncremental);
 
-                            geo.LowerZ[0] = topDestSP.GetTopZ(topDest.HeightIsIncremental);
-                            geo.LowerZ[1] = topDestEP.GetTopZ(topDest.HeightIsIncremental);
+                        geo.UpperZ[0] = thisSP.GetTopZ(HeightIsIncremental);
+                        geo.UpperZ[1] = thisSP.GetTopZ(HeightIsIncremental);
 
-                            geo.UpperZ[0] = thisSP.GetTopZ(HeightIsIncremental);
-                            geo.UpperZ[1] = thisSP.GetTopZ(HeightIsIncremental);
-                            edge.Geometry.Add(geo);
-                        }
+                        geo.BottomCell = topDest.Name;
+                        geo.BottomGroup = topDest.GroupName;
+                        geo.TopCell = Name;
+
+                        Geometry.Add(geo);
                     }
                 }
             }
+
+            return Geometry;
+        }
+
+        void generateWallDefs()
+        {
+            foreach (CellEdge edge in Edges)
+                generateWallDef(edge);
         }
 
         void clearGeometry ( )
