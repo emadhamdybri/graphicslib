@@ -38,6 +38,7 @@ namespace PortalEdit
 
     public enum CellEdgeType
     {
+        Unknown,
         Wall,
         Portal,
     }
@@ -73,12 +74,17 @@ namespace PortalEdit
 
         public Vector2 UVScale = Vector2.One;
         public Vector2 UVShift = Vector2.Zero;
+
+        public String BottomCell = string.Empty;
+        public String BottomGroup = string.Empty;
+        public String TopCell = string.Empty;
+        public String TopGroup = string.Empty;
     }
 
     public class CellEdge
     {
         public int Start, End;
-        public CellEdgeType EdgeType = CellEdgeType.Wall;
+        public CellEdgeType EdgeType = CellEdgeType.Unknown;
 
         public List<PortalDestination> Destinations = new List<PortalDestination>();
         public List<CellWallGeometry> Geometry = new List<CellWallGeometry>();
