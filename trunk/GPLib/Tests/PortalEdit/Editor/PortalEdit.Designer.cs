@@ -49,6 +49,7 @@
             this.MapZoomIn = new System.Windows.Forms.Button();
             this.MapView = new System.Windows.Forms.PictureBox();
             this.ViewCheckPanel = new FormControls.ImageCheckPanel();
+            this.ShowUnderlay = new System.Windows.Forms.Button();
             this.ShowPortals = new System.Windows.Forms.Button();
             this.ShowCellEdges = new System.Windows.Forms.Button();
             this.ViewRadioPanel = new FormControls.ImageRadioPanel();
@@ -74,6 +75,9 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.setupImageUnderlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.renameDepthGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteDepthGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MousePositionStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.DeleteCell = new System.Windows.Forms.Button();
@@ -97,9 +101,6 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FaceInfo = new System.Windows.Forms.TabPage();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.renameDepthGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteDepthGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -331,6 +332,7 @@
             // 
             this.ViewCheckPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.ViewCheckPanel.Controls.Add(this.ShowUnderlay);
             this.ViewCheckPanel.Controls.Add(this.ShowPortals);
             this.ViewCheckPanel.Controls.Add(this.ShowCellEdges);
             this.ViewCheckPanel.HighlightBGColor = System.Drawing.Color.CadetBlue;
@@ -340,6 +342,17 @@
             this.ViewCheckPanel.SelectedItem = null;
             this.ViewCheckPanel.Size = new System.Drawing.Size(378, 37);
             this.ViewCheckPanel.TabIndex = 0;
+            // 
+            // ShowUnderlay
+            // 
+            this.ShowUnderlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ShowUnderlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ShowUnderlay.Image = ((System.Drawing.Image)(resources.GetObject("ShowUnderlay.Image")));
+            this.ShowUnderlay.Location = new System.Drawing.Point(339, 1);
+            this.ShowUnderlay.Name = "ShowUnderlay";
+            this.ShowUnderlay.Size = new System.Drawing.Size(36, 36);
+            this.ShowUnderlay.TabIndex = 2;
+            this.ShowUnderlay.UseVisualStyleBackColor = true;
             // 
             // ShowPortals
             // 
@@ -559,6 +572,25 @@
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(194, 6);
+            // 
+            // renameDepthGroupToolStripMenuItem
+            // 
+            this.renameDepthGroupToolStripMenuItem.Name = "renameDepthGroupToolStripMenuItem";
+            this.renameDepthGroupToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.renameDepthGroupToolStripMenuItem.Text = "Rename Depth Group...";
+            this.renameDepthGroupToolStripMenuItem.Click += new System.EventHandler(this.renameDepthGroupToolStripMenuItem_Click);
+            // 
+            // deleteDepthGroupToolStripMenuItem
+            // 
+            this.deleteDepthGroupToolStripMenuItem.Name = "deleteDepthGroupToolStripMenuItem";
+            this.deleteDepthGroupToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.deleteDepthGroupToolStripMenuItem.Text = "Delete Depth Group";
+            this.deleteDepthGroupToolStripMenuItem.Click += new System.EventHandler(this.deleteDepthGroupToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -810,25 +842,6 @@
             this.FaceInfo.Text = "Faces";
             this.FaceInfo.UseVisualStyleBackColor = true;
             // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(194, 6);
-            // 
-            // renameDepthGroupToolStripMenuItem
-            // 
-            this.renameDepthGroupToolStripMenuItem.Name = "renameDepthGroupToolStripMenuItem";
-            this.renameDepthGroupToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
-            this.renameDepthGroupToolStripMenuItem.Text = "Rename Depth Group...";
-            this.renameDepthGroupToolStripMenuItem.Click += new System.EventHandler(this.renameDepthGroupToolStripMenuItem_Click);
-            // 
-            // deleteDepthGroupToolStripMenuItem
-            // 
-            this.deleteDepthGroupToolStripMenuItem.Name = "deleteDepthGroupToolStripMenuItem";
-            this.deleteDepthGroupToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
-            this.deleteDepthGroupToolStripMenuItem.Text = "Delete Depth Group";
-            this.deleteDepthGroupToolStripMenuItem.Click += new System.EventHandler(this.deleteDepthGroupToolStripMenuItem_Click);
-            // 
             // EditFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -944,6 +957,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem renameDepthGroupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteDepthGroupToolStripMenuItem;
+        private System.Windows.Forms.Button ShowUnderlay;
     }
 }
 

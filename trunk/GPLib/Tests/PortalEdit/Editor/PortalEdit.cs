@@ -97,6 +97,7 @@ namespace PortalEdit
 
             ViewCheckPanel.CheckButton(ShowCellEdges, settings.DrawCellEdges);
             ViewCheckPanel.CheckButton(ShowPortals, settings.DrawPortals);
+            ViewCheckPanel.CheckButton(ShowUnderlay, true);
             ViewCheckPanel.ItemCheckChanged += new ImageCheckPanel.ItemCheckChangedEvent(ViewCheckPanel_ItemCheckChanged);
 
             LoadEditorDepths();
@@ -120,6 +121,9 @@ namespace PortalEdit
                 Settings.settings.DrawCellEdges = e.value;
             if (e.button == ShowPortals)
                 Settings.settings.DrawPortals = e.value;
+            if (e.button == ShowUnderlay)
+                editor.viewRenderer.ShowUnderlay = e.value;
+
             Invalidate(true);
         }
 

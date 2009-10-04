@@ -33,6 +33,8 @@ namespace PortalEdit
         Vector2 underlayCenter;
         float   underlayScale;
 
+        public bool ShowUnderlay = true;
+
         public class CellClickedEventArgs : EventArgs
         {
             public CellClickedEventArgs(Cell c, int e, CellWallGeometry g, bool r, bool f)
@@ -646,7 +648,7 @@ namespace PortalEdit
 
         public void DrawUnderlay()
         {
-            if (underlay != null)
+            if (underlay != null && ShowUnderlay)
             {
                 GL.Disable(EnableCap.Lighting);
                 GL.Color4(Color.FromArgb((int)(255*Settings.settings.Underlay3DAlpha),Color.White));
@@ -711,9 +713,7 @@ namespace PortalEdit
             Vector4 lightPos = new Vector4(10, 20, 20, 0);
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
 
-            if (Settings.settings.ShowUnderlayWithDepth)
-                DrawUnderlay();
-            else
+            if (!Settings.settings.ShowUnderlayWithDepth || underlay == null)
             {
                 DrawBasePlane();
                 DrawUnderlay();
@@ -724,6 +724,9 @@ namespace PortalEdit
             DrawGridAxisMarker();
 
             DrawMap();
+
+            if (Settings.settings.ShowUnderlayWithDepth)
+                DrawUnderlay();
 
             GL.PopMatrix();
 
