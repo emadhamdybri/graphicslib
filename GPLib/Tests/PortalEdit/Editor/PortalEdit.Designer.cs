@@ -39,7 +39,6 @@
             this.HideBelowZ = new System.Windows.Forms.NumericUpDown();
             this.DepthEditPanel = new System.Windows.Forms.Panel();
             this.NamedDepthPresets = new System.Windows.Forms.ComboBox();
-            this.EditLoadZFromSelection = new System.Windows.Forms.Button();
             this.EditIncZ = new System.Windows.Forms.CheckBox();
             this.EditZPlus = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -47,20 +46,10 @@
             this.ZMinusLabel = new System.Windows.Forms.Label();
             this.MapEditToolsPanel = new System.Windows.Forms.Panel();
             this.MapRadioPanel = new FormControls.ImageRadioPanel();
-            this.SelectButton = new System.Windows.Forms.Button();
-            this.DrawButton = new System.Windows.Forms.Button();
             this.MapZoomPanel = new System.Windows.Forms.Panel();
             this.ResetZoom = new System.Windows.Forms.Button();
-            this.MapZoomOut = new System.Windows.Forms.Button();
-            this.MapZoomIn = new System.Windows.Forms.Button();
-            this.MapView = new System.Windows.Forms.PictureBox();
             this.ViewCheckPanel = new FormControls.ImageCheckPanel();
-            this.ShowUnderlay = new System.Windows.Forms.Button();
-            this.ShowPortals = new System.Windows.Forms.Button();
-            this.ShowCellEdges = new System.Windows.Forms.Button();
             this.ViewRadioPanel = new FormControls.ImageRadioPanel();
-            this.CellFillMode = new System.Windows.Forms.Button();
-            this.CellSelectButton = new System.Windows.Forms.Button();
             this.GLView = new OpenTK.GLControl();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -115,16 +104,30 @@
             this.PlanarFloor = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ZMax = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PlanarRoof = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.VertListRightMouseMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.setToPlaneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.EdgeInfo = new System.Windows.Forms.TabPage();
             this.CellEdgeList = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FaceInfo = new System.Windows.Forms.TabPage();
-            this.VertListRightMouseMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.setToPlaneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.zToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.zToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.MoveFloor = new System.Windows.Forms.Button();
+            this.MoveRoof = new System.Windows.Forms.Button();
+            this.SetCellToPreset = new System.Windows.Forms.Button();
+            this.EditLoadZFromSelection = new System.Windows.Forms.Button();
+            this.SelectButton = new System.Windows.Forms.Button();
+            this.DrawButton = new System.Windows.Forms.Button();
+            this.MapZoomOut = new System.Windows.Forms.Button();
+            this.MapZoomIn = new System.Windows.Forms.Button();
+            this.MapView = new System.Windows.Forms.PictureBox();
+            this.ShowUnderlay = new System.Windows.Forms.Button();
+            this.ShowPortals = new System.Windows.Forms.Button();
+            this.ShowCellEdges = new System.Windows.Forms.Button();
+            this.CellFillMode = new System.Windows.Forms.Button();
+            this.CellSelectButton = new System.Windows.Forms.Button();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -135,7 +138,6 @@
             this.MapEditToolsPanel.SuspendLayout();
             this.MapRadioPanel.SuspendLayout();
             this.MapZoomPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.MapView)).BeginInit();
             this.ViewCheckPanel.SuspendLayout();
             this.ViewRadioPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -150,9 +152,10 @@
             this.CellInfo.SuspendLayout();
             this.VertInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CellVertList)).BeginInit();
+            this.VertListRightMouseMenu.SuspendLayout();
             this.EdgeInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).BeginInit();
-            this.VertListRightMouseMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MapView)).BeginInit();
             this.SuspendLayout();
             // 
             // MainContainer
@@ -296,16 +299,6 @@
             this.NamedDepthPresets.TabIndex = 6;
             this.NamedDepthPresets.SelectedIndexChanged += new System.EventHandler(this.NamedDepthPresets_SelectedIndexChanged);
             // 
-            // EditLoadZFromSelection
-            // 
-            this.EditLoadZFromSelection.Image = ((System.Drawing.Image)(resources.GetObject("EditLoadZFromSelection.Image")));
-            this.EditLoadZFromSelection.Location = new System.Drawing.Point(165, 2);
-            this.EditLoadZFromSelection.Name = "EditLoadZFromSelection";
-            this.EditLoadZFromSelection.Size = new System.Drawing.Size(29, 28);
-            this.EditLoadZFromSelection.TabIndex = 6;
-            this.EditLoadZFromSelection.UseVisualStyleBackColor = true;
-            this.EditLoadZFromSelection.Click += new System.EventHandler(this.EditLoadZFromSelection_Click);
-            // 
             // EditIncZ
             // 
             this.EditIncZ.AutoSize = true;
@@ -375,29 +368,6 @@
             this.MapRadioPanel.TabIndex = 3;
             this.MapRadioPanel.TagsAreValues = false;
             // 
-            // SelectButton
-            // 
-            this.SelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.SelectButton.Image = ((System.Drawing.Image)(resources.GetObject("SelectButton.Image")));
-            this.SelectButton.Location = new System.Drawing.Point(29, 1);
-            this.SelectButton.Name = "SelectButton";
-            this.SelectButton.Size = new System.Drawing.Size(25, 23);
-            this.SelectButton.TabIndex = 2;
-            this.SelectButton.Tag = PortalEdit.MapEditMode.SelectMode;
-            this.SelectButton.UseVisualStyleBackColor = true;
-            // 
-            // DrawButton
-            // 
-            this.DrawButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.DrawButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.DrawButton.Image = ((System.Drawing.Image)(resources.GetObject("DrawButton.Image")));
-            this.DrawButton.Location = new System.Drawing.Point(3, 1);
-            this.DrawButton.Name = "DrawButton";
-            this.DrawButton.Size = new System.Drawing.Size(25, 23);
-            this.DrawButton.TabIndex = 1;
-            this.DrawButton.Tag = PortalEdit.MapEditMode.DrawMode;
-            this.DrawButton.UseVisualStyleBackColor = true;
-            // 
             // MapZoomPanel
             // 
             this.MapZoomPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -419,37 +389,6 @@
             this.ResetZoom.UseVisualStyleBackColor = true;
             this.ResetZoom.Click += new System.EventHandler(this.ResetZoom_Click);
             // 
-            // MapZoomOut
-            // 
-            this.MapZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("MapZoomOut.Image")));
-            this.MapZoomOut.Location = new System.Drawing.Point(31, 0);
-            this.MapZoomOut.Name = "MapZoomOut";
-            this.MapZoomOut.Size = new System.Drawing.Size(25, 23);
-            this.MapZoomOut.TabIndex = 1;
-            this.MapZoomOut.UseVisualStyleBackColor = true;
-            this.MapZoomOut.Click += new System.EventHandler(this.MapZoomOut_Click);
-            // 
-            // MapZoomIn
-            // 
-            this.MapZoomIn.Image = ((System.Drawing.Image)(resources.GetObject("MapZoomIn.Image")));
-            this.MapZoomIn.Location = new System.Drawing.Point(3, 0);
-            this.MapZoomIn.Name = "MapZoomIn";
-            this.MapZoomIn.Size = new System.Drawing.Size(25, 23);
-            this.MapZoomIn.TabIndex = 0;
-            this.MapZoomIn.UseVisualStyleBackColor = true;
-            this.MapZoomIn.Click += new System.EventHandler(this.MapZoomIn_Click);
-            // 
-            // MapView
-            // 
-            this.MapView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.MapView.Location = new System.Drawing.Point(3, 109);
-            this.MapView.Name = "MapView";
-            this.MapView.Size = new System.Drawing.Size(441, 399);
-            this.MapView.TabIndex = 0;
-            this.MapView.TabStop = false;
-            // 
             // ViewCheckPanel
             // 
             this.ViewCheckPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -465,37 +404,6 @@
             this.ViewCheckPanel.Size = new System.Drawing.Size(428, 37);
             this.ViewCheckPanel.TabIndex = 0;
             // 
-            // ShowUnderlay
-            // 
-            this.ShowUnderlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShowUnderlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowUnderlay.Image = ((System.Drawing.Image)(resources.GetObject("ShowUnderlay.Image")));
-            this.ShowUnderlay.Location = new System.Drawing.Point(389, 1);
-            this.ShowUnderlay.Name = "ShowUnderlay";
-            this.ShowUnderlay.Size = new System.Drawing.Size(36, 36);
-            this.ShowUnderlay.TabIndex = 2;
-            this.ShowUnderlay.UseVisualStyleBackColor = true;
-            // 
-            // ShowPortals
-            // 
-            this.ShowPortals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowPortals.Image = ((System.Drawing.Image)(resources.GetObject("ShowPortals.Image")));
-            this.ShowPortals.Location = new System.Drawing.Point(37, 0);
-            this.ShowPortals.Name = "ShowPortals";
-            this.ShowPortals.Size = new System.Drawing.Size(36, 36);
-            this.ShowPortals.TabIndex = 1;
-            this.ShowPortals.UseVisualStyleBackColor = true;
-            // 
-            // ShowCellEdges
-            // 
-            this.ShowCellEdges.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowCellEdges.Image = ((System.Drawing.Image)(resources.GetObject("ShowCellEdges.Image")));
-            this.ShowCellEdges.Location = new System.Drawing.Point(0, 0);
-            this.ShowCellEdges.Name = "ShowCellEdges";
-            this.ShowCellEdges.Size = new System.Drawing.Size(36, 36);
-            this.ShowCellEdges.TabIndex = 0;
-            this.ShowCellEdges.UseVisualStyleBackColor = true;
-            // 
             // ViewRadioPanel
             // 
             this.ViewRadioPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -510,28 +418,6 @@
             this.ViewRadioPanel.Size = new System.Drawing.Size(382, 26);
             this.ViewRadioPanel.TabIndex = 4;
             this.ViewRadioPanel.TagsAreValues = false;
-            // 
-            // CellFillMode
-            // 
-            this.CellFillMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CellFillMode.Image = ((System.Drawing.Image)(resources.GetObject("CellFillMode.Image")));
-            this.CellFillMode.Location = new System.Drawing.Point(34, 1);
-            this.CellFillMode.Name = "CellFillMode";
-            this.CellFillMode.Size = new System.Drawing.Size(25, 23);
-            this.CellFillMode.TabIndex = 3;
-            this.CellFillMode.Tag = PortalEdit.ViewEditMode.Paint;
-            this.CellFillMode.UseVisualStyleBackColor = true;
-            // 
-            // CellSelectButton
-            // 
-            this.CellSelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CellSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("CellSelectButton.Image")));
-            this.CellSelectButton.Location = new System.Drawing.Point(3, 1);
-            this.CellSelectButton.Name = "CellSelectButton";
-            this.CellSelectButton.Size = new System.Drawing.Size(25, 23);
-            this.CellSelectButton.TabIndex = 2;
-            this.CellSelectButton.Tag = PortalEdit.ViewEditMode.Select;
-            this.CellSelectButton.UseVisualStyleBackColor = true;
             // 
             // GLView
             // 
@@ -899,6 +785,9 @@
             // 
             // CellInfo
             // 
+            this.CellInfo.Controls.Add(this.SetCellToPreset);
+            this.CellInfo.Controls.Add(this.MoveRoof);
+            this.CellInfo.Controls.Add(this.MoveFloor);
             this.CellInfo.Controls.Add(this.CellGroupDropdown);
             this.CellInfo.Controls.Add(this.CellGroupDropdownLabel);
             this.CellInfo.Location = new System.Drawing.Point(4, 25);
@@ -1015,6 +904,36 @@
             this.PlanarRoof.Name = "PlanarRoof";
             this.PlanarRoof.ReadOnly = true;
             // 
+            // VertListRightMouseMenu
+            // 
+            this.VertListRightMouseMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setToPlaneToolStripMenuItem});
+            this.VertListRightMouseMenu.Name = "VertListRightMouseMenu";
+            this.VertListRightMouseMenu.Size = new System.Drawing.Size(140, 26);
+            // 
+            // setToPlaneToolStripMenuItem
+            // 
+            this.setToPlaneToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.zToolStripMenuItem,
+            this.zToolStripMenuItem1});
+            this.setToPlaneToolStripMenuItem.Name = "setToPlaneToolStripMenuItem";
+            this.setToPlaneToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+            this.setToPlaneToolStripMenuItem.Text = "Set To Plane";
+            // 
+            // zToolStripMenuItem
+            // 
+            this.zToolStripMenuItem.Name = "zToolStripMenuItem";
+            this.zToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.zToolStripMenuItem.Text = "Z+ (Roof)";
+            this.zToolStripMenuItem.Click += new System.EventHandler(this.zToolStripMenuItem_Click);
+            // 
+            // zToolStripMenuItem1
+            // 
+            this.zToolStripMenuItem1.Name = "zToolStripMenuItem1";
+            this.zToolStripMenuItem1.Size = new System.Drawing.Size(125, 22);
+            this.zToolStripMenuItem1.Text = "Z- (Floor)";
+            this.zToolStripMenuItem1.Click += new System.EventHandler(this.zToolStripMenuItem1_Click);
+            // 
             // EdgeInfo
             // 
             this.EdgeInfo.Controls.Add(this.CellEdgeList);
@@ -1081,35 +1000,152 @@
             this.FaceInfo.Text = "Faces";
             this.FaceInfo.UseVisualStyleBackColor = true;
             // 
-            // VertListRightMouseMenu
+            // MoveFloor
             // 
-            this.VertListRightMouseMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.setToPlaneToolStripMenuItem});
-            this.VertListRightMouseMenu.Name = "VertListRightMouseMenu";
-            this.VertListRightMouseMenu.Size = new System.Drawing.Size(153, 48);
+            this.MoveFloor.Location = new System.Drawing.Point(6, 43);
+            this.MoveFloor.Name = "MoveFloor";
+            this.MoveFloor.Size = new System.Drawing.Size(75, 23);
+            this.MoveFloor.TabIndex = 4;
+            this.MoveFloor.Text = "Move Floor";
+            this.MoveFloor.UseVisualStyleBackColor = true;
+            this.MoveFloor.Click += new System.EventHandler(this.MoveFloor_Click);
             // 
-            // setToPlaneToolStripMenuItem
+            // MoveRoof
             // 
-            this.setToPlaneToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.zToolStripMenuItem,
-            this.zToolStripMenuItem1});
-            this.setToPlaneToolStripMenuItem.Name = "setToPlaneToolStripMenuItem";
-            this.setToPlaneToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.setToPlaneToolStripMenuItem.Text = "Set To Plane";
+            this.MoveRoof.Location = new System.Drawing.Point(87, 43);
+            this.MoveRoof.Name = "MoveRoof";
+            this.MoveRoof.Size = new System.Drawing.Size(75, 23);
+            this.MoveRoof.TabIndex = 5;
+            this.MoveRoof.Text = "Move Roof";
+            this.MoveRoof.UseVisualStyleBackColor = true;
+            this.MoveRoof.Click += new System.EventHandler(this.MoveRoof_Click);
             // 
-            // zToolStripMenuItem
+            // SetCellToPreset
             // 
-            this.zToolStripMenuItem.Name = "zToolStripMenuItem";
-            this.zToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.zToolStripMenuItem.Text = "Z+ (Roof)";
-            this.zToolStripMenuItem.Click += new System.EventHandler(this.zToolStripMenuItem_Click);
+            this.SetCellToPreset.Location = new System.Drawing.Point(6, 72);
+            this.SetCellToPreset.Name = "SetCellToPreset";
+            this.SetCellToPreset.Size = new System.Drawing.Size(75, 23);
+            this.SetCellToPreset.TabIndex = 6;
+            this.SetCellToPreset.Text = "Preset";
+            this.SetCellToPreset.UseVisualStyleBackColor = true;
+            this.SetCellToPreset.Click += new System.EventHandler(this.SetCellToPreset_Click);
             // 
-            // zToolStripMenuItem1
+            // EditLoadZFromSelection
             // 
-            this.zToolStripMenuItem1.Name = "zToolStripMenuItem1";
-            this.zToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.zToolStripMenuItem1.Text = "Z- (Floor)";
-            this.zToolStripMenuItem1.Click += new System.EventHandler(this.zToolStripMenuItem1_Click);
+            this.EditLoadZFromSelection.Image = ((System.Drawing.Image)(resources.GetObject("EditLoadZFromSelection.Image")));
+            this.EditLoadZFromSelection.Location = new System.Drawing.Point(165, 2);
+            this.EditLoadZFromSelection.Name = "EditLoadZFromSelection";
+            this.EditLoadZFromSelection.Size = new System.Drawing.Size(29, 28);
+            this.EditLoadZFromSelection.TabIndex = 6;
+            this.EditLoadZFromSelection.UseVisualStyleBackColor = true;
+            this.EditLoadZFromSelection.Click += new System.EventHandler(this.EditLoadZFromSelection_Click);
+            // 
+            // SelectButton
+            // 
+            this.SelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.SelectButton.Image = ((System.Drawing.Image)(resources.GetObject("SelectButton.Image")));
+            this.SelectButton.Location = new System.Drawing.Point(29, 1);
+            this.SelectButton.Name = "SelectButton";
+            this.SelectButton.Size = new System.Drawing.Size(25, 23);
+            this.SelectButton.TabIndex = 2;
+            this.SelectButton.Tag = PortalEdit.MapEditMode.SelectMode;
+            this.SelectButton.UseVisualStyleBackColor = true;
+            // 
+            // DrawButton
+            // 
+            this.DrawButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.DrawButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.DrawButton.Image = ((System.Drawing.Image)(resources.GetObject("DrawButton.Image")));
+            this.DrawButton.Location = new System.Drawing.Point(3, 1);
+            this.DrawButton.Name = "DrawButton";
+            this.DrawButton.Size = new System.Drawing.Size(25, 23);
+            this.DrawButton.TabIndex = 1;
+            this.DrawButton.Tag = PortalEdit.MapEditMode.DrawMode;
+            this.DrawButton.UseVisualStyleBackColor = true;
+            // 
+            // MapZoomOut
+            // 
+            this.MapZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("MapZoomOut.Image")));
+            this.MapZoomOut.Location = new System.Drawing.Point(31, 0);
+            this.MapZoomOut.Name = "MapZoomOut";
+            this.MapZoomOut.Size = new System.Drawing.Size(25, 23);
+            this.MapZoomOut.TabIndex = 1;
+            this.MapZoomOut.UseVisualStyleBackColor = true;
+            this.MapZoomOut.Click += new System.EventHandler(this.MapZoomOut_Click);
+            // 
+            // MapZoomIn
+            // 
+            this.MapZoomIn.Image = ((System.Drawing.Image)(resources.GetObject("MapZoomIn.Image")));
+            this.MapZoomIn.Location = new System.Drawing.Point(3, 0);
+            this.MapZoomIn.Name = "MapZoomIn";
+            this.MapZoomIn.Size = new System.Drawing.Size(25, 23);
+            this.MapZoomIn.TabIndex = 0;
+            this.MapZoomIn.UseVisualStyleBackColor = true;
+            this.MapZoomIn.Click += new System.EventHandler(this.MapZoomIn_Click);
+            // 
+            // MapView
+            // 
+            this.MapView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.MapView.Location = new System.Drawing.Point(3, 109);
+            this.MapView.Name = "MapView";
+            this.MapView.Size = new System.Drawing.Size(441, 399);
+            this.MapView.TabIndex = 0;
+            this.MapView.TabStop = false;
+            // 
+            // ShowUnderlay
+            // 
+            this.ShowUnderlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ShowUnderlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ShowUnderlay.Image = ((System.Drawing.Image)(resources.GetObject("ShowUnderlay.Image")));
+            this.ShowUnderlay.Location = new System.Drawing.Point(389, 1);
+            this.ShowUnderlay.Name = "ShowUnderlay";
+            this.ShowUnderlay.Size = new System.Drawing.Size(36, 36);
+            this.ShowUnderlay.TabIndex = 2;
+            this.ShowUnderlay.UseVisualStyleBackColor = true;
+            // 
+            // ShowPortals
+            // 
+            this.ShowPortals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ShowPortals.Image = ((System.Drawing.Image)(resources.GetObject("ShowPortals.Image")));
+            this.ShowPortals.Location = new System.Drawing.Point(37, 0);
+            this.ShowPortals.Name = "ShowPortals";
+            this.ShowPortals.Size = new System.Drawing.Size(36, 36);
+            this.ShowPortals.TabIndex = 1;
+            this.ShowPortals.UseVisualStyleBackColor = true;
+            // 
+            // ShowCellEdges
+            // 
+            this.ShowCellEdges.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ShowCellEdges.Image = ((System.Drawing.Image)(resources.GetObject("ShowCellEdges.Image")));
+            this.ShowCellEdges.Location = new System.Drawing.Point(0, 0);
+            this.ShowCellEdges.Name = "ShowCellEdges";
+            this.ShowCellEdges.Size = new System.Drawing.Size(36, 36);
+            this.ShowCellEdges.TabIndex = 0;
+            this.ShowCellEdges.UseVisualStyleBackColor = true;
+            // 
+            // CellFillMode
+            // 
+            this.CellFillMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CellFillMode.Image = ((System.Drawing.Image)(resources.GetObject("CellFillMode.Image")));
+            this.CellFillMode.Location = new System.Drawing.Point(34, 1);
+            this.CellFillMode.Name = "CellFillMode";
+            this.CellFillMode.Size = new System.Drawing.Size(25, 23);
+            this.CellFillMode.TabIndex = 3;
+            this.CellFillMode.Tag = PortalEdit.ViewEditMode.Paint;
+            this.CellFillMode.UseVisualStyleBackColor = true;
+            // 
+            // CellSelectButton
+            // 
+            this.CellSelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CellSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("CellSelectButton.Image")));
+            this.CellSelectButton.Location = new System.Drawing.Point(3, 1);
+            this.CellSelectButton.Name = "CellSelectButton";
+            this.CellSelectButton.Size = new System.Drawing.Size(25, 23);
+            this.CellSelectButton.TabIndex = 2;
+            this.CellSelectButton.Tag = PortalEdit.ViewEditMode.Select;
+            this.CellSelectButton.UseVisualStyleBackColor = true;
             // 
             // EditFrame
             // 
@@ -1137,7 +1173,6 @@
             this.MapEditToolsPanel.ResumeLayout(false);
             this.MapRadioPanel.ResumeLayout(false);
             this.MapZoomPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.MapView)).EndInit();
             this.ViewCheckPanel.ResumeLayout(false);
             this.ViewRadioPanel.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
@@ -1156,9 +1191,10 @@
             this.VertInfo.ResumeLayout(false);
             this.VertInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CellVertList)).EndInit();
+            this.VertListRightMouseMenu.ResumeLayout(false);
             this.EdgeInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).EndInit();
-            this.VertListRightMouseMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.MapView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1261,6 +1297,9 @@
         private System.Windows.Forms.ToolStripMenuItem setToPlaneToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zToolStripMenuItem1;
+        private System.Windows.Forms.Button SetCellToPreset;
+        private System.Windows.Forms.Button MoveRoof;
+        private System.Windows.Forms.Button MoveFloor;
     }
 }
 

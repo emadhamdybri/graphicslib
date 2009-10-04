@@ -1,6 +1,5 @@
 
 ==General==
-Floor and Roof shifts and snaps
 Vertex Editing
 Edge hiding
 
