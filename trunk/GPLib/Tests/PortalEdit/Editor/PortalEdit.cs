@@ -364,6 +364,7 @@ namespace PortalEdit
         public void PopulateCellInfoList()
         {
             CellVertList.Rows.Clear();
+            CellGroupDropdown.Items.Clear();
             CellInfoZIsInc.Enabled = false;
 
             Cell cell = editor.GetSelectedCell();
@@ -383,6 +384,16 @@ namespace PortalEdit
 
                 CellVertList.Rows.Add(items.ToArray());
             }
+
+            int thisGroup = -1;
+
+            foreach (CellGroup group in editor.map.CellGroups)
+            {
+                int item = CellGroupDropdown.Items.Add(group.Name);
+                if (cell.GroupName == group.Name)
+                    thisGroup = item;
+            }
+            CellGroupDropdown.SelectedIndex = thisGroup;
         }
 
         private void CheckDirtySave ()
@@ -598,6 +609,14 @@ namespace PortalEdit
                 NamedDepthPresets.Items.Remove(NamedDepthPresets.SelectedItem);
                 NamedDepthPresets.SelectedIndex = 0;
             }
+        }
+
+        private void CellGroupDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CellGroupDropdown.SelectedItem != null)
+                editor.SetCellGroup(CellGroupDropdown.SelectedItem.ToString());
+
+            Invalidate(true);
         }
     }
 }

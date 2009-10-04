@@ -341,6 +341,27 @@ namespace PortalEdit
             return true;
         }
 
+        public void SetCellGroup ( String name )
+        {
+            EditorCell cell = GetSelectedCell();
+            if (cell == null)
+                return;
+
+            CellGroup newGroup = map.FindGroup(name);
+            if (newGroup == cell.Group)
+                return;
+
+            Undo.System.Add(new CellGroupChangeUndo(cell));
+
+            cell.Group.Cells.Remove(cell);
+            newGroup.Cells.Add(cell);
+            cell.Group = newGroup;
+            cell.GroupName = newGroup.Name;
+
+            RebuildMap();
+            ResetViews();
+        }
+
         void mapRenderer_NewPolygon(object sender, Polygon polygon)
         {
             if (map.CellGroups.Count == 0)
