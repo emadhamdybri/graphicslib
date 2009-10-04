@@ -49,9 +49,11 @@
             this.label6 = new System.Windows.Forms.Label();
             this.GridPage = new System.Windows.Forms.TabPage();
             this.MapViewPage = new System.Windows.Forms.TabPage();
-            this.UnderlayHasDepth = new System.Windows.Forms.CheckBox();
             this.UnderlayAlpha = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
+            this.UnderlayHasDepth = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.HiddenItemAlpha = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.PixelsPerUnit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapZoomPerClick)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GridSize)).BeginInit();
@@ -63,6 +65,7 @@
             this.GridPage.SuspendLayout();
             this.MapViewPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.UnderlayAlpha)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HiddenItemAlpha)).BeginInit();
             this.SuspendLayout();
             // 
             // OK
@@ -352,7 +355,9 @@
             // 
             // MapViewPage
             // 
+            this.MapViewPage.Controls.Add(this.HiddenItemAlpha);
             this.MapViewPage.Controls.Add(this.UnderlayAlpha);
+            this.MapViewPage.Controls.Add(this.label9);
             this.MapViewPage.Controls.Add(this.label8);
             this.MapViewPage.Controls.Add(this.UnderlayHasDepth);
             this.MapViewPage.Controls.Add(this.PixelsPerUnit);
@@ -366,16 +371,6 @@
             this.MapViewPage.Text = "Map View";
             this.MapViewPage.UseVisualStyleBackColor = true;
             // 
-            // UnderlayHasDepth
-            // 
-            this.UnderlayHasDepth.AutoSize = true;
-            this.UnderlayHasDepth.Location = new System.Drawing.Point(10, 77);
-            this.UnderlayHasDepth.Name = "UnderlayHasDepth";
-            this.UnderlayHasDepth.Size = new System.Drawing.Size(120, 17);
-            this.UnderlayHasDepth.TabIndex = 4;
-            this.UnderlayHasDepth.Text = "Underlay with depth";
-            this.UnderlayHasDepth.UseVisualStyleBackColor = true;
-            // 
             // UnderlayAlpha
             // 
             this.UnderlayAlpha.DecimalPlaces = 3;
@@ -384,7 +379,7 @@
             0,
             0,
             131072});
-            this.UnderlayAlpha.Location = new System.Drawing.Point(92, 106);
+            this.UnderlayAlpha.Location = new System.Drawing.Point(92, 84);
             this.UnderlayAlpha.Maximum = new decimal(new int[] {
             1,
             0,
@@ -407,11 +402,58 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 108);
+            this.label8.Location = new System.Drawing.Point(7, 86);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(79, 13);
             this.label8.TabIndex = 5;
             this.label8.Text = "Underlay Alpha";
+            // 
+            // UnderlayHasDepth
+            // 
+            this.UnderlayHasDepth.AutoSize = true;
+            this.UnderlayHasDepth.Location = new System.Drawing.Point(10, 66);
+            this.UnderlayHasDepth.Name = "UnderlayHasDepth";
+            this.UnderlayHasDepth.Size = new System.Drawing.Size(120, 17);
+            this.UnderlayHasDepth.TabIndex = 4;
+            this.UnderlayHasDepth.Text = "Underlay with depth";
+            this.UnderlayHasDepth.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(7, 111);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(71, 13);
+            this.label9.TabIndex = 5;
+            this.label9.Text = "Hidden Alpha";
+            // 
+            // HiddenItemAlpha
+            // 
+            this.HiddenItemAlpha.DecimalPlaces = 3;
+            this.HiddenItemAlpha.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.HiddenItemAlpha.Location = new System.Drawing.Point(92, 109);
+            this.HiddenItemAlpha.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.HiddenItemAlpha.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            196608});
+            this.HiddenItemAlpha.Name = "HiddenItemAlpha";
+            this.HiddenItemAlpha.Size = new System.Drawing.Size(46, 20);
+            this.HiddenItemAlpha.TabIndex = 6;
+            this.HiddenItemAlpha.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // SettingsDialog
             // 
@@ -442,6 +484,7 @@
             this.MapViewPage.ResumeLayout(false);
             this.MapViewPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.UnderlayAlpha)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HiddenItemAlpha)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -472,5 +515,7 @@
         private System.Windows.Forms.CheckBox UnderlayHasDepth;
         private System.Windows.Forms.NumericUpDown UnderlayAlpha;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.NumericUpDown HiddenItemAlpha;
+        private System.Windows.Forms.Label label9;
     }
 }

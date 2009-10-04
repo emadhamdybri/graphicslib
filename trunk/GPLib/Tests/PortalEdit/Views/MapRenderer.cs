@@ -326,6 +326,9 @@ namespace PortalEdit
 
         protected void DrawCell ( Cell cell, CellGroup group, Graphics graphics )
         {
+            if (!EditorCell.CellIsDrawn(cell))
+                return;
+
             Pen polygonPen = new Pen(EditorCell.GetCellOutlineColor(cell), 3);
             Pen internalPortalPen = new Pen(internalPortalColor,4);
             Pen externalPortalPen = new Pen(externalPortalColor, 4);
