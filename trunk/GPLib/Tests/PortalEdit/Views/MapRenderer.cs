@@ -22,8 +22,8 @@ namespace PortalEdit
 
     public class MapRenderer 
     {
-        public Polygon     incompletePoly = new Polygon();
-        Vector2     hoverPos = Vector2.Zero;
+        public Polygon incompletePoly = new Polygon();
+        Vector2  hoverPos = Vector2.Zero;
 
         Color cellColor = Color.FromArgb(128, Color.Wheat);
         Color outlineColor = Color.FromArgb(192, Color.Black);
@@ -326,7 +326,7 @@ namespace PortalEdit
 
         protected void DrawCell ( Cell cell, CellGroup group, Graphics graphics )
         {
-            Pen polygonPen = new Pen(outlineColor, 3);
+            Pen polygonPen = new Pen(EditorCell.GetCellOutlineColor(cell), 3);
             Pen internalPortalPen = new Pen(internalPortalColor,4);
             Pen externalPortalPen = new Pen(externalPortalColor, 4);
             Brush brush = new SolidBrush(cellColor);

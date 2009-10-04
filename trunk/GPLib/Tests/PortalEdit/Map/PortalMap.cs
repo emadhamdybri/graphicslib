@@ -23,16 +23,19 @@ namespace PortalEdit
         public String Value = String.Empty;
     }
 
-    public class PortalMap
+    public class PortalMapAttributes
     {
-        public List<CellGroup> CellGroups = new List<CellGroup>();
-        public List<PortalMapAttribute> MapAttributes = new List<PortalMapAttribute>();
+        public List<PortalMapAttribute> AttributeList = new List<PortalMapAttribute>();
 
-        public PortalMapAttribute[] FindAttributes ( String name )
+        public void Clear ()
+        {
+            AttributeList.Clear();
+        }
+        public PortalMapAttribute[] Find(String name)
         {
             List<PortalMapAttribute> foundItems = new List<PortalMapAttribute>();
 
-            foreach(PortalMapAttribute item in MapAttributes)
+            foreach (PortalMapAttribute item in AttributeList)
             {
                 if (item.Name == name)
                     foundItems.Add(item);
@@ -41,43 +44,49 @@ namespace PortalEdit
             return foundItems.ToArray();
         }
 
-        public void AddAttribute ( String name, String value )
+        public void Add(String name, String value)
         {
-            foreach (PortalMapAttribute item in MapAttributes)
+            foreach (PortalMapAttribute item in AttributeList)
             {
                 if (item.Name == name && item.Value == value)
                     return;
             }
-            MapAttributes.Add(new PortalMapAttribute(name, value));
+            AttributeList.Add(new PortalMapAttribute(name, value));
         }
 
-        public void RemoveAttributes(String name)
+        public void Remove(String name)
         {
             List<PortalMapAttribute> foundItems = new List<PortalMapAttribute>();
 
-            foreach (PortalMapAttribute item in MapAttributes)
+            foreach (PortalMapAttribute item in AttributeList)
             {
                 if (item.Name == name)
                     foundItems.Add(item);
             }
 
             foreach (PortalMapAttribute item in foundItems)
-                MapAttributes.Remove(item);
+                AttributeList.Remove(item);
         }
 
-        public void RemoveAttribute(String name, String value)
+        public void Remove(String name, String value)
         {
             List<PortalMapAttribute> foundItems = new List<PortalMapAttribute>();
 
-            foreach (PortalMapAttribute item in MapAttributes)
+            foreach (PortalMapAttribute item in AttributeList)
             {
                 if (item.Name == name && item.Value == value)
                     foundItems.Add(item);
             }
 
             foreach (PortalMapAttribute item in foundItems)
-                MapAttributes.Remove(item);
+                AttributeList.Remove(item);
         }
+    }
+
+    public class PortalMap
+    {
+        public List<CellGroup> CellGroups = new List<CellGroup>();
+        public PortalMapAttributes MapAttributes = new PortalMapAttributes();
 
         public bool Valid ()
         {

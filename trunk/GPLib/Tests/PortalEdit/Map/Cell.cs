@@ -53,8 +53,7 @@ namespace PortalEdit
         public String CellName = string.Empty;
         public String GroupName = string.Empty;
 
-        public List<PortalMapAttribute> DestinationAttributes = new List<PortalMapAttribute>();
-
+        public PortalMapAttributes DestinationAttributes = new PortalMapAttributes();
 
         public PortalDestination(){}
 
@@ -121,7 +120,7 @@ namespace PortalEdit
 
         public bool HeightIsIncremental = true;
 
-        public List<PortalMapAttribute> CellAttributes = new List<PortalMapAttribute>();
+        public PortalMapAttributes CellAttributes = new PortalMapAttributes();
 
         public override string ToString()
         {
@@ -187,6 +186,7 @@ namespace PortalEdit
     {
         public String Name = string.Empty;
         public List<Cell> Cells = new List<Cell>();
+        public PortalMapAttributes GroupAttributes = new PortalMapAttributes();
 
         protected bool NameExists ( String name )
         {

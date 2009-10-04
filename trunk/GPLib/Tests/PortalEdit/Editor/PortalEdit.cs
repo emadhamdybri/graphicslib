@@ -156,7 +156,7 @@ namespace PortalEdit
             NamedDepthPresets.Items.Clear();
             NamedDepthPresets.Items.Add("None");
 
-            PortalMapAttribute[] att = editor.map.FindAttributes("Editor:NamedDepthSet");
+            PortalMapAttribute[] att = editor.map.MapAttributes.Find("Editor:NamedDepthSet");
             foreach ( PortalMapAttribute at in att )
             {
                 string[] nugs = at.Value.Split(":".ToCharArray());
@@ -172,7 +172,7 @@ namespace PortalEdit
 
         PortalMapAttribute FindDepthAttribute ( string name )
         {
-            PortalMapAttribute[] att = editor.map.FindAttributes("Editor:NamedDepthSet");
+            PortalMapAttribute[] att = editor.map.MapAttributes.Find("Editor:NamedDepthSet");
             foreach (PortalMapAttribute at in att)
             {
                 string[] nugs = at.Value.Split(":".ToCharArray());
@@ -190,10 +190,10 @@ namespace PortalEdit
         {
             PortalMapAttribute att = FindDepthAttribute(name);
             if (att != null)
-                editor.map.RemoveAttribute(att.Name, att.Value);
+                editor.map.MapAttributes.Remove(att.Name, att.Value);
 
             String val = name + ":" + EditZMinus.Text + ":" + EditZPlus.Text + ":" + EditIncZ.Checked.ToString();
-            editor.map.AddAttribute("Editor:NamedDepthSet", val);
+            editor.map.MapAttributes.Add("Editor:NamedDepthSet", val);
             Editor.SetDirty();
         }
 
@@ -576,7 +576,7 @@ namespace PortalEdit
                 if (dlg.ShowDialog(this)== DialogResult.OK)
                 {
                     PortalMapAttribute attribute = FindDepthAttribute(NamedDepthPresets.SelectedItem.ToString());
-                    editor.map.RemoveAttribute(attribute.Name, attribute.Value);
+                    editor.map.MapAttributes.Remove(attribute.Name, attribute.Value);
                     SaveDepthAttribute(dlg.ItemName.Text);
                     NamedDepthPresets.SelectedItem = dlg.ItemName.Text;
                 }

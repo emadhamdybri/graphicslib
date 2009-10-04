@@ -34,7 +34,7 @@ namespace PortalEdit
 
         public static String GetMapUnderlayImage ( PortalMap map )
         {
-            PortalMapAttribute[] att = map.FindAttributes("Editor:Image:Underlay:File");
+            PortalMapAttribute[] att = map.MapAttributes.Find("Editor:Image:Underlay:File");
             if (att.Length > 0)
                 return att[0].Value;
             else
@@ -45,7 +45,7 @@ namespace PortalEdit
         {
             Vector2 vec = new Vector2(0, 0);
 
-            PortalMapAttribute[] att = map.FindAttributes("Editor:Image:Underlay:Offset:X");
+            PortalMapAttribute[] att = map.MapAttributes.Find("Editor:Image:Underlay:Offset:X");
             if (att.Length > 0)
             {
                 try
@@ -59,7 +59,7 @@ namespace PortalEdit
                 }
             }
 
-            att = map.FindAttributes("Editor:Image:Underlay:Offset:Y");
+            att = map.MapAttributes.Find("Editor:Image:Underlay:Offset:Y");
             if (att.Length > 0)
             {
                 try
@@ -79,7 +79,7 @@ namespace PortalEdit
         public static float GetMapUnderlayPPU ( PortalMap map )
         {
             float ppu = 100;
-            PortalMapAttribute[] att = map.FindAttributes("Editor:Image:Underlay:Scale");
+            PortalMapAttribute[] att = map.MapAttributes.Find("Editor:Image:Underlay:Scale");
             if (att.Length > 0)
             {
                 try
@@ -129,20 +129,20 @@ namespace PortalEdit
         {
             PortalMap map = Editor.instance.map;
 
-            map.RemoveAttributes("Editor:Image:Underlay:File");
-            map.RemoveAttributes("Editor:Image:Underlay:Scale");
-            map.RemoveAttributes("Editor:Image:Underlay:Offset:X");
-            map.RemoveAttributes("Editor:Image:Underlay:Offset:Y");
+            map.MapAttributes.Remove("Editor:Image:Underlay:File");
+            map.MapAttributes.Remove("Editor:Image:Underlay:Scale");
+            map.MapAttributes.Remove("Editor:Image:Underlay:Offset:X");
+            map.MapAttributes.Remove("Editor:Image:Underlay:Offset:Y");
 
             if (ImageFileName.Text != String.Empty)
             {
                 FileInfo file = new FileInfo(ImageFileName.Text);
                 if (file.Exists)
                 {
-                    map.AddAttribute("Editor:Image:Underlay:File", ImageFileName.Text);
-                    map.AddAttribute("Editor:Image:Underlay:Scale", PixelsPerUnit.Value.ToString());
-                    map.AddAttribute("Editor:Image:Underlay:Offset:X", CenterX.Value.ToString());
-                    map.AddAttribute("Editor:Image:Underlay:Offset:Y", CenterY.Value.ToString());
+                    map.MapAttributes.Add("Editor:Image:Underlay:File", ImageFileName.Text);
+                    map.MapAttributes.Add("Editor:Image:Underlay:Scale", PixelsPerUnit.Value.ToString());
+                    map.MapAttributes.Add("Editor:Image:Underlay:Offset:X", CenterX.Value.ToString());
+                    map.MapAttributes.Add("Editor:Image:Underlay:Offset:Y", CenterY.Value.ToString());
                     Editor.SetDirty();
                 }
                 else
