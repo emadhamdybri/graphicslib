@@ -47,6 +47,7 @@
             this.ZMinusLabel = new System.Windows.Forms.Label();
             this.MapEditToolsPanel = new System.Windows.Forms.Panel();
             this.MapRadioPanel = new FormControls.ImageRadioPanel();
+            this.EditVertButton = new System.Windows.Forms.Button();
             this.SelectButton = new System.Windows.Forms.Button();
             this.DrawButton = new System.Windows.Forms.Button();
             this.MapZoomPanel = new System.Windows.Forms.Panel();
@@ -128,7 +129,8 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FaceInfo = new System.Windows.Forms.TabPage();
-            this.EditVertButton = new System.Windows.Forms.Button();
+            this.FloorViz = new System.Windows.Forms.CheckBox();
+            this.RoofVis = new System.Windows.Forms.CheckBox();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -379,6 +381,17 @@
             this.MapRadioPanel.Size = new System.Drawing.Size(114, 26);
             this.MapRadioPanel.TabIndex = 3;
             this.MapRadioPanel.TagsAreValues = false;
+            // 
+            // EditVertButton
+            // 
+            this.EditVertButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.EditVertButton.Image = ((System.Drawing.Image)(resources.GetObject("EditVertButton.Image")));
+            this.EditVertButton.Location = new System.Drawing.Point(55, 1);
+            this.EditVertButton.Name = "EditVertButton";
+            this.EditVertButton.Size = new System.Drawing.Size(25, 23);
+            this.EditVertButton.TabIndex = 3;
+            this.EditVertButton.Tag = PortalEdit.MapEditMode.EditVertMode;
+            this.EditVertButton.UseVisualStyleBackColor = true;
             // 
             // SelectButton
             // 
@@ -904,6 +917,8 @@
             // 
             // CellInfo
             // 
+            this.CellInfo.Controls.Add(this.RoofVis);
+            this.CellInfo.Controls.Add(this.FloorViz);
             this.CellInfo.Controls.Add(this.SetCellToPreset);
             this.CellInfo.Controls.Add(this.MoveRoof);
             this.CellInfo.Controls.Add(this.MoveFloor);
@@ -1115,6 +1130,7 @@
             this.CellEdgeList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.CellEdgeList.Size = new System.Drawing.Size(191, 168);
             this.CellEdgeList.TabIndex = 1;
+            this.CellEdgeList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellEdgeList_CellValueChanged);
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -1149,16 +1165,27 @@
             this.FaceInfo.Text = "Faces";
             this.FaceInfo.UseVisualStyleBackColor = true;
             // 
-            // EditVertButton
+            // FloorViz
             // 
-            this.EditVertButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.EditVertButton.Image = ((System.Drawing.Image)(resources.GetObject("EditVertButton.Image")));
-            this.EditVertButton.Location = new System.Drawing.Point(55, 1);
-            this.EditVertButton.Name = "EditVertButton";
-            this.EditVertButton.Size = new System.Drawing.Size(25, 23);
-            this.EditVertButton.TabIndex = 3;
-            this.EditVertButton.Tag = PortalEdit.MapEditMode.EditVertMode;
-            this.EditVertButton.UseVisualStyleBackColor = true;
+            this.FloorViz.AutoSize = true;
+            this.FloorViz.Location = new System.Drawing.Point(6, 101);
+            this.FloorViz.Name = "FloorViz";
+            this.FloorViz.Size = new System.Drawing.Size(82, 17);
+            this.FloorViz.TabIndex = 7;
+            this.FloorViz.Text = "Floor Vizible";
+            this.FloorViz.UseVisualStyleBackColor = true;
+            this.FloorViz.CheckedChanged += new System.EventHandler(this.FloorViz_CheckedChanged);
+            // 
+            // RoofVis
+            // 
+            this.RoofVis.AutoSize = true;
+            this.RoofVis.Location = new System.Drawing.Point(6, 124);
+            this.RoofVis.Name = "RoofVis";
+            this.RoofVis.Size = new System.Drawing.Size(82, 17);
+            this.RoofVis.TabIndex = 8;
+            this.RoofVis.Text = "Roof Vizible";
+            this.RoofVis.UseVisualStyleBackColor = true;
+            this.RoofVis.CheckedChanged += new System.EventHandler(this.RoofVis_CheckedChanged);
             // 
             // EditFrame
             // 
@@ -1314,6 +1341,8 @@
         private System.Windows.Forms.Button MoveRoof;
         private System.Windows.Forms.Button MoveFloor;
         private System.Windows.Forms.Button EditVertButton;
+        private System.Windows.Forms.CheckBox RoofVis;
+        private System.Windows.Forms.CheckBox FloorViz;
     }
 }
 

@@ -1,6 +1,5 @@
 
 ==General==
-Edge hiding
 
 ==Display==
 Textures

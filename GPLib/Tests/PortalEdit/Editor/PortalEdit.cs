@@ -21,6 +21,8 @@ namespace PortalEdit
         Editor editor;
         MRU mru;
 
+        bool loadingUI = false;
+
         public EditFrame()
         {
             InitializeComponent();
@@ -335,6 +337,8 @@ namespace PortalEdit
 
         public void populateCellList ()
         {
+            loadingUI = true;
+
             object selected = null;
             if (MapTree.SelectedNode != null)
                 selected = MapTree.SelectedNode.Tag;
@@ -369,6 +373,7 @@ namespace PortalEdit
             MapTree.SelectedNode = selectedNode;
 
             PopulateCellInfoList();
+            loadingUI = false;
         }
 
         public void PopulateVertInfoList (EditorCell cell)
@@ -407,10 +412,31 @@ namespace PortalEdit
             }
         }
 
+        protected void PopulateEdgeInfoList ( EditorCell cell )
+        {
+            for (int i = 0; i < cell.Edges.Count; i++)
+            {
+               CellEdge edge = cell.Edges[i];
+
+                List<string> items = new List<string>();
+                items.Add(i.ToString());
+                if (edge.EdgeType == CellEdgeType.Portal)
+                    items.Add("Portal");
+                else if (edge.EdgeType == CellEdgeType.Wall)
+                    items.Add("Wall");
+                else
+                    items.Add("Unknown");
+
+                items.Add(edge.Vizable.ToString());
+                CellEdgeList.Rows.Add(items.ToArray());
+            }
+        }
+
         public void PopulateCellInfoList()
         {
             CellVertList.Rows.Clear();
             CellGroupDropdown.Items.Clear();
+            CellEdgeList.Rows.Clear();
             CellInfoZIsInc.Enabled = false;
 
             EditorCell cell = editor.GetSelectedCell();
@@ -418,7 +444,11 @@ namespace PortalEdit
                 return;
 
             PopulateVertInfoList(cell);
-            
+            PopulateEdgeInfoList(cell);
+
+            FloorViz.Checked = cell.FloorVizable;
+            RoofVis.Checked = cell.RoofVizable;
+         
             int thisGroup = -1;
 
             foreach (CellGroup group in editor.map.CellGroups)
@@ -497,7 +527,10 @@ namespace PortalEdit
             else
                 editor.SelectMapItem(null);
 
+            loadingUI = true;
             PopulateCellInfoList();
+            loadingUI = false;
+
             Invalidate(true);
         }
 
@@ -817,6 +850,47 @@ namespace PortalEdit
                     Invalidate(true);
                 }
             }
+        }
+
+        private void CellEdgeList_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (editor == null || loadingUI)
+                return;
+
+            EditorCell cell = editor.GetSelectedCell();
+            if (cell == null || e.RowIndex < 0)
+                return;
+
+            int edge = int.Parse(CellEdgeList.Rows[e.RowIndex].Cells[0].Value.ToString());
+            bool viz = CellEdgeList.Rows[e.RowIndex].Cells[2].Value.ToString() == "True";
+            editor.SetCellEdgeViz(cell, edge, viz);
+            Invalidate(true);
+        }
+
+        private void FloorViz_CheckedChanged(object sender, EventArgs e)
+        {
+            if (editor == null || loadingUI)
+                return;
+
+            EditorCell cell = editor.GetSelectedCell();
+            if (cell == null)
+                return;
+
+            editor.SetCellFloorViz(cell, FloorViz.Checked);
+            Invalidate(true);
+        }
+
+        private void RoofVis_CheckedChanged(object sender, EventArgs e)
+        {
+            if (editor == null || loadingUI)
+                return;
+
+            EditorCell cell = editor.GetSelectedCell();
+            if (cell == null)
+                return;
+
+            editor.SetCellRoofViz(cell, RoofVis.Checked);
+            Invalidate(true);
         }
     }
 }
