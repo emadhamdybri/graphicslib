@@ -363,4 +363,44 @@ namespace PortalEdit
             Editor.instance.SetCellVertXY(oldPos,vertIndex,c);
         }
     }
+
+    public class EdgeVisUndo : UndoObject
+    {
+        String group;
+        String cellName;
+
+        int edge;
+        bool vis;
+
+        public EdgeVisUndo(Cell cell, int i)
+        {
+            descrioption = "Edit Edge Visibility";
+
+            group = String.Copy(cell.GroupName);
+            cellName = String.Copy(cell.Name);
+
+            edge = i;
+            if (edge >= 0)
+                vis = cell.Edges[i].Vizable;
+            else if (edge == -1)
+                vis = cell.RoofVizable;
+            else
+                vis = cell.FloorVizable;
+        }
+
+        public override void Undo()
+        {
+            CellGroup g = Editor.instance.map.FindGroup(group);
+            EditorCell c = (EditorCell)g.FindCell(cellName);
+
+            if (edge >= 0)
+                c.Edges[edge].Vizable = vis;
+            else if (edge == -1)
+                c.RoofVizable = vis;
+            else
+                c.FloorVizable = vis;
+
+            c.GenerateDisplayGeometry();
+        }
+    }
 }

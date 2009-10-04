@@ -420,13 +420,13 @@ namespace PortalEdit
         public EditorCell(Cell cell)
             : base(cell)
         {
-            generateDisplayGeometry();
+            GenerateDisplayGeometry();
         }
 
         public EditorCell(EditorCell cell)
             : base(cell)
         {
-            generateDisplayGeometry();
+            GenerateDisplayGeometry();
         }
 
         public WallGeometry FindWallGeo ( int edge, CellWallGeometry geo )
@@ -574,7 +574,7 @@ namespace PortalEdit
             }
 
             setupCellGeoData();
-            generateDisplayGeometry();
+            GenerateDisplayGeometry();
             return hasPortal;
         }
 
@@ -975,17 +975,25 @@ namespace PortalEdit
             portals.Clear();
         }
 
-        void generateDisplayGeometry ( )
+        public void GenerateDisplayGeometry ( )
         {
             clearGeometry();
         
-            floor = new CellGeometry(true,this);
-            roof = new CellGeometry(false,this);
+            if (FloorVizable)
+                floor = new CellGeometry(true,this);
+            if (RoofVizable)
+                roof = new CellGeometry(false, this);
 
             foreach (CellEdge edge in Edges)
             {
+                if (!edge.Vizable)
+                    continue;
+
                 foreach (CellWallGeometry geo in edge.Geometry)
-                    walls.Add(new WallGeometry(this, edge, geo));
+                {
+                    if (geo.Vizable)
+                        walls.Add(new WallGeometry(this, edge, geo));
+                }
 
                 if (edge.EdgeType == CellEdgeType.Portal)
                 {

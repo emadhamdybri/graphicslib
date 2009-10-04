@@ -303,6 +303,48 @@ namespace PortalEdit
             cell.HeightIsIncremental = inc;
         }
 
+        public void SetCellEdgeViz ( EditorCell cell, int edge, bool vis )
+        {
+            Dirty = true;
+
+            Undo.System.Add(new EdgeVisUndo(cell, edge));
+
+            CellEdge e = cell.Edges[edge];
+            e.Vizable = vis;
+            cell.GenerateDisplayGeometry();
+            ResetViews();
+        }
+
+        public void SetCellFloorViz(EditorCell cell, bool vis)
+        {
+            Dirty = true;
+
+            Undo.System.Add(new EdgeVisUndo(cell, -2));
+
+            cell.FloorVizable = vis;
+            cell.GenerateDisplayGeometry();
+            ResetViews();
+        }
+
+        public void SetCellRoofViz(EditorCell cell, bool vis)
+        {
+            Dirty = true;
+
+            Undo.System.Add(new EdgeVisUndo(cell, -1));
+
+            cell.RoofVizable = vis;
+            cell.GenerateDisplayGeometry();
+            ResetViews();
+        }
+
+        public void RebuildMapGeo ()
+        {
+            foreach (CellGroup group in map.CellGroups)
+            {
+                foreach (EditorCell cell in group.Cells)
+                    cell.GenerateDisplayGeometry();
+            }
+        }
         public void New ()
         {
             FileName = string.Empty;

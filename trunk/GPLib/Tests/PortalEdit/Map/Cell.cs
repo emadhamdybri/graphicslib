@@ -67,6 +67,8 @@ namespace PortalEdit
 
     public class CellWallGeometry
     {
+        public bool Vizable = true;
+
         public float[] LowerZ = new float[2];
         public float[] UpperZ = new float[2];
 
@@ -83,6 +85,7 @@ namespace PortalEdit
 
     public class CellEdge
     {
+        public bool Vizable = true;
         public int Start, End;
         public CellEdgeType EdgeType = CellEdgeType.Unknown;
 
@@ -125,6 +128,9 @@ namespace PortalEdit
         public Vector3 RoofNormal = new Vector3(0, 0, -1);
 
         public bool HeightIsIncremental = true;
+
+        public bool RoofVizable = true;
+        public bool FloorVizable = true;
 
         public PortalMapAttributes CellAttributes = new PortalMapAttributes();
 

@@ -154,13 +154,15 @@ namespace PortalEdit
                         // do the floor
                         GL.LoadName(name);
                         selectionArgs.Add(name,new CellClickedEventArgs(cell,-1,null,false,true));
-                        cell.floor.GenerateGeo(null,null);
+                        if (cell.FloorVizable)
+                            cell.floor.GenerateGeo(null,null);
                         name++;
 
                         // do the roof
                         GL.LoadName(name);
                         selectionArgs.Add(name, new CellClickedEventArgs(cell, -1, null, true, false));
-                        cell.roof.GenerateGeo(null, null);
+                        if (cell.RoofVizable)
+                            cell.roof.GenerateGeo(null, null);
                         name++;
 
                         for ( int i = 0; i < cell.Edges.Count; i++ )
