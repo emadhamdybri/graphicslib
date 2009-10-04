@@ -18,12 +18,19 @@ namespace PortalEdit
     {
         DrawMode,
         SelectMode,
+        EditVertMode,
     };
 
     public class MapRenderer 
     {
         public Polygon incompletePoly = new Polygon();
-        Vector2  hoverPos = Vector2.Zero;
+
+        Vector2 hoverPos = Vector2.Zero;
+       
+        //Vert Edit Mode stuff
+        public Polygon EditPoly = new Polygon();
+        EditorCell editCell;
+        int editVert = -1;
 
         Color cellColor = Color.FromArgb(128, Color.Wheat);
         Color outlineColor = Color.FromArgb(192, Color.Black);
@@ -31,6 +38,8 @@ namespace PortalEdit
         Color externalPortalColor = Color.FromArgb(192, Color.DarkGoldenrod);
         Color selectedColor = Color.Red;
         Color vertSelectedColor = Color.Magenta;
+
+        Color vertEditColor = Color.ForestGreen;
 
         Control control;
 
@@ -61,6 +70,9 @@ namespace PortalEdit
             ctl.MouseMove += new MouseEventHandler(MouseMove);
             ctl.MouseWheel += new MouseEventHandler(MouseWheel);
             ctl.Resize += new EventHandler(Resize);
+
+            ctl.MouseDown += new MouseEventHandler(MouseDown);
+            ctl.MouseUp += new MouseEventHandler(MouseUp);
 
             CheckCursor();
 
@@ -279,12 +291,41 @@ namespace PortalEdit
                     DrawSelectedCell(Editor.instance.GetSelectedCell(), e.Graphics);
             }
 
-            DrawSelectedVert(Editor.instance.GetSelectedVert(), e.Graphics);
+            DrawSelectedVert(Editor.instance.GetSelectedVert(), vertSelectedColor, e.Graphics);
 
             if (EditMode == MapEditMode.DrawMode)
                 DrawEditPolygon(e.Graphics);
             else
                 incompletePoly.Verts.Clear();
+
+            if (EditMode == MapEditMode.EditVertMode)
+                DrawVertEditPoly(e.Graphics);
+        }
+
+        protected void DrawVertEditPoly ( Graphics graphics )
+        {
+            if (EditMode == MapEditMode.EditVertMode && editCell != null && editVert != -1 )
+            {
+                Pen editPen = new Pen(vertEditColor,5);
+                Pen selectPen = new Pen(selectedColor, 3);
+
+                Point[] pList = GetPointList(EditPoly.Verts);
+                graphics.DrawPolygon(editPen, pList);
+
+                graphics.DrawEllipse(selectPen, pList[editVert].X - 3, pList[editVert].Y - 3, 6, 6);
+
+                editPen.Dispose();
+                selectPen.Dispose();
+            }
+        }
+
+        protected Point[] GetPointList ( List<Vector2> vec )
+        {
+            Point[] a = new Point[vec.Count];
+            for (int i = 0; i < vec.Count; i++)
+                a[i] = new Point((int)(vec[i].X * Settings.settings.PixelsPerUnit), (int)(vec[i].Y * Settings.settings.PixelsPerUnit));
+
+            return a;
         }
 
         protected Point[] GetCellPointList ( Cell cell )
@@ -366,12 +407,12 @@ namespace PortalEdit
             externalPortalPen.Dispose();
         }
 
-        protected void DrawSelectedVert(CellVert vert, Graphics graphics)
+        protected void DrawSelectedVert(CellVert vert, Color color, Graphics graphics)
         {
             if (vert == null)
                 return;
 
-            Pen pen = new Pen(vertSelectedColor, 3);
+            Pen pen = new Pen(color, 3);
 
             Point p = VertToPoint(vert.Bottom);
             graphics.DrawEllipse(pen, p.X - 10, p.Y - 10, 20, 20);
@@ -490,7 +531,6 @@ namespace PortalEdit
                 PolygonSelection(e.Location);
         }
 
-
         private void MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Middle)
@@ -501,10 +541,103 @@ namespace PortalEdit
 
             hoverPos = SnapPoint(ScreenToMap(e.X, control.Height - e.Y));
 
+            if (EditMode == MapEditMode.EditVertMode && e.Button == MouseButtons.Left)
+            {
+                // move our selected vert to the hover pos
+                if (EditPoly.Verts.Count > editVert && editCell != null)
+                    EditPoly.Verts[editVert] = new Vector2(hoverPos);
+            }
+
             if (MouseStatusUpdate != null)
                 MouseStatusUpdate(this, hoverPos);
             lastMouse = new Point(e.X,e.Y);
             control.Invalidate(true);
+        }
+
+        void MouseUp(object sender, MouseEventArgs e)
+        {
+            if (EditMode == MapEditMode.EditVertMode && e.Button == MouseButtons.Left)
+            {
+                if (editCell != null && editVert != -1) // finalize the edit
+                {
+                    Undo.System.Add(new CellVertXYEditUndo(editCell,editVert));
+
+                    Editor.instance.SetCellVertXY(EditPoly.Verts[editVert], editVert, editCell);
+                }
+                editCell = null;
+                editVert = -1;
+                EditPoly.Verts.Clear();
+            }
+        }
+
+        void MouseDown(object sender, MouseEventArgs e)
+        {
+            if (EditMode == MapEditMode.EditVertMode && e.Button == MouseButtons.Left)
+                SetVertEditData(e.Location);
+        }
+
+        private void SetVertEditData (Point p )
+        {
+            EditPoly.Verts.Clear();
+            editCell = null;
+            editVert = -1;
+
+            Bitmap bitmap = new Bitmap(control.Width, control.Height);
+            Graphics graphics = Graphics.FromImage(bitmap);
+            
+            graphics.Clear(Color.White);
+            SetupGraphicsContext(graphics);
+
+            Dictionary<Color, KeyValuePair<EditorCell, int>> colorMap = new Dictionary<Color, KeyValuePair<EditorCell, int>>();
+
+            Random rand = new Random();
+
+            foreach (CellGroup group in map.CellGroups)
+            {
+                foreach (EditorCell cell in group.Cells)
+                {
+                    for (int i = 0; i < cell.Verts.Count; i++)
+                    {
+                        Color color = Color.FromArgb(255, rand.Next() % 255, rand.Next() % 255, rand.Next() % 255);
+                        while (color == Color.White || colorMap.ContainsKey(color))
+                            color = Color.FromArgb(255, rand.Next(), rand.Next(), rand.Next());
+
+                        colorMap.Add(color, new KeyValuePair<EditorCell, int>(cell, i));
+
+                        Brush brush = new SolidBrush(color);
+                        Point pos = VertToPoint(cell.Verts[i].Bottom);
+                        graphics.FillEllipse(brush, new Rectangle(pos.X - 3, pos.Y - 3, 6, 6));
+                    }
+                }
+            }
+
+            graphics.Flush();
+            graphics.Dispose();
+     
+            Color selectedColor = bitmap.GetPixel(p.X, p.Y);
+
+            if (!colorMap.ContainsKey(selectedColor))
+                return;
+
+            editCell = colorMap[selectedColor].Key;
+            editVert = colorMap[selectedColor].Value;
+
+            foreach (CellVert vert in editCell.Verts)
+                EditPoly.Verts.Add(new Vector2(vert.Bottom.X,vert.Bottom.Y));
+        }
+
+        public static void DebugBitmap ( Bitmap bitmap )
+        {
+            Form f = new Form();
+
+            f.Size = bitmap.Size;
+            PictureBox pic = new PictureBox();
+            pic.Image = bitmap;
+            f.Controls.Add(pic);
+            pic.Location = new Point(0, 0);
+            pic.Size = bitmap.Size;
+
+            f.ShowDialog();
         }
 
         private void PolygonSelection (Point p)

@@ -335,4 +335,32 @@ namespace PortalEdit
             Editor.instance.RenameCell(c, oldName);
         }
     }
+
+    public class CellVertXYEditUndo : UndoObject
+    {
+        String group;
+        String cellName;
+
+        Vector2 oldPos;
+        int     vertIndex;
+
+        public CellVertXYEditUndo(Cell cell, int i)
+        {
+            descrioption = "Edit Vert";
+
+            group = String.Copy(cell.GroupName);
+            cellName = String.Copy(cell.Name);
+
+            oldPos = new Vector2(cell.Verts[i].Bottom.X,cell.Verts[i].Bottom.Y);
+            vertIndex = i;
+        }
+
+        public override void Undo()
+        {
+            CellGroup g = Editor.instance.map.FindGroup(group);
+            EditorCell c = (EditorCell)g.FindCell(cellName);
+
+            Editor.instance.SetCellVertXY(oldPos,vertIndex,c);
+        }
+    }
 }
