@@ -1,6 +1,5 @@
 
 ==General==
-Add view option to now draw underlay
 Fix co-linar normal generation
 Add Regroup
 Add Group Name Edit
