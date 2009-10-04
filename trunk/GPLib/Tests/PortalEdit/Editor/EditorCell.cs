@@ -147,6 +147,9 @@ namespace PortalEdit
             CellVert destSP = dest.Cell.MatchingVert(cell.Verts[edge.Start]);
             CellVert destEP = dest.Cell.MatchingVert(cell.Verts[edge.End]);
 
+            if (destSP == null || destEP == null)
+                return;
+
             GL.Color4(EditorCell.portalColor);
 
             GL.DepthMask(false);
@@ -218,7 +221,7 @@ namespace PortalEdit
             if (floor)
             {
                 // draw the bottom
-                GL.Color4(EditorCell.cellColor);
+                GL.Color4(EditorCell.cellFloorColor);
                 GL.Begin(BeginMode.Polygon);
 
                 GL.Normal3(cell.FloorNormal);
@@ -229,7 +232,7 @@ namespace PortalEdit
             else
             {
                 // draw the top
-                GL.Color4(EditorCell.cellColor);
+                GL.Color4(EditorCell.cellRoofColor);
                 GL.Begin(BeginMode.Polygon);
 
                 GL.Normal3(cell.RoofNormal);
@@ -276,6 +279,8 @@ namespace PortalEdit
         public static int FloorPassOffet = 100;
 
         public static Color cellColor = Color.White;
+        public static Color cellFloorColor = Color.AntiqueWhite;
+        public static Color cellRoofColor = Color.WhiteSmoke;
         public static Color cellEdgeColor = Color.Black;
 
         public static Color wallColor = Color.WhiteSmoke;

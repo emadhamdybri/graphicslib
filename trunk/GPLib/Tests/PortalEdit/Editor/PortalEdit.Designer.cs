@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditFrame));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.MainContainer = new System.Windows.Forms.SplitContainer();
             this.NamedDepthPresets = new System.Windows.Forms.ComboBox();
             this.DepthEditPanel = new System.Windows.Forms.Panel();
             this.EditLoadZFromSelection = new System.Windows.Forms.Button();
@@ -78,34 +78,41 @@
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.renameDepthGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteDepthGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.renameGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameCellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MousePositionStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.DeleteCell = new System.Windows.Forms.Button();
-            this.Deslect = new System.Windows.Forms.Button();
-            this.MapTree = new System.Windows.Forms.TreeView();
             this.MapTreeIcons = new System.Windows.Forms.ImageList(this.components);
-            this.NewGroup = new System.Windows.Forms.Button();
+            this.GroupRightMouseMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.RenameGroupRMM = new System.Windows.Forms.ToolStripMenuItem();
+            this.CellRightMouseMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.RenameCellRMM = new System.Windows.Forms.ToolStripMenuItem();
+            this.DeleteCellRMM = new System.Windows.Forms.ToolStripMenuItem();
+            this.SidebarSplitter = new System.Windows.Forms.SplitContainer();
+            this.MapTree = new System.Windows.Forms.TreeView();
+            this.MapTreeRightMouseMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.deselectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CellTabControl = new System.Windows.Forms.TabControl();
+            this.CellInfo = new System.Windows.Forms.TabPage();
+            this.CellGroupDropdown = new System.Windows.Forms.ComboBox();
+            this.CellGroupDropdownLabel = new System.Windows.Forms.Label();
+            this.VertInfo = new System.Windows.Forms.TabPage();
+            this.CellInfoZIsInc = new System.Windows.Forms.CheckBox();
             this.CellVertList = new System.Windows.Forms.DataGridView();
             this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ZMin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ZMax = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.CellListPanel = new System.Windows.Forms.Panel();
-            this.RightSideOuterPanel = new System.Windows.Forms.Panel();
-            this.CellTabControl = new System.Windows.Forms.TabControl();
-            this.CellInfo = new System.Windows.Forms.TabPage();
-            this.VertInfo = new System.Windows.Forms.TabPage();
             this.EdgeInfo = new System.Windows.Forms.TabPage();
             this.CellEdgeList = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FaceInfo = new System.Windows.Forms.TabPage();
-            this.CellGroupDropdownLabel = new System.Windows.Forms.Label();
-            this.CellInfoZIsInc = new System.Windows.Forms.CheckBox();
-            this.CellGroupDropdown = new System.Windows.Forms.ComboBox();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            this.MainContainer.Panel1.SuspendLayout();
+            this.MainContainer.Panel2.SuspendLayout();
+            this.MainContainer.SuspendLayout();
             this.DepthEditPanel.SuspendLayout();
             this.MapEditToolsPanel.SuspendLayout();
             this.MapRadioPanel.SuspendLayout();
@@ -115,42 +122,46 @@
             this.ViewRadioPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CellVertList)).BeginInit();
-            this.CellListPanel.SuspendLayout();
-            this.RightSideOuterPanel.SuspendLayout();
+            this.GroupRightMouseMenu.SuspendLayout();
+            this.CellRightMouseMenu.SuspendLayout();
+            this.SidebarSplitter.Panel1.SuspendLayout();
+            this.SidebarSplitter.Panel2.SuspendLayout();
+            this.SidebarSplitter.SuspendLayout();
+            this.MapTreeRightMouseMenu.SuspendLayout();
             this.CellTabControl.SuspendLayout();
             this.CellInfo.SuspendLayout();
             this.VertInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CellVertList)).BeginInit();
             this.EdgeInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).BeginInit();
             this.SuspendLayout();
             // 
-            // splitContainer1
+            // MainContainer
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.MainContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 27);
-            this.splitContainer1.Name = "splitContainer1";
+            this.MainContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.MainContainer.Location = new System.Drawing.Point(0, 27);
+            this.MainContainer.Name = "MainContainer";
             // 
-            // splitContainer1.Panel1
+            // MainContainer.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.NamedDepthPresets);
-            this.splitContainer1.Panel1.Controls.Add(this.DepthEditPanel);
-            this.splitContainer1.Panel1.Controls.Add(this.MapEditToolsPanel);
-            this.splitContainer1.Panel1.Controls.Add(this.MapView);
-            this.splitContainer1.Panel1MinSize = 250;
+            this.MainContainer.Panel1.Controls.Add(this.NamedDepthPresets);
+            this.MainContainer.Panel1.Controls.Add(this.DepthEditPanel);
+            this.MainContainer.Panel1.Controls.Add(this.MapEditToolsPanel);
+            this.MainContainer.Panel1.Controls.Add(this.MapView);
+            this.MainContainer.Panel1MinSize = 250;
             // 
-            // splitContainer1.Panel2
+            // MainContainer.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.ViewCheckPanel);
-            this.splitContainer1.Panel2.Controls.Add(this.ViewRadioPanel);
-            this.splitContainer1.Panel2.Controls.Add(this.GLView);
-            this.splitContainer1.Panel2MinSize = 120;
-            this.splitContainer1.Size = new System.Drawing.Size(788, 475);
-            this.splitContainer1.SplitterDistance = 398;
-            this.splitContainer1.TabIndex = 0;
+            this.MainContainer.Panel2.Controls.Add(this.ViewCheckPanel);
+            this.MainContainer.Panel2.Controls.Add(this.ViewRadioPanel);
+            this.MainContainer.Panel2.Controls.Add(this.GLView);
+            this.MainContainer.Panel2MinSize = 120;
+            this.MainContainer.Size = new System.Drawing.Size(889, 513);
+            this.MainContainer.SplitterDistance = 449;
+            this.MainContainer.TabIndex = 0;
             // 
             // NamedDepthPresets
             // 
@@ -239,7 +250,7 @@
             this.MapEditToolsPanel.Controls.Add(this.MapZoomPanel);
             this.MapEditToolsPanel.Location = new System.Drawing.Point(3, 3);
             this.MapEditToolsPanel.Name = "MapEditToolsPanel";
-            this.MapEditToolsPanel.Size = new System.Drawing.Size(390, 29);
+            this.MapEditToolsPanel.Size = new System.Drawing.Size(441, 29);
             this.MapEditToolsPanel.TabIndex = 5;
             // 
             // MapRadioPanel
@@ -284,7 +295,7 @@
             this.MapZoomPanel.Controls.Add(this.ResetZoom);
             this.MapZoomPanel.Controls.Add(this.MapZoomOut);
             this.MapZoomPanel.Controls.Add(this.MapZoomIn);
-            this.MapZoomPanel.Location = new System.Drawing.Point(290, 0);
+            this.MapZoomPanel.Location = new System.Drawing.Point(341, 0);
             this.MapZoomPanel.Name = "MapZoomPanel";
             this.MapZoomPanel.Size = new System.Drawing.Size(100, 25);
             this.MapZoomPanel.TabIndex = 4;
@@ -326,7 +337,7 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.MapView.Location = new System.Drawing.Point(3, 77);
             this.MapView.Name = "MapView";
-            this.MapView.Size = new System.Drawing.Size(390, 393);
+            this.MapView.Size = new System.Drawing.Size(441, 431);
             this.MapView.TabIndex = 0;
             this.MapView.TabStop = false;
             // 
@@ -342,7 +353,7 @@
             this.ViewCheckPanel.Location = new System.Drawing.Point(3, 3);
             this.ViewCheckPanel.Name = "ViewCheckPanel";
             this.ViewCheckPanel.SelectedItem = null;
-            this.ViewCheckPanel.Size = new System.Drawing.Size(378, 37);
+            this.ViewCheckPanel.Size = new System.Drawing.Size(428, 37);
             this.ViewCheckPanel.TabIndex = 0;
             // 
             // ShowUnderlay
@@ -350,7 +361,7 @@
             this.ShowUnderlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ShowUnderlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ShowUnderlay.Image = ((System.Drawing.Image)(resources.GetObject("ShowUnderlay.Image")));
-            this.ShowUnderlay.Location = new System.Drawing.Point(339, 1);
+            this.ShowUnderlay.Location = new System.Drawing.Point(389, 1);
             this.ShowUnderlay.Name = "ShowUnderlay";
             this.ShowUnderlay.Size = new System.Drawing.Size(36, 36);
             this.ShowUnderlay.TabIndex = 2;
@@ -387,7 +398,7 @@
             this.ViewRadioPanel.Location = new System.Drawing.Point(3, 45);
             this.ViewRadioPanel.Name = "ViewRadioPanel";
             this.ViewRadioPanel.SelectedItem = null;
-            this.ViewRadioPanel.Size = new System.Drawing.Size(332, 26);
+            this.ViewRadioPanel.Size = new System.Drawing.Size(382, 26);
             this.ViewRadioPanel.TabIndex = 4;
             this.ViewRadioPanel.TagsAreValues = false;
             // 
@@ -421,7 +432,7 @@
             this.GLView.BackColor = System.Drawing.Color.Black;
             this.GLView.Location = new System.Drawing.Point(3, 77);
             this.GLView.Name = "GLView";
-            this.GLView.Size = new System.Drawing.Size(378, 393);
+            this.GLView.Size = new System.Drawing.Size(428, 431);
             this.GLView.TabIndex = 0;
             this.GLView.VSync = false;
             // 
@@ -433,7 +444,7 @@
             this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1005, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1106, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -570,7 +581,10 @@
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSeparator6,
             this.renameDepthGroupToolStripMenuItem,
-            this.deleteDepthGroupToolStripMenuItem});
+            this.deleteDepthGroupToolStripMenuItem,
+            this.toolStripSeparator7,
+            this.renameGroupToolStripMenuItem,
+            this.renameCellToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -594,13 +608,32 @@
             this.deleteDepthGroupToolStripMenuItem.Text = "Delete Depth Group";
             this.deleteDepthGroupToolStripMenuItem.Click += new System.EventHandler(this.deleteDepthGroupToolStripMenuItem_Click);
             // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(194, 6);
+            // 
+            // renameGroupToolStripMenuItem
+            // 
+            this.renameGroupToolStripMenuItem.Name = "renameGroupToolStripMenuItem";
+            this.renameGroupToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.renameGroupToolStripMenuItem.Text = "Rename Group...";
+            this.renameGroupToolStripMenuItem.Click += new System.EventHandler(this.renameGroupToolStripMenuItem_Click);
+            // 
+            // renameCellToolStripMenuItem
+            // 
+            this.renameCellToolStripMenuItem.Name = "renameCellToolStripMenuItem";
+            this.renameCellToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.renameCellToolStripMenuItem.Text = "Rename Cell...";
+            this.renameCellToolStripMenuItem.Click += new System.EventHandler(this.renameCellToolStripMenuItem_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MousePositionStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 505);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 543);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1005, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1106, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -609,42 +642,6 @@
             this.MousePositionStatus.Name = "MousePositionStatus";
             this.MousePositionStatus.Size = new System.Drawing.Size(46, 17);
             this.MousePositionStatus.Text = "Mouse:";
-            // 
-            // DeleteCell
-            // 
-            this.DeleteCell.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteCell.Location = new System.Drawing.Point(1, 32);
-            this.DeleteCell.Name = "DeleteCell";
-            this.DeleteCell.Size = new System.Drawing.Size(64, 23);
-            this.DeleteCell.TabIndex = 5;
-            this.DeleteCell.Text = "Delete";
-            this.DeleteCell.UseVisualStyleBackColor = true;
-            this.DeleteCell.Click += new System.EventHandler(this.DeleteCell_Click);
-            // 
-            // Deslect
-            // 
-            this.Deslect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Deslect.Location = new System.Drawing.Point(1, 3);
-            this.Deslect.Name = "Deslect";
-            this.Deslect.Size = new System.Drawing.Size(64, 23);
-            this.Deslect.TabIndex = 6;
-            this.Deslect.Text = "Deselect";
-            this.Deslect.UseVisualStyleBackColor = true;
-            this.Deslect.Click += new System.EventHandler(this.Deslect_Click);
-            // 
-            // MapTree
-            // 
-            this.MapTree.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.MapTree.FullRowSelect = true;
-            this.MapTree.HideSelection = false;
-            this.MapTree.ImageIndex = 0;
-            this.MapTree.ImageList = this.MapTreeIcons;
-            this.MapTree.Location = new System.Drawing.Point(68, 3);
-            this.MapTree.Name = "MapTree";
-            this.MapTree.SelectedImageIndex = 0;
-            this.MapTree.Size = new System.Drawing.Size(122, 116);
-            this.MapTree.TabIndex = 7;
-            this.MapTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MapTree_AfterSelect);
             // 
             // MapTreeIcons
             // 
@@ -655,22 +652,179 @@
             this.MapTreeIcons.Images.SetKeyName(2, "cell_group_tree_icon_selected.png");
             this.MapTreeIcons.Images.SetKeyName(3, "cell_tree_icon_selected.png");
             // 
-            // NewGroup
+            // GroupRightMouseMenu
             // 
-            this.NewGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.NewGroup.Location = new System.Drawing.Point(1, 61);
-            this.NewGroup.Name = "NewGroup";
-            this.NewGroup.Size = new System.Drawing.Size(64, 23);
-            this.NewGroup.TabIndex = 8;
-            this.NewGroup.Text = "New Group";
-            this.NewGroup.UseVisualStyleBackColor = true;
-            this.NewGroup.Click += new System.EventHandler(this.NewGroup_Click);
+            this.GroupRightMouseMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RenameGroupRMM});
+            this.GroupRightMouseMenu.Name = "GroupRightMouseMenu";
+            this.GroupRightMouseMenu.Size = new System.Drawing.Size(118, 26);
+            // 
+            // RenameGroupRMM
+            // 
+            this.RenameGroupRMM.Name = "RenameGroupRMM";
+            this.RenameGroupRMM.Size = new System.Drawing.Size(117, 22);
+            this.RenameGroupRMM.Text = "Rename";
+            this.RenameGroupRMM.Click += new System.EventHandler(this.RenameGroupRMM_Click);
+            // 
+            // CellRightMouseMenu
+            // 
+            this.CellRightMouseMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RenameCellRMM,
+            this.DeleteCellRMM});
+            this.CellRightMouseMenu.Name = "GroupRightMouseMenu";
+            this.CellRightMouseMenu.Size = new System.Drawing.Size(118, 48);
+            // 
+            // RenameCellRMM
+            // 
+            this.RenameCellRMM.Name = "RenameCellRMM";
+            this.RenameCellRMM.Size = new System.Drawing.Size(117, 22);
+            this.RenameCellRMM.Text = "Rename";
+            this.RenameCellRMM.Click += new System.EventHandler(this.RenameCellRMM_Click);
+            // 
+            // DeleteCellRMM
+            // 
+            this.DeleteCellRMM.Name = "DeleteCellRMM";
+            this.DeleteCellRMM.Size = new System.Drawing.Size(117, 22);
+            this.DeleteCellRMM.Text = "Delete";
+            this.DeleteCellRMM.Click += new System.EventHandler(this.DeleteCell_Click);
+            // 
+            // SidebarSplitter
+            // 
+            this.SidebarSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.SidebarSplitter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.SidebarSplitter.Location = new System.Drawing.Point(895, 27);
+            this.SidebarSplitter.Name = "SidebarSplitter";
+            this.SidebarSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // SidebarSplitter.Panel1
+            // 
+            this.SidebarSplitter.Panel1.Controls.Add(this.MapTree);
+            // 
+            // SidebarSplitter.Panel2
+            // 
+            this.SidebarSplitter.Panel2.Controls.Add(this.CellTabControl);
+            this.SidebarSplitter.Size = new System.Drawing.Size(211, 509);
+            this.SidebarSplitter.SplitterDistance = 217;
+            this.SidebarSplitter.TabIndex = 12;
+            // 
+            // MapTree
+            // 
+            this.MapTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.MapTree.ContextMenuStrip = this.MapTreeRightMouseMenu;
+            this.MapTree.FullRowSelect = true;
+            this.MapTree.HideSelection = false;
+            this.MapTree.ImageIndex = 0;
+            this.MapTree.ImageList = this.MapTreeIcons;
+            this.MapTree.Location = new System.Drawing.Point(3, 3);
+            this.MapTree.Name = "MapTree";
+            this.MapTree.SelectedImageIndex = 0;
+            this.MapTree.Size = new System.Drawing.Size(203, 209);
+            this.MapTree.TabIndex = 7;
+            this.MapTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MapTree_AfterSelect);
+            this.MapTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.MapTree_NodeMouseClick);
+            // 
+            // MapTreeRightMouseMenu
+            // 
+            this.MapTreeRightMouseMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem1,
+            this.deselectToolStripMenuItem});
+            this.MapTreeRightMouseMenu.Name = "MapTreeRightMouseMenu";
+            this.MapTreeRightMouseMenu.Size = new System.Drawing.Size(119, 48);
+            // 
+            // newToolStripMenuItem1
+            // 
+            this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(118, 22);
+            this.newToolStripMenuItem1.Text = "New";
+            this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
+            // 
+            // deselectToolStripMenuItem
+            // 
+            this.deselectToolStripMenuItem.Name = "deselectToolStripMenuItem";
+            this.deselectToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.deselectToolStripMenuItem.Text = "Deselect";
+            this.deselectToolStripMenuItem.Click += new System.EventHandler(this.deselectToolStripMenuItem_Click);
+            // 
+            // CellTabControl
+            // 
+            this.CellTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.CellTabControl.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+            this.CellTabControl.Controls.Add(this.CellInfo);
+            this.CellTabControl.Controls.Add(this.VertInfo);
+            this.CellTabControl.Controls.Add(this.EdgeInfo);
+            this.CellTabControl.Controls.Add(this.FaceInfo);
+            this.CellTabControl.Location = new System.Drawing.Point(-3, 3);
+            this.CellTabControl.Multiline = true;
+            this.CellTabControl.Name = "CellTabControl";
+            this.CellTabControl.SelectedIndex = 0;
+            this.CellTabControl.Size = new System.Drawing.Size(209, 279);
+            this.CellTabControl.TabIndex = 11;
+            // 
+            // CellInfo
+            // 
+            this.CellInfo.Controls.Add(this.CellGroupDropdown);
+            this.CellInfo.Controls.Add(this.CellGroupDropdownLabel);
+            this.CellInfo.Location = new System.Drawing.Point(4, 25);
+            this.CellInfo.Name = "CellInfo";
+            this.CellInfo.Padding = new System.Windows.Forms.Padding(3);
+            this.CellInfo.Size = new System.Drawing.Size(201, 250);
+            this.CellInfo.TabIndex = 0;
+            this.CellInfo.Text = "Cell";
+            this.CellInfo.UseVisualStyleBackColor = true;
+            // 
+            // CellGroupDropdown
+            // 
+            this.CellGroupDropdown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CellGroupDropdown.FormattingEnabled = true;
+            this.CellGroupDropdown.Location = new System.Drawing.Point(48, 6);
+            this.CellGroupDropdown.Name = "CellGroupDropdown";
+            this.CellGroupDropdown.Size = new System.Drawing.Size(139, 21);
+            this.CellGroupDropdown.TabIndex = 3;
+            this.CellGroupDropdown.SelectedIndexChanged += new System.EventHandler(this.CellGroupDropdown_SelectedIndexChanged);
+            // 
+            // CellGroupDropdownLabel
+            // 
+            this.CellGroupDropdownLabel.AutoSize = true;
+            this.CellGroupDropdownLabel.Location = new System.Drawing.Point(6, 9);
+            this.CellGroupDropdownLabel.Name = "CellGroupDropdownLabel";
+            this.CellGroupDropdownLabel.Size = new System.Drawing.Size(36, 13);
+            this.CellGroupDropdownLabel.TabIndex = 2;
+            this.CellGroupDropdownLabel.Text = "Group";
+            // 
+            // VertInfo
+            // 
+            this.VertInfo.Controls.Add(this.CellInfoZIsInc);
+            this.VertInfo.Controls.Add(this.CellVertList);
+            this.VertInfo.Location = new System.Drawing.Point(4, 25);
+            this.VertInfo.Name = "VertInfo";
+            this.VertInfo.Padding = new System.Windows.Forms.Padding(3);
+            this.VertInfo.Size = new System.Drawing.Size(201, 250);
+            this.VertInfo.TabIndex = 1;
+            this.VertInfo.Text = "Verts";
+            this.VertInfo.UseVisualStyleBackColor = true;
+            // 
+            // CellInfoZIsInc
+            // 
+            this.CellInfoZIsInc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.CellInfoZIsInc.AutoSize = true;
+            this.CellInfoZIsInc.Location = new System.Drawing.Point(3, 227);
+            this.CellInfoZIsInc.Name = "CellInfoZIsInc";
+            this.CellInfoZIsInc.Size = new System.Drawing.Size(139, 17);
+            this.CellInfoZIsInc.TabIndex = 2;
+            this.CellInfoZIsInc.Text = "Heights Are Incremental";
+            this.CellInfoZIsInc.UseVisualStyleBackColor = true;
             // 
             // CellVertList
             // 
             this.CellVertList.AllowUserToAddRows = false;
             this.CellVertList.AllowUserToDeleteRows = false;
             this.CellVertList.AllowUserToResizeRows = false;
+            this.CellVertList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.CellVertList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.CellVertList.BackgroundColor = System.Drawing.SystemColors.Window;
             this.CellVertList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -684,7 +838,7 @@
             this.CellVertList.RowHeadersWidth = 4;
             this.CellVertList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.CellVertList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.CellVertList.Size = new System.Drawing.Size(191, 147);
+            this.CellVertList.Size = new System.Drawing.Size(191, 215);
             this.CellVertList.TabIndex = 0;
             this.CellVertList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellVertList_CellValueChanged);
             this.CellVertList.SelectionChanged += new System.EventHandler(this.CellVertList_SelectionChanged);
@@ -712,71 +866,12 @@
             this.ZMax.Name = "ZMax";
             this.ZMax.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // CellListPanel
-            // 
-            this.CellListPanel.Controls.Add(this.MapTree);
-            this.CellListPanel.Controls.Add(this.Deslect);
-            this.CellListPanel.Controls.Add(this.NewGroup);
-            this.CellListPanel.Controls.Add(this.DeleteCell);
-            this.CellListPanel.Location = new System.Drawing.Point(5, 3);
-            this.CellListPanel.Name = "CellListPanel";
-            this.CellListPanel.Size = new System.Drawing.Size(198, 123);
-            this.CellListPanel.TabIndex = 10;
-            // 
-            // RightSideOuterPanel
-            // 
-            this.RightSideOuterPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RightSideOuterPanel.Controls.Add(this.CellTabControl);
-            this.RightSideOuterPanel.Controls.Add(this.CellListPanel);
-            this.RightSideOuterPanel.Location = new System.Drawing.Point(790, 27);
-            this.RightSideOuterPanel.Name = "RightSideOuterPanel";
-            this.RightSideOuterPanel.Size = new System.Drawing.Size(215, 475);
-            this.RightSideOuterPanel.TabIndex = 11;
-            // 
-            // CellTabControl
-            // 
-            this.CellTabControl.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
-            this.CellTabControl.Controls.Add(this.CellInfo);
-            this.CellTabControl.Controls.Add(this.VertInfo);
-            this.CellTabControl.Controls.Add(this.EdgeInfo);
-            this.CellTabControl.Controls.Add(this.FaceInfo);
-            this.CellTabControl.Location = new System.Drawing.Point(4, 132);
-            this.CellTabControl.Multiline = true;
-            this.CellTabControl.Name = "CellTabControl";
-            this.CellTabControl.SelectedIndex = 0;
-            this.CellTabControl.Size = new System.Drawing.Size(205, 339);
-            this.CellTabControl.TabIndex = 11;
-            // 
-            // CellInfo
-            // 
-            this.CellInfo.Controls.Add(this.CellGroupDropdown);
-            this.CellInfo.Controls.Add(this.CellGroupDropdownLabel);
-            this.CellInfo.Location = new System.Drawing.Point(4, 25);
-            this.CellInfo.Name = "CellInfo";
-            this.CellInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.CellInfo.Size = new System.Drawing.Size(197, 310);
-            this.CellInfo.TabIndex = 0;
-            this.CellInfo.Text = "Cell";
-            this.CellInfo.UseVisualStyleBackColor = true;
-            // 
-            // VertInfo
-            // 
-            this.VertInfo.Controls.Add(this.CellInfoZIsInc);
-            this.VertInfo.Controls.Add(this.CellVertList);
-            this.VertInfo.Location = new System.Drawing.Point(4, 25);
-            this.VertInfo.Name = "VertInfo";
-            this.VertInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.VertInfo.Size = new System.Drawing.Size(197, 310);
-            this.VertInfo.TabIndex = 1;
-            this.VertInfo.Text = "Verts";
-            this.VertInfo.UseVisualStyleBackColor = true;
-            // 
             // EdgeInfo
             // 
             this.EdgeInfo.Controls.Add(this.CellEdgeList);
             this.EdgeInfo.Location = new System.Drawing.Point(4, 25);
             this.EdgeInfo.Name = "EdgeInfo";
-            this.EdgeInfo.Size = new System.Drawing.Size(197, 310);
+            this.EdgeInfo.Size = new System.Drawing.Size(201, 250);
             this.EdgeInfo.TabIndex = 2;
             this.EdgeInfo.Text = "Edges";
             this.EdgeInfo.UseVisualStyleBackColor = true;
@@ -786,6 +881,8 @@
             this.CellEdgeList.AllowUserToAddRows = false;
             this.CellEdgeList.AllowUserToDeleteRows = false;
             this.CellEdgeList.AllowUserToResizeRows = false;
+            this.CellEdgeList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.CellEdgeList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.CellEdgeList.BackgroundColor = System.Drawing.SystemColors.Window;
             this.CellEdgeList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -799,7 +896,7 @@
             this.CellEdgeList.RowHeadersWidth = 4;
             this.CellEdgeList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.CellEdgeList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.CellEdgeList.Size = new System.Drawing.Size(191, 147);
+            this.CellEdgeList.Size = new System.Drawing.Size(191, 168);
             this.CellEdgeList.TabIndex = 1;
             // 
             // dataGridViewTextBoxColumn1
@@ -830,57 +927,28 @@
             // 
             this.FaceInfo.Location = new System.Drawing.Point(4, 25);
             this.FaceInfo.Name = "FaceInfo";
-            this.FaceInfo.Size = new System.Drawing.Size(197, 310);
+            this.FaceInfo.Size = new System.Drawing.Size(201, 250);
             this.FaceInfo.TabIndex = 3;
             this.FaceInfo.Text = "Faces";
             this.FaceInfo.UseVisualStyleBackColor = true;
-            // 
-            // CellGroupDropdownLabel
-            // 
-            this.CellGroupDropdownLabel.AutoSize = true;
-            this.CellGroupDropdownLabel.Location = new System.Drawing.Point(6, 9);
-            this.CellGroupDropdownLabel.Name = "CellGroupDropdownLabel";
-            this.CellGroupDropdownLabel.Size = new System.Drawing.Size(36, 13);
-            this.CellGroupDropdownLabel.TabIndex = 2;
-            this.CellGroupDropdownLabel.Text = "Group";
-            // 
-            // CellInfoZIsInc
-            // 
-            this.CellInfoZIsInc.AutoSize = true;
-            this.CellInfoZIsInc.Location = new System.Drawing.Point(3, 159);
-            this.CellInfoZIsInc.Name = "CellInfoZIsInc";
-            this.CellInfoZIsInc.Size = new System.Drawing.Size(139, 17);
-            this.CellInfoZIsInc.TabIndex = 2;
-            this.CellInfoZIsInc.Text = "Heights Are Incremental";
-            this.CellInfoZIsInc.UseVisualStyleBackColor = true;
-            // 
-            // CellGroupDropdown
-            // 
-            this.CellGroupDropdown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.CellGroupDropdown.FormattingEnabled = true;
-            this.CellGroupDropdown.Location = new System.Drawing.Point(48, 6);
-            this.CellGroupDropdown.Name = "CellGroupDropdown";
-            this.CellGroupDropdown.Size = new System.Drawing.Size(139, 21);
-            this.CellGroupDropdown.TabIndex = 3;
-            this.CellGroupDropdown.SelectedIndexChanged += new System.EventHandler(this.CellGroupDropdown_SelectedIndexChanged);
             // 
             // EditFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1005, 527);
-            this.Controls.Add(this.RightSideOuterPanel);
+            this.ClientSize = new System.Drawing.Size(1106, 565);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.MainContainer);
+            this.Controls.Add(this.SidebarSplitter);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(614, 450);
             this.Name = "EditFrame";
             this.Text = "Portal Edit: New Map";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EditFrame_FormClosing);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.ResumeLayout(false);
+            this.MainContainer.Panel1.ResumeLayout(false);
+            this.MainContainer.Panel2.ResumeLayout(false);
+            this.MainContainer.ResumeLayout(false);
             this.DepthEditPanel.ResumeLayout(false);
             this.DepthEditPanel.PerformLayout();
             this.MapEditToolsPanel.ResumeLayout(false);
@@ -893,14 +961,18 @@
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CellVertList)).EndInit();
-            this.CellListPanel.ResumeLayout(false);
-            this.RightSideOuterPanel.ResumeLayout(false);
+            this.GroupRightMouseMenu.ResumeLayout(false);
+            this.CellRightMouseMenu.ResumeLayout(false);
+            this.SidebarSplitter.Panel1.ResumeLayout(false);
+            this.SidebarSplitter.Panel2.ResumeLayout(false);
+            this.SidebarSplitter.ResumeLayout(false);
+            this.MapTreeRightMouseMenu.ResumeLayout(false);
             this.CellTabControl.ResumeLayout(false);
             this.CellInfo.ResumeLayout(false);
             this.CellInfo.PerformLayout();
             this.VertInfo.ResumeLayout(false);
             this.VertInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.CellVertList)).EndInit();
             this.EdgeInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).EndInit();
             this.ResumeLayout(false);
@@ -910,7 +982,7 @@
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer MainContainer;
         private System.Windows.Forms.PictureBox MapView;
         private OpenTK.GLControl GLView;
         private System.Windows.Forms.MenuStrip menuStrip1;
@@ -920,8 +992,6 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.Button DeleteCell;
-        private System.Windows.Forms.Button Deslect;
         private System.Windows.Forms.Button DrawButton;
         private System.Windows.Forms.Button SelectButton;
         private FormControls.ImageRadioPanel MapRadioPanel;
@@ -932,8 +1002,6 @@
         private System.Windows.Forms.Button CellFillMode;
         private System.Windows.Forms.Button CellSelectButton;
         private System.Windows.Forms.ImageList MapTreeIcons;
-        private System.Windows.Forms.Button NewGroup;
-        public System.Windows.Forms.TreeView MapTree;
         private FormControls.ImageCheckPanel ViewCheckPanel;
         private System.Windows.Forms.Button ShowCellEdges;
         private System.Windows.Forms.Button ShowPortals;
@@ -946,12 +1014,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.Button EditLoadZFromSelection;
         private System.Windows.Forms.CheckBox EditIncZ;
-        private System.Windows.Forms.Panel CellListPanel;
-        private System.Windows.Forms.Panel RightSideOuterPanel;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Index;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ZMin;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ZMax;
-        public System.Windows.Forms.DataGridView CellVertList;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -963,15 +1025,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.TabControl CellTabControl;
-        private System.Windows.Forms.TabPage CellInfo;
-        private System.Windows.Forms.TabPage VertInfo;
-        private System.Windows.Forms.TabPage EdgeInfo;
-        private System.Windows.Forms.TabPage FaceInfo;
-        public System.Windows.Forms.DataGridView CellEdgeList;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewTextBoxColumn3;
         private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem setupImageUnderlayToolStripMenuItem;
@@ -980,9 +1033,35 @@
         private System.Windows.Forms.ToolStripMenuItem renameDepthGroupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteDepthGroupToolStripMenuItem;
         private System.Windows.Forms.Button ShowUnderlay;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripMenuItem renameGroupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem renameCellToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip GroupRightMouseMenu;
+        private System.Windows.Forms.ToolStripMenuItem RenameGroupRMM;
+        private System.Windows.Forms.ContextMenuStrip CellRightMouseMenu;
+        private System.Windows.Forms.ToolStripMenuItem RenameCellRMM;
+        private System.Windows.Forms.ToolStripMenuItem DeleteCellRMM;
+        private System.Windows.Forms.SplitContainer SidebarSplitter;
+        public System.Windows.Forms.TreeView MapTree;
+        private System.Windows.Forms.TabControl CellTabControl;
+        private System.Windows.Forms.TabPage CellInfo;
         private System.Windows.Forms.ComboBox CellGroupDropdown;
         private System.Windows.Forms.Label CellGroupDropdownLabel;
+        private System.Windows.Forms.TabPage VertInfo;
         private System.Windows.Forms.CheckBox CellInfoZIsInc;
+        public System.Windows.Forms.DataGridView CellVertList;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Index;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ZMin;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ZMax;
+        private System.Windows.Forms.TabPage EdgeInfo;
+        public System.Windows.Forms.DataGridView CellEdgeList;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn dataGridViewTextBoxColumn3;
+        private System.Windows.Forms.TabPage FaceInfo;
+        private System.Windows.Forms.ContextMenuStrip MapTreeRightMouseMenu;
+        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem deselectToolStripMenuItem;
     }
 }
 

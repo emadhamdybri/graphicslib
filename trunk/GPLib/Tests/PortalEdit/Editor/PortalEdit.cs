@@ -213,7 +213,8 @@ namespace PortalEdit
             {
                 String name = "New Item" + NamedDepthPresets.Items.Count.ToString();
 
-                DepthGroupName nameDlog = new DepthGroupName();
+                RenameItem nameDlog = new RenameItem();
+                nameDlog.Text = "Set Name";
                 nameDlog.ItemName.Text = name;
                 if (nameDlog.ShowDialog(this) == DialogResult.OK)
                     name = nameDlog.ItemName.Text;
@@ -342,6 +343,7 @@ namespace PortalEdit
             {
                 TreeNode node = new TreeNode(group.Name, 0, 2);
                 node.Tag = group;
+                node.ContextMenuStrip = GroupRightMouseMenu;
                 MapTree.Nodes.Add(node);
                 if (group == selected)
                     selectedNode = node;
@@ -349,6 +351,7 @@ namespace PortalEdit
                 {
                     TreeNode child = new TreeNode(cell.Name, 1, 3);
                     child.Tag = cell;
+                    child.ContextMenuStrip = CellRightMouseMenu;
                     node.Nodes.Add(child);
                     if (cell == selected)
                         selectedNode = child;
@@ -434,20 +437,6 @@ namespace PortalEdit
             Invalidate(true);
         }
 
-        private void DeleteCell_Click(object sender, EventArgs e)
-        {
-            EditorCell cell = editor.GetSelectedCell();
-            MapTree.SelectedNode = null;
-            editor.DeleteCell(cell);
-        }
-
-        private void Deslect_Click(object sender, EventArgs e)
-        {
-            MapTree.SelectedNode = null;
-            editor.SelectMapItem(null);
-            Invalidate(true);
-        }
-
         private void MapZoomIn_Click(object sender, EventArgs e)
         {
             if (Control.ModifierKeys == Keys.Shift)
@@ -479,11 +468,6 @@ namespace PortalEdit
 
             PopulateCellInfoList();
             Invalidate(true);
-        }
-
-        private void NewGroup_Click(object sender, EventArgs e)
-        {
-            editor.NewGroup();
         }
 
         private void EditLoadZFromSelection_Click(object sender, EventArgs e)
@@ -587,7 +571,7 @@ namespace PortalEdit
         {
             if (NamedDepthPresets.SelectedItem != null && NamedDepthPresets.SelectedItem.ToString() != "New..." && NamedDepthPresets.SelectedItem.ToString() != "None")
             {
-                DepthGroupName dlg = new DepthGroupName();
+                RenameItem dlg = new RenameItem();
                 dlg.ItemName.Text = NamedDepthPresets.SelectedItem.ToString();
                 if (dlg.ShowDialog(this)== DialogResult.OK)
                 {
@@ -617,6 +601,102 @@ namespace PortalEdit
                 editor.SetCellGroup(CellGroupDropdown.SelectedItem.ToString());
 
             Invalidate(true);
+        }
+
+        private void RenameGroup ( CellGroup group )
+        {
+            if (group == null)
+                return;
+
+            RenameItem dlg = new RenameItem();
+            dlg.ItemName.Text = String.Copy(group.Name);
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                if (editor.map.FindGroup(dlg.ItemName.Text) != null)
+                {
+                    MessageBox.Show("Group name \"" + dlg.ItemName.Text + "\" already exists");
+                    return;
+                }
+                editor.RenameGroup(group.Name, dlg.ItemName.Text);
+                populateCellList();
+            }
+        }
+
+        private void renameGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CellGroup group = editor.GetSelectedGroup();
+            if (group == null)
+            {
+                EditorCell cell = editor.GetSelectedCell();
+                if (cell != null)
+                    group = cell.Group;
+            }
+            RenameGroup(group);
+        }
+
+        private void RenameCell ( EditorCell cell )
+        {
+            RenameItem dlg = new RenameItem();
+            dlg.ItemName.Text = String.Copy(cell.Name);
+            if (dlg.ShowDialog(this)== DialogResult.OK)
+            {
+                if (cell.Group.FindCell(dlg.ItemName.Text) != null)
+                {
+                    MessageBox.Show("Cell name \"" + dlg.ItemName.Text + "\" already exists in this group");
+                    return;
+                }
+                editor.RenameCell(cell, dlg.ItemName.Text);
+                populateCellList();
+            }
+        }
+
+        private void renameCellToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EditorCell cell = editor.GetSelectedCell();
+            if (cell != null)
+                return;
+
+           RenameCell(cell);
+        }
+
+        private void MapTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (e.Node.Tag.GetType() == typeof(CellGroup))
+                    GroupRightMouseMenu.Tag = e.Node.Tag;
+                else if (e.Node.Tag.GetType() == typeof(EditorCell))
+                    CellRightMouseMenu.Tag = e.Node.Tag;
+            }
+        }
+
+        private void RenameGroupRMM_Click(object sender, EventArgs e)
+        {
+            RenameGroup((CellGroup)GroupRightMouseMenu.Tag);
+        }
+
+        private void RenameCellRMM_Click(object sender, EventArgs e)
+        {
+            RenameCell((EditorCell)CellRightMouseMenu.Tag);
+        }
+
+        private void newToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            editor.NewGroup();
+        }
+
+        private void deselectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MapTree.SelectedNode = null;
+            editor.SelectMapItem(null);
+            Invalidate(true);
+        }
+
+        private void DeleteCell_Click(object sender, EventArgs e)
+        {
+            EditorCell cell = editor.GetSelectedCell();
+            MapTree.SelectedNode = null;
+            editor.DeleteCell(cell);
         }
     }
 }
