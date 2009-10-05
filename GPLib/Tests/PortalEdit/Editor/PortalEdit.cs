@@ -103,6 +103,8 @@ namespace PortalEdit
             ViewCheckPanel.CheckButton(ShowUnderlay, true);
             ViewCheckPanel.ItemCheckChanged += new ImageCheckPanel.ItemCheckChangedEvent(ViewCheckPanel_ItemCheckChanged);
 
+            LoadTextures();
+
             LoadEditorDepths();
        }
 
@@ -619,6 +621,7 @@ namespace PortalEdit
             if (new SettingsDialog(Settings.settings).ShowDialog(this) == DialogResult.OK)
             {
                 Settings.settings.Write();
+                LoadTextures();
                 DisplayListSystem.system.Invalidate();
                 Invalidate(true);
             }
@@ -891,6 +894,77 @@ namespace PortalEdit
 
             editor.SetCellRoofViz(cell, RoofVis.Checked);
             Invalidate(true);
+        }
+
+        protected TreeNode NodeForPath ( string path )
+        {
+            String[] nugs = path.Split(Path.DirectorySeparatorChar);
+
+            // find the root node
+            TreeNode theNode = null;
+            foreach ( TreeNode node in TextureList.Nodes )
+            {
+                if (node.Text == nugs[0])
+                {
+                    theNode = node;
+                    break;
+                }
+            }
+
+            if (theNode == null)
+            {
+                theNode = new TreeNode(nugs[0]);
+                TextureList.Nodes.Add(theNode);
+            }
+
+            for (int i = 1; i < nugs.Length; i++)
+            {
+                // see if a node exists and we arn't at the end
+                TreeNode newNode = null;
+                foreach (TreeNode node in theNode.Nodes)
+                {
+                    if (node.Text == nugs[i])
+                    {
+                        newNode = node;
+                        break;
+                    }
+                }
+
+                if (newNode == null)
+                {
+                    newNode = new TreeNode(nugs[i]);
+                    theNode.Nodes.Add(newNode);
+                }
+                theNode = newNode;
+            }
+
+            theNode.Tag = path;
+            return theNode;
+        }
+
+        public void LoadTextures ()
+        {
+            TextureList.Nodes.Clear();
+            List<String> images = Resources.Files("Textures", true);
+            foreach (string image in images)
+                NodeForPath(image);
+
+            TextureList.ExpandAll();
+        }
+
+        private void TextureList_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node == null || e.Node.Tag == null)
+            {
+                TexturePreview.Image = null;
+                PreviewInfo.Text = String.Empty;
+                return;
+            }
+
+            FileInfo file = Resources.File(e.Node.Tag.ToString());
+
+            TexturePreview.Image = Image.FromFile(Resources.File(e.Node.Tag.ToString()).FullName);
+            PreviewInfo.Text = e.Node.Tag.ToString() + "\r\n" + TexturePreview.Image.Size.ToString();
         }
     }
 }

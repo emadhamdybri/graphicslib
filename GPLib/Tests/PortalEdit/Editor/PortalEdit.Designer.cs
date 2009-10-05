@@ -131,6 +131,10 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.FaceInfo = new System.Windows.Forms.TabPage();
+            this.TextureInfo = new System.Windows.Forms.TabPage();
+            this.PreviewInfo = new System.Windows.Forms.TextBox();
+            this.TexturePreview = new System.Windows.Forms.PictureBox();
+            this.TextureList = new System.Windows.Forms.TreeView();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -159,6 +163,8 @@
             this.VertListRightMouseMenu.SuspendLayout();
             this.EdgeInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).BeginInit();
+            this.TextureInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TexturePreview)).BeginInit();
             this.SuspendLayout();
             // 
             // MainContainer
@@ -910,6 +916,7 @@
             this.CellTabControl.Controls.Add(this.VertInfo);
             this.CellTabControl.Controls.Add(this.EdgeInfo);
             this.CellTabControl.Controls.Add(this.FaceInfo);
+            this.CellTabControl.Controls.Add(this.TextureInfo);
             this.CellTabControl.Location = new System.Drawing.Point(-3, 3);
             this.CellTabControl.Multiline = true;
             this.CellTabControl.Name = "CellTabControl";
@@ -926,10 +933,10 @@
             this.CellInfo.Controls.Add(this.MoveFloor);
             this.CellInfo.Controls.Add(this.CellGroupDropdown);
             this.CellInfo.Controls.Add(this.CellGroupDropdownLabel);
-            this.CellInfo.Location = new System.Drawing.Point(4, 25);
+            this.CellInfo.Location = new System.Drawing.Point(4, 49);
             this.CellInfo.Name = "CellInfo";
             this.CellInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.CellInfo.Size = new System.Drawing.Size(201, 250);
+            this.CellInfo.Size = new System.Drawing.Size(201, 226);
             this.CellInfo.TabIndex = 0;
             this.CellInfo.Text = "Cell";
             this.CellInfo.UseVisualStyleBackColor = true;
@@ -1009,10 +1016,10 @@
             // 
             this.VertInfo.Controls.Add(this.CellInfoZIsInc);
             this.VertInfo.Controls.Add(this.CellVertList);
-            this.VertInfo.Location = new System.Drawing.Point(4, 25);
+            this.VertInfo.Location = new System.Drawing.Point(4, 49);
             this.VertInfo.Name = "VertInfo";
             this.VertInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.VertInfo.Size = new System.Drawing.Size(201, 250);
+            this.VertInfo.Size = new System.Drawing.Size(201, 226);
             this.VertInfo.TabIndex = 1;
             this.VertInfo.Text = "Verts";
             this.VertInfo.UseVisualStyleBackColor = true;
@@ -1125,9 +1132,9 @@
             // EdgeInfo
             // 
             this.EdgeInfo.Controls.Add(this.CellEdgeList);
-            this.EdgeInfo.Location = new System.Drawing.Point(4, 25);
+            this.EdgeInfo.Location = new System.Drawing.Point(4, 49);
             this.EdgeInfo.Name = "EdgeInfo";
-            this.EdgeInfo.Size = new System.Drawing.Size(201, 250);
+            this.EdgeInfo.Size = new System.Drawing.Size(201, 226);
             this.EdgeInfo.TabIndex = 2;
             this.EdgeInfo.Text = "Edges";
             this.EdgeInfo.UseVisualStyleBackColor = true;
@@ -1182,12 +1189,56 @@
             // 
             // FaceInfo
             // 
-            this.FaceInfo.Location = new System.Drawing.Point(4, 25);
+            this.FaceInfo.Location = new System.Drawing.Point(4, 49);
             this.FaceInfo.Name = "FaceInfo";
-            this.FaceInfo.Size = new System.Drawing.Size(201, 250);
+            this.FaceInfo.Size = new System.Drawing.Size(201, 226);
             this.FaceInfo.TabIndex = 3;
             this.FaceInfo.Text = "Faces";
             this.FaceInfo.UseVisualStyleBackColor = true;
+            // 
+            // TextureInfo
+            // 
+            this.TextureInfo.Controls.Add(this.PreviewInfo);
+            this.TextureInfo.Controls.Add(this.TexturePreview);
+            this.TextureInfo.Controls.Add(this.TextureList);
+            this.TextureInfo.Location = new System.Drawing.Point(4, 49);
+            this.TextureInfo.Name = "TextureInfo";
+            this.TextureInfo.Size = new System.Drawing.Size(201, 226);
+            this.TextureInfo.TabIndex = 4;
+            this.TextureInfo.Text = "Textures";
+            this.TextureInfo.UseVisualStyleBackColor = true;
+            // 
+            // PreviewInfo
+            // 
+            this.PreviewInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.PreviewInfo.Location = new System.Drawing.Point(84, 135);
+            this.PreviewInfo.Multiline = true;
+            this.PreviewInfo.Name = "PreviewInfo";
+            this.PreviewInfo.ReadOnly = true;
+            this.PreviewInfo.Size = new System.Drawing.Size(113, 75);
+            this.PreviewInfo.TabIndex = 2;
+            // 
+            // TexturePreview
+            // 
+            this.TexturePreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.TexturePreview.Location = new System.Drawing.Point(3, 135);
+            this.TexturePreview.Name = "TexturePreview";
+            this.TexturePreview.Size = new System.Drawing.Size(75, 75);
+            this.TexturePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.TexturePreview.TabIndex = 1;
+            this.TexturePreview.TabStop = false;
+            // 
+            // TextureList
+            // 
+            this.TextureList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.TextureList.Location = new System.Drawing.Point(3, 3);
+            this.TextureList.Name = "TextureList";
+            this.TextureList.Size = new System.Drawing.Size(194, 126);
+            this.TextureList.TabIndex = 0;
+            this.TextureList.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TextureList_AfterSelect);
             // 
             // EditFrame
             // 
@@ -1237,6 +1288,9 @@
             this.VertListRightMouseMenu.ResumeLayout(false);
             this.EdgeInfo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.CellEdgeList)).EndInit();
+            this.TextureInfo.ResumeLayout(false);
+            this.TextureInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TexturePreview)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1345,6 +1399,10 @@
         private System.Windows.Forms.Button EditVertButton;
         private System.Windows.Forms.CheckBox RoofVis;
         private System.Windows.Forms.CheckBox FloorViz;
+        private System.Windows.Forms.TabPage TextureInfo;
+        private System.Windows.Forms.TextBox PreviewInfo;
+        private System.Windows.Forms.PictureBox TexturePreview;
+        private System.Windows.Forms.TreeView TextureList;
     }
 }
 
