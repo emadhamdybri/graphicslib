@@ -32,13 +32,13 @@ namespace PortalEdit
             UP = true;
         }
 
-        public static String GetMapUnderlayImage ( PortalMap map )
+        public static string GetMapUnderlayImage ( PortalMap map )
         {
             PortalMapAttribute[] att = map.MapAttributes.Find("Editor:Image:Underlay:File");
             if (att.Length > 0)
                 return att[0].Value;
             else
-                return String.Empty;
+                return string.Empty;
         }
 
         public static Vector2 GetMapUnderlayCenter ( PortalMap map )
@@ -134,7 +134,7 @@ namespace PortalEdit
             map.MapAttributes.Remove("Editor:Image:Underlay:Offset:X");
             map.MapAttributes.Remove("Editor:Image:Underlay:Offset:Y");
 
-            if (ImageFileName.Text != String.Empty)
+            if (ImageFileName.Text != string.Empty)
             {
                 FileInfo file = new FileInfo(ImageFileName.Text);
                 if (file.Exists)

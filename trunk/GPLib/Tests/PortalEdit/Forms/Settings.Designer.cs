@@ -49,11 +49,16 @@
             this.label6 = new System.Windows.Forms.Label();
             this.GridPage = new System.Windows.Forms.TabPage();
             this.MapViewPage = new System.Windows.Forms.TabPage();
+            this.HiddenItemAlpha = new System.Windows.Forms.NumericUpDown();
             this.UnderlayAlpha = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.UnderlayHasDepth = new System.Windows.Forms.CheckBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.HiddenItemAlpha = new System.Windows.Forms.NumericUpDown();
+            this.ResourcesPage = new System.Windows.Forms.TabPage();
+            this.ResourceList = new System.Windows.Forms.DataGridView();
+            this.Directory = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Browse = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.Delete = new System.Windows.Forms.DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)(this.PixelsPerUnit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapZoomPerClick)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GridSize)).BeginInit();
@@ -64,8 +69,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.UndoLevels)).BeginInit();
             this.GridPage.SuspendLayout();
             this.MapViewPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.UnderlayAlpha)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HiddenItemAlpha)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UnderlayAlpha)).BeginInit();
+            this.ResourcesPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ResourceList)).BeginInit();
             this.SuspendLayout();
             // 
             // OK
@@ -286,6 +293,7 @@
             this.tabControl1.Controls.Add(this.GeneralPage);
             this.tabControl1.Controls.Add(this.GridPage);
             this.tabControl1.Controls.Add(this.MapViewPage);
+            this.tabControl1.Controls.Add(this.ResourcesPage);
             this.tabControl1.Location = new System.Drawing.Point(1, 1);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -371,6 +379,34 @@
             this.MapViewPage.Text = "Map View";
             this.MapViewPage.UseVisualStyleBackColor = true;
             // 
+            // HiddenItemAlpha
+            // 
+            this.HiddenItemAlpha.DecimalPlaces = 3;
+            this.HiddenItemAlpha.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.HiddenItemAlpha.Location = new System.Drawing.Point(92, 109);
+            this.HiddenItemAlpha.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.HiddenItemAlpha.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            196608});
+            this.HiddenItemAlpha.Name = "HiddenItemAlpha";
+            this.HiddenItemAlpha.Size = new System.Drawing.Size(46, 20);
+            this.HiddenItemAlpha.TabIndex = 6;
+            this.HiddenItemAlpha.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // UnderlayAlpha
             // 
             this.UnderlayAlpha.DecimalPlaces = 3;
@@ -399,6 +435,15 @@
             0,
             0});
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(7, 111);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(71, 13);
+            this.label9.TabIndex = 5;
+            this.label9.Text = "Hidden Alpha";
+            // 
             // label8
             // 
             this.label8.AutoSize = true;
@@ -418,42 +463,58 @@
             this.UnderlayHasDepth.Text = "Underlay with depth";
             this.UnderlayHasDepth.UseVisualStyleBackColor = true;
             // 
-            // label9
+            // ResourcesPage
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(7, 111);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(71, 13);
-            this.label9.TabIndex = 5;
-            this.label9.Text = "Hidden Alpha";
+            this.ResourcesPage.Controls.Add(this.ResourceList);
+            this.ResourcesPage.Location = new System.Drawing.Point(4, 22);
+            this.ResourcesPage.Name = "ResourcesPage";
+            this.ResourcesPage.Size = new System.Drawing.Size(257, 156);
+            this.ResourcesPage.TabIndex = 3;
+            this.ResourcesPage.Text = "Resources";
+            this.ResourcesPage.UseVisualStyleBackColor = true;
             // 
-            // HiddenItemAlpha
+            // ResourceList
             // 
-            this.HiddenItemAlpha.DecimalPlaces = 3;
-            this.HiddenItemAlpha.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            131072});
-            this.HiddenItemAlpha.Location = new System.Drawing.Point(92, 109);
-            this.HiddenItemAlpha.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.HiddenItemAlpha.Minimum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            196608});
-            this.HiddenItemAlpha.Name = "HiddenItemAlpha";
-            this.HiddenItemAlpha.Size = new System.Drawing.Size(46, 20);
-            this.HiddenItemAlpha.TabIndex = 6;
-            this.HiddenItemAlpha.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.ResourceList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.ResourceList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.ResourceList.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.ResourceList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ResourceList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Directory,
+            this.Browse,
+            this.Delete});
+            this.ResourceList.Location = new System.Drawing.Point(0, 0);
+            this.ResourceList.MultiSelect = false;
+            this.ResourceList.Name = "ResourceList";
+            this.ResourceList.RowHeadersWidth = 20;
+            this.ResourceList.Size = new System.Drawing.Size(254, 153);
+            this.ResourceList.TabIndex = 0;
+            this.ResourceList.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ResourceList_CellContentClick);
+            // 
+            // Directory
+            // 
+            this.Directory.HeaderText = "Directory";
+            this.Directory.Name = "Directory";
+            // 
+            // Browse
+            // 
+            this.Browse.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.Browse.HeaderText = "Browse";
+            this.Browse.Name = "Browse";
+            this.Browse.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Browse.UseColumnTextForButtonValue = true;
+            this.Browse.Width = 50;
+            // 
+            // Delete
+            // 
+            this.Delete.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.Delete.HeaderText = "Delete";
+            this.Delete.Name = "Delete";
+            this.Delete.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Delete.UseColumnTextForButtonValue = true;
+            this.Delete.Width = 50;
             // 
             // SettingsDialog
             // 
@@ -483,8 +544,10 @@
             this.GridPage.PerformLayout();
             this.MapViewPage.ResumeLayout(false);
             this.MapViewPage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.UnderlayAlpha)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.HiddenItemAlpha)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UnderlayAlpha)).EndInit();
+            this.ResourcesPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ResourceList)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -517,5 +580,10 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.NumericUpDown HiddenItemAlpha;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TabPage ResourcesPage;
+        private System.Windows.Forms.DataGridView ResourceList;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Directory;
+        private System.Windows.Forms.DataGridViewButtonColumn Browse;
+        private System.Windows.Forms.DataGridViewButtonColumn Delete;
     }
 }

@@ -195,13 +195,13 @@ namespace PortalEdit
             return null;
         }
 
-        void SaveDepthAttribute ( String name )
+        void SaveDepthAttribute ( string name )
         {
             PortalMapAttribute att = FindDepthAttribute(name);
             if (att != null)
                 editor.map.MapAttributes.Remove(att.Name, att.Value);
 
-            String val = name + ":" + EditZMinus.Text + ":" + EditZPlus.Text + ":" + EditIncZ.Checked.ToString();
+            string val = name + ":" + EditZMinus.Text + ":" + EditZPlus.Text + ":" + EditIncZ.Checked.ToString();
             editor.map.MapAttributes.Add("Editor:NamedDepthSet", val);
             Editor.SetDirty();
         }
@@ -220,7 +220,7 @@ namespace PortalEdit
                 return;
             if (NamedDepthPresets.SelectedItem.ToString() == "New...")
             {
-                String name = "New Item" + NamedDepthPresets.Items.Count.ToString();
+                string name = "New Item" + NamedDepthPresets.Items.Count.ToString();
 
                 RenameItem nameDlog = new RenameItem();
                 nameDlog.Text = "Set Name";
@@ -278,7 +278,7 @@ namespace PortalEdit
             Invalidate(true);
         }
 
-        private void OpenFile ( String file )
+        private void OpenFile ( string file )
         {
             CheckDirtySave();
             Text = "Portal Edit: " + Path.GetFileNameWithoutExtension(file);
@@ -392,7 +392,7 @@ namespace PortalEdit
             for (int i = 0; i < cell.Verts.Count; i++)
             {
                 CellVert vert = cell.Verts[i];
-                List<String> items = new List<String>();
+                List<string> items = new List<string>();
                 items.Add(i.ToString());
                 items.Add(vert.Bottom.Z.ToString());
 
@@ -673,7 +673,7 @@ namespace PortalEdit
                 return;
 
             RenameItem dlg = new RenameItem();
-            dlg.ItemName.Text = String.Copy(group.Name);
+            dlg.ItemName.Text = string.Copy(group.Name);
             if (dlg.ShowDialog(this) == DialogResult.OK)
             {
                 if (editor.map.FindGroup(dlg.ItemName.Text) != null)
@@ -702,7 +702,7 @@ namespace PortalEdit
         private void RenameCell ( EditorCell cell )
         {
             RenameItem dlg = new RenameItem();
-            dlg.ItemName.Text = String.Copy(cell.Name);
+            dlg.ItemName.Text = string.Copy(cell.Name);
             if (dlg.ShowDialog(this)== DialogResult.OK)
             {
                 if (cell.Group.FindCell(dlg.ItemName.Text) != null)
@@ -840,7 +840,7 @@ namespace PortalEdit
                 PortalMapAttribute item = FindDepthAttribute(dlg.SelectedPreset);
                 if (item != null)
                 {
-                    String[] nugs = item.Value.Split(":".ToCharArray());
+                    string[] nugs = item.Value.Split(":".ToCharArray());
 
                     float floor = float.Parse(nugs[1]);
                     float roof = float.Parse(nugs[2]);

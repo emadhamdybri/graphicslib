@@ -40,7 +40,7 @@ namespace PortalEdit
 
         MapViewRenderer.CellClickedEventArgs lastSelectionArgs = null;
 
-        public String FileName = string.Empty;
+        public string FileName = string.Empty;
 
         bool Dirty = false;
 
@@ -433,7 +433,7 @@ namespace PortalEdit
             return true;
         }
 
-        public void RenameGroup ( String oldName, String newName )
+        public void RenameGroup ( string oldName, string newName )
         {
             foreach (CellGroup group in map.CellGroups)
             {
@@ -459,7 +459,7 @@ namespace PortalEdit
             ResetViews();
         }
 
-        public void RenameCell(EditorCell cell, String newName)
+        public void RenameCell(EditorCell cell, string newName)
         {
             cell.Name = newName;
 
@@ -481,7 +481,7 @@ namespace PortalEdit
             ResetViews();
         }
 
-        public void SetCellGroup ( String name, EditorCell cell )
+        public void SetCellGroup ( string name, EditorCell cell )
         {
             if (cell == null)
                 return;
@@ -501,7 +501,7 @@ namespace PortalEdit
             ResetViews();
         }
 
-        public void SetCellGroup ( String name )
+        public void SetCellGroup ( string name )
         {
             SetCellGroup(name,GetSelectedCell());
         }

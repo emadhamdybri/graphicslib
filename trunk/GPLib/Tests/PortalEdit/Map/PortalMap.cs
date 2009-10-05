@@ -13,14 +13,14 @@ namespace PortalEdit
     public class PortalMapAttribute
     {
         public PortalMapAttribute (){}
-        public PortalMapAttribute (String n, String v)
+        public PortalMapAttribute (string n, string v)
         {
             Name = n;
             Value = v;
         }
 
-        public String Name = String.Empty;
-        public String Value = String.Empty;
+        public string Name = string.Empty;
+        public string Value = string.Empty;
     }
 
     public class PortalMapAttributes
@@ -31,7 +31,7 @@ namespace PortalEdit
         {
             AttributeList.Clear();
         }
-        public PortalMapAttribute[] Find(String name)
+        public PortalMapAttribute[] Find(string name)
         {
             List<PortalMapAttribute> foundItems = new List<PortalMapAttribute>();
 
@@ -44,7 +44,7 @@ namespace PortalEdit
             return foundItems.ToArray();
         }
 
-        public void Add(String name, String value)
+        public void Add(string name, string value)
         {
             foreach (PortalMapAttribute item in AttributeList)
             {
@@ -54,7 +54,7 @@ namespace PortalEdit
             AttributeList.Add(new PortalMapAttribute(name, value));
         }
 
-        public void Remove(String name)
+        public void Remove(string name)
         {
             List<PortalMapAttribute> foundItems = new List<PortalMapAttribute>();
 
@@ -68,7 +68,7 @@ namespace PortalEdit
                 AttributeList.Remove(item);
         }
 
-        public void Remove(String name, String value)
+        public void Remove(string name, string value)
         {
             List<PortalMapAttribute> foundItems = new List<PortalMapAttribute>();
 
@@ -98,7 +98,7 @@ namespace PortalEdit
             return false;
         }
 
-        protected bool NameExists(String name)
+        protected bool NameExists(string name)
         {
             foreach (CellGroup group in CellGroups)
             {
@@ -108,7 +108,7 @@ namespace PortalEdit
             return false;
         }
 
-        public String NewGroupName()
+        public string NewGroupName()
         {
             int count = CellGroups.Count;
             while (NameExists(count.ToString()))
@@ -158,7 +158,7 @@ namespace PortalEdit
                 group.Cells.Remove(cell);
         }
 
-        public CellGroup FindGroup ( String name )
+        public CellGroup FindGroup ( string name )
         {
             foreach (CellGroup group in CellGroups)
             {
@@ -168,7 +168,7 @@ namespace PortalEdit
             return null;
         }
 
-        public Cell FindCell ( String name, String groupName )
+        public Cell FindCell ( string name, string groupName )
         {
             CellGroup group = FindGroup(groupName);
             if (group != null)

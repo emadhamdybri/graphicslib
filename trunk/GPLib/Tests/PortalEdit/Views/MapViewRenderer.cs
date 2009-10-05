@@ -648,7 +648,7 @@ namespace PortalEdit
             GL.Disable(EnableCap.Lighting);
         }
 
-        public void DrawUnderlay()
+        public void DrawUnderlay( bool allowDepth )
         {
             if (underlay != null && ShowUnderlay)
             {
@@ -656,7 +656,7 @@ namespace PortalEdit
                 GL.Color4(Color.FromArgb((int)(255*Settings.settings.Underlay3DAlpha),Color.White));
                 GL.Enable(EnableCap.Texture2D);
 
-                if (!Settings.settings.ShowUnderlayWithDepth)
+                if (!Settings.settings.ShowUnderlayWithDepth && allowDepth)
                 {
                     GL.DepthMask(false);
                     GL.DepthFunc(DepthFunction.Always);
@@ -715,11 +715,8 @@ namespace PortalEdit
             Vector4 lightPos = new Vector4(10, 20, 20, 0);
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
 
-            if (!Settings.settings.ShowUnderlayWithDepth || underlay == null)
-            {
-                DrawBasePlane();
-                DrawUnderlay();
-            }
+            DrawBasePlane();
+            DrawUnderlay(false);
 
             if (GridList != null)
                 GridList.Call();
@@ -728,7 +725,7 @@ namespace PortalEdit
             DrawMap();
 
             if (Settings.settings.ShowUnderlayWithDepth)
-                DrawUnderlay();
+                DrawUnderlay(true);
 
             GL.PopMatrix();
 

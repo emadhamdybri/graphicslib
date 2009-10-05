@@ -27,7 +27,7 @@ namespace Drawables
     public class SingleListDrawableItem : IDisposable
     {
         public ListableEvent list = null;
-        static String defaultMatName = "SingleListDrawableItemWhite";
+        static string defaultMatName = "SingleListDrawableItemWhite";
         Material mat = MaterialSystem.system.getMaterial(defaultMatName);
         int pass = DrawablesSystem.FirstPass;
 

@@ -32,6 +32,18 @@ namespace PortalEdit
             HiddenItemAlpha.Value = (decimal)settings.HiddenItemAlpha;
           
             UndoLevels.Value = (decimal)settings.UndoLevels;
+
+            foreach (string str in settings.ResourceDirs)
+            {
+                if (str == string.Empty)
+                    continue;
+
+                List<string> item = new List<string>();
+                item.Add(String.Copy(str));
+                item.Add("...");
+                item.Add("X");
+                ResourceList.Rows.Add(item.ToArray());
+            }
        }
 
         private void OK_Click(object sender, EventArgs e)
@@ -51,7 +63,42 @@ namespace PortalEdit
             settings.UndoLevels = (int)UndoLevels.Value;
             Undo.System.CullUndos();
 
+            settings.ResourceDirs.Clear();
+            foreach (DataGridViewRow row in ResourceList.Rows )
+                settings.ResourceDirs.Add(row.Cells[0].FormattedValue.ToString());
+
             settings.Write();
+        }
+
+        private void ResourceList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 1)
+            {
+                if (e.RowIndex >= ResourceList.Rows.Count-1)
+                {
+                    OpenFileDialog ofd = new OpenFileDialog();
+                    if (ofd.ShowDialog(this) == DialogResult.OK)
+                    {
+                        String[] item = new string[3];
+                        item[0] = Path.GetDirectoryName(ofd.FileName);
+                        item[1] = "...";
+                        item[2] = "X";
+                        ResourceList.Rows.Add(item);
+                    }
+                }
+                else
+                {
+                    String data = ResourceList.Rows[e.RowIndex].Cells[0].Value.ToString();
+                    OpenFileDialog ofd = new OpenFileDialog();
+                    ofd.InitialDirectory = data;
+                    if (ofd.ShowDialog(this) == DialogResult.OK)
+                    {
+                        ResourceList.Rows[e.RowIndex].Cells[0].Value = Path.GetDirectoryName(ofd.FileName);
+                    }
+                }
+            }
+            if (e.ColumnIndex == 2)
+                ResourceList.Rows.Remove(ResourceList.Rows[e.RowIndex]);
         }
     }
 
@@ -84,7 +131,9 @@ namespace PortalEdit
         public bool Maximized = false;
 
         public int RecentFilesLimit = 10;
-        public List<String> RecentFiles = new List<string>();
+        public List<string> RecentFiles = new List<string>();
+
+        public List<string> ResourceDirs = new List<string>();
 
         public static Settings Read(FileInfo file)
         {
