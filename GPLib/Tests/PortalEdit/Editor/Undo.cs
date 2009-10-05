@@ -9,12 +9,12 @@ namespace PortalEdit
 {
     public class UndoObject
     {
-        public String Descrioption
+        public string Descrioption
         {
             get {return descrioption;}
         }
 
-        protected String descrioption = "Action";
+        protected string descrioption = "Action";
 
         public virtual void Undo ( )
         {
@@ -36,12 +36,12 @@ namespace PortalEdit
             get { return Undos.Count; } 
         }
 
-        public String Description
+        public string Description
         {
             get 
             {
                 if (Undos.Count == 0)
-                    return String.Empty;
+                    return string.Empty;
 
                 return Undos[0].Descrioption;
             }
@@ -94,9 +94,9 @@ namespace PortalEdit
             descrioption = "Delete Cell";
 
             cell = new EditorCell();
-            cell.GroupName = String.Copy(cell.GroupName);
+            cell.GroupName = string.Copy(cell.GroupName);
             cell.tag = c.tag;
-            cell.Name = String.Copy(cell.Name);
+            cell.Name = string.Copy(cell.Name);
 
             foreach(CellVert v in c.Verts)
                 cell.Verts.Add(new CellVert(v));
@@ -120,8 +120,8 @@ namespace PortalEdit
 
     public class CellAddUndo : UndoObject
     {
-        String group;
-        String cell;
+        string group;
+        string cell;
         Polygon polygon;
 
         public CellAddUndo(EditorCell c, Polygon poly)
@@ -130,8 +130,8 @@ namespace PortalEdit
 
             polygon = poly;
 
-            cell = String.Copy(c.Name);
-            group = String.Copy(c.GroupName);
+            cell = string.Copy(c.Name);
+            group = string.Copy(c.GroupName);
         }
 
         public override void Undo()
@@ -154,12 +154,12 @@ namespace PortalEdit
 
     public class GroupAddUndo : UndoObject
     {
-        String group;
+        string group;
 
         public GroupAddUndo(CellGroup c)
         {
             descrioption = "Add Group";
-            group = String.Copy(c.Name);
+            group = string.Copy(c.Name);
         }
 
         public override void Undo()
@@ -183,8 +183,8 @@ namespace PortalEdit
 
     public class VertexDataEditUndo : UndoObject
     {
-        String cellGroup;
-        String cellName;
+        string cellGroup;
+        string cellName;
 
         CellVert vert;
         int vertIndex;
@@ -193,8 +193,8 @@ namespace PortalEdit
         {
             descrioption = "Edit Vertex";
 
-            cellGroup = String.Copy(c.GroupName);
-            cellName =  String.Copy(c.Name);
+            cellGroup = string.Copy(c.GroupName);
+            cellName =  string.Copy(c.Name);
 
             vert = new CellVert(c.Verts[index]);
             vertIndex = index;
@@ -216,8 +216,8 @@ namespace PortalEdit
 
     public class IncrementalHeightsUndo : UndoObject
     {
-        public String cellGroup;
-        public String cellName;
+        public string cellGroup;
+        public string cellName;
 
         bool state;
 
@@ -225,8 +225,8 @@ namespace PortalEdit
         {
             descrioption = "Edit Cell Data";
 
-            cellGroup = String.Copy(c.GroupName);
-            cellName = String.Copy(c.Name);
+            cellGroup = string.Copy(c.GroupName);
+            cellName = string.Copy(c.Name);
 
             state = c.HeightIsIncremental;
         }
@@ -261,16 +261,16 @@ namespace PortalEdit
 
     public class CellGroupChangeUndo : UndoObject
     {
-        String group;
-        String cell;
-        String oldGroup;
+        string group;
+        string cell;
+        string oldGroup;
 
-        public CellGroupChangeUndo(Cell c, String newGroup)
+        public CellGroupChangeUndo(Cell c, string newGroup)
         {
             descrioption = "Change Cell Group";
-            cell = String.Copy(c.Name);
-            group =String.Copy(newGroup);
-            oldGroup = String.Copy(c.GroupName);
+            cell = string.Copy(c.Name);
+            group =string.Copy(newGroup);
+            oldGroup = string.Copy(c.GroupName);
         }
 
         public override void Undo()
@@ -295,14 +295,14 @@ namespace PortalEdit
 
     public class GroupRenameUndo : UndoObject
     {
-        String group;
-        String oldName;
+        string group;
+        string oldName;
 
-        public GroupRenameUndo(String _oldName, String _newName)
+        public GroupRenameUndo(string _oldName, string _newName)
         {
             descrioption = "Change Group Name";
             group = _newName;
-            oldName = String.Copy(_oldName);
+            oldName = string.Copy(_oldName);
         }
 
         public override void Undo()
@@ -313,18 +313,18 @@ namespace PortalEdit
 
     public class CellRenameUndo : UndoObject
     {
-        String group;
-        String cellName;
+        string group;
+        string cellName;
 
-        String oldName;
+        string oldName;
 
-        public CellRenameUndo(Cell cell, String newName)
+        public CellRenameUndo(Cell cell, string newName)
         {
             descrioption = "Change Cell Name";
 
-            group = String.Copy(cell.GroupName);
-            oldName = String.Copy(cell.Name);
-            cellName = String.Copy(newName);
+            group = string.Copy(cell.GroupName);
+            oldName = string.Copy(cell.Name);
+            cellName = string.Copy(newName);
         }
 
         public override void Undo()
@@ -338,8 +338,8 @@ namespace PortalEdit
 
     public class CellVertXYEditUndo : UndoObject
     {
-        String group;
-        String cellName;
+        string group;
+        string cellName;
 
         Vector2 oldPos;
         int     vertIndex;
@@ -348,8 +348,8 @@ namespace PortalEdit
         {
             descrioption = "Edit Vert";
 
-            group = String.Copy(cell.GroupName);
-            cellName = String.Copy(cell.Name);
+            group = string.Copy(cell.GroupName);
+            cellName = string.Copy(cell.Name);
 
             oldPos = new Vector2(cell.Verts[i].Bottom.X,cell.Verts[i].Bottom.Y);
             vertIndex = i;
@@ -366,8 +366,8 @@ namespace PortalEdit
 
     public class EdgeVisUndo : UndoObject
     {
-        String group;
-        String cellName;
+        string group;
+        string cellName;
 
         int edge;
         bool vis;
@@ -376,8 +376,8 @@ namespace PortalEdit
         {
             descrioption = "Edit Edge Visibility";
 
-            group = String.Copy(cell.GroupName);
-            cellName = String.Copy(cell.Name);
+            group = string.Copy(cell.GroupName);
+            cellName = string.Copy(cell.Name);
 
             edge = i;
             if (edge >= 0)

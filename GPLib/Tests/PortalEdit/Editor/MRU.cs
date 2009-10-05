@@ -6,7 +6,7 @@ using System.IO;
 
 namespace PortalEdit
 {
-    public delegate void MRUItemClicked ( object sender, String file );
+    public delegate void MRUItemClicked ( object sender, string file );
 
     public class MRU
     {
@@ -20,7 +20,7 @@ namespace PortalEdit
             BuildMenu();
         }
 
-        public void AddFile ( String file )
+        public void AddFile ( string file )
         {
             if (Settings.settings.RecentFiles.Contains(file))
                 Settings.settings.RecentFiles.Remove(file);
@@ -37,7 +37,7 @@ namespace PortalEdit
              if (Settings.settings.RecentFiles.Count > Settings.settings.RecentFilesLimit)
                  Settings.settings.RecentFiles.RemoveRange(Settings.settings.RecentFilesLimit, Settings.settings.RecentFiles.Count - Settings.settings.RecentFilesLimit);
 
-             foreach (String file in Settings.settings.RecentFiles)
+             foreach (string file in Settings.settings.RecentFiles)
              {
                  ToolStripItem item = MRUMenu.DropDownItems.Add(Path.GetFileNameWithoutExtension(file));
                  item.Tag = file;
@@ -49,7 +49,7 @@ namespace PortalEdit
         {
             ToolStripItem item = (ToolStripItem)sender;
 
-            String file = (string)item.Tag;
+            string file = (string)item.Tag;
 
             if (Clicked != null)
                 Clicked(sender, (string)file);

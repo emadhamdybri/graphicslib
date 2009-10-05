@@ -14,7 +14,7 @@ namespace PortalEdit
         public bool Roof = false;
         public bool PresetOnly = false;
 
-        public String SelectedPreset = String.Empty;
+        public string SelectedPreset = string.Empty;
 
         public CellZSSet()
         {

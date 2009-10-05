@@ -51,8 +51,8 @@ namespace PortalEdit
         [System.Xml.Serialization.XmlIgnoreAttribute]
         public CellGroup Group = null;
 
-        public String CellName = string.Empty;
-        public String GroupName = string.Empty;
+        public string CellName = string.Empty;
+        public string GroupName = string.Empty;
 
         public PortalMapAttributes DestinationAttributes = new PortalMapAttributes();
 
@@ -60,8 +60,8 @@ namespace PortalEdit
 
         public PortalDestination ( PortalDestination d )
         {
-            CellName = String.Copy(d.CellName);
-            GroupName = String.Copy(d.GroupName);
+            CellName = string.Copy(d.CellName);
+            GroupName = string.Copy(d.GroupName);
         }
     }
 
@@ -72,15 +72,15 @@ namespace PortalEdit
         public float[] LowerZ = new float[2];
         public float[] UpperZ = new float[2];
 
-        public String Material = String.Empty;
+        public string Material = string.Empty;
 
         public Vector2 UVScale = Vector2.One;
         public Vector2 UVShift = Vector2.Zero;
 
-        public String BottomCell = string.Empty;
-        public String BottomGroup = string.Empty;
-        public String TopCell = string.Empty;
-        public String TopGroup = string.Empty;
+        public string BottomCell = string.Empty;
+        public string BottomGroup = string.Empty;
+        public string TopCell = string.Empty;
+        public string TopGroup = string.Empty;
     }
 
     public class CellEdge
@@ -118,9 +118,9 @@ namespace PortalEdit
         [System.Xml.Serialization.XmlIgnoreAttribute]
         public CellGroup Group = null;
 
-        public String GroupName = string.Empty;
+        public string GroupName = string.Empty;
 
-        public String Name = new Random().Next().ToString();
+        public string Name = new Random().Next().ToString();
         public List<CellVert> Verts = new List<CellVert>();
         public List<CellEdge> Edges = new List<CellEdge>();
 
@@ -226,11 +226,11 @@ namespace PortalEdit
 
     public class CellGroup
     {
-        public String Name = string.Empty;
+        public string Name = string.Empty;
         public List<Cell> Cells = new List<Cell>();
         public PortalMapAttributes GroupAttributes = new PortalMapAttributes();
 
-        protected bool NameExists ( String name )
+        protected bool NameExists ( string name )
         {
             foreach (Cell cell in Cells)
             {
@@ -240,7 +240,7 @@ namespace PortalEdit
             return false;
         }
 
-        public String NewCellName ( )
+        public string NewCellName ( )
         {
             int count = Cells.Count;
             while (NameExists(count.ToString()))
@@ -260,7 +260,7 @@ namespace PortalEdit
             return null;
         }
 
-        public Cell FindCell ( String name )
+        public Cell FindCell ( string name )
         {
             foreach (Cell cell in Cells)
             {
