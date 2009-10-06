@@ -81,6 +81,11 @@ namespace PortalEdit
         public string BottomGroup = string.Empty;
         public string TopCell = string.Empty;
         public string TopGroup = string.Empty;
+
+        public Vector2 GetFinalUV ( float u, float v )
+        {
+            return new Vector2((u + UVShift.X) * UVScale.X, (v + UVShift.Y) * UVScale.Y);
+        }
     }
 
     public class CellEdge
