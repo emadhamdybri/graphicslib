@@ -8,6 +8,7 @@ using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
+using Drawables.Materials;
 using Drawables.DisplayLists;
 using Drawables;
 using Math3D;
@@ -62,13 +63,17 @@ namespace PortalEdit
         public CellEdge edge;
 
         public CellWallGeometry geo;
-        
+        Material mat;
+
         public WallGeometry ( Cell c, CellEdge e,  CellWallGeometry g)
         {
             cell = c;
             edge = e;
             geo = g;
-            wallGeo = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateGeo), DrawablesSystem.LastPass - EditorCell.WallPassOffet);
+
+            mat = EditorCell.GetDefaultMaterial();
+
+            wallGeo = new SingleListDrawableItem(mat,new ListableEvent.GenerateEventHandler(GenerateGeo), DrawablesSystem.LastPass - EditorCell.WallPassOffet);
             wallOutline = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateOutline), DrawablesSystem.LastPass - EditorCell.WallPassOffet + 1);
             wallOutline.ShouldDrawItem += new SingleListDrawableItem.ShouldDrawItemHandler(wallOutline_ShouldDrawItem);
         }
@@ -113,14 +118,22 @@ namespace PortalEdit
             if (!EditorCell.CellIsDrawn(cell))
                 alpha = Settings.settings.HiddenItemAlpha;
 
-            GL.Color4(EditorCell.wallColor.R / 255f, EditorCell.wallColor.G / 255f, EditorCell.wallColor.B / 255f, alpha);
-
             GL.Begin(BeginMode.Quads);
 
             GL.Normal3(edge.Normal.X, edge.Normal.Y, 0);
+
+         //   float edgeDistance = 
+          
+            GL.TexCoord2(geo.GetFinalUV(1,0));
             GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y,geo.LowerZ[1]);
+            
+            GL.TexCoord2(geo.GetFinalUV(0, 0));
             GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.LowerZ[0]);
+
+            GL.TexCoord2(geo.GetFinalUV(0, 1));
             GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.UpperZ[0]);
+
+            GL.TexCoord2(geo.GetFinalUV(1, 1));
             GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, geo.UpperZ[1]);
             GL.End();
         }
@@ -382,6 +395,18 @@ namespace PortalEdit
             CellGroupColors.Add(color);
             cell.Group.GroupAttributes.Add("Editor:GroupHighlightColor",r.ToString() + " " + g.ToString() + " " + b.ToString());
             return color;
+        }
+
+        static Material defaultMaterial = null;
+
+        public static Material GetDefaultMaterial ()
+        {
+            if (defaultMaterial != null)
+                return defaultMaterial;
+
+            defaultMaterial = MaterialSystem.system.FromImage(Editor.instance.frame.DefaultImages.Images[0]);
+
+            return defaultMaterial;
         }
 
         public static bool HideGeo = false;

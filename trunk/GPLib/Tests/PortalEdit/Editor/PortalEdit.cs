@@ -956,7 +956,7 @@ namespace PortalEdit
         {
             if (e.Node == null || e.Node.Tag == null)
             {
-                TexturePreview.Image = null;
+                TexturePreview.Image = DefaultImages.Images[1];
                 PreviewInfo.Text = String.Empty;
                 return;
             }

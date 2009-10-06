@@ -1,5 +1,6 @@
 
 ==General==
+Fix rename to rename geo desitinations too;
 
 ==Display==
 Textures
