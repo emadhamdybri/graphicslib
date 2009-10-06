@@ -38,12 +38,18 @@ namespace Drawables.Textures
         public bool mipmap = true;
 
         FileInfo file = null;
+        Image image = null;
 
         Size imageSize = Size.Empty;
 
         public Texture( FileInfo info )
         {
             file = info;
+        }
+
+        public Texture(Image img)
+        {
+            image = img;
         }
 
         public bool Valid ()
@@ -69,9 +75,14 @@ namespace Drawables.Textures
         {
             if (imageSize == Size.Empty)
             {
-                Image image = Image.FromFile(file.FullName);
                 if (image != null)
                     imageSize = new Size(image.Width, image.Height);
+                else
+                {
+                    Image pic = Image.FromFile(file.FullName);
+                    if (pic != null)
+                        imageSize = new Size(pic.Width, pic.Height);
+                }
             }
         }
 
@@ -91,30 +102,31 @@ namespace Drawables.Textures
             if (boundID == -1 || !listID.Valid())
                 Invalidate(); // we know one is bad, so make sure all is free;
 
+            Bitmap bitmap;
             if (file != null && file.Exists)
+                bitmap = new Bitmap(file.FullName);
+            else
+                bitmap = new Bitmap(image);
+
+            GL.GenTextures(1, out boundID);
+            GL.BindTexture(TextureTarget.Texture2D, boundID);
+
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+
+            if (mipmap)
             {
-                Bitmap bitmap = new Bitmap(file.FullName);
-
-                GL.GenTextures(1, out boundID);
-                GL.BindTexture(TextureTarget.Texture2D, boundID);
-
-                BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-
-                if (mipmap)
-                {
-                    if (TextureSystem.UseAniso)
-                        GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)0x84FF, 2f);
-                    
-                    GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-                }
-
-                bitmap.UnlockBits(data);
-
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                if (TextureSystem.UseAniso)
+                    GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)0x84FF, 2f);
+                
+                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             }
+
+            bitmap.UnlockBits(data);
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
             listID.Start(true);
             if (boundID != -1)
@@ -136,6 +148,18 @@ namespace Drawables.Textures
         {
             foreach(KeyValuePair<string,Texture> t in textures)
                 t.Value.Invalidate();
+        }
+
+        public Texture FromImage ( Image image )
+        {
+            String name = "Image:" + image.GetHashCode().ToString();
+
+            if (textures.ContainsKey(name))
+                return textures[name];
+
+            Texture texture = new Texture(image);
+            textures.Add(name, texture);
+            return texture;
         }
 
         public Texture GetTexture(string path)
@@ -164,7 +188,6 @@ namespace Drawables.Textures
             return texture;
         }
 
-       
         bool textureIsValid(string t)
         {
             if (t == string.Empty)

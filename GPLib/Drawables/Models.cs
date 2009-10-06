@@ -226,8 +226,6 @@ namespace Drawables.Models
 
         public List<Mesh> meshes = new List<Mesh>();
 
-        public List<MaterialOverride> skins = new List<MaterialOverride>();
-
         [System.Xml.Serialization.XmlIgnoreAttribute]
         public Dictionary<Material, Mesh> meshMap = new Dictionary<Material, Mesh>();
 
@@ -240,45 +238,9 @@ namespace Drawables.Models
 
         public void LinkToSystem(MaterialSystem system)
         {
-            foreach (MaterialOverride m in skins)
-                m.LinkToSystem(system);
-
             foreach (Mesh m in meshes)
-                m.material = system.getMaterial(m.material);
-        }
-
-        public MaterialOverride findSkin ( string name )
-        {
-            foreach(MaterialOverride m in skins)
-            {
-                if (m.name == name)
-                    return m;
-            }
-            return null;
-        }
-
-        public bool removeSkin ( string name )
-        {
-            MaterialOverride skin = findSkin(name);
-            if (skin == null)
-                return false;
-
-            skins.Remove(skin);
-            return true;
-        }
-
-        public MaterialOverride newSkin ( string name )
-        {
-            foreach (MaterialOverride m in skins)
-            {
-                if (m.name == name)
-                    return m;
-            }
-            MaterialOverride skin = new MaterialOverride();
-            skin.name = name;
-            skins.Add(skin);
-            return skin;
-        }
+                m.material = system.GetMaterial(m.material);
+        }    
 
         public void addMaterial (Material mat)
         {
@@ -352,9 +314,6 @@ namespace Drawables.Models
 
             foreach (Mesh m in meshes)
                 m.material.Invalidate();
-
-            foreach (MaterialOverride m in skins)
-                m.Invalidate();
         }
 
         void Rebuild ()
@@ -418,27 +377,6 @@ namespace Drawables.Models
             }
         }
 
-        public void draw(MeshOverride matOverride)
-        {
-            draw(getMeshForMaterial(matOverride.origonalMatName), matOverride);
-        }
-
-        public void draw(Mesh mesh, MeshOverride matOverride)
-        {
-            if (mesh == null)
-                return;
-
-            DisplayList list = matOverride.displayList;
-            if (!list.Valid())
-            {
-                list.Start();
-                mesh.build(matOverride.hiddenGroups);
-                list.End();
-            }
-
-            list.Call();
-        }
-
         public void draw ( Mesh mesh )
         {
             if (meshes.Count == 0)
@@ -446,18 +384,6 @@ namespace Drawables.Models
 
             Rebuild(false);
             geoLists[mesh.material].Call();
-        }
-
-        public void drawAll(MaterialOverride matOverride)
-        {
-            if (meshes.Count == 0)
-                return;
-
-            foreach (Mesh m in meshes)
-            {
-                matOverride.Execute(m.material);
-                draw(m, matOverride.getOverride(m.material));         
-            }
         }
 
         protected void drawAllExtras ( bool normals, bool wireframe )
@@ -488,20 +414,10 @@ namespace Drawables.Models
             drawAllExtras(normals, wireframe);
         }
 
-        public void drawAll(bool normals, bool wireframe, MaterialOverride matOverride)
-        {
-            if (meshes.Count == 0)
-                return;
-            drawAll(matOverride);
-
-            drawAllExtras(normals, wireframe);
-        }
-
         public void clear ()
         {
             Invalidate();
             meshes.Clear();
-            skins.Clear();
         }
 
         public bool valid ()

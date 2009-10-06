@@ -104,7 +104,6 @@ namespace Drawables.Materials
         public static GLColor Black = new GLColor(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
-
     public class Material
     {
         public string name = "Default";
@@ -120,10 +119,19 @@ namespace Drawables.Materials
         Texture texture;
 
         [System.Xml.Serialization.XmlIgnoreAttribute]
+        Image image;
+
+        [System.Xml.Serialization.XmlIgnoreAttribute]
         DisplayList displayList = DisplayListSystem.system.newList();
 
         public Material()
         {}
+
+        public Material(Image img)
+        {
+            name = "Image:" + img.GetHashCode().ToString();
+            image = img;
+        }
 
         public Material(GLColor color)
         {
@@ -161,18 +169,22 @@ namespace Drawables.Materials
             if (texture != null)
                 texture.Invalidate();
 
-            if (textureName != string.Empty)
-            {
+            if (textureName != string.Empty && image == null)
                 texture = TextureSystem.system.GetTexture(textureName);
-				if (texture != null)
-                	texture.Execute(); //execute just so we are sure it has a list before we put it in another list
-            }
+            else if (image != null)
+                texture = TextureSystem.system.FromImage(image);
             else
                 texture = null;
 
+            if (texture != null)
+                texture.Execute(); //execute just so we are sure it has a list before we put it in another list
+
             displayList.Start();
             if (texture != null)
+            {
+                GL.Enable(EnableCap.Texture2D);
                 texture.Execute();
+            }
             else
                 GL.Disable(EnableCap.Texture2D);
             baseColor.glColor();
@@ -188,199 +200,6 @@ namespace Drawables.Materials
         }
     }
 
-    public class MeshOverride
-    {
-        public string origonalMatName = string.Empty;
-        public Material newMaterial = new Material();
-        public List<string> hiddenGroups = new List<string>();
-
-        [System.Xml.Serialization.XmlIgnoreAttribute]
-        public DisplayList displayList = DisplayListSystem.system.newList();
-
-        public void Invalidate()
-        {
-            newMaterial.Invalidate();
-            displayList.Invalidate();
-        }
-
-        public void LinkToSystem (MaterialSystem system)
-        {
-            newMaterial = system.getMaterial(newMaterial);
-        }
-    }
-
-    public class MaterialOverride
-    {
-        public string name = string.Empty;
-        public List<MeshOverride> materials = new List<MeshOverride>();
-
-        [System.Xml.Serialization.XmlIgnoreAttribute]
-        Dictionary<Material, MeshOverride> materialReplacements = new Dictionary<Material, MeshOverride>();
-
-        public void LinkToSystem (MaterialSystem system)
-        {
-            foreach(MeshOverride m in materials)
-                m.LinkToSystem(system);
-        }
-
-        public List<string> getHiddenGroups(Material mat)
-        {
-            if (materialReplacements.ContainsKey(mat))
-                return materialReplacements[mat].hiddenGroups;
-
-            MeshOverride m = findOverride(mat.name);
-            if (m != null)
-            {
-                materialReplacements.Add(mat, m);
-                return m.hiddenGroups;
-            }
-
-            return new List<string>();
-        }
-
-        public MeshOverride getOverride(Material mat)
-        {
-            if (materialReplacements.ContainsKey(mat))
-                return materialReplacements[mat];
-            else
-            {
-                foreach (MeshOverride m in materials)
-                {
-                    if (m.origonalMatName == mat.name)
-                    {
-                        materialReplacements[mat] = m;
-                        return m;
-                    }
-                }
-
-                MeshOverride mesh = new MeshOverride();
-                mesh.origonalMatName = mat.name;
-                materials.Add(mesh);
-                materialReplacements[mat] = mesh;
-
-                return mesh;
-            }
-        }
-
-        public Material getMaterial(Material mat)
-        {
-            if (materialReplacements.ContainsKey(mat))
-                return materialReplacements[mat].newMaterial;
-            return mat;
-        }
-
-        public DisplayList getGeoList(Material mat)
-        {
-            if (materialReplacements.ContainsKey(mat))
-                return materialReplacements[mat].displayList;
-            return null;
-        }
-
-        public MeshOverride findOverride(string matName)
-        {
-            foreach (MeshOverride m in materials)
-            {
-                if (m.origonalMatName == matName)
-                    return m;
-            }
-
-            return null;
-        }
-
-        public void hideGroup(string matName, string name)
-        {
-            MeshOverride ovd = findOverride(matName);
-            if (ovd == null)
-                return;
-            if (!ovd.hiddenGroups.Contains(name))
-                ovd.hiddenGroups.Add(name);
-        }
-
-        public void showGroup(string matName, string name)
-        {
-            MeshOverride ovd = findOverride(matName);
-            if (ovd == null)
-                return;
-
-            if (ovd.hiddenGroups.Contains(name))
-                ovd.hiddenGroups.Remove(name);
-        }
-
-        public void addMaterial(string matName, Material mat)
-        {
-            MeshOverride mesh = findOverride(matName);
-            if (mesh == null)
-                mesh = new MeshOverride();
-
-            mesh.origonalMatName = matName;
-            mat.Invalidate();
-            if (mesh.newMaterial != null)
-                mesh.newMaterial.Invalidate();
-
-            mesh.newMaterial = new Material(mat);
-
-            materials.Add(mesh);
-        }
-
-        public void removeMaterial(string name)
-        {
-            Invalidate();
-
-            foreach (MeshOverride m in materials)
-            {
-                if (m.origonalMatName == name)
-                {
-                    materials.Remove(m);
-                    break;
-                }
-            }
-
-            foreach (KeyValuePair<Material, MeshOverride> m in materialReplacements)
-            {
-                if (m.Key.name == name)
-                    materialReplacements.Remove(m.Key);
-            }
-        }
-
-        public void Invalidate()
-        {
-            // kill the old materials
-            foreach (KeyValuePair<Material, MeshOverride> m in materialReplacements)
-                m.Key.Invalidate();
-            materialReplacements.Clear();
-
-            foreach (MeshOverride m in materials)
-                m.Invalidate();
-        }
-
-        public void Execute(Material mat)
-        {
-            if (materialReplacements.ContainsKey(mat))
-            {
-                Material ovrd = materialReplacements[mat].newMaterial;
-                if (ovrd != null)
-                    ovrd.Execute();
-                else
-                    mat.Execute();
-            }
-            else
-            {
-                foreach (MeshOverride m in materials)
-                {
-                    if (m.origonalMatName == mat.name)
-                    {
-                        materialReplacements.Add(mat, m);
-                        if (m != null)
-                            m.newMaterial.Execute();
-                        else
-                            mat.Execute();
-                        return;
-                    }
-                }
-                mat.Execute();
-            }
-        }
-    }
 
     public class MaterialSystem
     {
@@ -408,7 +227,7 @@ namespace Drawables.Materials
             return true;
         }
 
-        public Material getMaterial ( Material mat )
+        public Material GetMaterial ( Material mat )
         {
             foreach(Material m in materials)
             {
@@ -420,7 +239,7 @@ namespace Drawables.Materials
             return mat;
         }
 
-        public Material getMaterial(string name)
+        public Material GetMaterial(string name)
         {
             foreach (Material m in materials)
             {
@@ -430,9 +249,16 @@ namespace Drawables.Materials
             return null;
         }
 
-        public Material newMaterial()
+        public Material NewMaterial()
         {
             Material mat = new Material();
+            materials.Add(mat);
+            return mat;
+        }
+
+        public Material FromImage( Image image )
+        {
+            Material mat = new Material(image);
             materials.Add(mat);
             return mat;
         }
