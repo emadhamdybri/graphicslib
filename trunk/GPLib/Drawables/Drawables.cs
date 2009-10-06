@@ -28,7 +28,7 @@ namespace Drawables
     {
         public ListableEvent list = null;
         static string defaultMatName = "SingleListDrawableItemWhite";
-        Material mat = MaterialSystem.system.getMaterial(defaultMatName);
+        Material mat = MaterialSystem.system.GetMaterial(defaultMatName);
         int pass = DrawablesSystem.FirstPass;
 
         public delegate void ShouldDrawItemHandler(object sender, ref bool draw);
@@ -70,6 +70,13 @@ namespace Drawables
             Install(handler, null);
         }
 
+        public SingleListDrawableItem(Material _mat, ListableEvent.GenerateEventHandler handler, int _pass)
+        {
+            mat = _mat;
+            pass = _pass;
+            Install(handler, null);
+        }
+
         protected void Install ( ListableEvent.GenerateEventHandler handler, object tag )
         {
             list = new ListableEvent();
@@ -77,7 +84,7 @@ namespace Drawables
             list.tag = tag;
             if (mat == null)
             {
-                mat = MaterialSystem.system.newMaterial();
+                mat = MaterialSystem.system.NewMaterial();
                 mat.name = defaultMatName;
             }
 
