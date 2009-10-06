@@ -452,6 +452,15 @@ namespace PortalEdit
                             if (dest.GroupName == oldName)
                                 dest.GroupName = newName;
                         }
+
+                        foreach (CellWallGeometry geo in edge.Geometry)
+                        {
+                            if (geo.BottomGroup == oldName)
+                                geo.BottomGroup = newName;
+
+                            if (geo.TopGroup == oldName)
+                                geo.TopGroup = newName;
+                        }
                     }
                 }
             }
@@ -461,6 +470,7 @@ namespace PortalEdit
 
         public void RenameCell(EditorCell cell, string newName)
         {
+            string oldName = String.Copy(cell.Name);
             cell.Name = newName;
 
             foreach (CellGroup group in map.CellGroups)
@@ -473,6 +483,19 @@ namespace PortalEdit
                         {
                             if (dest.Cell == cell)
                                 dest.CellName = newName;
+                        }
+
+                        foreach (CellWallGeometry geo in edge.Geometry)
+                        {
+                            if (geo.BottomGroup == cell.GroupName && geo.BottomCell == oldName)
+                                geo.BottomCell = newName;
+                            if (geo.BottomGroup == string.Empty && tehCell == cell && geo.BottomCell == oldName)
+                                geo.BottomCell = newName;
+
+                            if (geo.TopGroup == cell.GroupName && geo.BottomCell == oldName)
+                                geo.TopCell = newName;
+                            if (geo.TopGroup == string.Empty && tehCell == cell && geo.TopCell == oldName)
+                                geo.TopCell = newName;
                         }
                     }
                 }
