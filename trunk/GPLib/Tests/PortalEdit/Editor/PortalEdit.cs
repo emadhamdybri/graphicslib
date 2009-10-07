@@ -153,9 +153,31 @@ namespace PortalEdit
             editor.SelectionChanged += new EditorSelectonChanged(editor_SelectionChanged);
             editor.MapLoaded += new MapLoadedHandler(editor_MapLoaded);
             editor_MapLoaded(null, EventArgs.Empty);
+
+            Objects.RegisterDefaults();
+            SetupObjectNewMenu();
+
             populateCellList();
 
             base.OnLoad(e);
+        }
+
+        void SetupObjectNewMenu ()
+        {
+            ObjectListNewMenu.DropDownItems.Clear();
+            foreach (KeyValuePair<string,MapObjectHandler> handler in Objects.Handlers)
+            {
+                ToolStripItem item = ObjectListNewMenu.DropDownItems.Add(handler.Key);
+                item.Tag = handler.Value;
+                item.Click += new EventHandler(ObjectListNewMenuItemClick);
+            }
+        }
+
+        void ObjectListNewMenuItemClick(object sender, EventArgs e)
+        {
+            MapObjectHandler handler = (MapObjectHandler)((ToolStripItem)sender).Tag;
+
+            editor.NewObject(handler.New());
         }
 
         FileInfo LocateTexture ( string file )

@@ -160,6 +160,12 @@ namespace PortalEdit
             SelectMapItem(item);
         }
 
+        public void NewObject ( ObjectInstance obj )
+        {
+            SetDirty();
+            map.MapObjects.Add(obj);
+        }
+
         public void NewGroup ()
         {
             NewGroup(true);

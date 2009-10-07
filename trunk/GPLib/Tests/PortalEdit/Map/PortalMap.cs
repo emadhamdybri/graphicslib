@@ -83,10 +83,21 @@ namespace PortalEdit
         }
     }
 
+    public class ObjectInstance
+    {
+        public String ObjectType = String.Empty;
+        public String Name = string.Empty;
+        public Vector3 Postion = Vector3.Zero;
+        public Vector3 Rotation = Vector3.Zero;
+
+        public PortalMapAttributes ObjectAttributes = new PortalMapAttributes();
+    }
+
     public class PortalMap
     {
         public List<CellGroup> CellGroups = new List<CellGroup>();
         public PortalMapAttributes MapAttributes = new PortalMapAttributes();
+        public List<ObjectInstance> MapObjects = new List<ObjectInstance>();
 
         public bool Valid ()
         {

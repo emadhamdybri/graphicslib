@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Editor\Objects.cs" />
     <Compile Include="Editor\Resources.cs" />
     <Compile Include="Forms\CellZSSet.cs">
       <SubType>Form</SubType>

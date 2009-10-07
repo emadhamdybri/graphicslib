@@ -571,6 +571,14 @@ namespace PortalEdit
                 return;
 
             DrawablesSystem.system.Execute();
+
+            // draw the objects
+            foreach (ObjectInstance obj in map.MapObjects)
+            {
+                GL.PushMatrix();
+                Objects.EditorDraw(obj);
+                GL.PopMatrix();
+            }
             DrawSelections();
         }
 
