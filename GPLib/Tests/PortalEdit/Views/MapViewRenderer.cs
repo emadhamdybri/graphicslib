@@ -11,6 +11,7 @@ using OpenTK.Graphics;
 using Drawables;
 using Drawables.DisplayLists;
 using Drawables.Textures;
+using Drawables.Materials;
 
 namespace PortalEdit
 {

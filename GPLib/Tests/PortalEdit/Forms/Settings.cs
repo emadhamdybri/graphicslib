@@ -80,7 +80,7 @@ namespace PortalEdit
                     if (ofd.ShowDialog(this) == DialogResult.OK)
                     {
                         String[] item = new string[3];
-                        item[0] = Path.GetDirectoryName(ofd.FileName);
+                        item[0] = Path.GetDirectoryName(ofd.FileName) + Path.DirectorySeparatorChar;
                         item[1] = "...";
                         item[2] = "X";
                         ResourceList.Rows.Add(item);
@@ -93,7 +93,7 @@ namespace PortalEdit
                     ofd.InitialDirectory = data;
                     if (ofd.ShowDialog(this) == DialogResult.OK)
                     {
-                        ResourceList.Rows[e.RowIndex].Cells[0].Value = Path.GetDirectoryName(ofd.FileName);
+                        ResourceList.Rows[e.RowIndex].Cells[0].Value = Path.GetDirectoryName(ofd.FileName) + Path.DirectorySeparatorChar;
                     }
                 }
             }

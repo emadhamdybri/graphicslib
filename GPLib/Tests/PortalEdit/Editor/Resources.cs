@@ -95,6 +95,9 @@ namespace PortalEdit
 
         public static FileInfo File(string filename)
         {
+            if (filename == string.Empty)
+                return null;
+
             foreach (String dir in Settings.settings.ResourceDirs)
             {
                 FileInfo info = new FileInfo(Path.Combine(dir, filename));

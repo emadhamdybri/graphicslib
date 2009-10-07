@@ -12,6 +12,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using FormControls;
 using Drawables.DisplayLists;
+using Drawables.Textures;
 using Math3D;
 
 namespace PortalEdit
@@ -149,6 +150,7 @@ namespace PortalEdit
                 Editor.instance = new Editor(this, MapView, GLView);
 
             editor = Editor.instance;
+            editor.SelectionChanged += new EditorSelectonChanged(editor_SelectionChanged);
             editor.MapLoaded += new MapLoadedHandler(editor_MapLoaded);
             editor_MapLoaded(null, EventArgs.Empty);
             populateCellList();
@@ -156,8 +158,14 @@ namespace PortalEdit
             base.OnLoad(e);
         }
 
+        FileInfo LocateTexture ( string file )
+        {
+            return Resources.File(file);
+        }
+
         void editor_MapLoaded(object sender, EventArgs args)
         {
+            TextureSystem.system.LocateFile = new TextureSystem.LocateFileHandler(LocateTexture);
             NamedDepthPresets.Items.Clear();
             NamedDepthPresets.Items.Add("None");
 
@@ -944,6 +952,7 @@ namespace PortalEdit
 
         public void LoadTextures ()
         {
+            // set the resource dirs into the texture manager
             TextureList.Nodes.Clear();
             List<String> images = Resources.Files("Textures", true);
             foreach (string image in images)
@@ -965,6 +974,100 @@ namespace PortalEdit
 
             TexturePreview.Image = Image.FromFile(Resources.File(e.Node.Tag.ToString()).FullName);
             PreviewInfo.Text = e.Node.Tag.ToString() + "\r\n" + TexturePreview.Image.Size.ToString();
+        }
+
+        private void UShift_ValueChanged(object sender, EventArgs e)
+        {
+            if (loadingUI)
+                return;
+
+            Editor.SetDirty();
+            CellMaterialInfo info = editor.GetSelectedMaterialInfo();
+            if (info == null)
+                return;
+
+
+            if (UScale.Value != 0)
+                info.UVScale.X = 1f / (float)UScale.Value;
+            else
+                info.UVScale.X = 0;
+    
+            if (VScale.Value != 0)
+                info.UVScale.Y = 1f / (float)VScale.Value;
+            else
+                info.UVScale.Y = 0;
+
+
+            if (UShift.Value != 0)
+                info.UVShift.X = 1f / (float)UShift.Value;
+            else
+                info.UVShift.X = 0;
+
+            if (VShift.Value != 0)
+                info.UVShift.Y = 1f / (float)VShift.Value;
+            else
+                info.UVShift.Y = 0;
+
+            editor.GetSelectedCell().GenerateDisplayGeometry();
+            RebuildAll();
+        }
+
+        void editor_SelectionChanged(object sender, EventArgs args)
+        {
+            loadingUI = true;
+            UScale.Value = 1;
+            VScale.Value = 1;
+
+            UShift.Value = 0;
+            VShift.Value = 0;
+
+            FaceMatInfo.Text = String.Empty;
+
+            CellMaterialInfo info = editor.GetSelectedMaterialInfo();
+            if (info == null)
+                return;
+
+            if (info.UVScale.X != 0)
+                UScale.Value = (decimal)(1f / info.UVScale.X);
+            if (info.UVScale.X != 0)
+                VScale.Value = (decimal)(1f / info.UVScale.Y);
+
+            if (info.UVShift.X != 0)
+                UShift.Value = (decimal) (1f / info.UVShift.X);
+
+            if (info.UVShift.Y != 0)
+                VShift.Value = (decimal)(1f / info.UVShift.Y);
+
+            EditorCell cell = editor.GetSelectedCell();
+            if (cell != null )
+            {
+                if (editor.GetFloorSelection())
+                {
+
+                }
+                else if (editor.GetRoofSelection())
+                {
+
+                }
+                else
+                {
+                    CellEdge edge = editor.GetSelectedEdge();
+                    CellWallGeometry wall = editor.GetSelectedWallGeo();
+
+                    if (wall != null && edge != null)
+                    {
+                        float dist = cell.EdgeDistance(edge);
+                        float spZ = wall.UpperZ[0] - wall.LowerZ[0];
+                        float epZ = wall.UpperZ[1] - wall.LowerZ[1];
+
+                        FaceMatInfo.Text = "Face Width(U) = " + dist.ToString() + "\r\n";
+                        FaceMatInfo.Text += "Face SP Height(V) = " + spZ.ToString() + "\r\n";
+                        FaceMatInfo.Text += "Face EP Height(V) = " + epZ.ToString() + "\r\n";
+                    }
+                }
+            }
+
+            loadingUI = false;
         }
     }
 }

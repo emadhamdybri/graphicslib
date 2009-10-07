@@ -63,7 +63,7 @@ namespace PortalEdit
         public CellEdge edge;
 
         public CellWallGeometry geo;
-        Material mat;
+        Material material;
 
         public WallGeometry ( Cell c, CellEdge e,  CellWallGeometry g)
         {
@@ -71,9 +71,9 @@ namespace PortalEdit
             edge = e;
             geo = g;
 
-            mat = EditorCell.GetDefaultMaterial();
+            material = EditorCell.GetGeoMaterial(geo.Material);
 
-            wallGeo = new SingleListDrawableItem(mat,new ListableEvent.GenerateEventHandler(GenerateGeo), DrawablesSystem.LastPass - EditorCell.WallPassOffet);
+            wallGeo = new SingleListDrawableItem(material, new ListableEvent.GenerateEventHandler(GenerateGeo), DrawablesSystem.LastPass - EditorCell.WallPassOffet);
             wallOutline = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateOutline), DrawablesSystem.LastPass - EditorCell.WallPassOffet + 1);
             wallOutline.ShouldDrawItem += new SingleListDrawableItem.ShouldDrawItemHandler(wallOutline_ShouldDrawItem);
         }
@@ -117,24 +117,28 @@ namespace PortalEdit
 
             if (!EditorCell.CellIsDrawn(cell))
                 alpha = Settings.settings.HiddenItemAlpha;
-
+            material.baseColor.glColor(alpha);
+    
             GL.Begin(BeginMode.Quads);
+
+            CellVert sp = cell.Verts[edge.Start];
+            CellVert ep = cell.Verts[edge.End];
 
             GL.Normal3(edge.Normal.X, edge.Normal.Y, 0);
 
-         //   float edgeDistance = 
-          
-            GL.TexCoord2(geo.GetFinalUV(1,0));
-            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y,geo.LowerZ[1]);
-            
-            GL.TexCoord2(geo.GetFinalUV(0, 0));
-            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.LowerZ[0]);
+            float edgeDistance = cell.EdgeDistance(edge);
 
-            GL.TexCoord2(geo.GetFinalUV(0, 1));
-            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, geo.UpperZ[0]);
+            GL.TexCoord2(geo.Material.GetFinalUV(edgeDistance, geo.UpperZ[1]-geo.LowerZ[1]));
+            GL.Vertex3(ep.Bottom.X, ep.Bottom.Y,geo.LowerZ[1]);
 
-            GL.TexCoord2(geo.GetFinalUV(1, 1));
-            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, geo.UpperZ[1]);
+            GL.TexCoord2(geo.Material.GetFinalUV(0, geo.UpperZ[0] - geo.LowerZ[0]));
+            GL.Vertex3(sp.Bottom.X, sp.Bottom.Y, geo.LowerZ[0]);
+
+            GL.TexCoord2(geo.Material.GetFinalUV(0, 0));
+            GL.Vertex3(sp.Bottom.X, sp.Bottom.Y, geo.UpperZ[0]);
+
+            GL.TexCoord2(geo.Material.GetFinalUV(edgeDistance, 0));
+            GL.Vertex3(ep.Bottom.X, ep.Bottom.Y, geo.UpperZ[1]);
             GL.End();
         }
 
@@ -228,12 +232,19 @@ namespace PortalEdit
         public Cell cell;
         public bool floor = true;
 
+        Material material;
+
         public CellGeometry(bool f, Cell c)
         {
             cell = c;
             floor = f;
 
-            geo = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateGeo));
+            if (f)
+                material = EditorCell.GetGeoMaterial(cell.FloorMaterial);
+            else
+                material = EditorCell.GetGeoMaterial(cell.RoofMaterial);
+
+            geo = new SingleListDrawableItem(material, new ListableEvent.GenerateEventHandler(GenerateGeo), DrawablesSystem.LastPass - EditorCell.FloorPassOffet);
             if (floor)
             {
                 outline = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateOutline));
@@ -252,27 +263,39 @@ namespace PortalEdit
 
             if (!EditorCell.CellIsDrawn(cell))
                 alpha = Settings.settings.HiddenItemAlpha;
-            
+
+            material.baseColor.glColor(alpha);
+
+            CellVert start = cell.Verts[cell.Edges[0].Start];
             if (floor)
             {
                 // draw the bottom
-                GL.Color4(EditorCell.cellFloorColor.R / 255f, EditorCell.cellFloorColor.G / 255f, EditorCell.cellFloorColor.B / 255f, alpha);
+              //  GL.Color4(EditorCell.cellFloorColor.R / 255f, EditorCell.cellFloorColor.G / 255f, EditorCell.cellFloorColor.B / 255f, alpha);
                 GL.Begin(BeginMode.Polygon);
 
                 GL.Normal3(cell.FloorNormal);
+
                 foreach (CellEdge edge in cell.Edges)
-                    GL.Vertex3(cell.Verts[edge.End].Bottom);
+                {
+                    CellVert vert = cell.Verts[edge.End];
+                    GL.TexCoord2(cell.FloorMaterial.GetFinalUV(vert.Bottom.X - start.Bottom.X, start.Bottom.Y-vert.Bottom.Y));
+                    GL.Vertex3(vert.Bottom);
+                }
                 GL.End();
             }
             else
             {
                 // draw the top
-                GL.Color4(EditorCell.cellRoofColor.R / 255f, EditorCell.cellRoofColor.G / 255f, EditorCell.cellRoofColor.B / 255f, alpha);
+            //    GL.Color4(EditorCell.cellRoofColor.R / 255f, EditorCell.cellRoofColor.G / 255f, EditorCell.cellRoofColor.B / 255f, alpha);
                 GL.Begin(BeginMode.Polygon);
 
                 GL.Normal3(cell.RoofNormal);
                 for (int i = cell.Edges.Count - 1; i >= 0; i--)
-                    GL.Vertex3(cell.Verts[cell.Edges[i].End].Bottom.X, cell.Verts[cell.Edges[i].End].Bottom.Y, cell.Verts[cell.Edges[i].End].GetTopZ(cell.HeightIsIncremental));
+                {
+                    CellVert vert = cell.Verts[cell.Edges[i].End];
+                    GL.TexCoord2(cell.FloorMaterial.GetFinalUV(vert.Bottom.X - start.Bottom.X, start.Bottom.Y-vert.Bottom.Y));
+                    GL.Vertex3(vert.Bottom.X, vert.Bottom.Y, vert.GetTopZ(cell.HeightIsIncremental));
+                }
                 GL.End();
             }
          }
@@ -407,6 +430,20 @@ namespace PortalEdit
             defaultMaterial = MaterialSystem.system.FromImage(Editor.instance.frame.DefaultImages.Images[0]);
 
             return defaultMaterial;
+        }
+       
+        public static Material GetGeoMaterial ( CellMaterialInfo info )
+        {
+            Material mat = MaterialSystem.system.GetMaterial(info.Material);
+            if (mat == null)
+            {
+                if (Resources.File(info.Material) != null)
+                    mat = MaterialSystem.system.FromTextureFile(info.Material);
+            }
+            if (mat == null)
+                mat = GetDefaultMaterial();
+
+            return mat;
         }
 
         public static bool HideGeo = false;
@@ -618,9 +655,9 @@ namespace PortalEdit
 
             foreach(CellWallGeometry geo in edge.Geometry)
             {
-                geo.Material = matGeo.Material;
-                geo.UVShift = matGeo.UVShift;
-                geo.UVScale = matGeo.UVScale;
+                geo.Material.Material = matGeo.Material.Material;
+                geo.Material.UVShift = matGeo.Material.UVShift;
+                geo.Material.UVScale = matGeo.Material.UVScale;
             }
         }
 
@@ -666,8 +703,8 @@ namespace PortalEdit
                 CellWallGeometry geo = edge.Geometry[0];
 
                 float heightChange = FloorPoint(edge.Start).Z - geo.LowerZ[0];
-                float heightChangeInScaledUV = heightChange / geo.UVScale.Y;
-                geo.UVShift.Y += heightChangeInScaledUV;
+                float heightChangeInScaledUV = heightChange / geo.Material.UVScale.Y;
+                geo.Material.UVShift.Y += heightChangeInScaledUV;
 
                 geo.LowerZ[0] = FloorPoint(edge.Start).Z;
                 geo.LowerZ[1] = FloorPoint(edge.End).Z;
@@ -696,18 +733,18 @@ namespace PortalEdit
                 CellWallGeometry oldGeo = FindMatchingGeo(edge.Geometry, geo);
                 if (oldGeo != null)
                 {
-                    geo.UVScale = oldGeo.UVScale;
-                    geo.UVShift = oldGeo.UVShift;
+                    geo.Material.UVScale = oldGeo.Material.UVScale;
+                    geo.Material.UVShift = oldGeo.Material.UVShift;
 
                     float heightChange = oldGeo.LowerZ[0] - geo.LowerZ[0];
-                    float heightChangeInScaledUV = heightChange / oldGeo.UVScale.Y;
-                    geo.UVShift.Y += heightChangeInScaledUV;
+                    float heightChangeInScaledUV = heightChange / oldGeo.Material.UVScale.Y;
+                    geo.Material.UVShift.Y += heightChangeInScaledUV;
 
-                    geo.Material = oldGeo.Material;
+                    geo.Material.Material = oldGeo.Material.Material;
                 }
                 else if (edge.Geometry.Count > 0)
                 {
-                    geo.Material = edge.Geometry[0].Material;
+                    geo.Material.Material = edge.Geometry[0].Material.Material;
                 }
             }
             edge.Geometry.Clear();

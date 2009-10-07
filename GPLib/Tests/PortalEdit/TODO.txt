@@ -2,14 +2,13 @@
 ==General==
 
 ==Display==
-Textures
 Light placement
 Vertex Shading
 Lightmaping
 
 ==System==
-Plug-ins
 Objects
+Plug-ins
 Geometry only normals
 Normal smothing
 

@@ -70,6 +70,11 @@ namespace Drawables.Materials
             GL.Color4(r, g, b, a);
         }
 
+        public void glColor(float A)
+        {
+            GL.Color4(r, g, b, A);
+        }
+
         public GLColor(Color color, float alpha)
         {
             r = color.R / 255.0f;
@@ -259,6 +264,15 @@ namespace Drawables.Materials
         public Material FromImage( Image image )
         {
             Material mat = new Material(image);
+            materials.Add(mat);
+            return mat;
+        }
+
+        public Material FromTextureFile(string filename)
+        {
+            Material mat = new Material();
+            mat.name = filename;
+            mat.textureName = filename;
             materials.Add(mat);
             return mat;
         }
