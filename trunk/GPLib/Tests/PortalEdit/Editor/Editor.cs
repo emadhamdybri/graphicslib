@@ -21,6 +21,8 @@ namespace PortalEdit
 
     public delegate void MapLoadedHandler ( object sender, EventArgs args );
 
+    public delegate void EditorSelectonChanged ( object sender, EventArgs args );
+
     class Editor
     {
         public PortalMap map;
@@ -37,6 +39,7 @@ namespace PortalEdit
         public ViewEditMode viewEditMode = ViewEditMode.Select;
 
         public event MapLoadedHandler MapLoaded;
+        public event EditorSelectonChanged SelectionChanged;
 
         MapViewRenderer.CellClickedEventArgs lastSelectionArgs = null;
 
@@ -79,9 +82,37 @@ namespace PortalEdit
         void viewRenderer_CellClicked(object sender, MapViewRenderer.CellClickedEventArgs e)
         {
             if (viewEditMode == ViewEditMode.Select)
+            {
                 SelectObject(e.cell);
-        
-            lastSelectionArgs = e;
+                lastSelectionArgs = e;
+
+                if (SelectionChanged != null)
+                    SelectionChanged(this, EventArgs.Empty);
+            }
+            else if (viewEditMode == ViewEditMode.Paint)
+                PaintFace(e);
+        }
+
+        void PaintFace(MapViewRenderer.CellClickedEventArgs e)
+        {
+            if (e.cell == null ||frame.TextureList.SelectedNode == null || frame.TextureList.SelectedNode.Tag == null)
+                return;
+
+            string texture = frame.TextureList.SelectedNode.Tag.ToString();
+
+            if (e.edge < 0)
+            {
+                if (e.floor)
+                    e.cell.FloorMaterial.Material = texture;
+                else if (e.roof)
+                    e.cell.RoofMaterial.Material = texture;
+            }
+            else
+                e.geo.Material.Material = texture;
+
+            EditorCell cell = (EditorCell)e.cell;
+            cell.GenerateDisplayGeometry();
+            ResetViews();
         }
 
         TreeNode FindSelectedNode ( object tag, TreeNode node )
@@ -226,6 +257,21 @@ namespace PortalEdit
                 return index;
             }
             return -1;
+        }
+
+        public CellMaterialInfo GetSelectedMaterialInfo ()
+        {
+            if (lastSelectionArgs == null || lastSelectionArgs.cell == null)
+                return null;
+
+            if (lastSelectionArgs.floor)
+                return lastSelectionArgs.cell.FloorMaterial;
+            if (lastSelectionArgs.roof)
+                return lastSelectionArgs.cell.RoofMaterial;
+            if (lastSelectionArgs.geo != null)
+                return lastSelectionArgs.geo.Material;
+
+            return null;
         }
 
         public void EditVert ()

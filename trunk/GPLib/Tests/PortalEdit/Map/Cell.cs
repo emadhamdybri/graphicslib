@@ -65,6 +65,21 @@ namespace PortalEdit
         }
     }
 
+    public class CellMaterialInfo
+    {
+        public float Rotation = 0f;
+
+        public string Material = string.Empty;
+
+        public Vector2 UVScale = Vector2.One;
+        public Vector2 UVShift = Vector2.Zero;
+
+        public Vector2 GetFinalUV(float u, float v)
+        {
+            return new Vector2((u + UVShift.X) * UVScale.X, (v + UVShift.Y) * UVScale.Y);
+        }
+    }
+
     public class CellWallGeometry
     {
         public bool Vizable = true;
@@ -72,20 +87,12 @@ namespace PortalEdit
         public float[] LowerZ = new float[2];
         public float[] UpperZ = new float[2];
 
-        public string Material = string.Empty;
-
-        public Vector2 UVScale = Vector2.One;
-        public Vector2 UVShift = Vector2.Zero;
+        public CellMaterialInfo Material = new CellMaterialInfo();
 
         public string BottomCell = string.Empty;
         public string BottomGroup = string.Empty;
         public string TopCell = string.Empty;
         public string TopGroup = string.Empty;
-
-        public Vector2 GetFinalUV ( float u, float v )
-        {
-            return new Vector2((u + UVShift.X) * UVScale.X, (v + UVShift.Y) * UVScale.Y);
-        }
     }
 
     public class CellEdge
@@ -136,6 +143,9 @@ namespace PortalEdit
 
         public bool RoofVizable = true;
         public bool FloorVizable = true;
+
+        public CellMaterialInfo FloorMaterial = new CellMaterialInfo();
+        public CellMaterialInfo RoofMaterial = new CellMaterialInfo();
 
         public PortalMapAttributes CellAttributes = new PortalMapAttributes();
 
@@ -194,6 +204,19 @@ namespace PortalEdit
                     return Verts[i];
             }
             return null;
+        }
+
+        public float EdgeDistance ( CellEdge edge )
+        {
+            CellVert sp = Verts[edge.Start];
+            CellVert ep = Verts[edge.End];
+
+            return (float)Math.Sqrt((ep.Bottom.X - sp.Bottom.X) * (ep.Bottom.X - sp.Bottom.X) + (ep.Bottom.Y - sp.Bottom.Y) * (ep.Bottom.Y - sp.Bottom.Y));
+        }
+
+        public float EdgeDistance ( int edge )
+        { 
+            return EdgeDistance(Edges[edge]);
         }
 
         public Vector3 FloorPoint ( int index )

@@ -102,6 +102,7 @@ namespace Drawables.Textures
             if (boundID == -1 || !listID.Valid())
                 Invalidate(); // we know one is bad, so make sure all is free;
 
+            GL.Enable(EnableCap.Texture2D);
             Bitmap bitmap;
             if (file != null && file.Exists)
                 bitmap = new Bitmap(file.FullName);
@@ -124,6 +125,7 @@ namespace Drawables.Textures
             }
 
             bitmap.UnlockBits(data);
+            bitmap.Dispose();
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
@@ -138,9 +140,11 @@ namespace Drawables.Textures
     public class TextureSystem
     {
         public static TextureSystem system = new TextureSystem();
-        public static bool UseAniso = true;
+        public static bool UseAniso = false;
 
-        public DirectoryInfo rootDir;
+        public delegate FileInfo LocateFileHandler(string file);
+
+        public LocateFileHandler LocateFile = null;     
 
         Dictionary<string, Texture> textures = new Dictionary<string,Texture>();
 
@@ -170,15 +174,14 @@ namespace Drawables.Textures
             Texture texture = null;
             if (textureIsValid(path))
             {
-                FileInfo file = new FileInfo(path);
+                FileInfo file;
+                if (LocateFile != null)
+                    file = LocateFile(path);
+                else
+                    file = new FileInfo(path);
+
                 if (file.Exists)
                     texture = new Texture(file);
-                else if (rootDir != null)
-                {
-                    file = new FileInfo(Path.Combine(rootDir.FullName, path));
-                    if (file.Exists)
-                        texture = new Texture(file);
-                }
             }
             if (texture == null)
                 return null;
