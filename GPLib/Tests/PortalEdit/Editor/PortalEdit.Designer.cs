@@ -147,6 +147,12 @@
             this.TexturePreview = new System.Windows.Forms.PictureBox();
             this.TextureList = new System.Windows.Forms.TreeView();
             this.DefaultImages = new System.Windows.Forms.ImageList(this.components);
+            this.ObjectInfo = new System.Windows.Forms.TabPage();
+            this.ObjectList = new System.Windows.Forms.ListBox();
+            this.ObjectListMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ObjectListNewMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.duplicateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -182,6 +188,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.UShift)).BeginInit();
             this.TextureInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TexturePreview)).BeginInit();
+            this.ObjectInfo.SuspendLayout();
+            this.ObjectListMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainContainer
@@ -934,6 +942,7 @@
             this.CellTabControl.Controls.Add(this.EdgeInfo);
             this.CellTabControl.Controls.Add(this.FaceInfo);
             this.CellTabControl.Controls.Add(this.TextureInfo);
+            this.CellTabControl.Controls.Add(this.ObjectInfo);
             this.CellTabControl.Location = new System.Drawing.Point(-3, 3);
             this.CellTabControl.Multiline = true;
             this.CellTabControl.Name = "CellTabControl";
@@ -1033,10 +1042,10 @@
             // 
             this.VertInfo.Controls.Add(this.CellInfoZIsInc);
             this.VertInfo.Controls.Add(this.CellVertList);
-            this.VertInfo.Location = new System.Drawing.Point(4, 49);
+            this.VertInfo.Location = new System.Drawing.Point(4, 25);
             this.VertInfo.Name = "VertInfo";
             this.VertInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.VertInfo.Size = new System.Drawing.Size(201, 278);
+            this.VertInfo.Size = new System.Drawing.Size(201, 302);
             this.VertInfo.TabIndex = 1;
             this.VertInfo.Text = "Verts";
             this.VertInfo.UseVisualStyleBackColor = true;
@@ -1045,7 +1054,7 @@
             // 
             this.CellInfoZIsInc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.CellInfoZIsInc.AutoSize = true;
-            this.CellInfoZIsInc.Location = new System.Drawing.Point(3, 339);
+            this.CellInfoZIsInc.Location = new System.Drawing.Point(3, 363);
             this.CellInfoZIsInc.Name = "CellInfoZIsInc";
             this.CellInfoZIsInc.Size = new System.Drawing.Size(139, 17);
             this.CellInfoZIsInc.TabIndex = 2;
@@ -1076,7 +1085,7 @@
             this.CellVertList.RowHeadersWidth = 4;
             this.CellVertList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.CellVertList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.CellVertList.Size = new System.Drawing.Size(191, 266);
+            this.CellVertList.Size = new System.Drawing.Size(191, 290);
             this.CellVertList.TabIndex = 0;
             this.CellVertList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellVertList_CellValueChanged);
             this.CellVertList.SelectionChanged += new System.EventHandler(this.CellVertList_SelectionChanged);
@@ -1149,9 +1158,9 @@
             // EdgeInfo
             // 
             this.EdgeInfo.Controls.Add(this.CellEdgeList);
-            this.EdgeInfo.Location = new System.Drawing.Point(4, 49);
+            this.EdgeInfo.Location = new System.Drawing.Point(4, 25);
             this.EdgeInfo.Name = "EdgeInfo";
-            this.EdgeInfo.Size = new System.Drawing.Size(201, 278);
+            this.EdgeInfo.Size = new System.Drawing.Size(201, 302);
             this.EdgeInfo.TabIndex = 2;
             this.EdgeInfo.Text = "Edges";
             this.EdgeInfo.UseVisualStyleBackColor = true;
@@ -1176,7 +1185,7 @@
             this.CellEdgeList.RowHeadersWidth = 4;
             this.CellEdgeList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.CellEdgeList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.CellEdgeList.Size = new System.Drawing.Size(191, 272);
+            this.CellEdgeList.Size = new System.Drawing.Size(191, 296);
             this.CellEdgeList.TabIndex = 1;
             this.CellEdgeList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellEdgeList_CellValueChanged);
             // 
@@ -1217,9 +1226,9 @@
             this.FaceInfo.Controls.Add(this.UShift);
             this.FaceInfo.Controls.Add(this.label4);
             this.FaceInfo.Controls.Add(this.FaceMatInfo);
-            this.FaceInfo.Location = new System.Drawing.Point(4, 49);
+            this.FaceInfo.Location = new System.Drawing.Point(4, 25);
             this.FaceInfo.Name = "FaceInfo";
-            this.FaceInfo.Size = new System.Drawing.Size(201, 278);
+            this.FaceInfo.Size = new System.Drawing.Size(201, 302);
             this.FaceInfo.TabIndex = 3;
             this.FaceInfo.Text = "Face";
             this.FaceInfo.UseVisualStyleBackColor = true;
@@ -1228,7 +1237,7 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(86, 222);
+            this.label6.Location = new System.Drawing.Point(86, 246);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(14, 13);
             this.label6.TabIndex = 10;
@@ -1238,7 +1247,7 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 222);
+            this.label7.Location = new System.Drawing.Point(3, 246);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(15, 13);
             this.label7.TabIndex = 9;
@@ -1253,7 +1262,7 @@
             0,
             0,
             196608});
-            this.VScale.Location = new System.Drawing.Point(106, 220);
+            this.VScale.Location = new System.Drawing.Point(106, 244);
             this.VScale.Minimum = new decimal(new int[] {
             100,
             0,
@@ -1273,7 +1282,7 @@
             0,
             0,
             196608});
-            this.UScale.Location = new System.Drawing.Point(24, 220);
+            this.UScale.Location = new System.Drawing.Point(24, 244);
             this.UScale.Minimum = new decimal(new int[] {
             100,
             0,
@@ -1288,7 +1297,7 @@
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 204);
+            this.label8.Location = new System.Drawing.Point(3, 228);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(45, 13);
             this.label8.TabIndex = 6;
@@ -1298,7 +1307,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(86, 171);
+            this.label5.Location = new System.Drawing.Point(86, 195);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(14, 13);
             this.label5.TabIndex = 5;
@@ -1308,7 +1317,7 @@
             // 
             this.ULabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ULabel.AutoSize = true;
-            this.ULabel.Location = new System.Drawing.Point(3, 171);
+            this.ULabel.Location = new System.Drawing.Point(3, 195);
             this.ULabel.Name = "ULabel";
             this.ULabel.Size = new System.Drawing.Size(15, 13);
             this.ULabel.TabIndex = 4;
@@ -1323,7 +1332,7 @@
             0,
             0,
             196608});
-            this.VShift.Location = new System.Drawing.Point(106, 169);
+            this.VShift.Location = new System.Drawing.Point(106, 193);
             this.VShift.Maximum = new decimal(new int[] {
             1,
             0,
@@ -1348,7 +1357,7 @@
             0,
             0,
             196608});
-            this.UShift.Location = new System.Drawing.Point(24, 169);
+            this.UShift.Location = new System.Drawing.Point(24, 193);
             this.UShift.Maximum = new decimal(new int[] {
             1,
             0,
@@ -1368,7 +1377,7 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 153);
+            this.label4.Location = new System.Drawing.Point(3, 177);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(46, 13);
             this.label4.TabIndex = 1;
@@ -1383,7 +1392,7 @@
             this.FaceMatInfo.Multiline = true;
             this.FaceMatInfo.Name = "FaceMatInfo";
             this.FaceMatInfo.ReadOnly = true;
-            this.FaceMatInfo.Size = new System.Drawing.Size(195, 146);
+            this.FaceMatInfo.Size = new System.Drawing.Size(195, 170);
             this.FaceMatInfo.TabIndex = 0;
             // 
             // TextureInfo
@@ -1436,6 +1445,52 @@
             this.DefaultImages.TransparentColor = System.Drawing.Color.Transparent;
             this.DefaultImages.Images.SetKeyName(0, "Grid.png");
             this.DefaultImages.Images.SetKeyName(1, "Folder - Pictures.png");
+            // 
+            // ObjectInfo
+            // 
+            this.ObjectInfo.Controls.Add(this.ObjectList);
+            this.ObjectInfo.Location = new System.Drawing.Point(4, 49);
+            this.ObjectInfo.Name = "ObjectInfo";
+            this.ObjectInfo.Size = new System.Drawing.Size(201, 278);
+            this.ObjectInfo.TabIndex = 5;
+            this.ObjectInfo.Text = "Objects";
+            this.ObjectInfo.UseVisualStyleBackColor = true;
+            // 
+            // ObjectList
+            // 
+            this.ObjectList.ContextMenuStrip = this.ObjectListMenuStrip;
+            this.ObjectList.FormattingEnabled = true;
+            this.ObjectList.Location = new System.Drawing.Point(3, 3);
+            this.ObjectList.Name = "ObjectList";
+            this.ObjectList.Size = new System.Drawing.Size(195, 199);
+            this.ObjectList.TabIndex = 0;
+            // 
+            // ObjectListMenuStrip
+            // 
+            this.ObjectListMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ObjectListNewMenu,
+            this.deleteToolStripMenuItem,
+            this.duplicateToolStripMenuItem});
+            this.ObjectListMenuStrip.Name = "ObjectListMenuStrip";
+            this.ObjectListMenuStrip.Size = new System.Drawing.Size(125, 70);
+            // 
+            // ObjectListNewMenu
+            // 
+            this.ObjectListNewMenu.Name = "ObjectListNewMenu";
+            this.ObjectListNewMenu.Size = new System.Drawing.Size(124, 22);
+            this.ObjectListNewMenu.Text = "New";
+            // 
+            // deleteToolStripMenuItem
+            // 
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.deleteToolStripMenuItem.Text = "Delete";
+            // 
+            // duplicateToolStripMenuItem
+            // 
+            this.duplicateToolStripMenuItem.Name = "duplicateToolStripMenuItem";
+            this.duplicateToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.duplicateToolStripMenuItem.Text = "Duplicate";
             // 
             // EditFrame
             // 
@@ -1494,6 +1549,8 @@
             this.TextureInfo.ResumeLayout(false);
             this.TextureInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TexturePreview)).EndInit();
+            this.ObjectInfo.ResumeLayout(false);
+            this.ObjectListMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1618,6 +1675,12 @@
         private System.Windows.Forms.NumericUpDown VScale;
         private System.Windows.Forms.NumericUpDown UScale;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TabPage ObjectInfo;
+        private System.Windows.Forms.ListBox ObjectList;
+        private System.Windows.Forms.ContextMenuStrip ObjectListMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem ObjectListNewMenu;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem duplicateToolStripMenuItem;
     }
 }
 
