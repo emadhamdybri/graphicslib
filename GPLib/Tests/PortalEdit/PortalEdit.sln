@@ -11,11 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\..\Utilitie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormControls", "..\..\Forms\FormControls\FormControls.csproj", "{063456CE-22FC-4FDD-B1CF-828205AA695D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "World", "..\..\World\World.csproj", "{D5EC63EC-B662-4C70-8C34-6E6AE3661D07}"
+EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
@@ -53,8 +51,18 @@ Global
 		{063456CE-22FC-4FDD-B1CF-828205AA695D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{063456CE-22FC-4FDD-B1CF-828205AA695D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{063456CE-22FC-4FDD-B1CF-828205AA695D}.Release|x86.ActiveCfg = Release|Any CPU
+		{D5EC63EC-B662-4C70-8C34-6E6AE3661D07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5EC63EC-B662-4C70-8C34-6E6AE3661D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5EC63EC-B662-4C70-8C34-6E6AE3661D07}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D5EC63EC-B662-4C70-8C34-6E6AE3661D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5EC63EC-B662-4C70-8C34-6E6AE3661D07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5EC63EC-B662-4C70-8C34-6E6AE3661D07}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal

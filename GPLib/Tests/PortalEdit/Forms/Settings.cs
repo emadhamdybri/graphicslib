@@ -145,7 +145,7 @@ namespace PortalEdit
                 s = (Settings)XML.Deserialize(stream);
                 stream.Close();
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
                 stream.Close();
                 file.Delete();

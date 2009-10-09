@@ -5,6 +5,8 @@ using System.Text;
 
 using OpenTK;
 
+using World;
+
 namespace PortalEdit
 {
     public class UndoObject
@@ -94,9 +96,8 @@ namespace PortalEdit
             descrioption = "Delete Cell";
 
             cell = new EditorCell();
-            cell.GroupName = string.Copy(cell.GroupName);
-            cell.tag = c.tag;
-            cell.Name = string.Copy(cell.Name);
+            cell.ID.GroupName = string.Copy(cell.ID.GroupName);
+            cell.ID.CellName = string.Copy(cell.ID.CellName);
 
             foreach(CellVert v in c.Verts)
                 cell.Verts.Add(new CellVert(v));
@@ -109,7 +110,7 @@ namespace PortalEdit
 
         public override void Undo()
         {
-            cell.Group = Editor.instance.map.FindGroup(cell.GroupName);
+            cell.Group = Editor.instance.map.FindGroup(cell.ID.GroupName);
             if (cell.Group != null)
             {
                 cell.Group.Cells.Add(cell);
@@ -130,8 +131,8 @@ namespace PortalEdit
 
             polygon = poly;
 
-            cell = string.Copy(c.Name);
-            group = string.Copy(c.GroupName);
+            cell = string.Copy(c.ID.CellName);
+            group = string.Copy(c.ID.GroupName);
         }
 
         public override void Undo()
@@ -193,8 +194,8 @@ namespace PortalEdit
         {
             descrioption = "Edit Vertex";
 
-            cellGroup = string.Copy(c.GroupName);
-            cellName =  string.Copy(c.Name);
+            cellGroup = string.Copy(c.ID.GroupName);
+            cellName =  string.Copy(c.ID.CellName);
 
             vert = new CellVert(c.Verts[index]);
             vertIndex = index;
@@ -225,8 +226,8 @@ namespace PortalEdit
         {
             descrioption = "Edit Cell Data";
 
-            cellGroup = string.Copy(c.GroupName);
-            cellName = string.Copy(c.Name);
+            cellGroup = string.Copy(c.ID.GroupName);
+            cellName = string.Copy(c.ID.CellName);
 
             state = c.HeightIsIncremental;
         }
@@ -268,9 +269,9 @@ namespace PortalEdit
         public CellGroupChangeUndo(Cell c, string newGroup)
         {
             descrioption = "Change Cell Group";
-            cell = string.Copy(c.Name);
+            cell = string.Copy(c.ID.CellName);
             group =string.Copy(newGroup);
-            oldGroup = string.Copy(c.GroupName);
+            oldGroup = string.Copy(c.ID.GroupName);
         }
 
         public override void Undo()
@@ -286,7 +287,7 @@ namespace PortalEdit
 
             CellGroup ng = Editor.instance.map.FindGroup(oldGroup);
             c.Group = ng;
-            c.GroupName = ng.Name;
+            c.ID.GroupName = ng.Name;
             ng.Cells.Add(c);
           
             Editor.instance.RebuildMap();
@@ -322,8 +323,8 @@ namespace PortalEdit
         {
             descrioption = "Change Cell Name";
 
-            group = string.Copy(cell.GroupName);
-            oldName = string.Copy(cell.Name);
+            group = string.Copy(cell.ID.GroupName);
+            oldName = string.Copy(cell.ID.CellName);
             cellName = string.Copy(newName);
         }
 
@@ -348,8 +349,8 @@ namespace PortalEdit
         {
             descrioption = "Edit Vert";
 
-            group = string.Copy(cell.GroupName);
-            cellName = string.Copy(cell.Name);
+            group = string.Copy(cell.ID.GroupName);
+            cellName = string.Copy(cell.ID.CellName);
 
             oldPos = new Vector2(cell.Verts[i].Bottom.X,cell.Verts[i].Bottom.Y);
             vertIndex = i;
@@ -376,8 +377,8 @@ namespace PortalEdit
         {
             descrioption = "Edit Edge Visibility";
 
-            group = string.Copy(cell.GroupName);
-            cellName = string.Copy(cell.Name);
+            group = string.Copy(cell.ID.GroupName);
+            cellName = string.Copy(cell.ID.CellName);
 
             edge = i;
             if (edge >= 0)

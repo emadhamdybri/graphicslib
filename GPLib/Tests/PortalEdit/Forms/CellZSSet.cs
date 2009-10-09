@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using World;
+
 namespace PortalEdit
 {
     public partial class CellZSSet : Form

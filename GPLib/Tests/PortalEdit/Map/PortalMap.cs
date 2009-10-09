@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 using OpenTK;
 
-namespace PortalEdit
+namespace PortalEditMap
 {
     public class PortalMapAttribute
     {
@@ -228,7 +228,7 @@ namespace PortalEdit
             {
                 map = (PortalMap)XML.Deserialize(file.OpenRead());
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
                 GZipStream compressionStream = new GZipStream(file.OpenRead(),CompressionMode.Decompress);
                 map = (PortalMap)XML.Deserialize(compressionStream);
@@ -268,7 +268,7 @@ namespace PortalEdit
                 else
                     XML.Serialize(file.OpenWrite(), writeMap);
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
                 return false;
             }

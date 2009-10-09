@@ -11,6 +11,8 @@ using Drawables;
 
 using Math3D;
 
+using World;
+
 namespace PortalEdit
 {
     public enum ViewEditMode
@@ -25,7 +27,7 @@ namespace PortalEdit
 
     class Editor
     {
-        public PortalMap map;
+        public PortalWorld map;
         public MapRenderer mapRenderer;
         public MapViewRenderer viewRenderer;
         public EditFrame frame;
@@ -65,7 +67,7 @@ namespace PortalEdit
             instance = this;
 
             frame = _frame;
-            map = new PortalMap();
+            map = new PortalWorld();
 
             mapRenderer = new MapRenderer(mapctl, map);
             viewRenderer = new MapViewRenderer(view, map);
@@ -163,6 +165,7 @@ namespace PortalEdit
         public void NewObject ( ObjectInstance obj )
         {
             SetDirty();
+            obj.cells = map.FindCells(obj.Postion);
             map.MapObjects.Add(obj);
         }
 
@@ -420,7 +423,7 @@ namespace PortalEdit
         public bool Open ( FileInfo file )
         {
             FileName = file.FullName;
-            PortalMap newMap = PortalMap.Read(file);
+            PortalWorld newMap = PortalWorld.Read(file);
             if (newMap == null)
                 return false;
 
@@ -494,24 +497,24 @@ namespace PortalEdit
 
                 foreach (EditorCell cell in group.Cells)
                 {
-                    if (cell.GroupName == oldName)
-                        cell.GroupName = newName;
+                    if (cell.ID.GroupName == oldName)
+                        cell.ID.GroupName = newName;
 
                     foreach( CellEdge edge in cell.Edges )
                     {
                         foreach (PortalDestination dest in edge.Destinations)
                         {
-                            if (dest.GroupName == oldName)
-                                dest.GroupName = newName;
+                            if (dest.DestinationCell.GroupName == oldName)
+                                dest.DestinationCell.GroupName = newName;
                         }
 
                         foreach (CellWallGeometry geo in edge.Geometry)
                         {
-                            if (geo.BottomGroup == oldName)
-                                geo.BottomGroup = newName;
+                            if (geo.Bottom.GroupName == oldName)
+                                geo.Bottom.GroupName = newName;
 
-                            if (geo.TopGroup == oldName)
-                                geo.TopGroup = newName;
+                            if (geo.Top.GroupName == oldName)
+                                geo.Top.GroupName = newName;
                         }
                     }
                 }
@@ -522,8 +525,8 @@ namespace PortalEdit
 
         public void RenameCell(EditorCell cell, string newName)
         {
-            string oldName = String.Copy(cell.Name);
-            cell.Name = newName;
+            string oldName = String.Copy(cell.ID.CellName);
+            cell.ID.CellName = newName;
 
             foreach (CellGroup group in map.CellGroups)
             {
@@ -534,20 +537,20 @@ namespace PortalEdit
                         foreach (PortalDestination dest in edge.Destinations)
                         {
                             if (dest.Cell == cell)
-                                dest.CellName = newName;
+                                dest.DestinationCell.CellName = newName;
                         }
 
                         foreach (CellWallGeometry geo in edge.Geometry)
                         {
-                            if (geo.BottomGroup == cell.GroupName && geo.BottomCell == oldName)
-                                geo.BottomCell = newName;
-                            if (geo.BottomGroup == string.Empty && tehCell == cell && geo.BottomCell == oldName)
-                                geo.BottomCell = newName;
+                            if (geo.Bottom.GroupName == cell.ID.GroupName && geo.Bottom.CellName == oldName)
+                                geo.Bottom.CellName = newName;
+                            if (geo.Bottom.GroupName == string.Empty && tehCell == cell && geo.Bottom.CellName == oldName)
+                                geo.Bottom.CellName = newName;
 
-                            if (geo.TopGroup == cell.GroupName && geo.BottomCell == oldName)
-                                geo.TopCell = newName;
-                            if (geo.TopGroup == string.Empty && tehCell == cell && geo.TopCell == oldName)
-                                geo.TopCell = newName;
+                            if (geo.Top.GroupName == cell.ID.GroupName && geo.Top.CellName == oldName)
+                                geo.Top.CellName = newName;
+                            if (geo.Top.GroupName == string.Empty && tehCell == cell && geo.Top.CellName == oldName)
+                                geo.Top.CellName = newName;
                         }
                     }
                 }
@@ -570,7 +573,7 @@ namespace PortalEdit
             cell.Group.Cells.Remove(cell);
             newGroup.Cells.Add(cell);
             cell.Group = newGroup;
-            cell.GroupName = newGroup.Name;
+            cell.ID.GroupName = newGroup.Name;
 
             RebuildMap();
             ResetViews();
@@ -671,7 +674,7 @@ namespace PortalEdit
                     group = selCel.Group;
 
                 if (group == null && selCel != null)
-                    group = map.FindGroup(selCel.GroupName);
+                    group = map.FindGroup(selCel.ID);
 
                 if (group == null)
                     group = map.CellGroups[map.CellGroups.Count - 1];
