@@ -33,9 +33,21 @@ namespace portalTest
         Font sans_serif = new Font(FontFamily.GenericSansSerif, 16.0f);
         Font small_serif = new Font(FontFamily.GenericSansSerif, 8.0f);
 
+        Point lastMousePos = Point.Empty;
+        Point thisMousePos = new Point(0, 0);
+
         public GameWindow() : base(1024,768)
         {
             InitializeComponent();
+            Mouse.Move += new MouseMoveEventHandler(Mouse_Move);
+        }
+
+        void Mouse_Move(MouseDevice sender, MouseMoveEventArgs e)
+        {
+            if (lastMousePos == Point.Empty)
+                lastMousePos = new Point(e.X, e.Y);
+
+            thisMousePos = new Point(thisMousePos.X + e.XDelta, thisMousePos.Y + e.YDelta);
         }
 
         protected override void SetupGL()
@@ -69,15 +81,10 @@ namespace portalTest
             clipingFrustum = new DebugableVisibleFrustum(camera.SnapshotFrusum());
         }
 
-        void Mouse_Move(object sender, MouseEventArgs e)
-        {
-            int i = e.X;
-        }
-
         protected override void InitGame()
         {
             world = new DebugablePortalWorld();
-            // build it and stuff
+            Cursor.Position = new Point(Location.X + (Width / 2), Location.X + (Height / 2));
         }
 
         protected override void Resized(EventArgs e)
@@ -93,14 +100,12 @@ namespace portalTest
             float turnSpeed = 40.0f;
             turnSpeed *= (float)e.TimeDelta;
 
-            if (Keyboard[Keys.Left])
-                camera.turn(0, turnSpeed);
-            if (Keyboard[Keys.Right])
-                camera.turn(0, -turnSpeed);
-            if (Keyboard[Keys.Up])
-                camera.turn(-turnSpeed, 0);
-            if (Keyboard[Keys.Down])
-                camera.turn(turnSpeed, 0);
+            Point delta = thisMousePos;
+            thisMousePos = new Point(0,0);
+
+            float sensitivity = 0.1f;
+
+            camera.turn(-turnSpeed * sensitivity * delta.Y, -turnSpeed * sensitivity * delta.X);
            
             Vector3 forward = new Vector3(camera.Heading());
             Vector3 leftward = new Vector3(forward);
@@ -171,7 +176,6 @@ namespace portalTest
                 world.draw();
             }
         }
-
     }
 
     public class DebugablePortalWorld
