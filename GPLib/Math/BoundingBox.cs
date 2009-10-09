@@ -225,20 +225,27 @@ namespace Math3D
             if (points == null)
                 throw new ArgumentNullException();
 
-
             // TODO: Just check that Count > 0
             bool empty = true;
-            Vector3 vector2 = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-            Vector3 vector1 = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+            Vector3 vector2 = Vector3.Zero;
+            Vector3 vector1 = Vector3.Zero;
             foreach (Vector3 vector3 in points)
             {
-                vector2 = Vector3.Min(vector2, vector3);
-                vector1 = Vector3.Max(vector1, vector3);
+                if (vector2 == Vector3.Zero)
+                {
+                    vector2 = new Vector3(vector3);
+                    vector1 = new Vector3(vector3);
+                }
+                else
+                {
+                    vector2 = VectorHelper3.Min(vector2, vector3);
+                    vector1 = VectorHelper3.Max(vector1, vector3);
+                    
+                }
                 empty = false;
             }
             if (empty)
                 throw new ArgumentException();
-
 
             return new BoundingBox(vector2, vector1);
         }
