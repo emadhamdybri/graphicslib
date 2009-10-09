@@ -567,6 +567,8 @@ namespace PortalEdit
             {
                 edge.Normal = new Vector2(Verts[edge.Start].Bottom.Y - Verts[edge.End].Bottom.Y, -1f * (Verts[edge.Start].Bottom.X - Verts[edge.End].Bottom.X));
                 edge.Normal.Normalize();
+                edge.Slope = new Vector2(Verts[edge.Start].Bottom.X - Verts[edge.End].Bottom.X, Verts[edge.Start].Bottom.Y - Verts[edge.End].Bottom.Y);
+                edge.Slope.Normalize();
 
                 Vector2 p1 = new Vector2(Verts[edge.Start].Bottom.X, Verts[edge.Start].Bottom.Y);
                 Vector2 p2 = new Vector2(Verts[edge.End].Bottom.X, Verts[edge.End].Bottom.Y);
