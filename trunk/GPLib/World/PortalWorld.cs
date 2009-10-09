@@ -323,7 +323,7 @@ namespace World
             if (GetFloorPlane().Intersects(point) == PlaneIntersectionType.Back)
                 return false;
 
-            if (GetRoofPlane().Intersects(point) == PlaneIntersectionType.Back)
+            if (GetRoofPlane().IntersectsPoint(point) == PlaneIntersectionType.Back)
                 return false;
 
             return true;
@@ -655,6 +655,7 @@ namespace World
 
             PortalWorld writeMap = new PortalWorld();
             writeMap.MapAttributes = MapAttributes;
+            writeMap.MapObjects = MapObjects;
 
             foreach (CellGroup group in CellGroups)
             {
