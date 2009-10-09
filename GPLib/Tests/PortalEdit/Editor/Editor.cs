@@ -296,6 +296,7 @@ namespace PortalEdit
                 float.TryParse(frame.CellVertList.SelectedRows[0].Cells[3].Value.ToString(), out vert.Top);
 
                 DisplayListSystem.system.Invalidate();
+                GetSelectedCell().Invaldate();
                 RebuildMap();
                 ResetViews();
             }
@@ -324,6 +325,7 @@ namespace PortalEdit
                 vert.Top = newZ;
 
             DisplayListSystem.system.Invalidate();
+            cell.Invaldate();
             RebuildMap();
             ResetViews();
         }
@@ -343,6 +345,7 @@ namespace PortalEdit
             vert.Bottom.Z = newZ;
 
             DisplayListSystem.system.Invalidate();
+            cell.Invaldate();
             RebuildMap();
             ResetViews();
         }
@@ -356,6 +359,7 @@ namespace PortalEdit
             Undo.System.Add(new IncrementalHeightsUndo(cell));
 
             cell.HeightIsIncremental = inc;
+            cell.Invaldate();
         }
 
         public void SetCellEdgeViz ( EditorCell cell, int edge, bool vis )
@@ -407,6 +411,7 @@ namespace PortalEdit
 
             viewRenderer.UnloadMapGraphics();
 
+            map.MapObjects.Clear();
             map.CellGroups.Clear();
             map.MapAttributes.Clear();
             NewGroup();
@@ -623,7 +628,7 @@ namespace PortalEdit
                         vert.Top = val;
                 }
             }
-
+            cell.Invaldate();
             RebuildMap();
             ResetViews();
         }
@@ -645,7 +650,7 @@ namespace PortalEdit
                 vert.Top = roof;
 
             }
-
+            cell.Invaldate();
             RebuildMap();
             ResetViews();
         }
@@ -657,6 +662,7 @@ namespace PortalEdit
 
             cell.Verts[vertIndex].Bottom.X = pos.X;
             cell.Verts[vertIndex].Bottom.Y = pos.Y;
+            cell.Invaldate();
             RebuildMap();
             ResetViews();
         }
