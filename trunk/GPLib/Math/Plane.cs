@@ -178,6 +178,19 @@ namespace Math3D
             return PlaneIntersectionType.Intersecting;
         }
 
+        public PlaneIntersectionType IntersectsPoint(Vector3 point)
+        {
+            Vector3 vec = VectorHelper3.Subtract(Normal * D, point);
+
+            float dot = Vector3.Dot(vec, Normal);
+
+            if (dot < -InsersectionTolerance)
+                return PlaneIntersectionType.Front;
+            if (dot > InsersectionTolerance)
+                return PlaneIntersectionType.Back;
+            return PlaneIntersectionType.Intersecting;
+        }
+
         public void Intersects(ref BoundingSphere sphere, out PlaneIntersectionType result)
         {
             result = Intersects(sphere);
