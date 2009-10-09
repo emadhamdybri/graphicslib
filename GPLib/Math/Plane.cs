@@ -47,6 +47,7 @@ namespace Math3D
 
         public static Plane Up = new Plane(0, 0, 1, 0);
         public static Plane Down = new Plane(0, 0, -1, 0);
+        public static Plane Empty = new Plane(0, 0, 0, 0);
 
         public static float InsersectionTolerance = 0.0001f;
         #endregion Static
