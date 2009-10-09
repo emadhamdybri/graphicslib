@@ -204,16 +204,6 @@ namespace portalTest
 
         public void drawGround()
         {
-            GL.Color3(System.Drawing.Color.LightGreen);
-
-            GL.Begin(BeginMode.Quads);
-            GL.Normal3(0, 0, 1);
-            GL.Vertex3(groundSize, groundSize, -0.01f);
-            GL.Vertex3(-groundSize, groundSize, -0.01f);
-            GL.Vertex3(-groundSize, -groundSize, -0.01f);
-            GL.Vertex3(groundSize, -groundSize, -0.01f);
-            GL.End();
-
             GL.Disable(EnableCap.Lighting);
             grid.Exectute();
             GL.Enable(EnableCap.Lighting);
