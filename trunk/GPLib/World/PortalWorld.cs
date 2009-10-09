@@ -121,6 +121,7 @@ namespace World
         public List<CellWallGeometry> Geometry = new List<CellWallGeometry>();
 
         public Vector2 Normal = new Vector2();
+        public Vector2 Slope = new Vector2();
 
         public List<PortalMapAttribute> EdgeAttributes = new List<PortalMapAttribute>();
 
@@ -163,6 +164,20 @@ namespace World
         public CellMaterialInfo RoofMaterial = new CellMaterialInfo();
 
         public PortalMapAttributes CellAttributes = new PortalMapAttributes();
+
+        [System.Xml.Serialization.XmlIgnoreAttribute]
+        BoundingBox Bounds = BoundingBox.Empty;
+        [System.Xml.Serialization.XmlIgnoreAttribute]
+        Plane FloorPlane = Plane.Empty;
+        [System.Xml.Serialization.XmlIgnoreAttribute]
+        Plane RoofPlane = Plane.Empty;
+        
+        public void Invaldate ()
+        {
+            Bounds = BoundingBox.Empty;
+            FloorPlane = Plane.Empty;
+            RoofPlane = Plane.Empty;
+        }
 
         public override string ToString()
         {
@@ -263,29 +278,55 @@ namespace World
 
         public Plane GetFloorPlane()
         {
-            return new Plane(FloorNormal, Vector3.Dot(FloorNormal, Verts[0].Bottom));
+            if (FloorPlane == Plane.Empty)
+                FloorPlane = new Plane(FloorNormal, Vector3.Dot(FloorNormal, Verts[0].Bottom));
+            return FloorPlane;
         }
 
         public Plane GetRoofPlane()
         {
-            return new Plane(RoofNormal, Vector3.Dot(RoofNormal, RoofPoint(0)));
+            if (RoofPlane == Plane.Empty)
+                RoofPlane = new Plane(RoofNormal, Vector3.Dot(RoofNormal, RoofPoint(0)));
+            return RoofPlane;
         }
 
         public BoundingBox GetBoundingBox ()
         {
-            List<Vector3> verts = new List<Vector3>();
-
-            foreach (CellVert vert in Verts)
+            if (Bounds == BoundingBox.Empty)
             {
-                verts.Add(vert.Bottom);
-                verts.Add(RoofPoint(vert));
+                List<Vector3> verts = new List<Vector3>();
+
+                foreach (CellVert vert in Verts)
+                {
+                    verts.Add(vert.Bottom);
+                    verts.Add(RoofPoint(vert));
+                }
+                Bounds = BoundingBox.CreateFromPoints(verts);
             }
-            return BoundingBox.CreateFromPoints(verts);
+            return Bounds;
         }
 
         public bool PointIn ( Vector3 point )
         {
-            return GetBoundingBox().Contains(point) == ContainmentType.Contains;
+            if (GetBoundingBox().Contains(point) == ContainmentType.Disjoint)
+                return false;
+
+            // check the XY see if we are outside
+            foreach ( CellEdge edge in Edges )
+            {
+                Vector2 v = new Vector2(Verts[edge.Start].Bottom.X - point.X, Verts[edge.Start].Bottom.Y - point.Y);
+                float dot = Vector2.Dot(v, edge.Normal);
+                if (dot > 0)
+                    return false;
+            }
+
+            if (GetFloorPlane().Intersects(point) == PlaneIntersectionType.Back)
+                return false;
+
+            if (GetRoofPlane().Intersects(point) == PlaneIntersectionType.Back)
+                return false;
+
+            return true;
         }
     }
 
