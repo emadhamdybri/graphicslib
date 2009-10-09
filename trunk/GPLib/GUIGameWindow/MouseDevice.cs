@@ -189,16 +189,34 @@ namespace GUIGameWindow
         Point lastDelta = new Point(0, 0);
         bool lastPointSet = false;
 
+        Control control = null;
+
         int wheelCount = 0;
         int lastWheelDelta = 0;
 
         public MouseDevice(Control ctl)
         {
+            control = ctl;
             ctl.MouseDown += new MouseEventHandler(InternalDown);
             ctl.MouseUp += new MouseEventHandler(InternalUp);
 
             ctl.MouseMove += new MouseEventHandler(InternalMove);
             ctl.MouseWheel += new MouseEventHandler(InternalWheel);
+        }
+
+        public void Capture ( bool cap )
+        {
+            control.Capture = cap;
+        }
+
+        public void Hide ( )
+        {
+            Cursor.Hide();
+        }
+
+        public void Show ( )
+        {
+            Cursor.Show();
         }
 
         protected void InternalDown(Object sender, MouseEventArgs args)
