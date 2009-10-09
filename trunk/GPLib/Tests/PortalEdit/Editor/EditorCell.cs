@@ -13,6 +13,8 @@ using Drawables.DisplayLists;
 using Drawables;
 using Math3D;
 
+using World;
+
 namespace PortalEdit
 {
     public class Polygon
@@ -471,12 +473,13 @@ namespace PortalEdit
         {
         }
 
-        public EditorCell (Polygon poly, PortalMap map, CellGroup parentGroup) : base()
+        public EditorCell(Polygon poly, PortalWorld map, CellGroup parentGroup)
+            : base()
         {
             Group = parentGroup;
-            GroupName = parentGroup.Name;
+            ID.GroupName = parentGroup.Name;
             buildFromPolygon(poly, map);
-            Name = parentGroup.NewCellName();
+            ID.CellName = parentGroup.NewCellName();
         }
 
         public EditorCell(Cell cell)
@@ -513,7 +516,7 @@ namespace PortalEdit
             return null;
         }
 
-        public bool buildFromPolygon ( Polygon poly, PortalMap map )
+        public bool buildFromPolygon(Polygon poly, PortalWorld map)
         {
             float v = poly.GetNormalDepth();
 
@@ -557,7 +560,7 @@ namespace PortalEdit
             clearGeometry();
         }
 
-        public bool CheckEdges ( PortalMap map )
+        public bool CheckEdges(PortalWorld map)
         {
             bool hasPortal = false;
             foreach (CellEdge edge in Edges)
@@ -594,8 +597,7 @@ namespace PortalEdit
                             PortalDestination dest = new PortalDestination();
                             dest.Cell = cell;
                             dest.Group = cell.Group;
-                            dest.CellName = cell.Name;
-                            dest.GroupName = cell.GroupName;
+                            dest.DestinationCell = cell.ID;
                             edge.Destinations.Add(dest);
                             edgeHasPortal = true;
                             hasPortal = true;
@@ -717,7 +719,7 @@ namespace PortalEdit
         {
             foreach (CellWallGeometry g in list)
             {
-                if (geo.BottomCell == g.BottomCell && geo.BottomGroup == g.BottomGroup && geo.TopGroup == g.TopGroup && geo.TopCell == g.TopCell)
+                if (geo.Bottom.CellName == g.Bottom.CellName && geo.Bottom.GroupName == g.Bottom.GroupName && geo.Top.GroupName == g.Top.GroupName && geo.Top.CellName == g.Top.CellName)
                     return g;
             }
 
@@ -774,8 +776,8 @@ namespace PortalEdit
                 geo.LowerZ[0] = Verts[edge.Start].Bottom.Z;
                 geo.LowerZ[1] = Verts[edge.End].Bottom.Z;
 
-                geo.BottomCell = Name;
-                geo.TopCell = Name;
+                geo.Bottom = ID;
+                geo.Top = ID;
 
                 Geometry.Add(geo);
             }
@@ -863,9 +865,8 @@ namespace PortalEdit
                         geo.LowerZ[0] = thisSP.Bottom.Z;
                         geo.LowerZ[1] = thisSP.Bottom.Z;
 
-                        geo.BottomCell = Name;
-                        geo.TopCell = topDest.Name;
-                        geo.TopGroup = topDest.GroupName;
+                        geo.Bottom = ID;
+                        geo.Top = topDest.ID;
 
                         Geometry.Add(geo);
                     }
@@ -925,10 +926,8 @@ namespace PortalEdit
                                 geo.LowerZ[0] = topDestSP.GetTopZ(topDest.HeightIsIncremental);
                                 geo.LowerZ[1] = topDestEP.GetTopZ(topDest.HeightIsIncremental);
 
-                                geo.BottomCell = topDest.Name;
-                                geo.TopCell = bestDest.Name;
-                                geo.BottomGroup = topDest.GroupName;
-                                geo.TopGroup = bestDest.GroupName;
+                                geo.Bottom = topDest.ID;
+                                geo.Top = bestDest.ID;
 
                                 Geometry.Add(geo);
 
@@ -976,9 +975,8 @@ namespace PortalEdit
                         geo.LowerZ[0] = bestDestSP.GetTopZ(bestDest.HeightIsIncremental);
                         geo.LowerZ[1] = bestDestEP.GetTopZ(bestDest.HeightIsIncremental);
 
-                        geo.BottomCell = bestDest.Name;
-                        geo.TopCell = Name;
-                        geo.BottomGroup = bestDest.GroupName;
+                        geo.Bottom = bestDest.ID;
+                        geo.Top = ID;
 
                         Geometry.Add(geo);
                     }
@@ -1000,9 +998,8 @@ namespace PortalEdit
                         geo.UpperZ[0] = thisSP.GetTopZ(HeightIsIncremental);
                         geo.UpperZ[1] = thisSP.GetTopZ(HeightIsIncremental);
 
-                        geo.BottomCell = topDest.Name;
-                        geo.BottomGroup = topDest.GroupName;
-                        geo.TopCell = Name;
+                        geo.Bottom = topDest.ID;
+                        geo.Top = ID;
 
                         Geometry.Add(geo);
                     }

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 
 using OpenTK;
+using World;
 
 namespace PortalEdit
 {
@@ -51,7 +52,7 @@ namespace PortalEdit
         public event CellSelectedHander CellSelected;
         public event MouseStatusUpdateHandler MouseStatusUpdate;
 
-        public PortalMap map;
+        public PortalWorld map;
 
         public MapEditMode EditMode { get { return editMode; } set { editMode = value; CheckCursor(); } }
 
@@ -61,7 +62,7 @@ namespace PortalEdit
         Vector2 underlayCenter = Vector2.Zero;
         float underlayScale = 0.01f;
 
-        public MapRenderer(Control ctl, PortalMap _map)
+        public MapRenderer(Control ctl, PortalWorld _map)
         {
             map = _map;
             control = ctl;

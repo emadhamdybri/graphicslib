@@ -13,12 +13,14 @@ using Drawables.DisplayLists;
 using Drawables.Textures;
 using Drawables.Materials;
 
+using World;
+
 namespace PortalEdit
 {
     public class MapViewRenderer
     {
         GLControl control;
-        PortalMap map;
+        PortalWorld map;
 
         Vector3 offset = new Vector3(0, 0, 1);
         Vector2 rotation = new Vector2(0, 0);
@@ -56,7 +58,7 @@ namespace PortalEdit
         public delegate void CellClickedEventHandler(object sender, CellClickedEventArgs e);
         public event CellClickedEventHandler CellClicked;
 
-        public MapViewRenderer(GLControl ctl, PortalMap m)
+        public MapViewRenderer(GLControl ctl, PortalWorld m)
         {
             map = m;
             control = ctl;

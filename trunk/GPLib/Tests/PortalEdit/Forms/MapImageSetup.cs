@@ -10,6 +10,8 @@ using System.IO;
 
 using OpenTK;
 
+using World;
+
 namespace PortalEdit
 {
     public partial class MapImageSetup : Form
@@ -21,7 +23,7 @@ namespace PortalEdit
 
             PixelsPerUnit.Value = 100;
 
-            PortalMap map = Editor.instance.map;
+            PortalWorld map = Editor.instance.map;
 
             ImageFileName.Text = GetMapUnderlayImage(map);
             PixelsPerUnit.Value = (decimal)GetMapUnderlayPPU(map);
@@ -32,7 +34,7 @@ namespace PortalEdit
             UP = true;
         }
 
-        public static string GetMapUnderlayImage ( PortalMap map )
+        public static string GetMapUnderlayImage ( PortalWorld map )
         {
             PortalMapAttribute[] att = map.MapAttributes.Find("Editor:Image:Underlay:File");
             if (att.Length > 0)
@@ -41,7 +43,7 @@ namespace PortalEdit
                 return string.Empty;
         }
 
-        public static Vector2 GetMapUnderlayCenter ( PortalMap map )
+        public static Vector2 GetMapUnderlayCenter(PortalWorld map)
         {
             Vector2 vec = new Vector2(0, 0);
 
@@ -76,7 +78,7 @@ namespace PortalEdit
             return vec;
         }
 
-        public static float GetMapUnderlayPPU ( PortalMap map )
+        public static float GetMapUnderlayPPU(PortalWorld map)
         {
             float ppu = 100;
             PortalMapAttribute[] att = map.MapAttributes.Find("Editor:Image:Underlay:Scale");
@@ -127,7 +129,7 @@ namespace PortalEdit
 
         private void OK_Click(object sender, EventArgs e)
         {
-            PortalMap map = Editor.instance.map;
+            PortalWorld map = Editor.instance.map;
 
             map.MapAttributes.Remove("Editor:Image:Underlay:File");
             map.MapAttributes.Remove("Editor:Image:Underlay:Scale");

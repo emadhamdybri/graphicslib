@@ -5,14 +5,14 @@ using System.Text;
 using OpenTK;
 using Math3D;
 
-namespace PortalEdit
+namespace PortalEditMap
 {
     public class CellVert
     {
         public Vector3 Bottom;
         public float Top;
 
-        public float GetTopZ ( bool incremental )
+        public float GetTopZ(bool incremental)
         {
             if (incremental)
                 return Top + Bottom.Z;
@@ -56,9 +56,9 @@ namespace PortalEdit
 
         public PortalMapAttributes DestinationAttributes = new PortalMapAttributes();
 
-        public PortalDestination(){}
+        public PortalDestination() { }
 
-        public PortalDestination ( PortalDestination d )
+        public PortalDestination(PortalDestination d)
         {
             CellName = string.Copy(d.CellName);
             GroupName = string.Copy(d.GroupName);
@@ -114,12 +114,12 @@ namespace PortalEdit
             End = -1;
         }
 
-        public CellEdge( CellEdge e)
+        public CellEdge(CellEdge e)
         {
             Start = e.Start;
             End = e.End;
             EdgeType = e.EdgeType;
-            foreach(PortalDestination dest in e.Destinations)
+            foreach (PortalDestination dest in e.Destinations)
                 Destinations.Add(new PortalDestination(dest));
             Normal = new Vector2(e.Normal);
         }
@@ -155,9 +155,9 @@ namespace PortalEdit
         }
 
         public Cell()
-        {}
+        { }
 
-        public Cell ( Cell cell )
+        public Cell(Cell cell)
         {
             Name = cell.Name;
             Verts = cell.Verts;
@@ -165,7 +165,7 @@ namespace PortalEdit
             HeightIsIncremental = cell.HeightIsIncremental;
         }
 
-        public bool HasEdge ( Vector2 e1, Vector2 e2 )
+        public bool HasEdge(Vector2 e1, Vector2 e2)
         {
             foreach (CellEdge edge in Edges)
             {
@@ -181,9 +181,9 @@ namespace PortalEdit
             return false;
         }
 
-        public int MatchingIndex ( Vector3 inVert )
+        public int MatchingIndex(Vector3 inVert)
         {
-            for ( int i = 0; i < Verts.Count; i++)
+            for (int i = 0; i < Verts.Count; i++)
             {
                 if (FloatHelper.Equals(inVert.X, Verts[i].Bottom.X) && FloatHelper.Equals(inVert.Y, Verts[i].Bottom.Y))
                     return i;
@@ -206,7 +206,7 @@ namespace PortalEdit
             return null;
         }
 
-        public float EdgeDistance ( CellEdge edge )
+        public float EdgeDistance(CellEdge edge)
         {
             CellVert sp = Verts[edge.Start];
             CellVert ep = Verts[edge.End];
@@ -214,12 +214,12 @@ namespace PortalEdit
             return (float)Math.Sqrt((ep.Bottom.X - sp.Bottom.X) * (ep.Bottom.X - sp.Bottom.X) + (ep.Bottom.Y - sp.Bottom.Y) * (ep.Bottom.Y - sp.Bottom.Y));
         }
 
-        public float EdgeDistance ( int edge )
-        { 
+        public float EdgeDistance(int edge)
+        {
             return EdgeDistance(Edges[edge]);
         }
 
-        public Vector3 FloorPoint ( int index )
+        public Vector3 FloorPoint(int index)
         {
             return Verts[index].Bottom;
         }
@@ -258,7 +258,7 @@ namespace PortalEdit
         public List<Cell> Cells = new List<Cell>();
         public PortalMapAttributes GroupAttributes = new PortalMapAttributes();
 
-        protected bool NameExists ( string name )
+        protected bool NameExists(string name)
         {
             foreach (Cell cell in Cells)
             {
@@ -268,7 +268,7 @@ namespace PortalEdit
             return false;
         }
 
-        public string NewCellName ( )
+        public string NewCellName()
         {
             int count = Cells.Count;
             while (NameExists(count.ToString()))
@@ -277,7 +277,7 @@ namespace PortalEdit
             return count.ToString();
         }
 
-        public Cell HasEdge ( Vector2 e1, Vector2 e2 )
+        public Cell HasEdge(Vector2 e1, Vector2 e2)
         {
             foreach (Cell cell in Cells)
             {
@@ -288,7 +288,7 @@ namespace PortalEdit
             return null;
         }
 
-        public Cell FindCell ( string name )
+        public Cell FindCell(string name)
         {
             foreach (Cell cell in Cells)
             {

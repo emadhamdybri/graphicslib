@@ -7,6 +7,8 @@ using OpenTK;
 using Math3D;
 using OpenTK.Graphics;
 
+using World;
+
 namespace PortalEdit
 {
     public class MapObjectHandler

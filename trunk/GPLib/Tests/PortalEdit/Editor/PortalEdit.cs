@@ -14,6 +14,7 @@ using FormControls;
 using Drawables.DisplayLists;
 using Drawables.Textures;
 using Math3D;
+using World;
 
 namespace PortalEdit
 {
@@ -392,7 +393,7 @@ namespace PortalEdit
                     selectedNode = node;
                 foreach ( Cell cell in group.Cells )
                 {
-                    TreeNode child = new TreeNode(cell.Name, 1, 3);
+                    TreeNode child = new TreeNode(cell.ID.CellName, 1, 3);
                     child.Tag = cell;
                     child.ContextMenuStrip = CellRightMouseMenu;
                     node.Nodes.Add(child);
@@ -486,7 +487,7 @@ namespace PortalEdit
             foreach (CellGroup group in editor.map.CellGroups)
             {
                 int item = CellGroupDropdown.Items.Add(group.Name);
-                if (cell.GroupName == group.Name)
+                if (cell.ID.GroupName == group.Name)
                     thisGroup = item;
             }
             CellGroupDropdown.SelectedIndex = thisGroup;
@@ -589,7 +590,7 @@ namespace PortalEdit
             {
                 float.TryParse(EditZMinus.Text,out Editor.EditZFloor);
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
                 EditZMinus.Text = Editor.EditZFloor.ToString();
             }
@@ -603,7 +604,7 @@ namespace PortalEdit
             {
                 float.TryParse(EditZPlus.Text, out Editor.EditZRoof);
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
                 EditZPlus.Text = Editor.EditZRoof.ToString();
             }
@@ -735,7 +736,7 @@ namespace PortalEdit
         private void RenameCell ( EditorCell cell )
         {
             RenameItem dlg = new RenameItem();
-            dlg.ItemName.Text = string.Copy(cell.Name);
+            dlg.ItemName.Text = string.Copy(cell.ID.CellName);
             if (dlg.ShowDialog(this)== DialogResult.OK)
             {
                 if (cell.Group.FindCell(dlg.ItemName.Text) != null)
@@ -1088,7 +1089,6 @@ namespace PortalEdit
                     }
                 }
             }
-
             loadingUI = false;
         }
     }

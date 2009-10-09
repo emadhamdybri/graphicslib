@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{83DDDF59-B115-4513-B479-3EC8B946E998}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -153,6 +153,10 @@
     <ProjectReference Include="..\..\Math\Math3D.csproj">
       <Project>{0BC4671F-FF72-4D3E-9889-44382F6C64F2}</Project>
       <Name>Math3D</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\World\World.csproj">
+      <Project>{D5EC63EC-B662-4C70-8C34-6E6AE3661D07}</Project>
+      <Name>World</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
