@@ -278,6 +278,36 @@ namespace Math3D
         {
             return new Vector3(v1.X-v2.X,v1.Y-v2.Y,v1.Z-v2.Z);
         }
+
+        public static Vector3 Min ( Vector3 v1, Vector3 v2 )
+        {
+            Vector3 ret = new Vector3(v1);
+            if (v2.X < ret.X)
+                ret.X = v2.X;
+            
+            if (v2.Y < ret.Y)
+                ret.Y = v2.Y;
+            
+            if (v2.Z < ret.Z)
+                ret.Z = v2.Z;
+
+            return ret;
+        }
+
+        public static Vector3 Max(Vector3 v1, Vector3 v2)
+        {
+            Vector3 ret = new Vector3(v1);
+            if (v2.X > ret.X)
+                ret.X = v2.X;
+
+            if (v2.Y > ret.Y)
+                ret.Y = v2.Y;
+
+            if (v2.Z > ret.Z)
+                ret.Z = v2.Z;
+
+            return ret;
+        }
     }
 
     public class VectorHelper2
