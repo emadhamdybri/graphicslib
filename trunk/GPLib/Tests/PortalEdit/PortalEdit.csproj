@@ -103,6 +103,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\RenameItem.resx">
       <DependentUpon>RenameItem.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MapImageSetup.resx">
       <DependentUpon>MapImageSetup.cs</DependentUpon>
