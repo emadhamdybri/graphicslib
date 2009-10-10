@@ -180,22 +180,6 @@ namespace PortalEdit
             CellVert destSP = dest.Cell.MatchingVert(cell.Verts[edge.Start]);
             CellVert destEP = dest.Cell.MatchingVert(cell.Verts[edge.End]);
 
-            float SPTop = dest.Cell.RoofZ(destSP);
-            if (cell.RoofZ(edge.Start) < SPTop)
-                SPTop = cell.RoofZ(edge.Start);
-
-            float EPTop = dest.Cell.RoofZ(destEP);
-            if (cell.RoofZ(edge.End) < EPTop)
-                EPTop = cell.RoofZ(edge.End);
-
-            float SPBottom = destSP.Bottom.Z;
-            if (cell.Verts[edge.Start].Bottom.Z < SPBottom)
-                SPBottom = cell.Verts[edge.Start].Bottom.Z;
-
-            float EPBottom = destEP.Bottom.Z;
-            if (cell.Verts[edge.End].Bottom.Z < EPBottom)
-                EPBottom = cell.Verts[edge.End].Bottom.Z;
-
             if (destSP == null || destEP == null)
                 return;
 
@@ -209,10 +193,10 @@ namespace PortalEdit
             GL.Begin(BeginMode.Quads);
 
             GL.Normal3(edge.Normal.X, edge.Normal.Y, 0);
-            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, EPBottom);
-            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, SPBottom);
-            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, SPTop);
-            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, EPTop);
+            GL.Vertex3(dest.EPBottom);
+            GL.Vertex3(dest.SPBottom);
+            GL.Vertex3(dest.SPTop);
+            GL.Vertex3(dest.EPTop);
 
             GL.End();
 
@@ -225,11 +209,10 @@ namespace PortalEdit
 
             GL.Begin(BeginMode.LineLoop);
 
-            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, EPBottom);
-            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, SPBottom);
-            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, SPTop);
-            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, EPTop);
-
+            GL.Vertex3(dest.EPBottom);
+            GL.Vertex3(dest.SPBottom);
+            GL.Vertex3(dest.SPTop);
+            GL.Vertex3(dest.EPTop);
             GL.End();
 
             GL.LineWidth(1);
@@ -592,6 +575,8 @@ namespace PortalEdit
                 Vector2 p2 = new Vector2(Verts[edge.End].Bottom.X, Verts[edge.End].Bottom.Y);
                 List<Cell> cellsWithEdge = map.CellsThatContainEdge(p1, p2,this);
 
+                edge.Destinations.Clear();
+
                 bool edgeHasPortal = false;
 
                 if (cellsWithEdge.Count > 0)
@@ -618,6 +603,23 @@ namespace PortalEdit
                             dest.Cell = cell;
                             dest.Group = cell.Group;
                             dest.DestinationCell = cell.ID;
+
+                            dest.SPTop = dest.Cell.RoofPoint(destSP);
+                            if (RoofZ(edge.Start) < dest.SPTop.Z)
+                                dest.SPTop.Z = RoofZ(edge.Start);
+
+                            dest.EPTop = dest.Cell.RoofPoint(destEP);
+                            if (RoofZ(edge.End) < dest.EPTop.Z)
+                                dest.EPTop.Z = RoofZ(edge.End);
+
+                            dest.SPBottom = new Vector3(destSP.Bottom);
+                            if (Verts[edge.Start].Bottom.Z > dest.SPBottom.Z)
+                                dest.SPBottom.Z = Verts[edge.Start].Bottom.Z;
+
+                            dest.EPBottom = new Vector3(destEP.Bottom);
+                            if (Verts[edge.End].Bottom.Z > dest.EPBottom.Z)
+                                dest.EPBottom.Z = Verts[edge.End].Bottom.Z;
+
                             edge.Destinations.Add(dest);
                             edgeHasPortal = true;
                             hasPortal = true;
