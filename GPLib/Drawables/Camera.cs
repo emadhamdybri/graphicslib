@@ -37,21 +37,21 @@ namespace Drawables.Cameras
         public float FOV
         {
             get { return fov; }
-            set { fov = FOV; updatePerspective(); }
+            set { fov = FOV; SetPersective(); }
         }
 
         float hither = 0.01f;
         public float NearPlane
         {
             get { return hither; }
-            set { hither = NearPlane; updatePerspective(); }
+            set { hither = NearPlane; SetPersective(); }
         }
 
         float yon = 1000.0f;
         public float FarPlane
         {
             get { return yon; }
-            set { yon = FarPlane; updatePerspective(); }
+            set { yon = FarPlane; SetPersective(); }
         }
 
         VisibleFrustum frustum = new VisibleFrustum();
@@ -103,12 +103,22 @@ namespace Drawables.Cameras
             return forward;
         }
 
-        void updatePerspective ()
+        public void SetPersective ()
         {
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             frustum.SetProjection(fov, aspect, hither, yon,width, height);
             GL.MultTransposeMatrix(ref frustum.projection);
+            GL.MatrixMode(MatrixMode.Modelview);
+        }
+
+        public void SetOrthographic()
+        {
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            GL.Ortho(0, width, 0, height, 0, yon);
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
         }
 
         public void Resize(Int32 _width, Int32 _height)
@@ -117,7 +127,7 @@ namespace Drawables.Cameras
             height = _height;
 
             aspect = width/(float)height;
-            updatePerspective();
+            SetPersective();
         }
 
         public void Execute()
