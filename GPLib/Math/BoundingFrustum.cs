@@ -394,9 +394,35 @@ namespace Math3D
             return true;
         }
 
+        public bool Intersects(IEnumerable<Vector3> polygon)
+        {
+            foreach (Plane plane in FrustumHelper.GetPlanes(this))
+            {
+                bool gotOne = false;
+                foreach (Vector3 vert in polygon)
+                {
+                    if ((plane.Normal.X * vert.X) + (plane.Normal.Y * vert.Y) + (plane.Normal.Z * vert.Z) + plane.D > 0)
+                    {
+                        gotOne = true;
+                        break;
+                    }
+
+                }
+                if (gotOne)
+                    continue;                
+            }
+
+            return true;
+        }
+
         public void Intersects(ref BoundingBox box, out bool result)
         {
            result = Intersects(box);
+        }
+
+        public void Intersects(ref IEnumerable<Vector3> polygon, out bool result)
+        {
+            result = Intersects(polygon);
         }
 
         public bool Intersects(BoundingFrustum frustum)
