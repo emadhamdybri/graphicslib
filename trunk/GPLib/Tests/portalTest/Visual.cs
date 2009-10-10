@@ -231,6 +231,18 @@ namespace portalTest
             Move(increment.Y, increment.X, increment.Z);
         }
 
+        public void CopyFrom (ViewPosition pos)
+        {
+            Position.X = pos.Position.X;
+            Position.Y = pos.Position.Y;
+            Position.Z = pos.Position.Z;
+
+            Position.X = pos.Position.X;
+            Position.Y = pos.Position.Y;
+
+            cell = pos.cell;
+        }
+
         public void Move(float forward, float sideways, float up)
         {
             Vector3 forwardVec = new Vector3(Heading());
@@ -337,6 +349,32 @@ namespace portalTest
             camera.Resize(window.Width, window.Height);
         }
 
+        void DrawOverlay()
+        {
+            GL.Disable(EnableCap.Lighting);
+            float mapSize = 250f;
+            // draw map frame
+            GL.Color4(1, 1, 1, 0.0f);
+            GL.Begin(BeginMode.Quads);
+
+            GL.Vertex3(mapSize, window.Height - mapSize, -100f);
+            GL.Vertex3(window.Width, window.Height - mapSize, -100f);
+            GL.Vertex3(window.Width, window.Height, -100f);
+            GL.Vertex3(mapSize, window.Height, -100f);
+
+            GL.Vertex3(0, 0, -100f);
+            GL.Vertex3(window.Width,0, -100f);
+            GL.Vertex3(window.Width, window.Height - mapSize, -100f);
+            GL.Vertex3(0, window.Height - mapSize, -100f);
+
+            GL.End();
+
+            GL.PushMatrix();
+            GL.Translate(mapSize/2f,window.Height - mapSize / 2f,-150);
+            renderer.DrawMapView(view);
+            GL.PopMatrix();
+        }
+
         public void RenderFrame ()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -350,9 +388,9 @@ namespace portalTest
             camera.Execute();
 
             DrawablesSystem.system.removeAll();
-
             renderer.ComputeViz();
 
+            GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.Light0);
             GL.Light(LightName.Light0, LightParameter.Position, new Vector4(10, 15, 10, 1.0f));
 
@@ -366,6 +404,14 @@ namespace portalTest
             while (!renderer.VizDone()) ;
 
             DrawablesSystem.system.Execute();
+            DrawablesSystem.system.removeAll();
+
+            camera.SetOrthographic();
+            GL.Clear(ClearBufferMask.DepthBufferBit);
+
+            DrawOverlay();
+
+            camera.SetPersective();
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
 
