@@ -659,7 +659,10 @@ namespace World
                         if (edge.EdgeType == CellEdgeType.Portal)
                         {
                             foreach (PortalDestination dest in edge.Destinations)
+                            {
                                 dest.Cell = FindCell(dest.DestinationCell);
+                                dest.Group = dest.Cell.Group;
+                            }
                         }
                     }
                 }
