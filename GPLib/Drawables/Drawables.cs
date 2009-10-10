@@ -88,6 +88,11 @@ namespace Drawables
                 mat.name = defaultMatName;
             }
 
+            Add();
+        }
+
+        public void Add ( )
+        {
             DrawablesSystem.system.addItem(mat, ExecuteCallback, pass);
         }
 
@@ -120,6 +125,7 @@ namespace Drawables
         public static DrawablesSystem system = new DrawablesSystem();
 
         public static int FirstPass = 0;
+        public static int MiddlePass = 500;
         public static int LastPass = 1000;
 
         Dictionary<int, Dictionary<Material, List<ExecuteItem>>> passes = new Dictionary<int, Dictionary<Material, List<ExecuteItem>>>();
