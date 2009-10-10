@@ -31,6 +31,7 @@ namespace portalTest
         String dataDir = string.Empty;
 
         ViewPosition player = new ViewPosition();
+        ViewPosition lastPlayerPos = new ViewPosition();
 
         public Game(GUIGameWindowBase win)
         {
@@ -50,6 +51,7 @@ namespace portalTest
             visual.view = player;
 
             player.Move(0, 0, 1);
+            lastPlayerPos.CopyFrom(player);
         }
 
         string GetSlashPath ( int num )
@@ -114,6 +116,7 @@ namespace portalTest
         {
             if (window.Keyboard[Keys.Escape])
                 return true;
+            lastPlayerPos.CopyFrom(player);
 
             float turnSpeed = 40.0f;
             turnSpeed *= (float)e.TimeDelta;
@@ -146,7 +149,43 @@ namespace portalTest
 
             player.Move(movement);
 
+            checkMovement();
+
             return false;
+        }
+
+
+        void checkMovement ( )
+        {
+            if (player.cell == null)
+                return;
+
+            Vector2 circle = new Vector2(player.Position);
+            float radius = 0.25f;
+
+            if (!player.cell.CircleIn(circle, radius))
+            {   
+                foreach (CellEdge edge in player.cell.Edges)
+                {
+                    if (player.cell.CircleCrossEdge(edge,circle, radius))
+                    {
+                        if (edge.EdgeType == CellEdgeType.Wall)
+                            player.CopyFrom(lastPlayerPos);
+                        else
+                        {
+                            Cell destination = edge.Destinations[0].Cell;
+                            if (destination == null)
+                                return;
+
+                            if (destination.PointIn(player.Position))
+                                player.cell = destination;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
         }
 
         public bool Update(GUIGameWindowBase.UpdateFrameArgs e)

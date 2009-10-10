@@ -291,8 +291,63 @@ namespace portalTest
             return true;
         }
 
-        public void Draw ()
+        public void Draw()
         {
+        }
+
+        public void DrawMapView ( ViewPosition view )
+        {
+            float scale = 20f;
+
+            GL.Color4(Color.Red);
+            IntPtr q = Glu.NewQuadric();
+            Glu.Sphere(q,5, 10, 10);
+            Glu.DeleteQuadric(q);
+
+            GL.Rotate(view.Rotation.Y - 90, 0, 0, 1);
+            GL.Translate(-view.Position.X * scale, -view.Position.Y * scale, -1);
+
+            GL.LineWidth(2);
+
+            GL.Color4(1f, 0f, 0f, 0.5f);
+            foreach (CellGroup group in World.CellGroups)
+            {
+                foreach (VizCell cell in group.Cells)
+                {
+                    if (cell == view.cell)
+                        GL.Color3(Color.Olive);
+                    else
+                        GL.Color3(Color.Green);
+
+                    GL.Begin(BeginMode.Polygon);
+                    foreach( CellVert vert in cell.Verts )
+                       GL.Vertex2(vert.Bottom.X * scale, vert.Bottom.Y * scale);
+                    GL.End();
+
+                    GL.Color3(Color.LightGreen);
+                    foreach (CellEdge edge in cell.Edges)
+                    {
+                        if (edge.EdgeType == CellEdgeType.Portal)
+                        {
+                            GL.Color3(Color.OliveDrab);
+                            foreach( PortalDestination dest in edge.Destinations)
+                            {
+                                if (dest.Cell.Group != group)
+                                    GL.Color3(Color.Yellow);
+                            }
+                        }
+                        else
+                            GL.Color3(Color.LightGreen);
+
+                       GL.Begin(BeginMode.Lines);
+                       GL.Vertex3(cell.Verts[edge.Start].Bottom.X * scale, cell.Verts[edge.Start].Bottom.Y * scale, 1);
+                       GL.Vertex3(cell.Verts[edge.End].Bottom.X * scale, cell.Verts[edge.End].Bottom.Y * scale, 1);
+                       GL.End();
+
+                    }
+                }
+            }
+            GL.LineWidth(1);
         }
     }
 }
