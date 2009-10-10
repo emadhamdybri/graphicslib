@@ -40,7 +40,7 @@ namespace Drawables.Cameras
             set { fov = FOV; updatePerspective(); }
         }
 
-        float hither = 1f;
+        float hither = 0.01f;
         public float NearPlane
         {
             get { return hither; }
