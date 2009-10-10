@@ -146,13 +146,13 @@
             this.PreviewInfo = new System.Windows.Forms.TextBox();
             this.TexturePreview = new System.Windows.Forms.PictureBox();
             this.TextureList = new System.Windows.Forms.TreeView();
-            this.DefaultImages = new System.Windows.Forms.ImageList(this.components);
             this.ObjectInfo = new System.Windows.Forms.TabPage();
             this.ObjectList = new System.Windows.Forms.ListBox();
             this.ObjectListMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ObjectListNewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DefaultImages = new System.Windows.Forms.ImageList(this.components);
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -215,8 +215,8 @@
             this.MainContainer.Panel2.Controls.Add(this.ViewRadioPanel);
             this.MainContainer.Panel2.Controls.Add(this.GLView);
             this.MainContainer.Panel2MinSize = 120;
-            this.MainContainer.Size = new System.Drawing.Size(889, 513);
-            this.MainContainer.SplitterDistance = 444;
+            this.MainContainer.Size = new System.Drawing.Size(838, 513);
+            this.MainContainer.SplitterDistance = 418;
             this.MainContainer.TabIndex = 0;
             // 
             // panel1
@@ -396,7 +396,7 @@
             this.MapEditToolsPanel.Controls.Add(this.MapZoomPanel);
             this.MapEditToolsPanel.Location = new System.Drawing.Point(3, 3);
             this.MapEditToolsPanel.Name = "MapEditToolsPanel";
-            this.MapEditToolsPanel.Size = new System.Drawing.Size(429, 29);
+            this.MapEditToolsPanel.Size = new System.Drawing.Size(403, 29);
             this.MapEditToolsPanel.TabIndex = 5;
             // 
             // MapRadioPanel
@@ -453,7 +453,7 @@
             this.MapZoomPanel.Controls.Add(this.ResetZoom);
             this.MapZoomPanel.Controls.Add(this.MapZoomOut);
             this.MapZoomPanel.Controls.Add(this.MapZoomIn);
-            this.MapZoomPanel.Location = new System.Drawing.Point(322, 0);
+            this.MapZoomPanel.Location = new System.Drawing.Point(296, 0);
             this.MapZoomPanel.Name = "MapZoomPanel";
             this.MapZoomPanel.Size = new System.Drawing.Size(100, 25);
             this.MapZoomPanel.TabIndex = 4;
@@ -496,7 +496,7 @@
             this.MapView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.MapView.Location = new System.Drawing.Point(3, 109);
             this.MapView.Name = "MapView";
-            this.MapView.Size = new System.Drawing.Size(433, 399);
+            this.MapView.Size = new System.Drawing.Size(407, 399);
             this.MapView.TabIndex = 0;
             this.MapView.TabStop = false;
             // 
@@ -512,7 +512,7 @@
             this.ViewCheckPanel.Location = new System.Drawing.Point(3, 3);
             this.ViewCheckPanel.Name = "ViewCheckPanel";
             this.ViewCheckPanel.SelectedItem = null;
-            this.ViewCheckPanel.Size = new System.Drawing.Size(425, 37);
+            this.ViewCheckPanel.Size = new System.Drawing.Size(400, 37);
             this.ViewCheckPanel.TabIndex = 0;
             // 
             // ShowUnderlay
@@ -520,7 +520,7 @@
             this.ShowUnderlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ShowUnderlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ShowUnderlay.Image = ((System.Drawing.Image)(resources.GetObject("ShowUnderlay.Image")));
-            this.ShowUnderlay.Location = new System.Drawing.Point(378, 1);
+            this.ShowUnderlay.Location = new System.Drawing.Point(353, 1);
             this.ShowUnderlay.Name = "ShowUnderlay";
             this.ShowUnderlay.Size = new System.Drawing.Size(36, 36);
             this.ShowUnderlay.TabIndex = 2;
@@ -557,7 +557,7 @@
             this.ViewRadioPanel.Location = new System.Drawing.Point(3, 45);
             this.ViewRadioPanel.Name = "ViewRadioPanel";
             this.ViewRadioPanel.SelectedItem = null;
-            this.ViewRadioPanel.Size = new System.Drawing.Size(379, 26);
+            this.ViewRadioPanel.Size = new System.Drawing.Size(354, 26);
             this.ViewRadioPanel.TabIndex = 4;
             this.ViewRadioPanel.TagsAreValues = false;
             // 
@@ -592,7 +592,7 @@
             this.GLView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.GLView.Location = new System.Drawing.Point(3, 77);
             this.GLView.Name = "GLView";
-            this.GLView.Size = new System.Drawing.Size(433, 427);
+            this.GLView.Size = new System.Drawing.Size(408, 427);
             this.GLView.TabIndex = 0;
             this.GLView.VSync = false;
             // 
@@ -878,7 +878,7 @@
             this.SidebarSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.SidebarSplitter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.SidebarSplitter.Location = new System.Drawing.Point(895, 27);
+            this.SidebarSplitter.Location = new System.Drawing.Point(844, 27);
             this.SidebarSplitter.Name = "SidebarSplitter";
             this.SidebarSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -889,7 +889,7 @@
             // SidebarSplitter.Panel2
             // 
             this.SidebarSplitter.Panel2.Controls.Add(this.CellTabControl);
-            this.SidebarSplitter.Size = new System.Drawing.Size(211, 509);
+            this.SidebarSplitter.Size = new System.Drawing.Size(262, 509);
             this.SidebarSplitter.SplitterDistance = 170;
             this.SidebarSplitter.TabIndex = 12;
             // 
@@ -905,7 +905,7 @@
             this.MapTree.Location = new System.Drawing.Point(3, 3);
             this.MapTree.Name = "MapTree";
             this.MapTree.SelectedImageIndex = 0;
-            this.MapTree.Size = new System.Drawing.Size(203, 162);
+            this.MapTree.Size = new System.Drawing.Size(254, 162);
             this.MapTree.TabIndex = 7;
             this.MapTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MapTree_AfterSelect);
             this.MapTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.MapTree_NodeMouseClick);
@@ -943,11 +943,11 @@
             this.CellTabControl.Controls.Add(this.FaceInfo);
             this.CellTabControl.Controls.Add(this.TextureInfo);
             this.CellTabControl.Controls.Add(this.ObjectInfo);
-            this.CellTabControl.Location = new System.Drawing.Point(-3, 3);
+            this.CellTabControl.Location = new System.Drawing.Point(3, 3);
             this.CellTabControl.Multiline = true;
             this.CellTabControl.Name = "CellTabControl";
             this.CellTabControl.SelectedIndex = 0;
-            this.CellTabControl.Size = new System.Drawing.Size(209, 331);
+            this.CellTabControl.Size = new System.Drawing.Size(254, 331);
             this.CellTabControl.TabIndex = 11;
             // 
             // CellInfo
@@ -962,7 +962,7 @@
             this.CellInfo.Location = new System.Drawing.Point(4, 49);
             this.CellInfo.Name = "CellInfo";
             this.CellInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.CellInfo.Size = new System.Drawing.Size(201, 278);
+            this.CellInfo.Size = new System.Drawing.Size(246, 278);
             this.CellInfo.TabIndex = 0;
             this.CellInfo.Text = "Cell";
             this.CellInfo.UseVisualStyleBackColor = true;
@@ -1045,7 +1045,7 @@
             this.VertInfo.Location = new System.Drawing.Point(4, 25);
             this.VertInfo.Name = "VertInfo";
             this.VertInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.VertInfo.Size = new System.Drawing.Size(201, 302);
+            this.VertInfo.Size = new System.Drawing.Size(199, 302);
             this.VertInfo.TabIndex = 1;
             this.VertInfo.Text = "Verts";
             this.VertInfo.UseVisualStyleBackColor = true;
@@ -1160,7 +1160,7 @@
             this.EdgeInfo.Controls.Add(this.CellEdgeList);
             this.EdgeInfo.Location = new System.Drawing.Point(4, 25);
             this.EdgeInfo.Name = "EdgeInfo";
-            this.EdgeInfo.Size = new System.Drawing.Size(201, 302);
+            this.EdgeInfo.Size = new System.Drawing.Size(199, 302);
             this.EdgeInfo.TabIndex = 2;
             this.EdgeInfo.Text = "Edges";
             this.EdgeInfo.UseVisualStyleBackColor = true;
@@ -1228,7 +1228,7 @@
             this.FaceInfo.Controls.Add(this.FaceMatInfo);
             this.FaceInfo.Location = new System.Drawing.Point(4, 25);
             this.FaceInfo.Name = "FaceInfo";
-            this.FaceInfo.Size = new System.Drawing.Size(201, 302);
+            this.FaceInfo.Size = new System.Drawing.Size(199, 302);
             this.FaceInfo.TabIndex = 3;
             this.FaceInfo.Text = "Face";
             this.FaceInfo.UseVisualStyleBackColor = true;
@@ -1402,7 +1402,7 @@
             this.TextureInfo.Controls.Add(this.TextureList);
             this.TextureInfo.Location = new System.Drawing.Point(4, 49);
             this.TextureInfo.Name = "TextureInfo";
-            this.TextureInfo.Size = new System.Drawing.Size(201, 278);
+            this.TextureInfo.Size = new System.Drawing.Size(246, 278);
             this.TextureInfo.TabIndex = 4;
             this.TextureInfo.Text = "Textures";
             this.TextureInfo.UseVisualStyleBackColor = true;
@@ -1411,19 +1411,19 @@
             // 
             this.PreviewInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.PreviewInfo.Location = new System.Drawing.Point(84, 200);
+            this.PreviewInfo.Location = new System.Drawing.Point(121, 162);
             this.PreviewInfo.Multiline = true;
             this.PreviewInfo.Name = "PreviewInfo";
             this.PreviewInfo.ReadOnly = true;
-            this.PreviewInfo.Size = new System.Drawing.Size(113, 75);
+            this.PreviewInfo.Size = new System.Drawing.Size(123, 113);
             this.PreviewInfo.TabIndex = 2;
             // 
             // TexturePreview
             // 
             this.TexturePreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.TexturePreview.Location = new System.Drawing.Point(3, 200);
+            this.TexturePreview.Location = new System.Drawing.Point(3, 162);
             this.TexturePreview.Name = "TexturePreview";
-            this.TexturePreview.Size = new System.Drawing.Size(75, 75);
+            this.TexturePreview.Size = new System.Drawing.Size(112, 112);
             this.TexturePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.TexturePreview.TabIndex = 1;
             this.TexturePreview.TabStop = false;
@@ -1435,23 +1435,16 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.TextureList.Location = new System.Drawing.Point(3, 3);
             this.TextureList.Name = "TextureList";
-            this.TextureList.Size = new System.Drawing.Size(194, 191);
+            this.TextureList.Size = new System.Drawing.Size(241, 153);
             this.TextureList.TabIndex = 0;
             this.TextureList.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TextureList_AfterSelect);
-            // 
-            // DefaultImages
-            // 
-            this.DefaultImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("DefaultImages.ImageStream")));
-            this.DefaultImages.TransparentColor = System.Drawing.Color.Transparent;
-            this.DefaultImages.Images.SetKeyName(0, "Grid.png");
-            this.DefaultImages.Images.SetKeyName(1, "Folder - Pictures.png");
             // 
             // ObjectInfo
             // 
             this.ObjectInfo.Controls.Add(this.ObjectList);
             this.ObjectInfo.Location = new System.Drawing.Point(4, 49);
             this.ObjectInfo.Name = "ObjectInfo";
-            this.ObjectInfo.Size = new System.Drawing.Size(201, 278);
+            this.ObjectInfo.Size = new System.Drawing.Size(199, 278);
             this.ObjectInfo.TabIndex = 5;
             this.ObjectInfo.Text = "Objects";
             this.ObjectInfo.UseVisualStyleBackColor = true;
@@ -1491,6 +1484,13 @@
             this.duplicateToolStripMenuItem.Name = "duplicateToolStripMenuItem";
             this.duplicateToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.duplicateToolStripMenuItem.Text = "Duplicate";
+            // 
+            // DefaultImages
+            // 
+            this.DefaultImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("DefaultImages.ImageStream")));
+            this.DefaultImages.TransparentColor = System.Drawing.Color.Transparent;
+            this.DefaultImages.Images.SetKeyName(0, "Grid.png");
+            this.DefaultImages.Images.SetKeyName(1, "Folder - Pictures.png");
             // 
             // EditFrame
             // 

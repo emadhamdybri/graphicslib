@@ -927,8 +927,20 @@ namespace PortalEdit
             Invalidate(true);
         }
 
+        bool ValidImageExtension ( string path )
+        {
+            string ext = Path.GetExtension(path).ToLower();
+            if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" || ext == ".tiff")
+                return true;
+
+            return false;
+        }
+
         protected TreeNode NodeForPath ( string path )
         {
+            if (!ValidImageExtension(path))
+                return null;
+
             String[] nugs = path.Split(Path.DirectorySeparatorChar);
 
             // find the root node
