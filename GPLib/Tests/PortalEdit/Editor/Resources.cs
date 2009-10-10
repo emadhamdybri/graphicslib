@@ -9,6 +9,9 @@ namespace PortalEdit
     {
         protected static void DirWalk (DirectoryInfo info, ref List<string> contents, string filter, bool recursive, bool dirOnly )
         {
+            String name = info.Name;
+            if (name.ToCharArray()[0] == '.')
+                return;
             if (!dirOnly)
             {
                 FileInfo[] files;
@@ -28,7 +31,7 @@ namespace PortalEdit
             {
                 foreach (DirectoryInfo dir in info.GetDirectories())
                 {
-                    if (Path.GetDirectoryName(dir.FullName).ToCharArray()[0] == '.')
+                    if (dir.Name.ToCharArray()[0] == '.')
                         continue;
                     if (dirOnly)
                         contents.Add(dir.FullName);
