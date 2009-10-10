@@ -100,7 +100,7 @@ namespace PortalEdit
             if (e.cell == null ||frame.TextureList.SelectedNode == null || frame.TextureList.SelectedNode.Tag == null)
                 return;
 
-            string texture = frame.TextureList.SelectedNode.Tag.ToString();
+            string texture = String.Copy(frame.TextureList.SelectedNode.Tag.ToString());
 
             if (e.edge < 0)
             {
@@ -438,6 +438,7 @@ namespace PortalEdit
 
             map.MapAttributes.Clear();
             map.MapAttributes = newMap.MapAttributes;
+            map.MapObjects = newMap.MapObjects;
             map.CellGroups.Clear();
 
             foreach (CellGroup group in newMap.CellGroups)
