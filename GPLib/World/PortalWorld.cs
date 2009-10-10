@@ -87,7 +87,7 @@ namespace World
         [System.Xml.Serialization.XmlIgnoreAttribute]
         public CellGroup Group = null;
 
-        public CellMaterialInfo Material = CellMaterialInfo.Empty;
+        public CellMaterialInfo Material = new CellMaterialInfo();
 
         public bool Visable = false;
 
@@ -111,7 +111,7 @@ namespace World
         public float[] LowerZ = new float[2];
         public float[] UpperZ = new float[2];
 
-        public CellMaterialInfo Material = CellMaterialInfo.Empty;
+        public CellMaterialInfo Material =  new CellMaterialInfo();
 
         public CellID Bottom = CellID.Empty;
         public CellID Top = CellID.Empty;
@@ -166,8 +166,8 @@ namespace World
         public bool RoofVizable = true;
         public bool FloorVizable = true;
 
-        public CellMaterialInfo FloorMaterial = CellMaterialInfo.Empty;
-        public CellMaterialInfo RoofMaterial = CellMaterialInfo.Empty;
+        public CellMaterialInfo FloorMaterial =  new CellMaterialInfo();
+        public CellMaterialInfo RoofMaterial =  new CellMaterialInfo();
 
         public PortalMapAttributes CellAttributes = new PortalMapAttributes();
 
@@ -209,6 +209,9 @@ namespace World
 
             RoofVizable = cell.RoofVizable;
             FloorVizable = cell.FloorVizable;
+
+            RoofMaterial = cell.RoofMaterial;
+            FloorMaterial = cell.FloorMaterial;
         }
 
         public bool HasEdge(Vector2 e1, Vector2 e2)
