@@ -5,13 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-
 using GUIGameWindow;
 using Drawables.Cameras;
+using Drawables;
 using OpenTK;
 using OpenTK.Graphics;
 using Math3D;
 using Grids;
+
+using World;
 
 namespace portalTest
 {
@@ -216,14 +218,74 @@ namespace portalTest
         }
     }
 
+
+    public class ViewPosition
+    {
+        public Vector3 Position = new Vector3();
+        public Vector2 Rotation = new Vector2(0, 0);
+
+        public Cell cell = null;
+
+        public void Move(Vector3 increment)
+        {
+            Move(increment.Y, increment.X, increment.Z);
+        }
+
+        public void Move(float forward, float sideways, float up)
+        {
+            Vector3 forwardVec = new Vector3(Heading());
+            Vector3 leftwardVec = new Vector3(forwardVec);
+            leftwardVec.X = -forwardVec.Y;
+            leftwardVec.Y = forwardVec.X;
+
+            Vector3 incremnt = new Vector3();
+            incremnt += forwardVec * forward;
+            incremnt += leftwardVec * sideways;
+            incremnt.Z += up;
+
+            Position += incremnt;
+        }
+
+        public void Turn(float spin, float tilt)
+        {
+            Rotation.X += tilt;
+            Rotation.Y += spin;
+        }
+
+        public void SetCamera(Camera cam)
+        {
+            cam.set(Position, Rotation.Y, Rotation.X);
+        }
+
+        public float HeadingAngle()
+        {
+            return Rotation.Y;
+        }
+
+        public Vector2 Heading()
+        {
+            return new Vector2((float)Math.Cos(Trig.DegreeToRadian(Rotation.Y)), (float)Math.Sin(Trig.DegreeToRadian(Rotation.Y)));
+        }
+
+        public Vector3 Forward()
+        {
+            Vector3 forward = new Vector3(Heading());
+            forward.Z = (float)Math.Tan(Trig.DegreeToRadian(Rotation.X));
+            forward.Normalize();
+            return forward;
+        }
+    }
+
+
     public class Visual
     {
         TextPrinter printer = new TextPrinter(TextQuality.High);
         Font sans_serif = new Font(FontFamily.GenericSansSerif, 16.0f);
         Font small_serif = new Font(FontFamily.GenericSansSerif, 8.0f);
 
+        public ViewPosition view = null;
 
-        public Camera camera = new Camera();
+        Camera camera = new Camera();
         DebugableVisibleFrustum clipingFrustum = null;
 
         GUIGameWindowBase window;
@@ -281,7 +343,11 @@ namespace portalTest
             GL.Disable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Lighting);
 
+            if (view != null)
+                view.SetCamera(camera);
+
             camera.Execute();
+            renderer.ComputeViz();
 
             GL.Enable(EnableCap.Light0);
             GL.Light(LightName.Light0, LightParameter.Position, new Vector4(10, 15, 10, 1.0f));
@@ -292,6 +358,10 @@ namespace portalTest
             grid.Exectute();
 
             renderer.Draw();
+
+            while (!renderer.VizDone()) ;
+
+            DrawablesSystem.system.Execute();
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
 
