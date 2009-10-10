@@ -62,6 +62,23 @@ namespace World
         }
     }
 
+    public class CellMaterialInfo
+    {
+        public static CellMaterialInfo Empty = new CellMaterialInfo();
+
+        public float Rotation = 0f;
+
+        public string Material = string.Empty;
+
+        public Vector2 UVScale = Vector2.One;
+        public Vector2 UVShift = Vector2.Zero;
+
+        public Vector2 GetFinalUV(float u, float v)
+        {
+            return new Vector2((u + UVShift.X) * UVScale.X, (v + UVShift.Y) * UVScale.Y);
+        }
+    }
+
     public class PortalDestination
     {
         [System.Xml.Serialization.XmlIgnoreAttribute]
@@ -69,6 +86,10 @@ namespace World
 
         [System.Xml.Serialization.XmlIgnoreAttribute]
         public CellGroup Group = null;
+
+        public CellMaterialInfo Material = CellMaterialInfo.Empty;
+
+        public bool Visable = false;
 
         public CellID DestinationCell = new CellID();
 
@@ -83,21 +104,6 @@ namespace World
         }
     }
 
-    public class CellMaterialInfo
-    {
-        public float Rotation = 0f;
-
-        public string Material = string.Empty;
-
-        public Vector2 UVScale = Vector2.One;
-        public Vector2 UVShift = Vector2.Zero;
-
-        public Vector2 GetFinalUV(float u, float v)
-        {
-            return new Vector2((u + UVShift.X) * UVScale.X, (v + UVShift.Y) * UVScale.Y);
-        }
-    }
-
     public class CellWallGeometry
     {
         public bool Vizable = true;
@@ -105,7 +111,7 @@ namespace World
         public float[] LowerZ = new float[2];
         public float[] UpperZ = new float[2];
 
-        public CellMaterialInfo Material = new CellMaterialInfo();
+        public CellMaterialInfo Material = CellMaterialInfo.Empty;
 
         public CellID Bottom = CellID.Empty;
         public CellID Top = CellID.Empty;
@@ -160,8 +166,8 @@ namespace World
         public bool RoofVizable = true;
         public bool FloorVizable = true;
 
-        public CellMaterialInfo FloorMaterial = new CellMaterialInfo();
-        public CellMaterialInfo RoofMaterial = new CellMaterialInfo();
+        public CellMaterialInfo FloorMaterial = CellMaterialInfo.Empty;
+        public CellMaterialInfo RoofMaterial = CellMaterialInfo.Empty;
 
         public PortalMapAttributes CellAttributes = new PortalMapAttributes();
 
@@ -192,9 +198,17 @@ namespace World
             ID.CellName = cell.ID.CellName;
             ID.GroupName = cell.ID.GroupName;
 
+            CellAttributes = cell.CellAttributes;
+
             Verts = cell.Verts;
             Edges = cell.Edges;
             HeightIsIncremental = cell.HeightIsIncremental;
+
+            FloorNormal = cell.FloorNormal;
+            RoofNormal = cell.RoofNormal;
+
+            RoofVizable = cell.RoofVizable;
+            FloorVizable = cell.FloorVizable;
         }
 
         public bool HasEdge(Vector2 e1, Vector2 e2)
@@ -269,6 +283,11 @@ namespace World
         public float RoofZ(int index)
         {
             return Verts[index].GetTopZ(HeightIsIncremental);
+        }
+
+        public float RoofZ(CellVert vert)
+        {
+            return vert.GetTopZ(HeightIsIncremental);
         }
 
         public static float GetZInPlane(Plane plane, float x, float y)
@@ -478,6 +497,30 @@ namespace World
         public List<CellGroup> CellGroups = new List<CellGroup>();
         public PortalMapAttributes MapAttributes = new PortalMapAttributes();
         public List<ObjectInstance> MapObjects = new List<ObjectInstance>();
+
+        public List<ObjectInstance> FindObjects ( string type )
+        {
+            List<ObjectInstance> objs = new List<ObjectInstance>();
+            foreach (ObjectInstance obj in MapObjects)
+            {
+                if (obj.ObjectType == type)
+                    objs.Add(obj);
+            }
+
+            return objs;
+        }
+
+        public List<ObjectInstance> FindObjects(string type, string name)
+        {
+            List<ObjectInstance> objs = new List<ObjectInstance>();
+            foreach (ObjectInstance obj in MapObjects)
+            {
+                if (obj.ObjectType == type && obj.Name == name)
+                    objs.Add(obj);
+            }
+
+            return objs;
+        }
 
         public bool Valid()
         {
