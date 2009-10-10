@@ -331,5 +331,20 @@ namespace Math3D
         {
             return new Vector2(v1.X - v2.X, v1.Y - v2.Y);
         }
+
+        public static Vector2 Subtract(Vector3 v1, Vector3 v2)
+        {
+            return new Vector2(v1.X - v2.X, v1.Y - v2.Y);
+        }
+
+        public static Vector2 Subtract(Vector2 v1, Vector3 v2)
+        {
+            return new Vector2(v1.X - v2.X, v1.Y - v2.Y);
+        }
+
+        public static Vector2 Subtract(Vector3 v1, Vector2 v2)
+        {
+            return new Vector2(v1.X - v2.X, v1.Y - v2.Y);
+        }
     }
 }
