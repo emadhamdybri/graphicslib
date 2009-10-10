@@ -171,7 +171,7 @@ namespace PortalEdit
 
         void portalGeo_ShouldDrawItem(object sender, ref bool draw)
         {
-            if (!Settings.settings.DrawPortals || dest.Group == cell.Group)
+            if (!Settings.settings.DrawPortals || dest.DestinationCell.GroupName == cell.ID.GroupName)
                 draw = false;
         }
 
@@ -179,6 +179,22 @@ namespace PortalEdit
         {
             CellVert destSP = dest.Cell.MatchingVert(cell.Verts[edge.Start]);
             CellVert destEP = dest.Cell.MatchingVert(cell.Verts[edge.End]);
+
+            float SPTop = dest.Cell.RoofZ(destSP);
+            if (cell.RoofZ(edge.Start) < SPTop)
+                SPTop = cell.RoofZ(edge.Start);
+
+            float EPTop = dest.Cell.RoofZ(destEP);
+            if (cell.RoofZ(edge.End) < EPTop)
+                EPTop = cell.RoofZ(edge.End);
+
+            float SPBottom = destSP.Bottom.Z;
+            if (cell.Verts[edge.Start].Bottom.Z < SPBottom)
+                SPBottom = cell.Verts[edge.Start].Bottom.Z;
+
+            float EPBottom = destEP.Bottom.Z;
+            if (cell.Verts[edge.End].Bottom.Z < EPBottom)
+                EPBottom = cell.Verts[edge.End].Bottom.Z;
 
             if (destSP == null || destEP == null)
                 return;
@@ -193,10 +209,10 @@ namespace PortalEdit
             GL.Begin(BeginMode.Quads);
 
             GL.Normal3(edge.Normal.X, edge.Normal.Y, 0);
-            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, destEP.Bottom.Z);
-            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, destSP.Bottom.Z);
-            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, destSP.GetTopZ(dest.Cell.HeightIsIncremental));
-            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y,  destEP.GetTopZ(dest.Cell.HeightIsIncremental));
+            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, EPBottom);
+            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, SPBottom);
+            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, SPTop);
+            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, EPTop);
 
             GL.End();
 
@@ -209,10 +225,10 @@ namespace PortalEdit
 
             GL.Begin(BeginMode.LineLoop);
 
-            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, destEP.Bottom.Z);
-            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, destSP.Bottom.Z);
-            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, destSP.GetTopZ(dest.Cell.HeightIsIncremental));
-            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y,  destEP.GetTopZ(dest.Cell.HeightIsIncremental));
+            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, EPBottom);
+            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, SPBottom);
+            GL.Vertex3(cell.Verts[edge.Start].Bottom.X, cell.Verts[edge.Start].Bottom.Y, SPTop);
+            GL.Vertex3(cell.Verts[edge.End].Bottom.X, cell.Verts[edge.End].Bottom.Y, EPTop);
 
             GL.End();
 
@@ -480,6 +496,8 @@ namespace PortalEdit
             ID.GroupName = parentGroup.Name;
             buildFromPolygon(poly, map);
             ID.CellName = parentGroup.NewCellName();
+            FloorMaterial = new CellMaterialInfo();
+            RoofMaterial = new CellMaterialInfo();
         }
 
         public EditorCell(Cell cell)
