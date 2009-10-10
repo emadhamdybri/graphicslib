@@ -28,7 +28,6 @@ namespace portalTest
         Point lastMousePos = Point.Empty;
         Point thisMousePos = new Point(0, 0);
 
-        String mapsDir = String.Empty;
         String dataDir = string.Empty;
 
         ViewPosition player = new ViewPosition();
@@ -38,9 +37,9 @@ namespace portalTest
             window = win;
 
             SetupResourceDirs();
-            String fileName = Path.Combine("Maps", "Sample.PortalWorld");
+            String fileName = Path.Combine("Maps", "Sample.PortalMap");
 
-            world = PortalWorld.Read(new FileInfo(Path.Combine(mapsDir, fileName)));
+            world = PortalWorld.Read(new FileInfo(Path.Combine(dataDir, fileName)));
             if (world == null)
                 world = new PortalWorld();
 
@@ -52,6 +51,7 @@ namespace portalTest
 
             player.Move(0, 0, 1);
         }
+
         string GetSlashPath ( int num )
         {
             string ret = "..";
@@ -65,13 +65,13 @@ namespace portalTest
         {
             string mapsDir = Path.Combine("Data","Maps");
 
-            DirectoryInfo info = new DirectoryInfo(GetSlashPath(3) + mapsDir);
+            DirectoryInfo info = new DirectoryInfo(Path.Combine(GetSlashPath(3),mapsDir));
             if (!info.Exists)
             {
-                info = new DirectoryInfo(GetSlashPath(2) + mapsDir);
+                info = new DirectoryInfo(Path.Combine(GetSlashPath(2),mapsDir));
                 if (!info.Exists)
                 {
-                    info = new DirectoryInfo(GetSlashPath(1) + mapsDir);
+                    info = new DirectoryInfo(Path.Combine(GetSlashPath(1), mapsDir));
 
                     if (!info.Exists)
                         info = new DirectoryInfo(mapsDir);
@@ -94,13 +94,16 @@ namespace portalTest
             if (spawns.Count > 0)
             {
                 player.Position = new Vector3(spawns[0].Postion);
-                player.Position.Z += 1;
+                player.Position.Z += 1.6f;
                 player.cell = world.FindCell(spawns[0].cells[0]);
             }
         }
 
         public void MouseMove ( MouseMoveEventArgs e)
         {
+            if (e.Buttons != MouseButtons.Right)
+                return;
+
             if (lastMousePos == Point.Empty)
                 lastMousePos = new Point(e.X, e.Y);
 
@@ -120,11 +123,11 @@ namespace portalTest
 
             float sensitivity = 0.1f;
 
-            player.Turn(-turnSpeed * sensitivity * delta.Y, -turnSpeed * sensitivity * delta.X);
+            player.Turn(-turnSpeed * sensitivity * delta.X, -turnSpeed * sensitivity * delta.Y);
 
             Vector3 movement = new Vector3();
 
-            float speed = 15.0f;
+            float speed = 5.0f;
             speed *= (float)e.TimeDelta;
 
             if (window.Keyboard[Keys.A])
@@ -150,7 +153,7 @@ namespace portalTest
         {
             if (doInput(e))
                 return true;
-            return true;
+            return false;
         }
     }
 }
