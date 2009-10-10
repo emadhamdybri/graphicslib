@@ -254,7 +254,7 @@ namespace portalTest
 
         public void SetCamera(Camera cam)
         {
-            cam.set(Position, Rotation.Y, Rotation.X);
+            cam.set(Position, Rotation.X, Rotation.Y);
         }
 
         public float HeadingAngle()
@@ -326,6 +326,7 @@ namespace portalTest
             GL.Light(LightName.Light0, LightParameter.Diffuse, lightInfo);
             GL.Light(LightName.Light0, LightParameter.Specular, lightInfo);
 
+            camera.FOV = 30f;
             camera.set(new Vector3(1, 1, 2), 0, 0);
 
             clipingFrustum = new DebugableVisibleFrustum(camera.SnapshotFrusum());
@@ -347,6 +348,9 @@ namespace portalTest
                 view.SetCamera(camera);
 
             camera.Execute();
+
+            DrawablesSystem.system.removeAll();
+
             renderer.ComputeViz();
 
             GL.Enable(EnableCap.Light0);
