@@ -12,6 +12,8 @@ using Drawables.Materials;
 using OpenTK;
 using OpenTK.Graphics;
 
+using Math3D;
+
 namespace portalTest
 {
     public class CellDrawable : IDisposable
@@ -177,48 +179,24 @@ namespace portalTest
         {
             GL.Begin(BeginMode.Quads);
 
-            CellVert sp = cell.Verts[edge.Start];
-            CellVert ep = cell.Verts[edge.End];
-
             GL.Normal3(edge.Normal.X, edge.Normal.Y, 0);
 
             float edgeDistance = cell.EdgeDistance(edge);
 
-            CellVert destSP = destination.Cell.MatchingVert(sp);
-            CellVert destEP = destination.Cell.MatchingVert(ep);
+            GL.TexCoord2(destination.Material.GetFinalUV(edgeDistance, destination.EPTop.Z - destination.EPBottom.Z));
+            GL.Vertex3(destination.EPBottom);
 
-            float SPTop = cell.RoofZ(edge.Start);
-            if (destination.Cell.RoofZ(destSP) < SPTop)
-                SPTop = destination.Cell.RoofZ(destSP);
-
-            float SPBottom = sp.Bottom.Z;
-            if (destSP.Bottom.Z > SPBottom)
-                SPBottom = destSP.Bottom.Z;
-
-            float EPTop = cell.RoofZ(edge.Start);
-            if (destination.Cell.RoofZ(destEP) < EPTop)
-                EPTop = destination.Cell.RoofZ(destEP);
-
-            float EPBottom = sp.Bottom.Z;
-            if (destEP.Bottom.Z > EPBottom)
-                EPBottom = destEP.Bottom.Z;
-
-            GL.TexCoord2(destination.Material.GetFinalUV(edgeDistance, EPTop - EPBottom));
-            GL.Vertex3(ep.Bottom.X, ep.Bottom.Y, EPBottom);
-
-            GL.TexCoord2(destination.Material.GetFinalUV(0, SPTop - SPBottom));
-            GL.Vertex3(sp.Bottom.X, sp.Bottom.Y,SPBottom);
+            GL.TexCoord2(destination.Material.GetFinalUV(0, destination.SPTop.Z - destination.SPBottom.Z));
+            GL.Vertex3(destination.SPBottom);
 
             GL.TexCoord2(destination.Material.GetFinalUV(0, 0));
-            GL.Vertex3(sp.Bottom.X, sp.Bottom.Y, SPTop);
+            GL.Vertex3(destination.SPTop);
 
             GL.TexCoord2(destination.Material.GetFinalUV(edgeDistance, 0));
-            GL.Vertex3(ep.Bottom.X, ep.Bottom.Y, EPTop);
+            GL.Vertex3(destination.EPTop);
             GL.End();
         }
-
     }
-
 
     public class VizCell : Cell
     {
@@ -252,9 +230,26 @@ namespace portalTest
         }
     }
 
+    public class ExternalPortal
+    {
+        public VizCell cell;
+        public CellEdge edge;
+        public PortalDestination destination;
+    }
+
+    public class PortalVisitItem
+    {
+        public PortalDestination portal;
+        public BoundingFrustum frustum;
+    }
+
     public class PortalWorldRenderer
     {
         public PortalWorld World;
+
+        List<Cell> visitedCells = new List<Cell>();
+
+        Dictionary<CellGroup, List<ExternalPortal> > externalPortals = new Dictionary<CellGroup, List<ExternalPortal> >();
 
         public PortalWorldRenderer (PortalWorld world)
         {
@@ -275,36 +270,122 @@ namespace portalTest
             }
 
             World.RebindCells();
+
+            CacheExternalCells();
         }
 
-        public void ComputeViz ()
+        protected void CacheExternalCells()
         {
             foreach (CellGroup group in World.CellGroups)
             {
+                List<ExternalPortal> dests = new List<ExternalPortal>();
                 foreach (VizCell cell in group.Cells)
-                    cell.Add();
+                {
+                    foreach (CellEdge edge in cell.Edges)
+                    {
+                        if (edge.EdgeType == CellEdgeType.Portal)
+                        {
+                            foreach (PortalDestination dest in edge.Destinations)
+                            {
+                                if (dest.DestinationCell.GroupName == group.Name)
+                                    continue;
+
+                                ExternalPortal externPort = new ExternalPortal();
+                                externPort.cell = cell;
+                                externPort.destination = dest;
+                                externPort.edge = edge;
+
+                                dests.Add(externPort);
+                            }
+                        }
+                    }
+                }
+
+                externalPortals.Add(group, dests);
             }
         }
 
-        public bool VizDone ()
+        protected void DrawGroup ( CellGroup group )
         {
-            return true;
+            foreach (VizCell cell in group.Cells)
+            {
+                if (visitedCells.Contains(cell))
+                    continue;
+
+                cell.Add();
+                visitedCells.Add(cell);
+            }
+
+            // draw any objects in the cell too
+            DrawablesSystem.system.Execute();
+            DrawablesSystem.system.removeAll();
         }
 
-        public void Draw()
+        protected void RecursiveWalkGroup ( Cell cell, ref List<PortalVisitItem> VisitStack )
         {
+            if (visitedCells.Contains(cell))
+                return; // this is being handled by others, so let it go
+
+            // ok first draw the group
+            DrawGroup(cell.Group);
+
+            List<ExternalPortal> dests = externalPortals[cell.Group];
+
+            foreach (ExternalPortal dest in dests)
+            {
+                if (VisitStack[0].frustum.Intersects(dest.destination.GetPolygon()))
+                {
+                    PortalVisitItem item = new PortalVisitItem();
+                    // TODO CLIP the frustum to the portal!!!
+
+
+                    item.frustum = VisitStack[0].frustum;
+                    item.portal = dest.destination;
+
+                    VisitStack.Add(item);
+                    RecursiveWalkGroup(dest.destination.Cell, ref VisitStack);
+                    VisitStack.Remove(item);
+                }
+            }
+        }
+
+        public void Draw( ViewPosition view, BoundingFrustum frustum )
+        {
+            // always draw where we are.
+            visitedCells.Clear();
+            DrawGroup(view.cell.Group);
+
+            List<ExternalPortal> dests = externalPortals[view.cell.Group];
+
+            foreach (ExternalPortal dest in dests)
+            {
+                List<PortalVisitItem> VisitStack = new List<PortalVisitItem>();
+
+                if (frustum.Intersects(dest.destination.GetPolygon()))
+                {
+                    PortalVisitItem item = new PortalVisitItem();
+                    // TODO CLIP the frustum to the portal!!!
+
+                    item.frustum = frustum;
+                    item.portal = dest.destination;
+
+                    VisitStack.Add(item);
+                    RecursiveWalkGroup(dest.destination.Cell, ref VisitStack);
+                }
+            }
         }
 
         public void DrawMapView ( ViewPosition view )
         {
             float scale = 20f;
 
+            GL.PushMatrix();
             GL.Color4(Color.Red);
             IntPtr q = Glu.NewQuadric();
             Glu.Sphere(q,5, 10, 10);
             Glu.DeleteQuadric(q);
 
-            GL.Rotate(view.Rotation.Y - 90, 0, 0, 1);
+            GL.Rotate(-view.Rotation.Y + 90, 0, 0, 1);
             GL.Translate(-view.Position.X * scale, -view.Position.Y * scale, -1);
 
             GL.LineWidth(2);
@@ -317,7 +398,13 @@ namespace portalTest
                     if (cell == view.cell)
                         GL.Color3(Color.Olive);
                     else
-                        GL.Color3(Color.Green);
+                    {
+                        if (visitedCells.Contains(cell))
+                            GL.Color3(Color.LightSalmon);
+                        else
+                            GL.Color3(Color.Green);
+                    }
+                       
 
                     GL.Begin(BeginMode.Polygon);
                     foreach( CellVert vert in cell.Verts )
@@ -348,6 +435,7 @@ namespace portalTest
                 }
             }
             GL.LineWidth(1);
+            GL.PopMatrix();
         }
     }
 }

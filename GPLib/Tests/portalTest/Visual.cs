@@ -352,6 +352,7 @@ namespace portalTest
         void DrawOverlay()
         {
             GL.Disable(EnableCap.Lighting);
+            GL.Disable(EnableCap.Texture2D);
             float mapSize = 250f;
             // draw map frame
             GL.Color4(1, 1, 1, 0.0f);
@@ -372,6 +373,21 @@ namespace portalTest
             GL.PushMatrix();
             GL.Translate(mapSize/2f,window.Height - mapSize / 2f,-150);
             renderer.DrawMapView(view);
+
+            GL.Begin(BeginMode.Lines);
+
+            GL.Color3(Color.Wheat);
+            GL.Vertex3(0, 0, 10);
+            GL.Vertex3(0, 100, 10);
+
+            GL.Color3(Color.LightGray);
+            GL.Vertex3(0, 0, 10);
+            GL.Vertex3(Math.Cos(Trig.DegreeToRadian(camera.FOVX + 90)) * 200, Math.Sin(Trig.DegreeToRadian(camera.FOVX + 90)) * 200, 10);
+
+            GL.Vertex3(0, 0, 10);
+            GL.Vertex3(Math.Cos(Trig.DegreeToRadian(-camera.FOVX + 90)) * 200, Math.Sin(Trig.DegreeToRadian(-camera.FOVX + 90)) * 200, 10);
+
+            GL.End();
             GL.PopMatrix();
         }
 
@@ -388,20 +404,14 @@ namespace portalTest
             camera.Execute();
 
             DrawablesSystem.system.removeAll();
-            renderer.ComputeViz();
 
             GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.Light0);
             GL.Light(LightName.Light0, LightParameter.Position, new Vector4(10, 15, 10, 1.0f));
 
-            if (clipingFrustum != null)
-                clipingFrustum.drawFrustum();
-
             grid.Exectute();
 
-            renderer.Draw();
-
-            while (!renderer.VizDone()) ;
+            renderer.Draw(view, camera.ViewFrustum);
 
             DrawablesSystem.system.Execute();
             DrawablesSystem.system.removeAll();
