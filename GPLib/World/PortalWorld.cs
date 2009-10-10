@@ -95,6 +95,12 @@ namespace World
 
         public PortalMapAttributes DestinationAttributes = new PortalMapAttributes();
 
+        public Vector3 SPBottom = new Vector3();
+        public Vector3 SPTop = new Vector3();
+       
+        public Vector3 EPBottom = new Vector3();
+        public Vector3 EPTop = new Vector3();
+
         public PortalDestination() { }
 
         public PortalDestination(PortalDestination d)
@@ -102,6 +108,29 @@ namespace World
             DestinationCell.CellName = string.Copy(d.DestinationCell.CellName);
             DestinationCell.GroupName = string.Copy(d.DestinationCell.GroupName);
         }
+
+
+        [System.Xml.Serialization.XmlIgnoreAttribute]
+        public static bool CachePolygons = false;
+
+        [System.Xml.Serialization.XmlIgnoreAttribute]
+        List<Vector3> cachedVertList = null;
+
+        public List<Vector3> GetPolygon ( )
+        {
+            if (!CachePolygons || cachedVertList == null)
+            {
+                cachedVertList = new List<Vector3>();
+
+                cachedVertList.Add(EPBottom);
+                cachedVertList.Add(SPBottom);
+                cachedVertList.Add(SPTop);
+                cachedVertList.Add(EPTop);
+            }
+
+            return cachedVertList;
+        }
+
     }
 
     public class CellWallGeometry
@@ -713,15 +742,22 @@ namespace World
             XmlSerializer XML = new XmlSerializer(typeof(PortalWorld));
 
             PortalWorld map = null;
+            FileStream fileStream = file.OpenRead();
             try
             {
-                map = (PortalWorld)XML.Deserialize(file.OpenRead());
+                map = (PortalWorld)XML.Deserialize(fileStream);
             }
             catch (System.Exception ex)
             {
-                GZipStream compressionStream = new GZipStream(file.OpenRead(), CompressionMode.Decompress);
+                fileStream.Close();
+                fileStream = file.OpenRead();
+
+                GZipStream compressionStream = new GZipStream(fileStream, CompressionMode.Decompress);
                 map = (PortalWorld)XML.Deserialize(compressionStream);
+                compressionStream.Close();
             }
+
+            fileStream.Close();
 
             if (map != null)
                 map.RebindCells();
@@ -752,13 +788,29 @@ namespace World
             }
 
             if (file.Exists)
-                file.Delete();
+            {
+                try
+                {
+                    file.Delete();
+                }
+                catch (System.Exception ex)
+                {
+                	
+                }
+            }
             try
             {
+                FileStream fileStream = file.OpenWrite();
                 if (compress)
-                    XML.Serialize(new GZipStream(file.OpenWrite(), CompressionMode.Compress), writeMap);
+                {
+                    GZipStream compression = new GZipStream(fileStream, CompressionMode.Compress);
+                    XML.Serialize(compression, writeMap);
+                    compression.Close();
+                }
                 else
-                    XML.Serialize(file.OpenWrite(), writeMap);
+                    XML.Serialize(fileStream, writeMap);
+
+                fileStream.Close();
             }
             catch (System.Exception ex)
             {
