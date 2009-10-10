@@ -23,13 +23,14 @@ namespace GUIGameWindow
         //
         //   yDelta:
         //     The change in Y position produced by this event.
-        public MouseMoveEventArgs(int x, int y, int xDelta, int yDelta)
+        public MouseMoveEventArgs(int x, int y, int xDelta, int yDelta, MouseButtons buttons)
         {
             Position = new Point(x, y);
             X = x;
             Y = y;
             XDelta = xDelta;
             YDelta = yDelta;
+            Buttons = buttons;
         }
 
         // Summary:
@@ -52,6 +53,8 @@ namespace GUIGameWindow
         // Summary:
         //     Gets the change in Y position produced by this event.
         public int YDelta;
+
+        public MouseButtons Buttons;
     } 
     public struct MouseButtonEventArgs
     {
@@ -239,7 +242,7 @@ namespace GUIGameWindow
             {
                 lastDelta = new Point(args.Location.X - lastPoint.X,args.Location.Y - lastPoint.Y);
                 if (Move != null)
-                    Move(this, new MouseMoveEventArgs(args.Location.X, args.Location.Y, lastDelta.X, lastDelta.Y));
+                    Move(this, new MouseMoveEventArgs(args.Location.X, args.Location.Y, lastDelta.X, lastDelta.Y,args.Button));
             }
 
             lastPoint = new Point(args.Location.X,args.Location.Y);
