@@ -406,12 +406,13 @@ namespace Math3D
                         gotOne = true;
                         break;
                     }
-
                 }
                 if (gotOne)
-                    continue;                
-            }
+                    continue;
 
+                // all points are behind the one plane so they can't be inside any other plane
+                return false;
+            }
             return true;
         }
 
