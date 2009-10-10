@@ -350,6 +350,42 @@ namespace World
 
             return true;
         }
+
+        public float DistanceToCircle (CellEdge edge, Vector2 center, float radius)
+        {
+            Vector2 dir = VectorHelper2.Subtract(Verts[edge.End].Bottom, Verts[edge.Start].Bottom);
+            Vector2 diff = VectorHelper2.Subtract(center, Verts[edge.Start].Bottom);
+
+            float t = Vector2.Dot(diff, dir) / Vector2.Dot(dir, dir);
+
+            if (t < 0.0f)
+                t = 0.0f;
+            if (t > 1.0f)
+                t = 1.0f;
+
+            Vector2 closest = new Vector2(Verts[edge.Start].Bottom) + t * dir;
+
+            Vector2 d = center - closest;
+
+            float distsqr = Vector2.Dot(d, d);
+            return (float)Math.Sqrt(distsqr);
+        }
+
+        public bool CircleCrossEdge ( CellEdge edge, Vector2 center, float radius)
+        {
+            return DistanceToCircle(edge,center,radius) <= radius;
+        }
+
+        public bool CircleIn ( Vector2 center, float radius )
+        {
+            foreach (CellEdge edge in Edges)
+            {
+                if (CircleCrossEdge(edge, center, radius))
+                    return false;
+            }
+
+            return true;
+        }
     }
 
     public class CellGroup
@@ -715,6 +751,8 @@ namespace World
                     newGroup.Cells.Add(new Cell(cell));
             }
 
+            if (file.Exists)
+                file.Delete();
             try
             {
                 if (compress)
