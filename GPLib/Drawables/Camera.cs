@@ -40,6 +40,11 @@ namespace Drawables.Cameras
             set { fov = FOV; SetPersective(); }
         }
 
+        public float FOVX
+        {
+            get { return fov / aspect; }
+        }
+
         float hither = 0.01f;
         public float NearPlane
         {
