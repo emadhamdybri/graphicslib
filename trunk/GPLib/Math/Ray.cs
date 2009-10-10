@@ -168,7 +168,6 @@ namespace Math3D
             return result;
         }
 
-
         public void Intersects(ref BoundingSphere sphere, out float? result)
         {
             // Find the vector between where the ray starts the the sphere's centre
