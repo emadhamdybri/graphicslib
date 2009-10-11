@@ -885,7 +885,7 @@ namespace PortalEdit
                         geo.UpperZ[1] = bestDestEP.Bottom.Z;
 
                         geo.LowerZ[0] = thisSP.Bottom.Z;
-                        geo.LowerZ[1] = thisSP.Bottom.Z;
+                        geo.LowerZ[1] = thisEP.Bottom.Z;
 
                         geo.Bottom = ID;
                         geo.Top = topDest.ID;
@@ -1018,7 +1018,7 @@ namespace PortalEdit
                         geo.LowerZ[1] = topDestEP.GetTopZ(topDest.HeightIsIncremental);
 
                         geo.UpperZ[0] = thisSP.GetTopZ(HeightIsIncremental);
-                        geo.UpperZ[1] = thisSP.GetTopZ(HeightIsIncremental);
+                        geo.UpperZ[1] = thisEP.GetTopZ(HeightIsIncremental);
 
                         geo.Bottom = topDest.ID;
                         geo.Top = ID;
