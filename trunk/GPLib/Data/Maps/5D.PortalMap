@@ -13,7 +13,7 @@
             <CellVert>
               <Bottom>
                 <X>2</X>
-                <Y>-2</Y>
+                <Y>-3</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
@@ -28,7 +28,7 @@
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>1</X>
+                <X>0</X>
                 <Y>1</Y>
                 <Z>0</Z>
               </Bottom>
@@ -36,7 +36,7 @@
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>-1</X>
+                <X>-2</X>
                 <Y>1</Y>
                 <Z>0</Z>
               </Bottom>
@@ -44,8 +44,8 @@
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>-1</X>
-                <Y>-2</Y>
+                <X>-2</X>
+                <Y>-3</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
@@ -139,12 +139,12 @@
                     <Z>2</Z>
                   </SPTop>
                   <EPBottom>
-                    <X>1</X>
+                    <X>0</X>
                     <Y>1</Y>
                     <Z>0</Z>
                   </EPBottom>
                   <EPTop>
-                    <X>1</X>
+                    <X>0</X>
                     <Y>1</Y>
                     <Z>2</Z>
                   </EPTop>
@@ -383,22 +383,22 @@
             <CellVert>
               <Bottom>
                 <X>2</X>
-                <Y>3</Y>
+                <Y>4</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>1</X>
-                <Y>3</Y>
+                <X>0</X>
+                <Y>4</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>1</X>
+                <X>0</X>
                 <Y>1</Y>
                 <Z>0</Z>
               </Bottom>
@@ -494,12 +494,12 @@
                   </SPTop>
                   <EPBottom>
                     <X>2</X>
-                    <Y>3</Y>
+                    <Y>4</Y>
                     <Z>0</Z>
                   </EPBottom>
                   <EPTop>
                     <X>2</X>
-                    <Y>3</Y>
+                    <Y>4</Y>
                     <Z>2</Z>
                   </EPTop>
                 </PortalDestination>
@@ -519,22 +519,12 @@
               <Vizable>true</Vizable>
               <Start>2</Start>
               <End>3</End>
-              <EdgeType>Wall</EdgeType>
-              <Destinations />
-              <Geometry>
-                <CellWallGeometry>
-                  <Vizable>true</Vizable>
-                  <LowerZ>
-                    <float>0</float>
-                    <float>0</float>
-                  </LowerZ>
-                  <UpperZ>
-                    <float>2</float>
-                    <float>2</float>
-                  </UpperZ>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
                   <Material>
                     <Rotation>0</Rotation>
-                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03cc.jpg</Material>
+                    <Material />
                     <UVScale>
                       <X>1</X>
                       <Y>1</Y>
@@ -544,16 +534,37 @@
                       <Y>0</Y>
                     </UVShift>
                   </Material>
-                  <Bottom>
-                    <CellName>0</CellName>
-                    <GroupName>1</GroupName>
-                  </Bottom>
-                  <Top>
-                    <CellName>0</CellName>
-                    <GroupName>1</GroupName>
-                  </Top>
-                </CellWallGeometry>
-              </Geometry>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>1</CellName>
+                    <GroupName>5</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>2</X>
+                    <Y>4</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>2</X>
+                    <Y>4</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>0</X>
+                    <Y>4</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>0</X>
+                    <Y>4</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
               <Normal>
                 <X>0</X>
                 <Y>-1</Y>
@@ -641,12 +652,12 @@
                     <AttributeList />
                   </DestinationAttributes>
                   <SPBottom>
-                    <X>1</X>
+                    <X>0</X>
                     <Y>1</Y>
                     <Z>0</Z>
                   </SPBottom>
                   <SPTop>
-                    <X>1</X>
+                    <X>0</X>
                     <Y>1</Y>
                     <Z>2</Z>
                   </SPTop>
@@ -731,7 +742,7 @@
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>5</X>
+                <X>6</X>
                 <Y>2</Y>
                 <Z>0</Z>
               </Bottom>
@@ -739,8 +750,8 @@
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>5</X>
-                <Y>3</Y>
+                <X>6</X>
+                <Y>4</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
@@ -748,7 +759,7 @@
             <CellVert>
               <Bottom>
                 <X>2</X>
-                <Y>3</Y>
+                <Y>4</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
@@ -801,12 +812,12 @@
                     <Z>2</Z>
                   </SPTop>
                   <EPBottom>
-                    <X>5</X>
+                    <X>6</X>
                     <Y>2</Y>
                     <Z>0</Z>
                   </EPBottom>
                   <EPTop>
-                    <X>5</X>
+                    <X>6</X>
                     <Y>2</Y>
                     <Z>2</Z>
                   </EPTop>
@@ -950,12 +961,12 @@
                   </DestinationAttributes>
                   <SPBottom>
                     <X>2</X>
-                    <Y>3</Y>
+                    <Y>4</Y>
                     <Z>0</Z>
                   </SPBottom>
                   <SPTop>
                     <X>2</X>
-                    <Y>3</Y>
+                    <Y>4</Y>
                     <Z>2</Z>
                   </SPTop>
                   <EPBottom>
@@ -1089,7 +1100,7 @@
             <CellVert>
               <Bottom>
                 <X>4</X>
-                <Y>0</Y>
+                <Y>-0.25</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
@@ -1097,7 +1108,7 @@
             <CellVert>
               <Bottom>
                 <X>4</X>
-                <Y>-1</Y>
+                <Y>-2.25</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
@@ -1105,22 +1116,22 @@
             <CellVert>
               <Bottom>
                 <X>4</X>
-                <Y>-2</Y>
+                <Y>-4</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>5</X>
-                <Y>-2</Y>
+                <X>6</X>
+                <Y>-4</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>5</X>
+                <X>6</X>
                 <Y>2</Y>
                 <Z>0</Z>
               </Bottom>
@@ -1165,22 +1176,22 @@
                   </DestinationAttributes>
                   <SPBottom>
                     <X>4</X>
-                    <Y>0</Y>
+                    <Y>-0.25</Y>
                     <Z>0</Z>
                   </SPBottom>
                   <SPTop>
                     <X>4</X>
-                    <Y>0</Y>
+                    <Y>-0.25</Y>
                     <Z>2</Z>
                   </SPTop>
                   <EPBottom>
                     <X>4</X>
-                    <Y>-1</Y>
+                    <Y>-2.25</Y>
                     <Z>0</Z>
                   </EPBottom>
                   <EPTop>
                     <X>4</X>
-                    <Y>-1</Y>
+                    <Y>-2.25</Y>
                     <Z>2</Z>
                   </EPTop>
                 </PortalDestination>
@@ -1371,12 +1382,12 @@
                     <AttributeList />
                   </DestinationAttributes>
                   <SPBottom>
-                    <X>5</X>
+                    <X>6</X>
                     <Y>2</Y>
                     <Z>0</Z>
                   </SPBottom>
                   <SPTop>
-                    <X>5</X>
+                    <X>6</X>
                     <Y>2</Y>
                     <Z>2</Z>
                   </SPTop>
@@ -1511,23 +1522,23 @@
             <CellVert>
               <Bottom>
                 <X>4</X>
-                <Y>0</Y>
+                <Y>-0.25</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>-1.75</X>
-                <Y>0</Y>
+                <X>-3</X>
+                <Y>-0.25</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
             </CellVert>
             <CellVert>
               <Bottom>
-                <X>-1.75</X>
-                <Y>-1</Y>
+                <X>-3</X>
+                <Y>-2.25</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
@@ -1535,7 +1546,7 @@
             <CellVert>
               <Bottom>
                 <X>4</X>
-                <Y>-1</Y>
+                <Y>-2.25</Y>
                 <Z>0</Z>
               </Bottom>
               <Top>2</Top>
@@ -1595,22 +1606,12 @@
               <Vizable>true</Vizable>
               <Start>1</Start>
               <End>2</End>
-              <EdgeType>Wall</EdgeType>
-              <Destinations />
-              <Geometry>
-                <CellWallGeometry>
-                  <Vizable>true</Vizable>
-                  <LowerZ>
-                    <float>0</float>
-                    <float>0</float>
-                  </LowerZ>
-                  <UpperZ>
-                    <float>2</float>
-                    <float>2</float>
-                  </UpperZ>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
                   <Material>
                     <Rotation>0</Rotation>
-                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03f.jpg</Material>
+                    <Material />
                     <UVScale>
                       <X>1</X>
                       <Y>1</Y>
@@ -1620,16 +1621,37 @@
                       <Y>0</Y>
                     </UVShift>
                   </Material>
-                  <Bottom>
-                    <CellName>0</CellName>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>1</CellName>
                     <GroupName>3</GroupName>
-                  </Bottom>
-                  <Top>
-                    <CellName>0</CellName>
-                    <GroupName>3</GroupName>
-                  </Top>
-                </CellWallGeometry>
-              </Geometry>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>-3</X>
+                    <Y>-0.25</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>-3</X>
+                    <Y>-0.25</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>-3</X>
+                    <Y>-2.25</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>-3</X>
+                    <Y>-2.25</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
               <Normal>
                 <X>1</X>
                 <Y>-0</Y>
@@ -1718,22 +1740,22 @@
                   </DestinationAttributes>
                   <SPBottom>
                     <X>4</X>
-                    <Y>-1</Y>
+                    <Y>-2.25</Y>
                     <Z>0</Z>
                   </SPBottom>
                   <SPTop>
                     <X>4</X>
-                    <Y>-1</Y>
+                    <Y>-2.25</Y>
                     <Z>2</Z>
                   </SPTop>
                   <EPBottom>
                     <X>4</X>
-                    <Y>0</Y>
+                    <Y>-0.25</Y>
                     <Z>0</Z>
                   </EPBottom>
                   <EPTop>
                     <X>4</X>
-                    <Y>0</Y>
+                    <Y>-0.25</Y>
                     <Z>2</Z>
                   </EPTop>
                 </PortalDestination>
@@ -1778,6 +1800,1579 @@
           <RoofMaterial>
             <Rotation>0</Rotation>
             <Material>Textures\YvesAllaire\Evi8\evil8_base\e8crete03.jpg</Material>
+            <UVScale>
+              <X>1</X>
+              <Y>1</Y>
+            </UVScale>
+            <UVShift>
+              <X>0</X>
+              <Y>0</Y>
+            </UVShift>
+          </RoofMaterial>
+          <CellAttributes>
+            <AttributeList />
+          </CellAttributes>
+        </Cell>
+        <Cell>
+          <ID>
+            <CellName>1</CellName>
+            <GroupName>3</GroupName>
+          </ID>
+          <Verts>
+            <CellVert>
+              <Bottom>
+                <X>-3</X>
+                <Y>-0.25</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-5</X>
+                <Y>-0.25</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-5</X>
+                <Y>-2.25</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-3</X>
+                <Y>-2.25</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+          </Verts>
+          <Edges>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>0</Start>
+              <End>1</End>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material />
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>0</CellName>
+                    <GroupName>4</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>-3</X>
+                    <Y>-0.25</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>-3</X>
+                    <Y>-0.25</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>-5</X>
+                    <Y>-0.25</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>-5</X>
+                    <Y>-0.25</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
+              <Normal>
+                <X>0</X>
+                <Y>-1</Y>
+              </Normal>
+              <Slope>
+                <X>1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>1</Start>
+              <End>2</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03cc.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>1</CellName>
+                    <GroupName>3</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>1</CellName>
+                    <GroupName>3</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>1</X>
+                <Y>-0</Y>
+              </Normal>
+              <Slope>
+                <X>0</X>
+                <Y>1</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>2</Start>
+              <End>3</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03cc.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>1</CellName>
+                    <GroupName>3</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>1</CellName>
+                    <GroupName>3</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>0</X>
+                <Y>1</Y>
+              </Normal>
+              <Slope>
+                <X>-1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>3</Start>
+              <End>0</End>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material />
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>0</CellName>
+                    <GroupName>3</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>-3</X>
+                    <Y>-2.25</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>-3</X>
+                    <Y>-2.25</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>-3</X>
+                    <Y>-0.25</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>-3</X>
+                    <Y>-0.25</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
+              <Normal>
+                <X>-1</X>
+                <Y>-0</Y>
+              </Normal>
+              <Slope>
+                <X>0</X>
+                <Y>-1</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+          </Edges>
+          <FloorNormal>
+            <X>0</X>
+            <Y>0</Y>
+            <Z>1</Z>
+          </FloorNormal>
+          <RoofNormal>
+            <X>-0</X>
+            <Y>-0</Y>
+            <Z>-1</Z>
+          </RoofNormal>
+          <HeightIsIncremental>true</HeightIsIncremental>
+          <RoofVizable>true</RoofVizable>
+          <FloorVizable>true</FloorVizable>
+          <FloorMaterial>
+            <Rotation>0</Rotation>
+            <Material>Textures\YvesAllaire\Evi8\evil8_floor\e8clangfloor04b.jpg</Material>
+            <UVScale>
+              <X>1</X>
+              <Y>1</Y>
+            </UVScale>
+            <UVShift>
+              <X>0</X>
+              <Y>0</Y>
+            </UVShift>
+          </FloorMaterial>
+          <RoofMaterial>
+            <Rotation>0</Rotation>
+            <Material>Textures\YvesAllaire\Evi8\evil8_base\e8crete01.jpg</Material>
+            <UVScale>
+              <X>1</X>
+              <Y>1</Y>
+            </UVScale>
+            <UVShift>
+              <X>0</X>
+              <Y>0</Y>
+            </UVShift>
+          </RoofMaterial>
+          <CellAttributes>
+            <AttributeList />
+          </CellAttributes>
+        </Cell>
+      </Cells>
+      <GroupAttributes>
+        <AttributeList />
+      </GroupAttributes>
+    </CellGroup>
+    <CellGroup>
+      <Name>4</Name>
+      <Cells>
+        <Cell>
+          <ID>
+            <CellName>0</CellName>
+            <GroupName>4</GroupName>
+          </ID>
+          <Verts>
+            <CellVert>
+              <Bottom>
+                <X>-3</X>
+                <Y>-0.25</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-3</X>
+                <Y>5</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-5</X>
+                <Y>5</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-5</X>
+                <Y>-0.25</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+          </Verts>
+          <Edges>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>0</Start>
+              <End>1</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03cc.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>0</CellName>
+                    <GroupName>4</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>0</CellName>
+                    <GroupName>4</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>-1</X>
+                <Y>-0</Y>
+              </Normal>
+              <Slope>
+                <X>0</X>
+                <Y>-1</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>1</Start>
+              <End>2</End>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material />
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>1</CellName>
+                    <GroupName>4</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>-3</X>
+                    <Y>5</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>-3</X>
+                    <Y>5</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>-5</X>
+                    <Y>5</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>-5</X>
+                    <Y>5</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
+              <Normal>
+                <X>0</X>
+                <Y>-1</Y>
+              </Normal>
+              <Slope>
+                <X>1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>2</Start>
+              <End>3</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03cc.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>0</CellName>
+                    <GroupName>4</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>0</CellName>
+                    <GroupName>4</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>1</X>
+                <Y>-0</Y>
+              </Normal>
+              <Slope>
+                <X>0</X>
+                <Y>1</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>3</Start>
+              <End>0</End>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material />
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>1</CellName>
+                    <GroupName>3</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>-5</X>
+                    <Y>-0.25</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>-5</X>
+                    <Y>-0.25</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>-3</X>
+                    <Y>-0.25</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>-3</X>
+                    <Y>-0.25</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
+              <Normal>
+                <X>0</X>
+                <Y>1</Y>
+              </Normal>
+              <Slope>
+                <X>-1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+          </Edges>
+          <FloorNormal>
+            <X>0</X>
+            <Y>-0</Y>
+            <Z>1</Z>
+          </FloorNormal>
+          <RoofNormal>
+            <X>0</X>
+            <Y>0</Y>
+            <Z>-1</Z>
+          </RoofNormal>
+          <HeightIsIncremental>true</HeightIsIncremental>
+          <RoofVizable>true</RoofVizable>
+          <FloorVizable>true</FloorVizable>
+          <FloorMaterial>
+            <Rotation>0</Rotation>
+            <Material>Textures\YvesAllaire\Evi8\evil8_floor\e8clangfloor04b.jpg</Material>
+            <UVScale>
+              <X>1</X>
+              <Y>1</Y>
+            </UVScale>
+            <UVShift>
+              <X>0</X>
+              <Y>0</Y>
+            </UVShift>
+          </FloorMaterial>
+          <RoofMaterial>
+            <Rotation>0</Rotation>
+            <Material>Textures\YvesAllaire\Evi8\evil8_base\e8crete01.jpg</Material>
+            <UVScale>
+              <X>1</X>
+              <Y>1</Y>
+            </UVScale>
+            <UVShift>
+              <X>0</X>
+              <Y>0</Y>
+            </UVShift>
+          </RoofMaterial>
+          <CellAttributes>
+            <AttributeList />
+          </CellAttributes>
+        </Cell>
+        <Cell>
+          <ID>
+            <CellName>1</CellName>
+            <GroupName>4</GroupName>
+          </ID>
+          <Verts>
+            <CellVert>
+              <Bottom>
+                <X>-3</X>
+                <Y>5</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-3</X>
+                <Y>7</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-5</X>
+                <Y>7</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-5</X>
+                <Y>5</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+          </Verts>
+          <Edges>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>0</Start>
+              <End>1</End>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material />
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>0</CellName>
+                    <GroupName>5</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>-3</X>
+                    <Y>5</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>-3</X>
+                    <Y>5</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>-3</X>
+                    <Y>7</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>-3</X>
+                    <Y>7</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
+              <Normal>
+                <X>-1</X>
+                <Y>-0</Y>
+              </Normal>
+              <Slope>
+                <X>0</X>
+                <Y>-1</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>1</Start>
+              <End>2</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03cc.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>1</CellName>
+                    <GroupName>4</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>1</CellName>
+                    <GroupName>4</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>0</X>
+                <Y>-1</Y>
+              </Normal>
+              <Slope>
+                <X>1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>2</Start>
+              <End>3</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03cc.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>1</CellName>
+                    <GroupName>4</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>1</CellName>
+                    <GroupName>4</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>1</X>
+                <Y>-0</Y>
+              </Normal>
+              <Slope>
+                <X>0</X>
+                <Y>1</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>3</Start>
+              <End>0</End>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material />
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>0</CellName>
+                    <GroupName>4</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>-5</X>
+                    <Y>5</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>-5</X>
+                    <Y>5</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>-3</X>
+                    <Y>5</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>-3</X>
+                    <Y>5</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
+              <Normal>
+                <X>0</X>
+                <Y>1</Y>
+              </Normal>
+              <Slope>
+                <X>-1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+          </Edges>
+          <FloorNormal>
+            <X>0</X>
+            <Y>-0</Y>
+            <Z>1</Z>
+          </FloorNormal>
+          <RoofNormal>
+            <X>0</X>
+            <Y>0</Y>
+            <Z>-1</Z>
+          </RoofNormal>
+          <HeightIsIncremental>true</HeightIsIncremental>
+          <RoofVizable>true</RoofVizable>
+          <FloorVizable>true</FloorVizable>
+          <FloorMaterial>
+            <Rotation>0</Rotation>
+            <Material>Textures\YvesAllaire\Evi8\evil8_floor\e8clangfloor04b.jpg</Material>
+            <UVScale>
+              <X>1</X>
+              <Y>1</Y>
+            </UVScale>
+            <UVShift>
+              <X>0</X>
+              <Y>0</Y>
+            </UVShift>
+          </FloorMaterial>
+          <RoofMaterial>
+            <Rotation>0</Rotation>
+            <Material>Textures\YvesAllaire\Evi8\evil8_base\e8crete01.jpg</Material>
+            <UVScale>
+              <X>1</X>
+              <Y>1</Y>
+            </UVScale>
+            <UVShift>
+              <X>0</X>
+              <Y>0</Y>
+            </UVShift>
+          </RoofMaterial>
+          <CellAttributes>
+            <AttributeList />
+          </CellAttributes>
+        </Cell>
+      </Cells>
+      <GroupAttributes>
+        <AttributeList />
+      </GroupAttributes>
+    </CellGroup>
+    <CellGroup>
+      <Name>5</Name>
+      <Cells>
+        <Cell>
+          <ID>
+            <CellName>0</CellName>
+            <GroupName>5</GroupName>
+          </ID>
+          <Verts>
+            <CellVert>
+              <Bottom>
+                <X>0</X>
+                <Y>5</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>2</X>
+                <Y>5</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>2</X>
+                <Y>7</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-3</X>
+                <Y>7</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>-3</X>
+                <Y>5</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+          </Verts>
+          <Edges>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>0</Start>
+              <End>1</End>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material />
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>1</CellName>
+                    <GroupName>5</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>0</X>
+                    <Y>5</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>0</X>
+                    <Y>5</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>2</X>
+                    <Y>5</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>2</X>
+                    <Y>5</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
+              <Normal>
+                <X>0</X>
+                <Y>1</Y>
+              </Normal>
+              <Slope>
+                <X>-1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>1</Start>
+              <End>2</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03cc.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>0</CellName>
+                    <GroupName>5</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>0</CellName>
+                    <GroupName>5</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>-1</X>
+                <Y>-0</Y>
+              </Normal>
+              <Slope>
+                <X>0</X>
+                <Y>-1</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>2</Start>
+              <End>3</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03cc.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>0</CellName>
+                    <GroupName>5</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>0</CellName>
+                    <GroupName>5</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>0</X>
+                <Y>-1</Y>
+              </Normal>
+              <Slope>
+                <X>1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>3</Start>
+              <End>4</End>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material />
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>1</CellName>
+                    <GroupName>4</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>-3</X>
+                    <Y>7</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>-3</X>
+                    <Y>7</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>-3</X>
+                    <Y>5</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>-3</X>
+                    <Y>5</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
+              <Normal>
+                <X>1</X>
+                <Y>-0</Y>
+              </Normal>
+              <Slope>
+                <X>0</X>
+                <Y>1</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>4</Start>
+              <End>0</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_wall\e8crete03cc.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>0</CellName>
+                    <GroupName>5</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>0</CellName>
+                    <GroupName>5</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>0</X>
+                <Y>1</Y>
+              </Normal>
+              <Slope>
+                <X>-1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+          </Edges>
+          <FloorNormal>
+            <X>0</X>
+            <Y>0</Y>
+            <Z>1</Z>
+          </FloorNormal>
+          <RoofNormal>
+            <X>0</X>
+            <Y>0</Y>
+            <Z>-1</Z>
+          </RoofNormal>
+          <HeightIsIncremental>true</HeightIsIncremental>
+          <RoofVizable>true</RoofVizable>
+          <FloorVizable>true</FloorVizable>
+          <FloorMaterial>
+            <Rotation>0</Rotation>
+            <Material>Textures\YvesAllaire\Evi8\evil8_floor\e8clangfloor04b.jpg</Material>
+            <UVScale>
+              <X>1</X>
+              <Y>1</Y>
+            </UVScale>
+            <UVShift>
+              <X>0</X>
+              <Y>0</Y>
+            </UVShift>
+          </FloorMaterial>
+          <RoofMaterial>
+            <Rotation>0</Rotation>
+            <Material>Textures\YvesAllaire\Evi8\evil8_base\e8crete01.jpg</Material>
+            <UVScale>
+              <X>1</X>
+              <Y>1</Y>
+            </UVScale>
+            <UVShift>
+              <X>0</X>
+              <Y>0</Y>
+            </UVShift>
+          </RoofMaterial>
+          <CellAttributes>
+            <AttributeList />
+          </CellAttributes>
+        </Cell>
+        <Cell>
+          <ID>
+            <CellName>1</CellName>
+            <GroupName>5</GroupName>
+          </ID>
+          <Verts>
+            <CellVert>
+              <Bottom>
+                <X>2</X>
+                <Y>4</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>2</X>
+                <Y>5</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>0</X>
+                <Y>5</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+            <CellVert>
+              <Bottom>
+                <X>0</X>
+                <Y>4</Y>
+                <Z>0</Z>
+              </Bottom>
+              <Top>2</Top>
+            </CellVert>
+          </Verts>
+          <Edges>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>0</Start>
+              <End>1</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_floor\e8warning128.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>1</CellName>
+                    <GroupName>5</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>1</CellName>
+                    <GroupName>5</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>-1</X>
+                <Y>-0</Y>
+              </Normal>
+              <Slope>
+                <X>0</X>
+                <Y>-1</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>1</Start>
+              <End>2</End>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material />
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>0</CellName>
+                    <GroupName>5</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>2</X>
+                    <Y>5</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>2</X>
+                    <Y>5</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>0</X>
+                    <Y>5</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>0</X>
+                    <Y>5</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
+              <Normal>
+                <X>0</X>
+                <Y>-1</Y>
+              </Normal>
+              <Slope>
+                <X>1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>2</Start>
+              <End>3</End>
+              <EdgeType>Wall</EdgeType>
+              <Destinations />
+              <Geometry>
+                <CellWallGeometry>
+                  <Vizable>true</Vizable>
+                  <LowerZ>
+                    <float>0</float>
+                    <float>0</float>
+                  </LowerZ>
+                  <UpperZ>
+                    <float>2</float>
+                    <float>2</float>
+                  </UpperZ>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material>Textures\YvesAllaire\Evi8\evil8_floor\e8warning128.jpg</Material>
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Bottom>
+                    <CellName>1</CellName>
+                    <GroupName>5</GroupName>
+                  </Bottom>
+                  <Top>
+                    <CellName>1</CellName>
+                    <GroupName>5</GroupName>
+                  </Top>
+                </CellWallGeometry>
+              </Geometry>
+              <Normal>
+                <X>1</X>
+                <Y>-0</Y>
+              </Normal>
+              <Slope>
+                <X>0</X>
+                <Y>1</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+            <CellEdge>
+              <Vizable>true</Vizable>
+              <Start>3</Start>
+              <End>0</End>
+              <EdgeType>Portal</EdgeType>
+              <Destinations>
+                <PortalDestination>
+                  <Material>
+                    <Rotation>0</Rotation>
+                    <Material />
+                    <UVScale>
+                      <X>1</X>
+                      <Y>1</Y>
+                    </UVScale>
+                    <UVShift>
+                      <X>0</X>
+                      <Y>0</Y>
+                    </UVShift>
+                  </Material>
+                  <Visable>false</Visable>
+                  <DestinationCell>
+                    <CellName>0</CellName>
+                    <GroupName>1</GroupName>
+                  </DestinationCell>
+                  <DestinationAttributes>
+                    <AttributeList />
+                  </DestinationAttributes>
+                  <SPBottom>
+                    <X>0</X>
+                    <Y>4</Y>
+                    <Z>0</Z>
+                  </SPBottom>
+                  <SPTop>
+                    <X>0</X>
+                    <Y>4</Y>
+                    <Z>2</Z>
+                  </SPTop>
+                  <EPBottom>
+                    <X>2</X>
+                    <Y>4</Y>
+                    <Z>0</Z>
+                  </EPBottom>
+                  <EPTop>
+                    <X>2</X>
+                    <Y>4</Y>
+                    <Z>2</Z>
+                  </EPTop>
+                </PortalDestination>
+              </Destinations>
+              <Geometry />
+              <Normal>
+                <X>0</X>
+                <Y>1</Y>
+              </Normal>
+              <Slope>
+                <X>-1</X>
+                <Y>0</Y>
+              </Slope>
+              <EdgeAttributes />
+            </CellEdge>
+          </Edges>
+          <FloorNormal>
+            <X>0</X>
+            <Y>-0</Y>
+            <Z>1</Z>
+          </FloorNormal>
+          <RoofNormal>
+            <X>0</X>
+            <Y>0</Y>
+            <Z>-1</Z>
+          </RoofNormal>
+          <HeightIsIncremental>true</HeightIsIncremental>
+          <RoofVizable>true</RoofVizable>
+          <FloorVizable>true</FloorVizable>
+          <FloorMaterial>
+            <Rotation>0</Rotation>
+            <Material>Textures\YvesAllaire\Evi8\evil8_floor\e8warning128.jpg</Material>
+            <UVScale>
+              <X>1</X>
+              <Y>1</Y>
+            </UVScale>
+            <UVShift>
+              <X>0</X>
+              <Y>0</Y>
+            </UVShift>
+          </FloorMaterial>
+          <RoofMaterial>
+            <Rotation>0</Rotation>
+            <Material>Textures\YvesAllaire\Evi8\evil8_floor\e8warning128.jpg</Material>
             <UVScale>
               <X>1</X>
               <Y>1</Y>
