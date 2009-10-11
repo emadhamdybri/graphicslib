@@ -17,212 +17,13 @@ using World;
 
 namespace portalTest
 {
-    public class DebugableVisibleFrustum : VisibleFrustum
-    {
-        public DebugableVisibleFrustum(VisibleFrustum val)
-            : base(val)
-        {
-        }
-
-        void drawEyePoint()
-        {
-            // put a sphere at the eye point and draw the axes
-            GL.Color4(0.25f, 0.25f, 1f, 0.5f);
-            Glu.Sphere(Glu.NewQuadric(), 0.25f, 6, 6);
-
-            GL.Disable(EnableCap.Lighting);
-
-            GL.LineWidth(2.0f);
-            GL.Begin(BeginMode.Lines);
-
-            // the "up" vector
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(Up);
-            GL.Vertex3(Up);
-            GL.Vertex3(Up * 0.75f + RightVec * 0.35f);
-
-            // the "right" vector
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(RightVec);
-            GL.Vertex3(RightVec);
-            GL.Vertex3(RightVec * 0.75f + Up * 0.25f);
-
-            // the "forward" vector
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(ViewDir * 3f);
-            GL.Vertex3(ViewDir * 3f);
-            GL.Vertex3(ViewDir * 2.75f + Up * 0.125f);
-            GL.Vertex3(ViewDir * 3f);
-            GL.Vertex3(ViewDir * 2.75f + Up * -0.125f);
-
-            GL.End();
-
-            GL.Enable(EnableCap.Lighting);
-        }
-
-        void drawViewFrustum()
-        {
-            GL.Disable(EnableCap.Lighting);
-
-            float endViewAlpha = 0.25f;
-            float startViewAlpha = 0.75f;
-
-            //GL.Disable(EnableCap.DepthTest);
-            GL.DepthMask(false);
-
-            float planeAlphaFactor = 0.25f;
-            GL.Begin(BeginMode.Triangles);
-
-            // top
-            GL.Color4(1f, 1f, 1f, startViewAlpha * planeAlphaFactor);
-            GL.Vertex3(0f, 0f, 0f);
-            GL.Color4(1f, 1f, 1f, endViewAlpha * planeAlphaFactor);
-            GL.Vertex3(edge[2] * farClip);
-            GL.Vertex3(edge[3] * farClip);
-            GL.Color4(1f, 1f, 1f, startViewAlpha * planeAlphaFactor);
-            GL.Vertex3(0f, 0f, 0f);
-            GL.Color4(1f, 1f, 1f, endViewAlpha * planeAlphaFactor);
-            GL.Vertex3(edge[3] * farClip);
-            GL.Vertex3(edge[2] * farClip);
-
-            // bottom
-            GL.Color4(1f, 1f, 1f, startViewAlpha * planeAlphaFactor);
-            GL.Vertex3(0f, 0f, 0f);
-            GL.Color4(1f, 1f, 1f, endViewAlpha * planeAlphaFactor);
-            GL.Vertex3(edge[0] * farClip);
-            GL.Vertex3(edge[1] * farClip);
-            GL.Color4(1f, 1f, 1f, startViewAlpha * planeAlphaFactor);
-            GL.Vertex3(0f, 0f, 0f);
-            GL.Color4(1f, 1f, 1f, endViewAlpha * planeAlphaFactor);
-            GL.Vertex3(edge[1] * farClip);
-            GL.Vertex3(edge[0] * farClip);
-
-            // left
-            GL.Color4(1f, 1f, 1f, startViewAlpha * planeAlphaFactor);
-            GL.Vertex3(0f, 0f, 0f);
-            GL.Color4(1f, 1f, 1f, endViewAlpha * planeAlphaFactor);
-            GL.Vertex3(edge[0] * farClip);
-            GL.Vertex3(edge[3] * farClip);
-            GL.Color4(1f, 1f, 1f, startViewAlpha * planeAlphaFactor);
-            GL.Vertex3(0f, 0f, 0f);
-            GL.Color4(1f, 1f, 1f, endViewAlpha * planeAlphaFactor);
-            GL.Vertex3(edge[3] * farClip);
-            GL.Vertex3(edge[0] * farClip);
-
-            // right
-            GL.Color4(1f, 1f, 1f, startViewAlpha * planeAlphaFactor);
-            GL.Vertex3(0f, 0f, 0f);
-            GL.Color4(1f, 1f, 1f, endViewAlpha * planeAlphaFactor);
-            GL.Vertex3(edge[2] * farClip);
-            GL.Vertex3(edge[1] * farClip);
-            GL.Color4(1f, 1f, 1f, startViewAlpha * planeAlphaFactor);
-            GL.Vertex3(0f, 0f, 0f);
-            GL.Color4(1f, 1f, 1f, endViewAlpha * planeAlphaFactor);
-            GL.Vertex3(edge[1] * farClip);
-            GL.Vertex3(edge[2] * farClip);
-
-            GL.End();
-
-            GL.Begin(BeginMode.Quads);
-            // far
-            GL.Color4(1f, 1f, 1f, endViewAlpha * planeAlphaFactor);
-            GL.Vertex3(edge[0] * farClip);
-            GL.Vertex3(edge[1] * farClip);
-            GL.Vertex3(edge[2] * farClip);
-            GL.Vertex3(edge[3] * farClip);
-            GL.Vertex3(edge[3] * farClip);
-            GL.Vertex3(edge[2] * farClip);
-            GL.Vertex3(edge[1] * farClip);
-            GL.Vertex3(edge[0] * farClip);
-            GL.End();
-
-            GL.LineWidth(2.0f);
-            // draw the edge vectors
-            GL.Begin(BeginMode.Lines);
-            foreach (Vector3 e in edge)
-            {
-                GL.Color4(1f, 1f, 1f, startViewAlpha);
-                GL.Vertex3(0, 0, 0);
-                GL.Color4(1f, 1f, 1f, endViewAlpha);
-                GL.Vertex3(e * farClip);
-            }
-            GL.End();
-
-            GL.LineWidth(3.0f);
-            // compute the view plane points for normal drawing
-            Vector3 leftPoint = (edge[0] + edge[3]) * 2;
-            Vector3 rightPoint = (edge[1] + edge[2]) * 2;
-            Vector3 topPoint = (edge[3] + edge[2]) * 2;
-            Vector3 bottomPoint = (edge[0] + edge[1]) * 2;
-
-            GL.Begin(BeginMode.Lines);
-
-            GL.Color4(1f, 0f, 0f, 0.5f);
-            GL.Vertex3(leftPoint);
-            GL.Vertex3(leftPoint + Left.Normal);
-
-            GL.Color4(0f, 1f, 0f, 0.5f);
-            GL.Vertex3(rightPoint);
-            GL.Vertex3(rightPoint + Right.Normal);
-
-            GL.Color4(0f, 0f, 1f, 0.5f);
-            GL.Vertex3(topPoint);
-            GL.Vertex3(topPoint + Top.Normal);
-
-            GL.Color4(1f, 0f, 1f, 0.5f);
-            GL.Vertex3(bottomPoint);
-            GL.Vertex3(bottomPoint + Bottom.Normal);
-
-            GL.Color4(1f, 1f, 1f, endViewAlpha);
-            GL.Vertex3(ViewDir * farClip);
-            GL.Vertex3(ViewDir * farClip + Far.Normal);
-            GL.End();
-
-            GL.Begin(BeginMode.LineLoop);
-            GL.Color4(0.5f, 0.5f, 0.5f, endViewAlpha);
-            foreach (Vector3 e in edge)
-                GL.Vertex3(e * farClip);
-            GL.End();
-
-            GL.PushMatrix();
-            GL.Color4(1f, 1f, 1f, startViewAlpha);
-            GL.Translate(ViewDir * nearClip);
-            Glu.Sphere(Glu.NewQuadric(), 0.125f, 3, 2);
-            GL.PopMatrix();
-
-            GL.PushMatrix();
-            GL.Color4(0.5f, 0.5f, 0.5f, endViewAlpha);
-            GL.Translate(ViewDir * farClip);
-            Glu.Sphere(Glu.NewQuadric(), 0.125f, 3, 2);
-            GL.PopMatrix();
-
-            GL.Enable(EnableCap.DepthTest);
-            GL.DepthMask(true);
-
-            GL.Enable(EnableCap.Lighting);
-        }
-
-        public void drawFrustum()
-        {
-            GL.PushMatrix();
-            //move to the eye point
-            GL.Translate(EyePoint);
-
-            drawEyePoint();
-
-            drawViewFrustum();
-
-            GL.PopMatrix();
-
-            GL.Enable(EnableCap.Lighting);
-        }
-    }
-
-
     public class ViewPosition
     {
         public Vector3 Position = new Vector3();
         public Vector2 Rotation = new Vector2(0, 0);
+
+        public float EyeHeight = 1.6f;
+        public Vector3 Eye = new Vector3();
 
         public Cell cell = null;
 
@@ -266,7 +67,10 @@ namespace portalTest
 
         public void SetCamera(Camera cam)
         {
-            cam.set(Position, Rotation.X, Rotation.Y);
+            Eye = new Vector3(Position);
+            Eye.Z += EyeHeight;
+
+            cam.set(Eye, Rotation.X, Rotation.Y);
         }
 
         public float HeadingAngle()
@@ -298,7 +102,6 @@ namespace portalTest
         public ViewPosition view = null;
 
         Camera camera = new Camera();
-        DebugableVisibleFrustum clipingFrustum = null;
 
         GUIGameWindowBase window;
 
@@ -340,8 +143,6 @@ namespace portalTest
 
             camera.FOV = 30f;
             camera.set(new Vector3(1, 1, 2), 0, 0);
-
-            clipingFrustum = new DebugableVisibleFrustum(camera.SnapshotFrusum());
         }
 
         public void Resized(EventArgs e)
