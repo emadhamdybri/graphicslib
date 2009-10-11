@@ -366,7 +366,7 @@ namespace portalTest
 
             foreach (ExternalPortal dest in dests)
             {
-                float dot = Vector3.Dot(VectorHelper3.Subtract(dest.destination.SPBottom,view.Position),new Vector3(dest.edge.Normal));
+                float dot = Vector3.Dot(VectorHelper3.Subtract(dest.destination.SPBottom,view.Eye),new Vector3(dest.edge.Normal));
                 if (dot > 0)
                     continue;
 

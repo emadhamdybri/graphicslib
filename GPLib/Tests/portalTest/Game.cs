@@ -49,8 +49,6 @@ namespace portalTest
 
             visual = new Visual(window, renderer);
             visual.view = player;
-
-            player.Move(0, 0, 1);
             lastPlayerPos.CopyFrom(player);
         }
 
@@ -185,6 +183,9 @@ namespace portalTest
                     }
                 }
             }
+
+            // force the player to be at the right Z level
+            player.Position.Z = Cell.GetZInPlane(player.cell.GetFloorPlane(), player.Position.X, player.Position.Y);
 
         }
 
