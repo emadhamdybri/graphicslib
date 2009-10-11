@@ -204,7 +204,22 @@ namespace portalTest
 
             camera.Execute();
 
-            DrawablesSystem.system.removeAll();
+            if (view != null)
+            {
+                GL.Color3(Color.Yellow);
+                GL.Begin(BeginMode.Lines);
+                GL.Vertex3(view.Eye);
+                GL.Vertex3(view.Position);
+                GL.End();
+
+                IntPtr quadric = Glu.NewQuadric();
+                GL.PushMatrix();
+                GL.Translate(view.Position);
+                Glu.Sphere(quadric, 0.25f, 10, 10);
+                Glu.DeleteQuadric(quadric);
+                GL.PopMatrix();
+            }
+             DrawablesSystem.system.removeAll();
 
             GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.Light0);
