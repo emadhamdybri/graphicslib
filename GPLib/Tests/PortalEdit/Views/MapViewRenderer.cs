@@ -315,7 +315,8 @@ namespace PortalEdit
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             float aspect = (float)control.Width / (float)control.Height;
-            Glu.Perspective(45 / aspect, aspect, 1f, 1000f);
+
+            Glu.Perspective(45, aspect, 1f, 1000f);
             GL.MatrixMode(MatrixMode.Modelview);
         }
 
