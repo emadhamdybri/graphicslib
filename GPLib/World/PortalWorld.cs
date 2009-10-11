@@ -130,7 +130,6 @@ namespace World
 
             return cachedVertList;
         }
-
     }
 
     public class CellWallGeometry
