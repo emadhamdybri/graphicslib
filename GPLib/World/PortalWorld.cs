@@ -356,19 +356,27 @@ namespace World
             return Bounds;
         }
 
-        public bool PointIn ( Vector3 point )
+        public bool PointIn2D( Vector3 point )
         {
-            if (GetBoundingBox().Contains(point) == ContainmentType.Disjoint)
-                return false;
-
             // check the XY see if we are outside
-            foreach ( CellEdge edge in Edges )
+            foreach (CellEdge edge in Edges)
             {
                 Vector2 v = new Vector2(Verts[edge.Start].Bottom.X - point.X, Verts[edge.Start].Bottom.Y - point.Y);
                 float dot = Vector2.Dot(v, edge.Normal);
                 if (dot > 0)
                     return false;
             }
+
+            return true;
+        }
+
+        public bool PointIn ( Vector3 point )
+        {
+            if (GetBoundingBox().Contains(point) == ContainmentType.Disjoint)
+                return false;
+
+            if (!PointIn2D(point))
+                return false;
 
             if (GetFloorPlane().Intersects(point) == PlaneIntersectionType.Back)
                 return false;
@@ -421,6 +429,11 @@ namespace World
         public string Name = string.Empty;
         public List<Cell> Cells = new List<Cell>();
         public PortalMapAttributes GroupAttributes = new PortalMapAttributes();
+
+        public override string ToString()
+        {
+            return Name;
+        }
 
         protected bool NameExists(string name)
         {
@@ -557,6 +570,12 @@ namespace World
 
         public List<CellID> cells;
         public PortalMapAttributes ObjectAttributes = new PortalMapAttributes();
+
+        public override string ToString()
+        {
+            return Name + "(" + ObjectType+")";
+        }
+
     }
 
     public class PortalWorld
