@@ -38,7 +38,7 @@ namespace portalTest
             window = win;
 
             SetupResourceDirs();
-            String fileName = Path.Combine("Maps", "Sample.PortalMap");
+            String fileName = Path.Combine("Maps", "5D.PortalMap");
 
             world = PortalWorld.Read(new FileInfo(Path.Combine(dataDir, fileName)));
             if (world == null)

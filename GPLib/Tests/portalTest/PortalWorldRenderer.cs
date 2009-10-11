@@ -321,29 +321,64 @@ namespace portalTest
             DrawablesSystem.system.removeAll();
         }
 
-        protected void RecursiveWalkGroup ( Cell cell, ref List<PortalVisitItem> VisitStack )
+
+        void DrawPortalStackToStencil (List<PortalVisitItem> VisitStack)
+        {
+            GL.Clear(ClearBufferMask.StencilBufferBit);
+
+            GL.Enable(EnableCap.StencilTest);
+            GL.StencilFunc(StencilFunction.Always, 1, 1);
+            GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
+
+            GL.Disable(EnableCap.DepthTest);
+
+            GL.Color4(1, 1, 1, 0f);
+
+            for (int i = VisitStack.Count - 1; i >= 0; i-- )
+            {
+                PortalDestination destination = VisitStack[i].portal;
+                GL.Begin(BeginMode.Quads);
+
+                GL.Vertex3(destination.EPBottom);
+                GL.Vertex3(destination.SPBottom);
+                GL.Vertex3(destination.SPTop);
+                GL.Vertex3(destination.EPTop);
+
+                GL.End();
+            }
+            GL.Enable(EnableCap.DepthTest);
+            GL.StencilFunc(StencilFunction.Equal, 1, 1);
+            GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
+        }
+
+        protected void RecursiveWalkGroup ( Cell cell, ref List<PortalVisitItem> VisitStack, ViewPosition view )
         {
             if (visitedCells.Contains(cell))
                 return; // this is being handled by others, so let it go
 
+            DrawPortalStackToStencil(VisitStack);
             // ok first draw the group
             DrawGroup(cell.Group);
+
+            GL.Disable(EnableCap.StencilTest);
 
             List<ExternalPortal> dests = externalPortals[cell.Group];
 
             foreach (ExternalPortal dest in dests)
             {
+                float dot = Vector3.Dot(VectorHelper3.Subtract(dest.destination.SPBottom,view.Position),new Vector3(dest.edge.Normal));
+                if (dot > 0)
+                    continue;
+
                 if (VisitStack[0].frustum.Intersects(dest.destination.GetPolygon()))
                 {
                     PortalVisitItem item = new PortalVisitItem();
                     // TODO CLIP the frustum to the portal!!!
-
-
                     item.frustum = VisitStack[0].frustum;
                     item.portal = dest.destination;
 
                     VisitStack.Add(item);
-                    RecursiveWalkGroup(dest.destination.Cell, ref VisitStack);
+                    RecursiveWalkGroup(dest.destination.Cell, ref VisitStack, view);
                     VisitStack.Remove(item);
                 }
             }
@@ -370,7 +405,7 @@ namespace portalTest
                     item.portal = dest.destination;
 
                     VisitStack.Add(item);
-                    RecursiveWalkGroup(dest.destination.Cell, ref VisitStack);
+                    RecursiveWalkGroup(dest.destination.Cell, ref VisitStack, view);
                 }
             }
         }
