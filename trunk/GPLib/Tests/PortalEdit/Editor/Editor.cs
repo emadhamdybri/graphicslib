@@ -167,6 +167,15 @@ namespace PortalEdit
             SetDirty();
             obj.cells = map.FindCells(obj.Postion);
             map.MapObjects.Add(obj);
+            ResetViews();
+            frame.LoadObjectList();
+        }
+
+        public void MoveObject ( ObjectInstance obj, Vector3 pos )
+        {
+            SetDirty();
+            obj.Postion = pos;
+            obj.cells = map.FindCells(obj.Postion);
         }
 
         public void NewGroup ()
