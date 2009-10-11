@@ -210,6 +210,9 @@ namespace PortalEdit
             HideAboveZ.Value = (decimal)EditorCell.HideGeoOver;
 
             HideGeo_CheckedChanged(this, EventArgs.Empty);
+
+            LoadObjectList();
+
         }
 
         public static PortalMapAttribute FindDepthAttribute ( string name )
@@ -1104,19 +1107,53 @@ namespace PortalEdit
             loadingUI = false;
         }
 
-        private void ObjectGroupList_SelectedIndexChanged(object sender, EventArgs e)
+        public void LoadObjectList ()
         {
+            loadingUI = true;
+            ObjectList.Items.Clear();
+
+            foreach(ObjectInstance obj in editor.map.MapObjects)
+                ObjectList.Items.Add(obj);
+
+            loadingUI = false;
 
         }
 
-        private void ObjectCellList_SelectedIndexChanged(object sender, EventArgs e)
+        private void ObjectList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            loadingUI = true;
+            ObjectInfoBox.Text = string.Empty;
 
+            ObjectPosX.Value = 0;
+            ObjectPosY.Value = 0;
+            ObjectPosZ.Value = 0;
+
+            ObjectInstance inst = (ObjectInstance)ObjectList.SelectedItem;
+            if (inst != null)
+            {
+                foreach (CellID ID in inst.cells)
+                    ObjectInfoBox.Text += ID.GroupName + " " + ID.CellName;
+
+
+                ObjectPosX.Value = (decimal)inst.Postion.X;
+                ObjectPosY.Value = (decimal)inst.Postion.Y;
+                ObjectPosZ.Value = (decimal)inst.Postion.Z;
+            }
+            loadingUI = false;
         }
 
         private void ObjectPosX_ValueChanged(object sender, EventArgs e)
         {
+            if (loadingUI)
+                return;
 
+            ObjectInstance inst = (ObjectInstance)ObjectList.SelectedItem;
+            if (inst != null)
+            {
+                editor.MoveObject(inst, new Vector3((float)ObjectPosX.Value,(float)ObjectPosY.Value,(float)ObjectPosZ.Value));
+                ObjectList_SelectedIndexChanged(this,EventArgs.Empty);
+                Invalidate(true);
+            }
         }
     }
 }
