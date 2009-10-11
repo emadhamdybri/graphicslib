@@ -353,7 +353,7 @@ namespace portalTest
         {
             GL.Disable(EnableCap.Lighting);
             GL.Disable(EnableCap.Texture2D);
-            float mapSize = 250f;
+            float mapSize = 300;
             // draw map frame
             GL.Color4(1, 1, 1, 0.0f);
             GL.Begin(BeginMode.Quads);
@@ -393,7 +393,7 @@ namespace portalTest
 
         public void RenderFrame ()
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             GL.Disable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Lighting);
@@ -409,7 +409,7 @@ namespace portalTest
             GL.Enable(EnableCap.Light0);
             GL.Light(LightName.Light0, LightParameter.Position, new Vector4(10, 15, 10, 1.0f));
 
-            grid.Exectute();
+          //  grid.Exectute();
 
             renderer.Draw(view, camera.ViewFrustum);
 
