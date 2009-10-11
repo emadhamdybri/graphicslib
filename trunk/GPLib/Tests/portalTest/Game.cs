@@ -38,7 +38,7 @@ namespace portalTest
             window = win;
 
             SetupResourceDirs();
-            String fileName = Path.Combine("Maps", "5D.PortalMap");
+            String fileName = Path.Combine("Maps", "Ramp.PortalMap");
 
             world = PortalWorld.Read(new FileInfo(Path.Combine(dataDir, fileName)));
             if (world == null)
@@ -94,8 +94,10 @@ namespace portalTest
             if (spawns.Count > 0)
             {
                 player.Position = new Vector3(spawns[0].Postion);
-                player.Position.Z += 1.6f;
                 player.cell = world.FindCell(spawns[0].cells[0]);
+                lastPlayerPos.CopyFrom(player);
+
+                checkMovement();
             }
         }
 
@@ -145,44 +147,72 @@ namespace portalTest
             if (window.Keyboard[Keys.PageDown])
                 movement.Z = -speed;
 
-            player.Move(movement);
-
-            checkMovement();
+            if (window.Keyboard[Keys.A] || window.Keyboard[Keys.S] || window.Keyboard[Keys.D] || window.Keyboard[Keys.W] || window.Keyboard[Keys.PageUp] || window.Keyboard[Keys.PageDown])
+            {
+                player.Move(movement);
+                checkMovement();
+            }
 
             return false;
         }
 
+
+        Cell FindCellAcrossEdge ( ref Vector3 position, Vector3 initalPos,  Cell starter, ref List<Cell> TestedCells )
+        {
+            Vector2 circle = new Vector2(position);
+            float radius = 0.35f;
+
+            float autoStepZ = 0.5f;
+
+            if (starter.CircleIn(circle, radius))
+                return starter;
+
+            foreach (CellEdge edge in starter.Edges)
+            {
+                if (starter.CircleCrossEdge(edge, circle, radius))
+                {
+                    if (edge.EdgeType == CellEdgeType.Wall)
+                    {
+                        position = initalPos;
+                        return starter;
+                    }
+
+                    if (starter.PointIn(player.Position)) // it is still in my cell but hasn't gone over
+                        return starter;
+
+                    foreach (PortalDestination dest in edge.Destinations)
+                    {
+                        if (TestedCells.Contains(dest.Cell))
+                            continue;
+
+                        // check it's Z
+                        if (dest.EPBottom.Z > player.Position.Z + autoStepZ || dest.SPBottom.Z > player.Position.Z + autoStepZ)
+                            continue; // it's above us, so go on
+
+                        if (dest.Cell.PointIn2D(player.Position))
+                            return dest.Cell;
+
+                        TestedCells.Add(dest.Cell);
+                        Cell possibleCell = FindCellAcrossEdge(ref position, initalPos, dest.Cell, ref TestedCells);
+                        TestedCells.Remove(dest.Cell);
+                        if (possibleCell != dest.Cell)
+                            return possibleCell;
+                    }
+                }
+            }
+
+            // if we can't figure it out, don't allow the move
+            position = initalPos;
+            return starter;
+        }
 
         void checkMovement ( )
         {
             if (player.cell == null)
                 return;
 
-            Vector2 circle = new Vector2(player.Position);
-            float radius = 0.25f;
-
-            if (!player.cell.CircleIn(circle, radius))
-            {   
-                foreach (CellEdge edge in player.cell.Edges)
-                {
-                    if (player.cell.CircleCrossEdge(edge,circle, radius))
-                    {
-                        if (edge.EdgeType == CellEdgeType.Wall)
-                            player.CopyFrom(lastPlayerPos);
-                        else
-                        {
-                            Cell destination = edge.Destinations[0].Cell;
-                            if (destination == null)
-                                return;
-
-                            if (destination.PointIn(player.Position))
-                                player.cell = destination;
-                        }
-
-                        break;
-                    }
-                }
-            }
+            List<Cell> TestedCells = new List<Cell>();
+            player.cell = FindCellAcrossEdge(ref player.Position, lastPlayerPos.Position, player.cell, ref TestedCells);
 
             // force the player to be at the right Z level
             player.Position.Z = Cell.GetZInPlane(player.cell.GetFloorPlane(), player.Position.X, player.Position.Y);
