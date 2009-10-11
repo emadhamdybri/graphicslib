@@ -1103,5 +1103,20 @@ namespace PortalEdit
             }
             loadingUI = false;
         }
+
+        private void ObjectGroupList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ObjectCellList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ObjectPosX_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
