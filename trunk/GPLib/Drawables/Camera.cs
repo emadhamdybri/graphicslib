@@ -77,6 +77,25 @@ namespace Drawables.Cameras
             position.Z += z;
         }
 
+        public void MoveRelitive(Vector3 vec )
+        {
+            MoveRelitive(vec.Y, vec.X, vec.Z);
+        }
+
+        public void MoveRelitive(float forward, float sideways, float up)
+        {
+            Vector3 forwardVec = new Vector3(Forward());
+            Vector3 leftwardVec = Vector3.Cross(new Vector3(0,0,1),forwardVec);
+            Vector3 upwardVec = Vector3.Cross(forwardVec, leftwardVec);
+
+            Vector3 incremnt = new Vector3();
+            incremnt += forwardVec * forward;
+            incremnt += leftwardVec * sideways;
+            incremnt += upwardVec * up;
+
+            position += incremnt;
+        }
+
         public void turn( float _tilt, float _spin )
         {
             tilt += _tilt;
