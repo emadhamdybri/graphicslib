@@ -122,6 +122,8 @@ namespace Drawables
 
     public class DrawablesSystem
     {
+        public static bool RestateMaterial = false;
+
         public static DrawablesSystem system = new DrawablesSystem();
 
         public static int FirstPass = 0;
@@ -194,7 +196,11 @@ namespace Drawables
                 {
                     matList.Key.Execute();
                     foreach (ExecuteItem item in matList.Value)
+                    {
                         item.call(matList.Key);
+                        if (RestateMaterial)
+                            matList.Key.Execute();
+                    }
                 }
             }
         }

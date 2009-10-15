@@ -86,6 +86,39 @@ namespace Drawables.Textures
             }
         }
 
+        public void Bind ()
+        {
+            GL.Enable(EnableCap.Texture2D);
+            Bitmap bitmap;
+            if (file != null && file.Exists)
+                bitmap = new Bitmap(file.FullName);
+            else
+                bitmap = new Bitmap(image);
+
+            GL.GenTextures(1, out boundID);
+            GL.BindTexture(TextureTarget.Texture2D, boundID);
+
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+
+            if (mipmap)
+            {
+                if (TextureSystem.UseAniso)
+                    GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)0x84FF, 2f);
+
+                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            }
+
+            bitmap.UnlockBits(data);
+            bitmap.Dispose();
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+
+                GL.BindTexture(TextureTarget.Texture2D, boundID);
+        }
+
         public void Execute()
         {
             // easy out, do this most of the time
@@ -102,33 +135,7 @@ namespace Drawables.Textures
             if (boundID == -1 || !listID.Valid())
                 Invalidate(); // we know one is bad, so make sure all is free;
 
-            GL.Enable(EnableCap.Texture2D);
-            Bitmap bitmap;
-            if (file != null && file.Exists)
-                bitmap = new Bitmap(file.FullName);
-            else
-                bitmap = new Bitmap(image);
-
-            GL.GenTextures(1, out boundID);
-            GL.BindTexture(TextureTarget.Texture2D, boundID);
-
-            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height),ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-
-            if (mipmap)
-            {
-                if (TextureSystem.UseAniso)
-                    GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)0x84FF, 2f);
-                
-                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-            }
-
-            bitmap.UnlockBits(data);
-            bitmap.Dispose();
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            Bind();
 
             listID.Start(true);
             if (boundID != -1)
