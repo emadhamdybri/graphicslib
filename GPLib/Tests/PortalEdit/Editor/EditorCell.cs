@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Drawing;
 using System.Text;
 
 using System.Drawing;
@@ -11,6 +11,7 @@ using OpenTK.Graphics.OpenGL;
 using Drawables.Materials;
 using Drawables.DisplayLists;
 using Drawables;
+using Drawables.Textures;
 using Math3D;
 
 using World;
@@ -120,6 +121,25 @@ namespace PortalEdit
             if (!EditorCell.CellIsDrawn(cell))
                 alpha = Settings.settings.HiddenItemAlpha;
             material.baseColor.glColor(alpha);
+
+            bool lightmap = false;
+
+            float highestPoint = Math.Max(geo.UpperZ[0], geo.UpperZ[1]);
+            float lowestPoint = Math.Min(geo.LowerZ[0], geo.LowerZ[1]);
+
+            if (geo.Lightmap != null)
+            {
+                lightmap = true;
+                DrawablesSystem.RestateMaterial = true;
+
+                GL.ActiveTexture(TextureUnit.Texture0);
+                TextureSystem.system.GetTexture(material.textureName).Bind();
+                GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
+
+                GL.ActiveTexture(TextureUnit.Texture1);
+                TextureSystem.system.FromImage(geo.Lightmap).Bind();
+                GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
+            }
     
             GL.Begin(BeginMode.Quads);
 
@@ -130,16 +150,16 @@ namespace PortalEdit
 
             float edgeDistance = cell.EdgeDistance(edge);
 
-            GL.TexCoord2(geo.Material.GetFinalUV(edgeDistance, geo.UpperZ[1]-geo.LowerZ[1]));
+            GL.MultiTexCoord2(TextureUnit.Texture0, geo.Material.GetFinalUV(edgeDistance, geo.UpperZ[1]-geo.LowerZ[1]));
             GL.Vertex3(ep.Bottom.X, ep.Bottom.Y,geo.LowerZ[1]);
 
-            GL.TexCoord2(geo.Material.GetFinalUV(0, geo.UpperZ[0] - geo.LowerZ[0]));
+            GL.MultiTexCoord2(TextureUnit.Texture0, geo.Material.GetFinalUV(0, geo.UpperZ[0] - geo.LowerZ[0]));
             GL.Vertex3(sp.Bottom.X, sp.Bottom.Y, geo.LowerZ[0]);
 
-            GL.TexCoord2(geo.Material.GetFinalUV(0, 0));
+            GL.MultiTexCoord2(TextureUnit.Texture0, geo.Material.GetFinalUV(0, 0));
             GL.Vertex3(sp.Bottom.X, sp.Bottom.Y, geo.UpperZ[0]);
 
-            GL.TexCoord2(geo.Material.GetFinalUV(edgeDistance, 0));
+            GL.MultiTexCoord2(TextureUnit.Texture0, geo.Material.GetFinalUV(edgeDistance, 0));
             GL.Vertex3(ep.Bottom.X, ep.Bottom.Y, geo.UpperZ[1]);
             GL.End();
         }
@@ -571,6 +591,9 @@ namespace PortalEdit
                 edge.Slope = new Vector2(Verts[edge.Start].Bottom.X - Verts[edge.End].Bottom.X, Verts[edge.Start].Bottom.Y - Verts[edge.End].Bottom.Y);
                 edge.Slope.Normalize();
 
+                edge.EdgePlane = Plane.Empty;
+                GetEdgePlane(edge);
+
                 Vector2 p1 = new Vector2(Verts[edge.Start].Bottom.X, Verts[edge.Start].Bottom.Y);
                 Vector2 p2 = new Vector2(Verts[edge.End].Bottom.X, Verts[edge.End].Bottom.Y);
                 List<Cell> cellsWithEdge = map.CellsThatContainEdge(p1, p2,this);
@@ -780,6 +803,21 @@ namespace PortalEdit
         {
             edge.Geometry.Clear();
             edge.Geometry = generateWallDefs(edge);
+        }
+
+        void GenerateLightmapForGeo ( CellWallGeometry geo, CellEdge edge )
+        {
+            float edgeDistance = EdgeDistance(edge);
+
+            float highestPoint = Math.Max(geo.UpperZ[0], geo.UpperZ[1]);
+            float lowestPoint = Math.Min(geo.LowerZ[0], geo.LowerZ[1]);
+
+            float deltaZ = highestPoint - lowestPoint;
+
+            geo.Lightmap = new Bitmap((int)Math.Ceiling(edgeDistance * PortalWorld.LightmapUnitSize), (int)Math.Ceiling(deltaZ * PortalWorld.LightmapUnitSize));
+            Graphics graphics = Graphics.FromImage(geo.Lightmap);
+            graphics.Clear(Color.Green);
+            graphics.Dispose();
         }
 
         List<CellWallGeometry> generateWallDefs ( CellEdge edge )

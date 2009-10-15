@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Drawing;
 
 using OpenTK;
 using Math3D;
@@ -143,6 +144,9 @@ namespace World
 
         public CellID Bottom = CellID.Empty;
         public CellID Top = CellID.Empty;
+
+        public float lightampUnitSize = 8;
+        public Image Lightmap = null;
     }
 
     public class CellEdge
@@ -158,6 +162,8 @@ namespace World
         public Vector2 Slope = new Vector2();
 
         public List<PortalMapAttribute> EdgeAttributes = new List<PortalMapAttribute>();
+
+        public Plane EdgePlane = Plane.Empty;
 
         public CellEdge()
         {
@@ -338,6 +344,14 @@ namespace World
             if (RoofPlane == Plane.Empty)
                 RoofPlane = new Plane(RoofNormal, Vector3.Dot(RoofNormal, RoofPoint(0)));
             return RoofPlane;
+        }
+
+
+        public Plane GetEdgePlane (CellEdge edge)
+        {
+            if (edge.EdgePlane == Plane.Empty)
+                edge.EdgePlane = new Plane(new Vector3(edge.Normal), Vector3.Dot(new Vector3(edge.Normal), Verts[edge.Start].Bottom));
+            return edge.EdgePlane;
         }
 
         public BoundingBox GetBoundingBox ()
@@ -580,6 +594,9 @@ namespace World
 
     public class PortalWorld
     {
+        [System.Xml.Serialization.XmlIgnoreAttribute]
+        public static float LightmapUnitSize = 8f;
+
         public List<CellGroup> CellGroups = new List<CellGroup>();
         public PortalMapAttributes MapAttributes = new PortalMapAttributes();
         public List<ObjectInstance> MapObjects = new List<ObjectInstance>();
