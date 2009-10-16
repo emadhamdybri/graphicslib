@@ -46,15 +46,6 @@ namespace LightmapTest
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Enable(EnableCap.ColorMaterial);
             GL.Enable(EnableCap.LineSmooth);
-            GL.LightModel(LightModelParameter.LightModelColorControl, 1);
-
-            // setup light 0
-            Vector4 lightInfo = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-            GL.Light(LightName.Light0, LightParameter.Ambient, lightInfo);
-
-            lightInfo = new Vector4(0.7f, 0.7f, 0.7f, 1.0f);
-            GL.Light(LightName.Light0, LightParameter.Diffuse, lightInfo);
-            GL.Light(LightName.Light0, LightParameter.Specular, lightInfo);
 
             camera.FOV = 30f;
             camera.set(new Vector3(-5, 0, 0), 0, 0);
@@ -66,8 +57,9 @@ namespace LightmapTest
             Mouse.ButtonUp += new EventHandler<MouseButtonEventArgs>(Mouse_ButtonUp);
             OnResize(EventArgs.Empty);
 
-            surface = TextureSystem.system.FromImage(Resource1.t_flr_oddtile_cln);
-            lightmap = TextureSystem.system.FromImage(Resource1.lightmap2);
+            surface = TextureSystem.system.FromImage(Resource1.picture);
+            lightmap = TextureSystem.system.FromImage(Resource1.Lightmap);
+           // lightmap.Luminance = true;
         }
 
         protected virtual void SetViewPort()
@@ -174,10 +166,19 @@ namespace LightmapTest
             if (!loaded)
                 return;
 
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             camera.Execute();
+            GL.MatrixMode(MatrixMode.Texture);
+            GL.LoadIdentity();
 
+            GL.MatrixMode(MatrixMode.Modelview);
             GL.Color4(Color.Red);
             GL.Begin(BeginMode.Lines);
 
@@ -186,40 +187,56 @@ namespace LightmapTest
             GL.End();
             Grid();
 
+            bool ortho = false;
+           
+            if (ortho)
+            {
+                camera.SetOrthographic();
+                GL.Translate(Width / 2, Height / 2, -10);
+            }
+
+            GL.Disable(EnableCap.Lighting);
 
             GL.Color4(Color.White);
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.Enable(EnableCap.Texture2D);
             surface.Execute();
-            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Replace);
-            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.CombineRgb, (int)TextureEnvModeCombine.Replace);
-//
+
+            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
+               
             GL.ActiveTexture(TextureUnit.Texture1);
             GL.Enable(EnableCap.Texture2D);
             lightmap.Execute();
-            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
-            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.CombineRgb, (int)TextureEnvModeCombine.Dot3Rgba);
+            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Combine);
+            GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.CombineRgb, (int)TextureEnvModeCombine.AddSigned);
 
+            float size = 150;
+            if (!ortho)
+            {
+                size = 2;
+                GL.Rotate(-90, 0, 1, 0);
+                GL.Rotate(-90, 0, 0, 1);
+            }
             GL.Begin(BeginMode.Quads);
+           // if (ortho)
+            {
+                GL.MultiTexCoord2(TextureUnit.Texture0, 0, 1);
+                GL.MultiTexCoord2(TextureUnit.Texture1, 0, 1);
+                GL.Vertex3(-size, -size, 0);
 
-            GL.Normal3(0, -1, 0);
-            GL.MultiTexCoord2(TextureUnit.Texture0, 0, 0);
-            GL.MultiTexCoord2(TextureUnit.Texture1, 0, 0);
-            GL.Vertex3(0, -1, 0);
+                GL.MultiTexCoord2(TextureUnit.Texture0, 1, 1);
+                GL.MultiTexCoord2(TextureUnit.Texture1, 1, 1);
+                GL.Vertex3(size, -size, 0);
 
-            GL.MultiTexCoord2(TextureUnit.Texture0, 0, 1);
-            GL.MultiTexCoord2(TextureUnit.Texture1, 0, 0);
-            GL.Vertex3(0, -1, 2);
+                GL.MultiTexCoord2(TextureUnit.Texture0, 1, 0);
+                GL.MultiTexCoord2(TextureUnit.Texture1, 1, 0);
+                GL.Vertex3(size, size, 0);
 
-            GL.MultiTexCoord2(TextureUnit.Texture0, 1, 1);
-            GL.MultiTexCoord2(TextureUnit.Texture1, 0, 0);
-            GL.Vertex3(0, 1, 2);
-
-            GL.MultiTexCoord2(TextureUnit.Texture0, 1, 0);
-            GL.MultiTexCoord2(TextureUnit.Texture1, 0, 0);
-            GL.Vertex3(0, 1, 0);
-
+                GL.MultiTexCoord2(TextureUnit.Texture0, 0, 0);
+                GL.MultiTexCoord2(TextureUnit.Texture1, 0, 0);
+                GL.Vertex3(-size, size, 0);
+            }
 
             GL.End();
 

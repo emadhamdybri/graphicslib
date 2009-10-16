@@ -74,6 +74,13 @@ namespace LightmapTest {
             }
         }
         
+        internal static System.Drawing.Bitmap picture {
+            get {
+                object obj = ResourceManager.GetObject("picture", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap t_flr_oddtile_cln {
             get {
                 object obj = ResourceManager.GetObject("t_flr_oddtile_cln", resourceCulture);
