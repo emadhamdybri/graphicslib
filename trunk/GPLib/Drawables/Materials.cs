@@ -167,6 +167,24 @@ namespace Drawables.Materials
             displayList.Invalidate();
         }
 
+        public Texture GetTexture()
+        {
+            if (texture != null)
+                return texture;
+
+            if (textureName != string.Empty && image == null)
+                texture = TextureSystem.system.GetTexture(textureName);
+            else if (image != null)
+                texture = TextureSystem.system.FromImage(image);
+            else 
+                texture = null;
+
+            if (texture != null)
+                texture.Execute(); //execute just so we are sure it has a list before we put it in another list
+
+            return texture;
+        }
+
         public void Generate()
         {
             Invalidate();
