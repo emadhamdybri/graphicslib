@@ -573,7 +573,11 @@ namespace PortalEdit
             if (map == null)
                 return;
 
-            DrawablesSystem.system.Execute();
+            foreach(CellGroup group in map.CellGroups)
+            {
+                foreach (EditorCell cell in group.Cells)
+                    cell.Draw();
+            }
 
             // draw the objects
             foreach (ObjectInstance obj in map.MapObjects)

@@ -57,18 +57,111 @@ namespace PortalEdit
         }
     }
 
-    public class WallGeometry : IDisposable
+    public class MultiTexturedDrawable : IDisposable
     {
-        SingleListDrawableItem wallGeo;
-        SingleListDrawableItem wallOutline;
+        public ListableEvent Geometry;
+        public List<Texture> Textures = new List<Texture>();
 
+        public event SingleListDrawableItem.ShouldDrawItemHandler ShouldDraw;
+
+        public MultiTexturedDrawable()
+        {}
+
+        public MultiTexturedDrawable(ListableEvent.GenerateEventHandler geo, SingleListDrawableItem.ShouldDrawItemHandler shouldDraw)
+        {
+            Geometry = new ListableEvent(geo);
+            ShouldDraw += shouldDraw;
+        }
+
+        public MultiTexturedDrawable(ListableEvent.GenerateEventHandler geo, SingleListDrawableItem.ShouldDrawItemHandler shouldDraw,  Texture basecoat)
+        {
+            Geometry = new ListableEvent(geo);
+            if (basecoat != null)
+                Textures.Add(basecoat);
+            ShouldDraw += shouldDraw;
+        }
+
+        public MultiTexturedDrawable(ListableEvent.GenerateEventHandler geo, Texture basecoat)
+        {
+            Geometry = new ListableEvent(geo);
+            if (basecoat != null)
+                Textures.Add(basecoat);
+        }
+
+        public MultiTexturedDrawable ( ListableEvent.GenerateEventHandler geo, Texture lightmap, Texture basecoat )
+        {
+            Geometry = new ListableEvent(geo);
+            if (lightmap != null)
+                Textures.Add(lightmap);
+            if (basecoat != null)
+                Textures.Add(basecoat);
+        }
+
+        public void Dispose()
+        {
+            if (Geometry != null)
+                Geometry.Dispose();
+        }
+
+        public void Draw ()
+        {
+            if (Geometry == null)
+                return;
+
+            if (ShouldDraw != null)
+            {
+                bool draw = true;
+                ShouldDraw(this, ref draw);
+                if (!draw)
+                    return;
+            }
+
+            int i = 0;
+            foreach (Texture texture in Textures)
+            {
+                GL.ActiveTexture(TextureUnit.Texture0+i);
+                GL.Enable(EnableCap.Texture2D);
+                i++;
+                texture.Bind();
+                GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
+            }
+
+            if (i == 0)
+                GL.Disable(EnableCap.Texture2D);
+            GL.Color4(Color.White);
+            Geometry.Call();
+        }
+
+    }
+
+    public class GeometryBase : IDisposable
+    {
+        public List<MultiTexturedDrawable> Items = new List<MultiTexturedDrawable>();
+
+        public void Dispose()
+        {
+            foreach (MultiTexturedDrawable item in Items)
+                item.Dispose();
+
+            Items.Clear();
+        }
+
+        public void Draw ( )
+        {
+            foreach (MultiTexturedDrawable item in Items)
+                item.Draw();
+        }
+    }
+
+    public class WallGeometry : GeometryBase
+    {
         public Cell cell;
         public CellEdge edge;
 
         public CellWallGeometry geo;
         Material material;
 
-        public WallGeometry ( Cell c, CellEdge e,  CellWallGeometry g)
+        public WallGeometry ( Cell c, CellEdge e,  CellWallGeometry g) : base()
         {
             cell = c;
             edge = e;
@@ -76,9 +169,8 @@ namespace PortalEdit
 
             material = EditorCell.GetGeoMaterial(geo.Material);
 
-            wallGeo = new SingleListDrawableItem(material, new ListableEvent.GenerateEventHandler(GenerateGeo), DrawablesSystem.LastPass - EditorCell.WallPassOffet);
-            wallOutline = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateOutline), DrawablesSystem.LastPass - EditorCell.WallPassOffet + 1);
-            wallOutline.ShouldDrawItem += new SingleListDrawableItem.ShouldDrawItemHandler(wallOutline_ShouldDrawItem);
+            Items.Add(new MultiTexturedDrawable( new ListableEvent.GenerateEventHandler(GenerateGeo),TextureSystem.system.FromImage(geo.Lightmap),material.GetTexture()));
+            Items.Add(new MultiTexturedDrawable(new ListableEvent.GenerateEventHandler(GenerateOutline), new SingleListDrawableItem.ShouldDrawItemHandler(wallOutline_ShouldDrawItem)));
         }
 
         void wallOutline_ShouldDrawItem(object sender, ref bool draw)
@@ -127,20 +219,17 @@ namespace PortalEdit
             float highestPoint = Math.Max(geo.UpperZ[0], geo.UpperZ[1]);
             float lowestPoint = Math.Min(geo.LowerZ[0], geo.LowerZ[1]);
 
-            if (geo.Lightmap != null)
-            {
-                lightmap = true;
-                DrawablesSystem.RestateMaterial = true;
+            float lightmapX = geo.Lightmap.Width / geo.lightampUnitSize;
+            float lightmapY = geo.Lightmap.Height / geo.lightampUnitSize;
 
-                GL.ActiveTexture(TextureUnit.Texture0);
-                TextureSystem.system.GetTexture(material.textureName).Bind();
-                GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
+            float edgeDistance = cell.EdgeDistance(edge);
 
-                GL.ActiveTexture(TextureUnit.Texture1);
-                TextureSystem.system.FromImage(geo.Lightmap).Bind();
-                GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (int)TextureEnvMode.Modulate);
-            }
-    
+            float EPU = edgeDistance / lightmapX;
+            float SPFloorV = (geo.LowerZ[0] - lowestPoint) / lightmapY;
+            float SPRoofV = (geo.UpperZ[0] - lowestPoint) / lightmapY;
+            float EPFloorV = (geo.LowerZ[1] - lowestPoint) / lightmapY;
+            float EPRoofV = (geo.UpperZ[1] - lowestPoint) / lightmapY;
+
             GL.Begin(BeginMode.Quads);
 
             CellVert sp = cell.Verts[edge.Start];
@@ -148,33 +237,30 @@ namespace PortalEdit
 
             GL.Normal3(edge.Normal.X, edge.Normal.Y, 0);
 
-            float edgeDistance = cell.EdgeDistance(edge);
+            // bottom end point
+            GL.MultiTexCoord2(TextureUnit.Texture0, EPU, EPFloorV);
+            GL.MultiTexCoord2(TextureUnit.Texture1, geo.Material.GetFinalU(edgeDistance), geo.Material.GetFinalV(geo.UpperZ[1] - geo.LowerZ[1]));
+            GL.Vertex3(ep.Bottom.X, ep.Bottom.Y, geo.LowerZ[1]);
 
-            GL.MultiTexCoord2(TextureUnit.Texture0, geo.Material.GetFinalUV(edgeDistance, geo.UpperZ[1]-geo.LowerZ[1]));
-            GL.Vertex3(ep.Bottom.X, ep.Bottom.Y,geo.LowerZ[1]);
-
-            GL.MultiTexCoord2(TextureUnit.Texture0, geo.Material.GetFinalUV(0, geo.UpperZ[0] - geo.LowerZ[0]));
+            // bottom start point
+            GL.MultiTexCoord2(TextureUnit.Texture0, 0, SPFloorV);
+            GL.MultiTexCoord2(TextureUnit.Texture1, geo.Material.GetFinalU(0), geo.Material.GetFinalV(geo.UpperZ[0] - geo.LowerZ[0]));
             GL.Vertex3(sp.Bottom.X, sp.Bottom.Y, geo.LowerZ[0]);
 
-            GL.MultiTexCoord2(TextureUnit.Texture0, geo.Material.GetFinalUV(0, 0));
+            // top start point
+            GL.MultiTexCoord2(TextureUnit.Texture0, 0, SPRoofV);
+            GL.MultiTexCoord2(TextureUnit.Texture1, geo.Material.GetFinalU(0), geo.Material.GetFinalV(0));
             GL.Vertex3(sp.Bottom.X, sp.Bottom.Y, geo.UpperZ[0]);
 
-            GL.MultiTexCoord2(TextureUnit.Texture0, geo.Material.GetFinalUV(edgeDistance, 0));
+            GL.MultiTexCoord2(TextureUnit.Texture0, EPU, EPRoofV);
+            GL.MultiTexCoord2(TextureUnit.Texture1, geo.Material.GetFinalU(edgeDistance), geo.Material.GetFinalV(0));
             GL.Vertex3(ep.Bottom.X, ep.Bottom.Y, geo.UpperZ[1]);
             GL.End();
         }
-
-        public void Dispose ()
-        {
-            wallGeo.Dispose();
-            wallOutline.Dispose();
-        }
     }
 
-    public class PortalGeometry : IDisposable
+    public class PortalGeometry : GeometryBase
     {
-        SingleListDrawableItem portalGeo;
-
         Cell cell;
         CellEdge edge;
 
@@ -185,8 +271,15 @@ namespace PortalEdit
             cell = c;
             edge = e;
             dest = d;
-            portalGeo = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateGeo), DrawablesSystem.LastPass);
-            portalGeo.ShouldDrawItem += new SingleListDrawableItem.ShouldDrawItemHandler(portalGeo_ShouldDrawItem);
+
+            if (dest.Material != null)
+            {
+                Material material = EditorCell.GetGeoMaterial(dest.Material);
+
+                Items.Add(new MultiTexturedDrawable(new ListableEvent.GenerateEventHandler(GenerateGeo), new SingleListDrawableItem.ShouldDrawItemHandler(portalGeo_ShouldDrawItem), material.GetTexture()));
+            }
+            else
+                Items.Add(new MultiTexturedDrawable(new ListableEvent.GenerateEventHandler(GenerateGeo), new SingleListDrawableItem.ShouldDrawItemHandler(portalGeo_ShouldDrawItem)));
         }
 
         void portalGeo_ShouldDrawItem(object sender, ref bool draw)
@@ -238,17 +331,10 @@ namespace PortalEdit
             GL.LineWidth(1);
             GL.Enable(EnableCap.Lighting);
         }
-
-        public void Dispose()
-        {
-            portalGeo.Dispose();
-        }
     }
 
-    public class CellGeometry : IDisposable
+    public class CellGeometry : GeometryBase
     {
-        SingleListDrawableItem geo;
-        SingleListDrawableItem outline;
 
         public Cell cell;
         public bool floor = true;
@@ -265,11 +351,11 @@ namespace PortalEdit
             else
                 material = EditorCell.GetGeoMaterial(cell.RoofMaterial);
 
-            geo = new SingleListDrawableItem(material, new ListableEvent.GenerateEventHandler(GenerateGeo), DrawablesSystem.LastPass - EditorCell.FloorPassOffet);
+            Items.Add(new MultiTexturedDrawable(new ListableEvent.GenerateEventHandler(GenerateGeo),material.GetTexture()));
+
             if (floor)
             {
-                outline = new SingleListDrawableItem(new ListableEvent.GenerateEventHandler(GenerateOutline));
-                outline.ShouldDrawItem += new SingleListDrawableItem.ShouldDrawItemHandler(outline_ShouldDrawItem);
+                Items.Add(new MultiTexturedDrawable(new ListableEvent.GenerateEventHandler(GenerateOutline), new SingleListDrawableItem.ShouldDrawItemHandler(outline_ShouldDrawItem), TextureSystem.system.GetTexture(material.textureName)));
             }
         }
 
@@ -342,13 +428,6 @@ namespace PortalEdit
 
             GL.LineWidth(1);
             GL.Enable(EnableCap.Lighting);
-        }
-
-        public void Dispose()
-        {
-            geo.Dispose();
-            if (outline != null)
-                outline.Dispose();
         }
     }
 
@@ -816,7 +895,20 @@ namespace PortalEdit
 
             geo.Lightmap = new Bitmap((int)Math.Ceiling(edgeDistance * PortalWorld.LightmapUnitSize), (int)Math.Ceiling(deltaZ * PortalWorld.LightmapUnitSize));
             Graphics graphics = Graphics.FromImage(geo.Lightmap);
-            graphics.Clear(Color.Green);
+            graphics.Clear(Color.White);
+
+            Pen p = new Pen(Color.DarkGray, 1);
+            for (int x = 0; x < geo.Lightmap.Width; x += 5)
+                graphics.DrawLine(p, x, 0, x, geo.Lightmap.Height);
+            
+            for (int y = 0; y < geo.Lightmap.Width; y += 5)
+                graphics.DrawLine(p, 0, y, geo.Lightmap.Width,y);
+
+            p.Dispose();
+
+            p = new Pen(Color.Green, 10);
+            graphics.DrawLine(p, 0, 0, 5, 5);
+
             graphics.Dispose();
         }
 
@@ -839,6 +931,7 @@ namespace PortalEdit
                 geo.Bottom = ID;
                 geo.Top = ID;
 
+                GenerateLightmapForGeo(geo, edge);
                 Geometry.Add(geo);
             }
             else
@@ -928,6 +1021,7 @@ namespace PortalEdit
                         geo.Bottom = ID;
                         geo.Top = topDest.ID;
 
+                        GenerateLightmapForGeo(geo, edge);
                         Geometry.Add(geo);
                     }
 
@@ -989,6 +1083,7 @@ namespace PortalEdit
                                 geo.Bottom = topDest.ID;
                                 geo.Top = bestDest.ID;
 
+                                GenerateLightmapForGeo(geo, edge);
                                 Geometry.Add(geo);
 
                                 // set the next cell as the "top" and do it again
@@ -1038,6 +1133,7 @@ namespace PortalEdit
                         geo.Bottom = bestDest.ID;
                         geo.Top = ID;
 
+                        GenerateLightmapForGeo(geo, edge);
                         Geometry.Add(geo);
                     }
                 }
@@ -1061,6 +1157,7 @@ namespace PortalEdit
                         geo.Bottom = topDest.ID;
                         geo.Top = ID;
 
+                        GenerateLightmapForGeo(geo, edge);
                         Geometry.Add(geo);
                     }
                 }
@@ -1092,6 +1189,18 @@ namespace PortalEdit
 
             walls.Clear();
             portals.Clear();
+        }
+
+        public void Draw ()
+        {
+            floor.Draw();
+            roof.Draw();
+
+            foreach(WallGeometry wall in walls)
+                wall.Draw();
+
+            foreach(PortalGeometry portal in portals)
+                portal.Draw();
         }
 
         public void GenerateDisplayGeometry ( )
