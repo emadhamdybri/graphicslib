@@ -76,7 +76,17 @@ namespace World
 
         public Vector2 GetFinalUV(float u, float v)
         {
-            return new Vector2((u + UVShift.X) * UVScale.X, (v + UVShift.Y) * UVScale.Y);
+            return new Vector2(GetFinalU(u),GetFinalV(v));
+        }
+
+        public float GetFinalU(float u)
+        {
+            return (u + UVShift.X) * UVScale.X;
+        }
+
+        public float GetFinalV(float v)
+        {
+            return (v + UVShift.Y) * UVScale.Y;
         }
     }
 
