@@ -145,6 +145,14 @@ namespace Drawables.DisplayLists
 
         protected DisplayList list = DisplayListSystem.system.newList();
 
+        public ListableEvent()
+        {}
+
+        public ListableEvent ( GenerateEventHandler handler )
+        {
+            Generate += handler;
+        }
+
         public void Dispose()
         {
             Invalidate();
