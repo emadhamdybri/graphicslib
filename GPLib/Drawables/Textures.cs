@@ -163,6 +163,9 @@ namespace Drawables.Textures
 
         public Texture FromImage ( Image image )
         {
+            if (image == null)
+                return null;
+
             String name = "Image:" + image.GetHashCode().ToString();
 
             if (textures.ContainsKey(name))
