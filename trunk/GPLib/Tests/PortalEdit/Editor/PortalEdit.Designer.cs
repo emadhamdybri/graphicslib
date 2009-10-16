@@ -147,6 +147,7 @@
             this.TexturePreview = new System.Windows.Forms.PictureBox();
             this.TextureList = new System.Windows.Forms.TreeView();
             this.ObjectInfo = new System.Windows.Forms.TabPage();
+            this.ObjectInfoBox = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.ObjectPosZ = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
@@ -159,7 +160,7 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DefaultImages = new System.Windows.Forms.ImageList(this.components);
-            this.ObjectInfoBox = new System.Windows.Forms.TextBox();
+            this.LightInfo = new System.Windows.Forms.TabPage();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -953,6 +954,7 @@
             this.CellTabControl.Controls.Add(this.FaceInfo);
             this.CellTabControl.Controls.Add(this.TextureInfo);
             this.CellTabControl.Controls.Add(this.ObjectInfo);
+            this.CellTabControl.Controls.Add(this.LightInfo);
             this.CellTabControl.Location = new System.Drawing.Point(3, 3);
             this.CellTabControl.Multiline = true;
             this.CellTabControl.Name = "CellTabControl";
@@ -1052,10 +1054,10 @@
             // 
             this.VertInfo.Controls.Add(this.CellInfoZIsInc);
             this.VertInfo.Controls.Add(this.CellVertList);
-            this.VertInfo.Location = new System.Drawing.Point(4, 49);
+            this.VertInfo.Location = new System.Drawing.Point(4, 25);
             this.VertInfo.Name = "VertInfo";
             this.VertInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.VertInfo.Size = new System.Drawing.Size(246, 278);
+            this.VertInfo.Size = new System.Drawing.Size(246, 302);
             this.VertInfo.TabIndex = 1;
             this.VertInfo.Text = "Verts";
             this.VertInfo.UseVisualStyleBackColor = true;
@@ -1064,7 +1066,7 @@
             // 
             this.CellInfoZIsInc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.CellInfoZIsInc.AutoSize = true;
-            this.CellInfoZIsInc.Location = new System.Drawing.Point(3, 363);
+            this.CellInfoZIsInc.Location = new System.Drawing.Point(3, 387);
             this.CellInfoZIsInc.Name = "CellInfoZIsInc";
             this.CellInfoZIsInc.Size = new System.Drawing.Size(139, 17);
             this.CellInfoZIsInc.TabIndex = 2;
@@ -1095,7 +1097,7 @@
             this.CellVertList.RowHeadersWidth = 4;
             this.CellVertList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.CellVertList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.CellVertList.Size = new System.Drawing.Size(191, 290);
+            this.CellVertList.Size = new System.Drawing.Size(191, 314);
             this.CellVertList.TabIndex = 0;
             this.CellVertList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellVertList_CellValueChanged);
             this.CellVertList.SelectionChanged += new System.EventHandler(this.CellVertList_SelectionChanged);
@@ -1168,9 +1170,9 @@
             // EdgeInfo
             // 
             this.EdgeInfo.Controls.Add(this.CellEdgeList);
-            this.EdgeInfo.Location = new System.Drawing.Point(4, 49);
+            this.EdgeInfo.Location = new System.Drawing.Point(4, 25);
             this.EdgeInfo.Name = "EdgeInfo";
-            this.EdgeInfo.Size = new System.Drawing.Size(246, 278);
+            this.EdgeInfo.Size = new System.Drawing.Size(246, 302);
             this.EdgeInfo.TabIndex = 2;
             this.EdgeInfo.Text = "Edges";
             this.EdgeInfo.UseVisualStyleBackColor = true;
@@ -1195,7 +1197,7 @@
             this.CellEdgeList.RowHeadersWidth = 4;
             this.CellEdgeList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.CellEdgeList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.CellEdgeList.Size = new System.Drawing.Size(191, 296);
+            this.CellEdgeList.Size = new System.Drawing.Size(191, 320);
             this.CellEdgeList.TabIndex = 1;
             this.CellEdgeList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellEdgeList_CellValueChanged);
             // 
@@ -1236,9 +1238,9 @@
             this.FaceInfo.Controls.Add(this.UShift);
             this.FaceInfo.Controls.Add(this.label4);
             this.FaceInfo.Controls.Add(this.FaceMatInfo);
-            this.FaceInfo.Location = new System.Drawing.Point(4, 49);
+            this.FaceInfo.Location = new System.Drawing.Point(4, 25);
             this.FaceInfo.Name = "FaceInfo";
-            this.FaceInfo.Size = new System.Drawing.Size(246, 278);
+            this.FaceInfo.Size = new System.Drawing.Size(246, 302);
             this.FaceInfo.TabIndex = 3;
             this.FaceInfo.Text = "Face";
             this.FaceInfo.UseVisualStyleBackColor = true;
@@ -1247,7 +1249,7 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(86, 246);
+            this.label6.Location = new System.Drawing.Point(86, 270);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(14, 13);
             this.label6.TabIndex = 10;
@@ -1257,7 +1259,7 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 246);
+            this.label7.Location = new System.Drawing.Point(3, 270);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(15, 13);
             this.label7.TabIndex = 9;
@@ -1272,7 +1274,7 @@
             0,
             0,
             196608});
-            this.VScale.Location = new System.Drawing.Point(106, 244);
+            this.VScale.Location = new System.Drawing.Point(106, 268);
             this.VScale.Minimum = new decimal(new int[] {
             100,
             0,
@@ -1292,7 +1294,7 @@
             0,
             0,
             196608});
-            this.UScale.Location = new System.Drawing.Point(24, 244);
+            this.UScale.Location = new System.Drawing.Point(24, 268);
             this.UScale.Minimum = new decimal(new int[] {
             100,
             0,
@@ -1307,7 +1309,7 @@
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 228);
+            this.label8.Location = new System.Drawing.Point(3, 252);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(45, 13);
             this.label8.TabIndex = 6;
@@ -1317,7 +1319,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(86, 195);
+            this.label5.Location = new System.Drawing.Point(86, 219);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(14, 13);
             this.label5.TabIndex = 5;
@@ -1327,7 +1329,7 @@
             // 
             this.ULabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ULabel.AutoSize = true;
-            this.ULabel.Location = new System.Drawing.Point(3, 195);
+            this.ULabel.Location = new System.Drawing.Point(3, 219);
             this.ULabel.Name = "ULabel";
             this.ULabel.Size = new System.Drawing.Size(15, 13);
             this.ULabel.TabIndex = 4;
@@ -1342,7 +1344,7 @@
             0,
             0,
             196608});
-            this.VShift.Location = new System.Drawing.Point(106, 193);
+            this.VShift.Location = new System.Drawing.Point(106, 217);
             this.VShift.Maximum = new decimal(new int[] {
             1,
             0,
@@ -1367,7 +1369,7 @@
             0,
             0,
             196608});
-            this.UShift.Location = new System.Drawing.Point(24, 193);
+            this.UShift.Location = new System.Drawing.Point(24, 217);
             this.UShift.Maximum = new decimal(new int[] {
             1,
             0,
@@ -1387,7 +1389,7 @@
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 177);
+            this.label4.Location = new System.Drawing.Point(3, 201);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(46, 13);
             this.label4.TabIndex = 1;
@@ -1402,7 +1404,7 @@
             this.FaceMatInfo.Multiline = true;
             this.FaceMatInfo.Name = "FaceMatInfo";
             this.FaceMatInfo.ReadOnly = true;
-            this.FaceMatInfo.Size = new System.Drawing.Size(195, 170);
+            this.FaceMatInfo.Size = new System.Drawing.Size(195, 194);
             this.FaceMatInfo.TabIndex = 0;
             // 
             // TextureInfo
@@ -1465,6 +1467,15 @@
             this.ObjectInfo.TabIndex = 5;
             this.ObjectInfo.Text = "Objects";
             this.ObjectInfo.UseVisualStyleBackColor = true;
+            // 
+            // ObjectInfoBox
+            // 
+            this.ObjectInfoBox.Location = new System.Drawing.Point(3, 182);
+            this.ObjectInfoBox.Multiline = true;
+            this.ObjectInfoBox.Name = "ObjectInfoBox";
+            this.ObjectInfoBox.ReadOnly = true;
+            this.ObjectInfoBox.Size = new System.Drawing.Size(239, 67);
+            this.ObjectInfoBox.TabIndex = 7;
             // 
             // label11
             // 
@@ -1615,14 +1626,14 @@
             this.DefaultImages.Images.SetKeyName(0, "Grid.png");
             this.DefaultImages.Images.SetKeyName(1, "Folder - Pictures.png");
             // 
-            // ObjectInfoBox
+            // LightInfo
             // 
-            this.ObjectInfoBox.Location = new System.Drawing.Point(3, 182);
-            this.ObjectInfoBox.Multiline = true;
-            this.ObjectInfoBox.Name = "ObjectInfoBox";
-            this.ObjectInfoBox.ReadOnly = true;
-            this.ObjectInfoBox.Size = new System.Drawing.Size(239, 67);
-            this.ObjectInfoBox.TabIndex = 7;
+            this.LightInfo.Location = new System.Drawing.Point(4, 49);
+            this.LightInfo.Name = "LightInfo";
+            this.LightInfo.Size = new System.Drawing.Size(246, 278);
+            this.LightInfo.TabIndex = 6;
+            this.LightInfo.Text = "Lights";
+            this.LightInfo.UseVisualStyleBackColor = true;
             // 
             // EditFrame
             // 
@@ -1824,6 +1835,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.NumericUpDown ObjectPosX;
         private System.Windows.Forms.TextBox ObjectInfoBox;
+        private System.Windows.Forms.TabPage LightInfo;
     }
 }
 
