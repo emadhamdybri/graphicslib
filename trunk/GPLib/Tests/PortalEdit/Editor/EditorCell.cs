@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 
-using System.Drawing;
-
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -213,8 +211,6 @@ namespace PortalEdit
             if (!EditorCell.CellIsDrawn(cell))
                 alpha = Settings.settings.HiddenItemAlpha;
             material.baseColor.glColor(alpha);
-
-            bool lightmap = false;
 
             float highestPoint = Math.Max(geo.UpperZ[0], geo.UpperZ[1]);
             float lowestPoint = Math.Min(geo.LowerZ[0], geo.LowerZ[1]);
@@ -884,7 +880,7 @@ namespace PortalEdit
             edge.Geometry = generateWallDefs(edge);
         }
 
-        void GenerateLightmapForGeo ( CellWallGeometry geo, CellEdge edge )
+        public void GenerateLightmapForGeo ( CellWallGeometry geo, CellEdge edge )
         {
             float edgeDistance = EdgeDistance(edge);
 
@@ -905,9 +901,6 @@ namespace PortalEdit
                 graphics.DrawLine(p, 0, y, geo.Lightmap.Width,y);
 
             p.Dispose();
-
-            p = new Pen(Color.Green, 10);
-            graphics.DrawLine(p, 0, 0, 5, 5);
 
             graphics.Dispose();
         }

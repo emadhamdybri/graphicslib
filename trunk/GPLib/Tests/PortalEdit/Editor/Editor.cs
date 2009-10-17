@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text;
 using System.IO;
+using System.Drawing;
 
 using OpenTK;
 
-using Drawables.DisplayLists;
 using Drawables;
+using Drawables.DisplayLists;
+using Drawables.Textures;
 
 using Math3D;
 
@@ -448,6 +450,8 @@ namespace PortalEdit
             map.MapAttributes.Clear();
             map.MapAttributes = newMap.MapAttributes;
             map.MapObjects = newMap.MapObjects;
+            map.AmbientLight = newMap.AmbientLight;
+            map.Lights = newMap.Lights;
             map.CellGroups.Clear();
 
             foreach (CellGroup group in newMap.CellGroups)
@@ -712,6 +716,206 @@ namespace PortalEdit
 
             DisplayListSystem.system.Invalidate();
             ResetViews();
+        }
+
+        public void NewLight()
+        {
+            SetDirty();
+            map.Lights.Add(new LightInstance());
+            ResetViews();
+            frame.LoadLightList();
+        }
+
+        public void MoveLight ( LightInstance light, Vector3 pos )
+        {
+            SetDirty();
+            light.Position = pos;
+            ResetViews();
+            frame.LoadLightList();
+        }
+
+        public void ComputeLightmaps ()
+        {
+            SetDirty();
+            Byte v = (Byte)(255*map.AmbientLight);
+            Color ambientColor = Color.FromArgb(255, v, v, v);
+            foreach(CellGroup group in map.CellGroups)
+            {
+                foreach (EditorCell cell in group.Cells)
+                {
+                    foreach (CellEdge edge in cell.Edges)
+                    {
+                        foreach (CellWallGeometry geo in edge.Geometry)
+                        {
+                            cell.GenerateLightmapForGeo(geo, edge);
+                            Graphics graphics = Graphics.FromImage(geo.Lightmap);
+                            graphics.Clear(ambientColor);
+
+                            float pixelInUnits = 1.0f/geo.lightampUnitSize;
+                            Vector3 XStep = VectorHelper3.Subtract(cell.FloorPoint(edge.End),cell.FloorPoint(edge.Start));
+                            Vector3 Start = new Vector3(cell.FloorPoint(edge.Start));
+                            XStep.Z = 0;
+                            XStep.Normalize();
+
+                            for( int y = 0; y < geo.Lightmap.Height; y++ )
+                            {
+                                for (int x = 0; x < geo.Lightmap.Width; x++)
+                                {
+                                    Vector3 pos = Start + (XStep * (x * pixelInUnits));
+                                    pos.Z += y * pixelInUnits;
+
+                                    foreach (LightInstance light in map.Lights)
+                                    {
+                                        Vector3 vecToLight = VectorHelper3.Subtract(pos,light.Position);
+
+                                        float mag = vecToLight.Length;
+                                        vecToLight.Normalize();
+
+                                        float dot = Vector3.Dot(vecToLight,new Vector3(edge.Normal));
+                                        if (dot < 0)
+                                        {
+                                            if (!RayHitsFace(light.Position,vecToLight,mag-0.1f))
+                                            {
+                                                float attenuation = 1f;
+                                                if (mag > light.MinRadius)
+                                                {
+                                                    if (mag > light.MaxRadius)
+                                                        attenuation = 0;
+                                                    else
+                                                    {
+                                                        float scaler = mag-light.MinRadius;
+                                                        attenuation = 1f/(scaler/(light.MaxRadius/light.MinRadius));
+                                                    }
+                                                }
+                                                Byte c = (Byte)(255 * light.Inensity * attenuation * (float)Math.Abs(dot));
+                                                Pen pen = new Pen(Color.FromArgb(255,c,c,c),1);
+                                                graphics.DrawLine(pen, x, y, x, y+1);
+                                                pen.Dispose();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            graphics.Dispose();
+                        }
+                    }
+                }
+            }
+            TextureSystem.system.FlushAllImageTextures();
+            RebuildMapGeo();
+            ResetViews();
+        }
+    
+        float RayHitsPlane ( Vector3 origin, Vector3 vector, Plane plane )
+        {
+            float top = -plane.D - (plane.Normal.X * origin.X) - (plane.Normal.Y * origin.Y) - (plane.Normal.Z * origin.Z);
+            float bottom = (plane.Normal.X * vector.X) + (plane.Normal.Y * vector.Y) + (plane.Normal.Z * vector.Z);
+
+            if (Math.Abs(bottom) < 0.00001f)
+                return -1;
+            return top / bottom;
+        }
+
+        public bool PointInPolygon ( Vector3 point, Vector3[] polygon, Vector3 polygonNormal )
+        {
+            for (int i = 1; i < polygon.Length; i++ )
+            {
+                Vector3 edge = VectorHelper3.Subtract(polygon[i], polygon[i - 1]);
+                Vector3 normal = Vector3.Cross(edge, polygonNormal);
+
+                Vector3 vecToPoint = VectorHelper3.Subtract(point, polygon[i]);
+                if (Vector3.Dot(vecToPoint, normal) < 0)
+                    return false;
+            }
+
+            return true;
+        }
+        
+        public bool RayHitsFace(Vector3 origin, Vector3 vector ,float maxDist )
+        {
+            foreach (CellGroup group in map.CellGroups )
+            {
+                foreach (EditorCell cell in group.Cells)
+                {
+                    // check the floors and roofs
+                    List<Vector3> cellVerts = new List<Vector3>();
+
+                    foreach (CellVert vert in cell.Verts)
+                        cellVerts.Add(vert.Bottom);
+
+                    Plane plane = cell.GetFloorPlane();
+
+                    float t = RayHitsPlane(origin, vector, plane);
+                    if (t > 0 && t < maxDist)
+                    {
+                        Vector3 pointInPlane = vector * t;
+
+                        if (PointInPolygon(pointInPlane, cellVerts.ToArray(), plane.Normal))
+                            return true;
+                    }
+
+                    plane = cell.GetRoofPlane();
+
+                    t = RayHitsPlane(origin, vector, plane);
+                    if (t > 0 && t < maxDist)
+                    {
+                        Vector3 pointInPlane = vector * t;
+
+
+                        cellVerts.Clear();
+
+                        foreach (CellVert vert in cell.Verts)
+                            cellVerts.Add(cell.RoofPoint(vert));
+
+                        cellVerts.Reverse();
+
+                        if (PointInPolygon(pointInPlane, cellVerts.ToArray(), plane.Normal))
+                            return true;
+                    }
+                
+                    // check the walls
+                    foreach (CellEdge edge in cell.Edges)
+                    {
+                        // see if the ray hits the edge plane at all
+
+                        plane = cell.GetEdgePlane(edge);
+
+                        t = RayHitsPlane(origin, vector, plane);
+                        if (t > 0 && t < maxDist)
+                        {
+                            Vector3 pointInPlane = vector * t;
+
+                            foreach (CellWallGeometry geo in edge.Geometry)
+                            {
+                                // see if the point is inside the edges of the geometry
+
+                                List<Vector3> poly = new List<Vector3>();
+                                Vector3 SPBottom = cell.FloorPoint(edge.Start);
+                                SPBottom.Z = geo.LowerZ[0];
+
+                                Vector3 EPBottom = cell.FloorPoint(edge.End);
+                                EPBottom.Z = geo.LowerZ[1];
+
+                                Vector3 SPTop = cell.RoofPoint(edge.Start);
+                                SPTop.Z = geo.UpperZ[0];
+                                
+                                Vector3 EPTop = cell.RoofPoint(edge.End);
+                                EPTop.Z = geo.UpperZ[1];
+
+                                poly.Add(EPBottom);
+                                poly.Add(SPBottom);
+                                poly.Add(SPTop);
+                                poly.Add(EPTop);
+
+                                if (PointInPolygon(pointInPlane,poly.ToArray(),new Vector3(edge.Normal)))
+                                    return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }

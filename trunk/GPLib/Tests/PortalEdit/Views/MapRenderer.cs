@@ -20,6 +20,7 @@ namespace PortalEdit
         DrawMode,
         SelectMode,
         EditVertMode,
+        EditLightMode,
     };
 
     public class MapRenderer 
@@ -32,6 +33,7 @@ namespace PortalEdit
         public Polygon EditPoly = new Polygon();
         EditorCell editCell;
         int editVert = -1;
+        LightInstance editLight;
 
         Color cellColor = Color.FromArgb(128, Color.Wheat);
         Color outlineColor = Color.FromArgb(192, Color.Black);
@@ -265,11 +267,24 @@ namespace PortalEdit
                     DrawCell(cell, group, e.Graphics);
             }
 
-            if (Settings.settings.ShowLowestSelection)
+            if (editMode == MapEditMode.DrawMode || editMode == MapEditMode.SelectMode)
             {
-                Cell selectedCell = Editor.instance.GetSelectedCell();
-                if (selectedCell != null)
-                    DrawSelectedCell(selectedCell, e.Graphics);
+
+                if (Settings.settings.ShowLowestSelection)
+                {
+                    Cell selectedCell = Editor.instance.GetSelectedCell();
+                    if (selectedCell != null)
+                        DrawSelectedCell(selectedCell, e.Graphics);
+                    else
+                    {
+                        CellGroup selectedGroup = Editor.instance.GetSelectedGroup();
+                        if (selectedGroup != null)
+                        {
+                            foreach (Cell cell in selectedGroup.Cells)
+                                DrawSelectedCell(cell, e.Graphics);
+                        }
+                    }
+                }
                 else
                 {
                     CellGroup selectedGroup = Editor.instance.GetSelectedGroup();
@@ -278,21 +293,12 @@ namespace PortalEdit
                         foreach (Cell cell in selectedGroup.Cells)
                             DrawSelectedCell(cell, e.Graphics);
                     }
+                    else
+                        DrawSelectedCell(Editor.instance.GetSelectedCell(), e.Graphics);
                 }
-            }
-            else
-            {
-                CellGroup selectedGroup = Editor.instance.GetSelectedGroup();
-                if (selectedGroup != null)
-                {
-                    foreach (Cell cell in selectedGroup.Cells)
-                        DrawSelectedCell(cell, e.Graphics);
-                }
-                else
-                    DrawSelectedCell(Editor.instance.GetSelectedCell(), e.Graphics);
-            }
 
-            DrawSelectedVert(Editor.instance.GetSelectedVert(), vertSelectedColor, e.Graphics);
+                DrawSelectedVert(Editor.instance.GetSelectedVert(), vertSelectedColor, e.Graphics);
+            }
 
             if (EditMode == MapEditMode.DrawMode)
                 DrawEditPolygon(e.Graphics);
@@ -301,6 +307,36 @@ namespace PortalEdit
 
             if (EditMode == MapEditMode.EditVertMode)
                 DrawVertEditPoly(e.Graphics);
+
+            if (EditMode == MapEditMode.EditLightMode)
+                DrawEditLights(e.Graphics);
+        }
+
+
+        protected void DrawEditLights ( Graphics graphics )
+        {
+            Pen outlinePen = new Pen(Color.DarkGoldenrod,2);
+            Brush brush = new SolidBrush(Color.Yellow);
+            Brush brush2 = new SolidBrush(Color.DarkOrange);
+
+            foreach (LightInstance light in map.Lights)
+            {
+                Point pos = VertToPoint(light.Position);
+                graphics.FillEllipse(brush, pos.X - 10, pos.Y - 10, 20, 20);
+                graphics.DrawEllipse(outlinePen, pos.X - 10, pos.Y - 10, 20, 20);
+            }
+
+            if (editLight != null)
+            {
+                Point pos = VertToPoint(hoverPos);
+                graphics.FillEllipse(brush2, pos.X - 10, pos.Y - 10, 20, 20);
+                graphics.DrawEllipse(outlinePen, pos.X - 10, pos.Y - 10, 20, 20);
+
+            }
+
+            outlinePen.Dispose();
+            brush.Dispose();
+            brush2.Dispose();
         }
 
         protected void DrawVertEditPoly ( Graphics graphics )
@@ -569,12 +605,62 @@ namespace PortalEdit
                 editVert = -1;
                 EditPoly.Verts.Clear();
             }
+            else if (EditMode == MapEditMode.EditLightMode && e.Button == MouseButtons.Left)
+            {
+                if (editLight != null)
+                    Editor.instance.MoveLight(editLight, new Vector3(hoverPos.X,hoverPos.Y,editLight.Position.Z));
+
+                editLight = null;
+            }
         }
 
         void MouseDown(object sender, MouseEventArgs e)
         {
             if (EditMode == MapEditMode.EditVertMode && e.Button == MouseButtons.Left)
                 SetVertEditData(e.Location);
+            else if (EditMode == MapEditMode.EditLightMode && e.Button == MouseButtons.Left)
+                SetLightEditData(e.Location);
+        }
+        private void SetLightEditData (Point p )
+        {
+            editLight = null;
+
+            EditPoly.Verts.Clear();
+            editCell = null;
+            editVert = -1;
+
+            Bitmap bitmap = new Bitmap(control.Width, control.Height);
+            Graphics graphics = Graphics.FromImage(bitmap);
+
+            graphics.Clear(Color.White);
+            SetupGraphicsContext(graphics);
+
+            Dictionary<Color, LightInstance> colorMap = new Dictionary<Color, LightInstance>();
+
+            Random rand = new Random();
+
+            foreach (LightInstance light in map.Lights)
+            {
+                Color color = Color.FromArgb(255, rand.Next() % 255, rand.Next() % 255, rand.Next() % 255);
+                while (color == Color.White || colorMap.ContainsKey(color))
+                    color = Color.FromArgb(255, rand.Next(), rand.Next(), rand.Next());
+
+                colorMap.Add(color, light);
+
+                Brush brush = new SolidBrush(color);
+                Point pos = VertToPoint(light.Position);
+                graphics.FillEllipse(brush, new Rectangle(pos.X - 10, pos.Y - 10, 20, 20));
+            }
+
+            graphics.Flush();
+            graphics.Dispose();
+
+            Color selectedColor = bitmap.GetPixel(p.X, p.Y);
+
+            if (!colorMap.ContainsKey(selectedColor))
+                return;
+
+            editLight = colorMap[selectedColor];
         }
 
         private void SetVertEditData (Point p )

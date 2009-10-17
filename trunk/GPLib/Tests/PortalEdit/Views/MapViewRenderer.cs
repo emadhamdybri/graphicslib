@@ -573,11 +573,13 @@ namespace PortalEdit
             if (map == null)
                 return;
 
+            GL.Disable(EnableCap.Lighting);
             foreach(CellGroup group in map.CellGroups)
             {
                 foreach (EditorCell cell in group.Cells)
                     cell.Draw();
             }
+            GL.Enable(EnableCap.Lighting);
 
             // draw the objects
             foreach (ObjectInstance obj in map.MapObjects)
