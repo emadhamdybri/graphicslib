@@ -38,7 +38,7 @@ namespace Drawables.Textures
         public bool mipmap = true;
 
         FileInfo file = null;
-        Image image = null;
+        public Image image = null;
 
         Size imageSize = Size.Empty;
 
@@ -159,6 +159,22 @@ namespace Drawables.Textures
         {
             foreach(KeyValuePair<string,Texture> t in textures)
                 t.Value.Invalidate();
+        }
+
+        public void FlushAllImageTextures ()
+        {
+            List<string> texturesToKill = new List<string>();
+            foreach(KeyValuePair<string,Texture> texture in textures)
+            {
+                if (texture.Value.image != null)
+                {
+                    texturesToKill.Add(texture.Key);
+                    texture.Value.Invalidate();
+                }
+            }
+
+            foreach (String name in texturesToKill)
+                textures.Remove(name);
         }
 
         public Texture FromImage ( Image image )
