@@ -47,6 +47,7 @@
             this.ZMinusLabel = new System.Windows.Forms.Label();
             this.MapEditToolsPanel = new System.Windows.Forms.Panel();
             this.MapRadioPanel = new FormControls.ImageRadioPanel();
+            this.LightingModeButton = new System.Windows.Forms.Button();
             this.EditVertButton = new System.Windows.Forms.Button();
             this.SelectButton = new System.Windows.Forms.Button();
             this.DrawButton = new System.Windows.Forms.Button();
@@ -159,8 +160,16 @@
             this.ObjectListNewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.DefaultImages = new System.Windows.Forms.ImageList(this.components);
             this.LightInfo = new System.Windows.Forms.TabPage();
+            this.LightList = new System.Windows.Forms.ListView();
+            this.LightListRMM = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.NewLight = new System.Windows.Forms.ToolStripMenuItem();
+            this.RemoveLight = new System.Windows.Forms.ToolStripMenuItem();
+            this.AmbientLevel = new System.Windows.Forms.NumericUpDown();
+            this.AmbientLabel = new System.Windows.Forms.Label();
+            this.DefaultImages = new System.Windows.Forms.ImageList(this.components);
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.computeLightmapsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -201,6 +210,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.ObjectPosY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectPosX)).BeginInit();
             this.ObjectListMenuStrip.SuspendLayout();
+            this.LightInfo.SuspendLayout();
+            this.LightListRMM.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AmbientLevel)).BeginInit();
             this.SuspendLayout();
             // 
             // MainContainer
@@ -412,6 +424,7 @@
             // 
             // MapRadioPanel
             // 
+            this.MapRadioPanel.Controls.Add(this.LightingModeButton);
             this.MapRadioPanel.Controls.Add(this.EditVertButton);
             this.MapRadioPanel.Controls.Add(this.SelectButton);
             this.MapRadioPanel.Controls.Add(this.DrawButton);
@@ -423,6 +436,17 @@
             this.MapRadioPanel.Size = new System.Drawing.Size(114, 26);
             this.MapRadioPanel.TabIndex = 3;
             this.MapRadioPanel.TagsAreValues = false;
+            // 
+            // LightingModeButton
+            // 
+            this.LightingModeButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.LightingModeButton.Image = ((System.Drawing.Image)(resources.GetObject("LightingModeButton.Image")));
+            this.LightingModeButton.Location = new System.Drawing.Point(83, 1);
+            this.LightingModeButton.Name = "LightingModeButton";
+            this.LightingModeButton.Size = new System.Drawing.Size(25, 23);
+            this.LightingModeButton.TabIndex = 4;
+            this.LightingModeButton.Tag = PortalEdit.MapEditMode.EditLightMode;
+            this.LightingModeButton.UseVisualStyleBackColor = true;
             // 
             // EditVertButton
             // 
@@ -758,7 +782,9 @@
             this.renameGroupToolStripMenuItem,
             this.toolStripSeparator8,
             this.renameCellToolStripMenuItem,
-            this.deleteCellToolStripMenuItem});
+            this.deleteCellToolStripMenuItem,
+            this.toolStripSeparator9,
+            this.computeLightmapsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -1054,10 +1080,10 @@
             // 
             this.VertInfo.Controls.Add(this.CellInfoZIsInc);
             this.VertInfo.Controls.Add(this.CellVertList);
-            this.VertInfo.Location = new System.Drawing.Point(4, 25);
+            this.VertInfo.Location = new System.Drawing.Point(4, 49);
             this.VertInfo.Name = "VertInfo";
             this.VertInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.VertInfo.Size = new System.Drawing.Size(246, 302);
+            this.VertInfo.Size = new System.Drawing.Size(246, 278);
             this.VertInfo.TabIndex = 1;
             this.VertInfo.Text = "Verts";
             this.VertInfo.UseVisualStyleBackColor = true;
@@ -1170,9 +1196,9 @@
             // EdgeInfo
             // 
             this.EdgeInfo.Controls.Add(this.CellEdgeList);
-            this.EdgeInfo.Location = new System.Drawing.Point(4, 25);
+            this.EdgeInfo.Location = new System.Drawing.Point(4, 49);
             this.EdgeInfo.Name = "EdgeInfo";
-            this.EdgeInfo.Size = new System.Drawing.Size(246, 302);
+            this.EdgeInfo.Size = new System.Drawing.Size(246, 278);
             this.EdgeInfo.TabIndex = 2;
             this.EdgeInfo.Text = "Edges";
             this.EdgeInfo.UseVisualStyleBackColor = true;
@@ -1238,9 +1264,9 @@
             this.FaceInfo.Controls.Add(this.UShift);
             this.FaceInfo.Controls.Add(this.label4);
             this.FaceInfo.Controls.Add(this.FaceMatInfo);
-            this.FaceInfo.Location = new System.Drawing.Point(4, 25);
+            this.FaceInfo.Location = new System.Drawing.Point(4, 49);
             this.FaceInfo.Name = "FaceInfo";
-            this.FaceInfo.Size = new System.Drawing.Size(246, 302);
+            this.FaceInfo.Size = new System.Drawing.Size(246, 278);
             this.FaceInfo.TabIndex = 3;
             this.FaceInfo.Text = "Face";
             this.FaceInfo.UseVisualStyleBackColor = true;
@@ -1619,6 +1645,78 @@
             this.duplicateToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.duplicateToolStripMenuItem.Text = "Duplicate";
             // 
+            // LightInfo
+            // 
+            this.LightInfo.Controls.Add(this.LightList);
+            this.LightInfo.Controls.Add(this.AmbientLevel);
+            this.LightInfo.Controls.Add(this.AmbientLabel);
+            this.LightInfo.Location = new System.Drawing.Point(4, 49);
+            this.LightInfo.Name = "LightInfo";
+            this.LightInfo.Size = new System.Drawing.Size(246, 278);
+            this.LightInfo.TabIndex = 6;
+            this.LightInfo.Text = "Lights";
+            this.LightInfo.UseVisualStyleBackColor = true;
+            // 
+            // LightList
+            // 
+            this.LightList.ContextMenuStrip = this.LightListRMM;
+            this.LightList.Location = new System.Drawing.Point(0, 0);
+            this.LightList.Name = "LightList";
+            this.LightList.Size = new System.Drawing.Size(246, 220);
+            this.LightList.TabIndex = 2;
+            this.LightList.UseCompatibleStateImageBehavior = false;
+            this.LightList.View = System.Windows.Forms.View.List;
+            // 
+            // LightListRMM
+            // 
+            this.LightListRMM.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.NewLight,
+            this.RemoveLight});
+            this.LightListRMM.Name = "LightListRMM";
+            this.LightListRMM.Size = new System.Drawing.Size(118, 48);
+            // 
+            // NewLight
+            // 
+            this.NewLight.Name = "NewLight";
+            this.NewLight.Size = new System.Drawing.Size(117, 22);
+            this.NewLight.Text = "New";
+            this.NewLight.Click += new System.EventHandler(this.NewLight_Click);
+            // 
+            // RemoveLight
+            // 
+            this.RemoveLight.Name = "RemoveLight";
+            this.RemoveLight.Size = new System.Drawing.Size(117, 22);
+            this.RemoveLight.Text = "Remove";
+            this.RemoveLight.Click += new System.EventHandler(this.RemoveLight_Click);
+            // 
+            // AmbientLevel
+            // 
+            this.AmbientLevel.DecimalPlaces = 4;
+            this.AmbientLevel.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.AmbientLevel.Location = new System.Drawing.Point(55, 243);
+            this.AmbientLevel.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.AmbientLevel.Name = "AmbientLevel";
+            this.AmbientLevel.Size = new System.Drawing.Size(65, 20);
+            this.AmbientLevel.TabIndex = 1;
+            this.AmbientLevel.ValueChanged += new System.EventHandler(this.AmbientLevel_ValueChanged);
+            // 
+            // AmbientLabel
+            // 
+            this.AmbientLabel.AutoSize = true;
+            this.AmbientLabel.Location = new System.Drawing.Point(4, 245);
+            this.AmbientLabel.Name = "AmbientLabel";
+            this.AmbientLabel.Size = new System.Drawing.Size(45, 13);
+            this.AmbientLabel.TabIndex = 0;
+            this.AmbientLabel.Text = "Ambient";
+            // 
             // DefaultImages
             // 
             this.DefaultImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("DefaultImages.ImageStream")));
@@ -1626,14 +1724,17 @@
             this.DefaultImages.Images.SetKeyName(0, "Grid.png");
             this.DefaultImages.Images.SetKeyName(1, "Folder - Pictures.png");
             // 
-            // LightInfo
+            // toolStripSeparator9
             // 
-            this.LightInfo.Location = new System.Drawing.Point(4, 49);
-            this.LightInfo.Name = "LightInfo";
-            this.LightInfo.Size = new System.Drawing.Size(246, 278);
-            this.LightInfo.TabIndex = 6;
-            this.LightInfo.Text = "Lights";
-            this.LightInfo.UseVisualStyleBackColor = true;
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(206, 6);
+            // 
+            // computeLightmapsToolStripMenuItem
+            // 
+            this.computeLightmapsToolStripMenuItem.Name = "computeLightmapsToolStripMenuItem";
+            this.computeLightmapsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.computeLightmapsToolStripMenuItem.Text = "Compute Lightmaps";
+            this.computeLightmapsToolStripMenuItem.Click += new System.EventHandler(this.computeLightmapsToolStripMenuItem_Click);
             // 
             // EditFrame
             // 
@@ -1698,6 +1799,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.ObjectPosY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ObjectPosX)).EndInit();
             this.ObjectListMenuStrip.ResumeLayout(false);
+            this.LightInfo.ResumeLayout(false);
+            this.LightInfo.PerformLayout();
+            this.LightListRMM.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.AmbientLevel)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1836,6 +1941,15 @@
         private System.Windows.Forms.NumericUpDown ObjectPosX;
         private System.Windows.Forms.TextBox ObjectInfoBox;
         private System.Windows.Forms.TabPage LightInfo;
+        private System.Windows.Forms.Label AmbientLabel;
+        private System.Windows.Forms.NumericUpDown AmbientLevel;
+        private System.Windows.Forms.ListView LightList;
+        private System.Windows.Forms.ContextMenuStrip LightListRMM;
+        private System.Windows.Forms.ToolStripMenuItem NewLight;
+        private System.Windows.Forms.ToolStripMenuItem RemoveLight;
+        private System.Windows.Forms.Button LightingModeButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripMenuItem computeLightmapsToolStripMenuItem;
     }
 }
 

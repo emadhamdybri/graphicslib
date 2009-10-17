@@ -212,7 +212,7 @@ namespace PortalEdit
             HideGeo_CheckedChanged(this, EventArgs.Empty);
 
             LoadObjectList();
-
+            LoadLightList();
         }
 
         public static PortalMapAttribute FindDepthAttribute ( string name )
@@ -1154,6 +1154,41 @@ namespace PortalEdit
                 ObjectList_SelectedIndexChanged(this,EventArgs.Empty);
                 Invalidate(true);
             }
+        }
+        
+        public void LoadLightList()
+        {
+            LightList.Items.Clear();
+            foreach (LightInstance light in editor.map.Lights)
+                LightList.Items.Add(light.ToString()).Tag = light;
+
+            loadingUI = true;
+            AmbientLevel.Value = (decimal)editor.map.AmbientLight;
+            loadingUI = false;
+        }
+
+        private void NewLight_Click(object sender, EventArgs e)
+        {
+            editor.NewLight();
+        }
+
+        private void RemoveLight_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AmbientLevel_ValueChanged(object sender, EventArgs e)
+        {
+            if (loadingUI)
+                return;
+
+            Editor.SetDirty();
+            editor.map.AmbientLight = (float)AmbientLevel.Value;
+        }
+
+        private void computeLightmapsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            editor.ComputeLightmaps();
         }
     }
 }
