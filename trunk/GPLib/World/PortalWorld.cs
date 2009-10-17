@@ -156,7 +156,11 @@ namespace World
         public CellID Top = CellID.Empty;
 
         public float lightampUnitSize = 8;
+
+        [System.Xml.Serialization.XmlIgnoreAttribute]
         public Image Lightmap = null;
+
+        public String LightmapID = String.Empty;
     }
 
     public class CellEdge
@@ -599,7 +603,37 @@ namespace World
         {
             return Name + "(" + ObjectType+")";
         }
+    }
 
+    public enum LightType
+    {
+        PointLight,
+        Spotlight,
+    }
+
+    public class LightInstance
+    {
+        public Vector3 Position = new Vector3(0, 0, 1);
+        public LightType Type = LightType.PointLight;
+        public Vector3 Direction = new Vector3(0, 0, -1);
+        public float cone = 45.0f;
+        public float Inensity = 1.0f;
+        public float MinRadius = 1.0f;
+        public float MaxRadius = 10.0f;
+
+        public override string ToString()
+        {
+            string name = "Point";
+            if (Type == LightType.Spotlight)
+                name = "Spot";
+            return name + "(" + Position.ToString() + ")";
+        }
+    }
+
+    public class LightmapBitmap
+    {
+        public string ID = string.Empty;
+        public Byte[] buffer;
     }
 
     public class PortalWorld
@@ -610,6 +644,79 @@ namespace World
         public List<CellGroup> CellGroups = new List<CellGroup>();
         public PortalMapAttributes MapAttributes = new PortalMapAttributes();
         public List<ObjectInstance> MapObjects = new List<ObjectInstance>();
+
+        public List<LightInstance> Lights = new List<LightInstance>();
+        public float AmbientLight = 0.25f;
+
+        public List<LightmapBitmap> Lightmaps = new List<LightmapBitmap>();
+
+        public void StoreLightmaps ( )
+        {
+            Random rand = new Random();
+            Lightmaps.Clear();
+            foreach ( CellGroup group in CellGroups)
+            {
+                foreach (Cell cell in group.Cells)
+                {
+                    foreach(CellEdge edge in cell.Edges)
+                    {
+                        foreach(CellWallGeometry geo in edge.Geometry)
+                        {
+                            LightmapBitmap bitmap = new LightmapBitmap();
+                            bitmap.ID = rand.Next().ToString() + rand.Next().ToString();
+                            geo.LightmapID = bitmap.ID;
+
+                            MemoryStream stream = new MemoryStream(1000000);
+                            geo.Lightmap.Save(stream,System.Drawing.Imaging.ImageFormat.Png);
+                            bitmap.buffer = new Byte[stream.Position];
+                            stream.Position = 0;
+                            stream.Read(bitmap.buffer,0,bitmap.buffer.Length);
+                            Lightmaps.Add(bitmap);
+                        }
+                    }
+                }
+            }
+        }
+
+        LightmapBitmap FindBitmap ( string ID )
+        {
+            foreach(LightmapBitmap lightmap in Lightmaps)
+            {
+                if (lightmap.ID == ID)
+                    return lightmap;
+            }
+
+            return null;
+        }
+
+        public void RestoreLightamps ()
+        {
+            foreach (CellGroup group in CellGroups)
+            {
+                foreach (Cell cell in group.Cells)
+                {
+                    foreach (CellEdge edge in cell.Edges)
+                    {
+                        foreach (CellWallGeometry geo in edge.Geometry)
+                        {
+                            LightmapBitmap bitmap = FindBitmap(geo.LightmapID);
+                            if (bitmap == null)
+                            {
+                                geo.LightmapID = string.Empty;
+                                geo.Lightmap = null;
+                            }
+                            else
+                            {
+                                MemoryStream stream = new MemoryStream(bitmap.buffer);
+                                geo.Lightmap = new Bitmap(stream);
+                            }
+                        }
+                    }
+                }
+            }
+
+            Lightmaps.Clear();
+        }
 
         public List<ObjectInstance> FindObjects ( string type )
         {
@@ -805,7 +912,10 @@ namespace World
             fileStream.Close();
 
             if (map != null)
+            {
                 map.RebindCells();
+                map.RestoreLightamps();
+            }
 
             return map;
         }
@@ -822,6 +932,8 @@ namespace World
             PortalWorld writeMap = new PortalWorld();
             writeMap.MapAttributes = MapAttributes;
             writeMap.MapObjects = MapObjects;
+            writeMap.Lights = Lights;
+            writeMap.AmbientLight = AmbientLight;
 
             foreach (CellGroup group in CellGroups)
             {
@@ -831,6 +943,8 @@ namespace World
                 foreach (Cell cell in group.Cells)
                     newGroup.Cells.Add(new Cell(cell));
             }
+
+            writeMap.StoreLightmaps();
 
             if (file.Exists)
             {
