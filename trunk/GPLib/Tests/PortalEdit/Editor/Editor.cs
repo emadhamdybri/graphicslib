@@ -15,6 +15,8 @@ using Math3D;
 
 using World;
 
+using coldet;
+
 namespace PortalEdit
 {
     public enum ViewEditMode
@@ -734,11 +736,45 @@ namespace PortalEdit
             frame.LoadLightList();
         }
 
+        ColdetModel buildCollisionModel()
+        {
+            ColdetModel model = Coldet.NewCollisionModel();
+
+            foreach (CellGroup group in map.CellGroups)
+            {
+                foreach (EditorCell cell in group.Cells)
+                {
+                    for (int i = 2; i < cell.Verts.Count; i++)
+                    {
+                        model.AddTriangle(cell.Verts[0].Bottom, cell.Verts[i - 1].Bottom, cell.Verts[i].Bottom);
+                        model.AddTriangle(cell.RoofPoint(0), cell.RoofPoint(i), cell.RoofPoint(i - 1));
+                    }
+
+                    foreach (CellEdge edge in cell.Edges)
+                    {
+                        Vector3 sp = cell.Verts[edge.Start].Bottom;
+                        Vector3 ep = cell.Verts[edge.End].Bottom;
+
+                        foreach (CellWallGeometry geo in edge.Geometry)
+                        {
+                            model.AddTriangle(ep.X,ep.Y,geo.LowerZ[1], sp.X,sp.Y,geo.LowerZ[0], sp.X,sp.Y,geo.UpperZ[0]);
+                            model.AddTriangle(ep.X, ep.Y, geo.LowerZ[1], sp.X, sp.Y, geo.UpperZ[0], ep.X, ep.Y, geo.UpperZ[1]);
+                        }
+                    }
+                }
+            }
+
+            return model;
+        }
+
         public void ComputeLightmaps ()
         {
             SetDirty();
             Byte v = (Byte)(255*map.AmbientLight);
             Color ambientColor = Color.FromArgb(255, v, v, v);
+
+            ColdetModel model = buildCollisionModel();
+
             foreach(CellGroup group in map.CellGroups)
             {
                 foreach (EditorCell cell in group.Cells)
@@ -750,6 +786,8 @@ namespace PortalEdit
                             cell.GenerateLightmapForGeo(geo, edge);
                             Graphics graphics = Graphics.FromImage(geo.Lightmap);
                             graphics.Clear(ambientColor);
+                            graphics.Dispose();
+                            Bitmap bitmap = geo.Lightmap as Bitmap;
 
                             float pixelInUnits = 1.0f/geo.lightampUnitSize;
                             Vector3 XStep = VectorHelper3.Subtract(cell.FloorPoint(edge.End),cell.FloorPoint(edge.Start));
@@ -774,7 +812,7 @@ namespace PortalEdit
                                         float dot = Vector3.Dot(vecToLight,new Vector3(edge.Normal));
                                         if (dot < 0)
                                         {
-                                            if (!RayHitsFace(light.Position,vecToLight,mag-0.1f))
+                                            if (!model.RayCollision(light.Position, vecToLight, false, 0.1f, mag - 0.1f))
                                             {
                                                 float attenuation = 1f;
                                                 if (mag > light.MinRadius)
@@ -787,16 +825,33 @@ namespace PortalEdit
                                                         attenuation = 1f/(scaler/(light.MaxRadius/light.MinRadius));
                                                     }
                                                 }
-                                                Byte c = (Byte)(255 * light.Inensity * attenuation * (float)Math.Abs(dot));
-                                                Pen pen = new Pen(Color.FromArgb(255,c,c,c),1);
-                                                graphics.DrawLine(pen, x, y, x, y+1);
-                                                pen.Dispose();
+                                                Byte c = (Byte)(255 * light.Inensity);// * attenuation);// * (float)Math.Abs(dot));
+                                                Color pixel = bitmap.GetPixel(x, y);
+                                                Byte R = pixel.R;
+                                                Byte G = pixel.G;
+                                                Byte B = pixel.B;
+
+                                                if ((int)pixel.R + (int)c > 255)
+                                                    R += 255;
+                                                else
+                                                    R += c;
+
+                                                if ((int)pixel.G + (int)c > 255)
+                                                    G += 255;
+                                                else
+                                                    G += c;
+
+                                                if ((int)pixel.B + (int)c > 255)
+                                                    B += 255;
+                                                else
+                                                    B += c;
+
+                                                bitmap.SetPixel(x,y,Color.FromArgb(255,R,G,B));
                                             }
                                         }
                                     }
                                 }
                             }
-                            graphics.Dispose();
                         }
                     }
                 }
