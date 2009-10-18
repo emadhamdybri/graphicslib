@@ -143,6 +143,16 @@ namespace World
         }
     }
 
+    public class LightmapInfo
+    {
+        public float UnitSize = 8;
+
+        [System.Xml.Serialization.XmlIgnoreAttribute]
+        public Image Map = null;
+
+        public String ID = String.Empty;
+    }
+
     public class CellWallGeometry
     {
         public bool Vizable = true;
@@ -155,12 +165,7 @@ namespace World
         public CellID Bottom = CellID.Empty;
         public CellID Top = CellID.Empty;
 
-        public float lightampUnitSize = 8;
-
-        [System.Xml.Serialization.XmlIgnoreAttribute]
-        public Image Lightmap = null;
-
-        public String LightmapID = String.Empty;
+        public LightmapInfo Lightmap = new LightmapInfo();
     }
 
     public class CellEdge
@@ -217,6 +222,9 @@ namespace World
         public CellMaterialInfo FloorMaterial =  new CellMaterialInfo();
         public CellMaterialInfo RoofMaterial =  new CellMaterialInfo();
 
+        public LightmapInfo FloorLightmap = new LightmapInfo();
+        public LightmapInfo RoofLightmap = new LightmapInfo();
+
         public PortalMapAttributes CellAttributes = new PortalMapAttributes();
 
         [System.Xml.Serialization.XmlIgnoreAttribute]
@@ -260,6 +268,9 @@ namespace World
 
             RoofMaterial = cell.RoofMaterial;
             FloorMaterial = cell.FloorMaterial;
+
+            FloorLightmap = cell.FloorLightmap;
+            RoofLightmap = cell.RoofLightmap;
         }
 
         public bool HasEdge(Vector2 e1, Vector2 e2)
@@ -449,6 +460,41 @@ namespace World
             }
 
             return true;
+        }
+
+        public Vector2 FindMinXY ( )
+        {
+            // find the lower left
+            Vector2 v = new Vector2(FloorPoint(0));
+            for (int i = 1; i < Verts.Count; i++)
+            {
+                if (Verts[i].Bottom.X < v.X)
+                    v.X = Verts[i].Bottom.X;
+
+                if (Verts[i].Bottom.Y < v.Y)
+                    v.Y = Verts[i].Bottom.Y;
+
+            }
+
+            return v;
+        }
+
+
+        public Vector2 FindMaxXY()
+        {
+            // find the lower left
+            Vector2 v = new Vector2(FloorPoint(0));
+            for (int i = 1; i < Verts.Count; i++)
+            {
+                if (Verts[i].Bottom.X > v.X)
+                    v.X = Verts[i].Bottom.X;
+
+                if (Verts[i].Bottom.Y > v.Y)
+                    v.Y = Verts[i].Bottom.Y;
+
+            }
+
+            return v;
         }
     }
 
@@ -650,29 +696,41 @@ namespace World
 
         public List<LightmapBitmap> Lightmaps = new List<LightmapBitmap>();
 
+
+        protected void StoreLightmap (ref LightmapInfo info )
+        {
+            if (info.Map == null)
+            {
+                info.ID = string.Empty;
+                return;
+            }
+            Random rand = new Random();
+            LightmapBitmap bitmap = new LightmapBitmap();
+            bitmap.ID = rand.Next().ToString() + rand.Next().ToString();
+            info.ID = bitmap.ID;
+
+            MemoryStream stream = new MemoryStream(1000000);
+            info.Map.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            bitmap.buffer = new Byte[stream.Position];
+            stream.Position = 0;
+            stream.Read(bitmap.buffer, 0, bitmap.buffer.Length);
+            Lightmaps.Add(bitmap);
+        }
+
         public void StoreLightmaps ( )
         {
-            Random rand = new Random();
             Lightmaps.Clear();
             foreach ( CellGroup group in CellGroups)
             {
                 foreach (Cell cell in group.Cells)
                 {
+                    StoreLightmap(ref cell.FloorLightmap);
+                    StoreLightmap(ref cell.RoofLightmap);
+
                     foreach(CellEdge edge in cell.Edges)
                     {
-                        foreach(CellWallGeometry geo in edge.Geometry)
-                        {
-                            LightmapBitmap bitmap = new LightmapBitmap();
-                            bitmap.ID = rand.Next().ToString() + rand.Next().ToString();
-                            geo.LightmapID = bitmap.ID;
-
-                            MemoryStream stream = new MemoryStream(1000000);
-                            geo.Lightmap.Save(stream,System.Drawing.Imaging.ImageFormat.Png);
-                            bitmap.buffer = new Byte[stream.Position];
-                            stream.Position = 0;
-                            stream.Read(bitmap.buffer,0,bitmap.buffer.Length);
-                            Lightmaps.Add(bitmap);
-                        }
+                        foreach (CellWallGeometry geo in edge.Geometry)
+                            StoreLightmap(ref geo.Lightmap);
                     }
                 }
             }
@@ -689,33 +747,75 @@ namespace World
             return null;
         }
 
+        protected void RestoreLightmap(ref LightmapInfo info)
+        {
+            LightmapBitmap bitmap = FindBitmap(info.ID);
+            if (bitmap == null)
+            {
+                info.ID = string.Empty;
+                info.Map = null;
+            }
+            else
+            {
+                MemoryStream stream = new MemoryStream(bitmap.buffer);
+                info.Map = new Bitmap(stream);
+            }
+        }
+
         public void RestoreLightamps ()
         {
             foreach (CellGroup group in CellGroups)
             {
                 foreach (Cell cell in group.Cells)
                 {
+                    RestoreLightmap(ref cell.FloorLightmap);
+                    RestoreLightmap(ref cell.RoofLightmap);
+
                     foreach (CellEdge edge in cell.Edges)
                     {
                         foreach (CellWallGeometry geo in edge.Geometry)
-                        {
-                            LightmapBitmap bitmap = FindBitmap(geo.LightmapID);
-                            if (bitmap == null)
-                            {
-                                geo.LightmapID = string.Empty;
-                                geo.Lightmap = null;
-                            }
-                            else
-                            {
-                                MemoryStream stream = new MemoryStream(bitmap.buffer);
-                                geo.Lightmap = new Bitmap(stream);
-                            }
-                        }
+                            RestoreLightmap(ref geo.Lightmap);
                     }
                 }
             }
 
             Lightmaps.Clear();
+        }
+
+        public int CountCells ( )
+        {
+            int count = 0;
+            foreach (CellGroup group in CellGroups)
+                foreach (Cell cell in group.Cells)
+                    count++;
+
+            return count;
+        }
+
+        public int CountEdges()
+        {
+            int count = 0;
+            foreach (CellGroup group in CellGroups)
+                foreach (Cell cell in group.Cells)
+                    foreach (CellEdge edge in cell.Edges)
+                        count++;
+
+            return count;
+        }
+
+        public int CountFaces()
+        {
+            int count = 0;
+            foreach (CellGroup group in CellGroups)
+                foreach (Cell cell in group.Cells)
+                {
+                    count += 2;
+                    foreach (CellEdge edge in cell.Edges)
+                        foreach(CellWallGeometry geo in edge.Geometry)
+                            count++;
+                }
+
+            return count;
         }
 
         public List<ObjectInstance> FindObjects ( string type )
