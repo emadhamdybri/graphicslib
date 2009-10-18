@@ -173,6 +173,14 @@ namespace Drawables.DisplayLists
                 list.Invalidate();
         }
 
+        public void Draw ()
+        {
+            if (Generate == null)
+                return;
+
+            Generate(this, list);
+        }
+
         public void Call ()
         {
             if (Generate == null)
