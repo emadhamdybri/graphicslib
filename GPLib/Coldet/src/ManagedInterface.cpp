@@ -41,6 +41,14 @@ bool ColdetModel::RayCollision(Vector3 ^point,Vector3 ^vector, bool closest, flo
 	return model->rayCollision(p,v,closest,segmin,segmax);
 }
 
+Vector3^ ColdetModel::GetCollisionPoint()
+{
+  float v[3];
+  model->getCollisionPoint(v,false);
+
+  return gcnew Vector3(v[0], v[1], v[2]);
+}
+
 
 void ColdetModel::FinalizeMesh(void)
 {
