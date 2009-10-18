@@ -22,6 +22,7 @@ namespace coldet
 		
 		bool RayCollision(Vector3 ^point,Vector3 ^vector, bool closest, float segmin, float segmax);
 	
+		Vector3^ GetCollisionPoint ();
 	internal:
 		ColdetModel();
 		~ColdetModel();
