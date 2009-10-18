@@ -40,6 +40,8 @@ namespace Drawables.Textures
         FileInfo file = null;
         public Image image = null;
 
+        public bool Clamp = false;
+
         Size imageSize = Size.Empty;
 
         public Texture( FileInfo info )
@@ -50,6 +52,12 @@ namespace Drawables.Textures
         public Texture(Image img)
         {
             image = img;
+        }
+
+        public Texture(Image img, bool clamp)
+        {
+            image = img;
+            Clamp = clamp;
         }
 
         public bool Valid ()
@@ -116,7 +124,18 @@ namespace Drawables.Textures
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-                GL.BindTexture(TextureTarget.Texture2D, boundID);
+            if (Clamp)
+            {
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+            }
+            else
+            {
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            }
+
+            GL.BindTexture(TextureTarget.Texture2D, boundID);
         }
 
         public void Execute()
@@ -179,15 +198,20 @@ namespace Drawables.Textures
 
         public Texture FromImage ( Image image )
         {
+            return FromImage(image, false);
+        }
+
+        public Texture FromImage ( Image image, bool clamp )
+        {
             if (image == null)
                 return null;
 
-            String name = "Image:" + image.GetHashCode().ToString();
+            String name = "Image:" + image.GetHashCode().ToString() + clamp.ToString();
 
             if (textures.ContainsKey(name))
                 return textures[name];
 
-            Texture texture = new Texture(image);
+            Texture texture = new Texture(image, clamp);
             textures.Add(name, texture);
             return texture;
         }
