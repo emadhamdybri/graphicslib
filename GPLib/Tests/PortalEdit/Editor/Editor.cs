@@ -53,6 +53,11 @@ namespace PortalEdit
 
         bool Dirty = false;
 
+        Color ambientLightColor;
+
+        ColdetModel colModel = null;
+
+
         public static void SetDirty()
         {
             instance.Dirty = true;
@@ -763,99 +768,234 @@ namespace PortalEdit
                     }
                 }
             }
+            model.FinalizeMesh();
 
             return model;
         }
-
-        public void ComputeLightmaps ()
+       
+        protected Color GetColorForLightmapPos ( Vector3 pos, Vector3 normal, Color initalColor )
         {
-            SetDirty();
-            Byte v = (Byte)(255*map.AmbientLight);
-            Color ambientColor = Color.FromArgb(255, v, v, v);
+            return GetColorForLightmapPos(pos, normal, initalColor, false);
+        }
 
-            ColdetModel model = buildCollisionModel();
-
-            foreach(CellGroup group in map.CellGroups)
+        protected Color GetColorForLightmapPos ( Vector3 pos, Vector3 normal, Color initalColor, bool showDebugRay )
+        {
+            Color returnColor = Color.FromArgb(initalColor.A,initalColor.R,initalColor.G,initalColor.B);
+            foreach (LightInstance light in map.Lights)
             {
-                foreach (EditorCell cell in group.Cells)
+                Vector3 vecToLight = VectorHelper3.Subtract(pos,light.Position);
+
+                float mag = vecToLight.Length;
+                vecToLight.Normalize();
+
+                float dot = Vector3.Dot(vecToLight, normal);
+             //   if (dot < 0)
                 {
-                    foreach (CellEdge edge in cell.Edges)
+                    if (!colModel.RayCollision(light.Position, vecToLight, false, 0.1f, mag - 0.1f))
                     {
-                        foreach (CellWallGeometry geo in edge.Geometry)
+                        if (showDebugRay)
                         {
-                            cell.GenerateLightmapForGeo(geo, edge);
-                            Graphics graphics = Graphics.FromImage(geo.Lightmap);
-                            graphics.Clear(ambientColor);
-                            graphics.Dispose();
-                            Bitmap bitmap = geo.Lightmap as Bitmap;
+                            RayTestDebugInfo info = new RayTestDebugInfo();
+                            info.Origin = light.Position;
+                            info.vector = vecToLight;
+                            info.mag = mag;
+                            viewRenderer.debugRays.Add(info);
+                        }
 
-                            float pixelInUnits = 1.0f/geo.lightampUnitSize;
-                            Vector3 XStep = VectorHelper3.Subtract(cell.FloorPoint(edge.End),cell.FloorPoint(edge.Start));
-                            Vector3 Start = new Vector3(cell.FloorPoint(edge.Start));
-                            XStep.Z = 0;
-                            XStep.Normalize();
-
-                            for( int y = 0; y < geo.Lightmap.Height; y++ )
+                        float attenuation = 1f;
+                        if (mag > light.MinRadius)
+                        {
+                            if (mag > light.MaxRadius)
+                                attenuation = 0;
+                            else
                             {
-                                for (int x = 0; x < geo.Lightmap.Width; x++)
-                                {
-                                    Vector3 pos = Start + (XStep * (x * pixelInUnits));
-                                    pos.Z += y * pixelInUnits;
-
-                                    foreach (LightInstance light in map.Lights)
-                                    {
-                                        Vector3 vecToLight = VectorHelper3.Subtract(pos,light.Position);
-
-                                        float mag = vecToLight.Length;
-                                        vecToLight.Normalize();
-
-                                        float dot = Vector3.Dot(vecToLight,new Vector3(edge.Normal));
-                                        if (dot < 0)
-                                        {
-                                            if (!model.RayCollision(light.Position, vecToLight, false, 0.1f, mag - 0.1f))
-                                            {
-                                                float attenuation = 1f;
-                                                if (mag > light.MinRadius)
-                                                {
-                                                    if (mag > light.MaxRadius)
-                                                        attenuation = 0;
-                                                    else
-                                                    {
-                                                        float scaler = mag-light.MinRadius;
-                                                        attenuation = 1f/(scaler/(light.MaxRadius/light.MinRadius));
-                                                    }
-                                                }
-                                                Byte c = (Byte)(255 * light.Inensity);// * attenuation);// * (float)Math.Abs(dot));
-                                                Color pixel = bitmap.GetPixel(x, y);
-                                                Byte R = pixel.R;
-                                                Byte G = pixel.G;
-                                                Byte B = pixel.B;
-
-                                                if ((int)pixel.R + (int)c > 255)
-                                                    R += 255;
-                                                else
-                                                    R += c;
-
-                                                if ((int)pixel.G + (int)c > 255)
-                                                    G += 255;
-                                                else
-                                                    G += c;
-
-                                                if ((int)pixel.B + (int)c > 255)
-                                                    B += 255;
-                                                else
-                                                    B += c;
-
-                                                bitmap.SetPixel(x,y,Color.FromArgb(255,R,G,B));
-                                            }
-                                        }
-                                    }
-                                }
+                                float scaler = mag - light.MinRadius;
+                                attenuation = 1f - (scaler / (light.MaxRadius - light.MinRadius));
                             }
+                        }
+                        Byte c = (Byte)(255 * light.Inensity * attenuation * (float)Math.Abs(dot));
+                        Byte R = returnColor.R;
+                        Byte G = returnColor.G;
+                        Byte B = returnColor.B;
+
+                        if ((int)returnColor.R + (int)c > 255)
+                            R = 255;
+                        else
+                            R += c;
+
+                        if ((int)returnColor.G + (int)c > 255)
+                            G = 255;
+                        else
+                            G += c;
+
+                        if ((int)returnColor.B + (int)c > 255)
+                            B = 255;
+                        else
+                            B += c;
+
+                        returnColor = Color.FromArgb(R, G, B);
+                    }
+                    else
+                    {
+                        if (showDebugRay)
+                        {
+                            RayTestDebugInfo info = new RayTestDebugInfo();
+                            info.Origin = light.Position;
+                            info.vector = vecToLight;
+                            info.mag = mag;
+                            info.HitDist = (Vector3)colModel.GetCollisionPoint();
+                            viewRenderer.debugRays.Add(info);
                         }
                     }
                 }
             }
+
+            return returnColor;
+        }
+
+        protected void BuildLightmapForCellWall ( EditorCell cell, CellWallGeometry geo, CellEdge edge )
+        {
+            cell.GenerateLightmapForWall(geo, edge);
+            Graphics graphics = Graphics.FromImage(geo.Lightmap.Map);
+            graphics.Clear(ambientLightColor);
+            graphics.Dispose();
+            Bitmap bitmap = geo.Lightmap.Map as Bitmap;
+
+            float pixelInUnits = 1.0f / geo.Lightmap.UnitSize;
+            Vector3 XStep = VectorHelper3.Subtract(cell.FloorPoint(edge.End), cell.FloorPoint(edge.Start));
+            Vector3 Start = new Vector3(cell.FloorPoint(edge.Start));
+            XStep.Z = 0;
+            XStep.Normalize();
+
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    Vector3 pos = Start + (XStep * (x * pixelInUnits));
+                    pos.Z += y * pixelInUnits;
+
+                    bitmap.SetPixel(x, y, GetColorForLightmapPos(pos, new Vector3(edge.Normal), bitmap.GetPixel(x, y)));
+                }
+            }
+        }
+
+        protected void BuildLightmapForCellFloor(EditorCell cell )
+        {
+            cell.GenerateLightmapForFloor();
+
+            Graphics graphics = Graphics.FromImage(cell.FloorLightmap.Map);
+            graphics.Clear(ambientLightColor);
+            graphics.Dispose();
+            Bitmap bitmap = cell.FloorLightmap.Map as Bitmap;
+
+            float pixelInUnits = 1.0f / cell.FloorLightmap.UnitSize;
+
+            Vector2 startPos = cell.FindMinXY();
+
+            Plane plane = cell.GetFloorPlane();
+
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    Vector3 pos = new Vector3();
+                    pos.X = startPos.X + (x * pixelInUnits);
+                    pos.Y = startPos.Y + (y * pixelInUnits);
+                    pos.Z = Cell.GetZInPlane(plane, pos.X, pos.Y);
+
+                    bitmap.SetPixel(x, y, GetColorForLightmapPos(pos, cell.FloorNormal, bitmap.GetPixel(x, y)));
+                }
+            }
+        }
+
+        protected void BuildLightmapForCellRoof(EditorCell cell)
+        {
+            cell.GenerateLightmapForRoof();
+
+            Graphics graphics = Graphics.FromImage(cell.RoofLightmap.Map);
+            graphics.Clear(ambientLightColor);
+            graphics.Dispose();
+            Bitmap bitmap = cell.RoofLightmap.Map as Bitmap;
+
+            float pixelInUnits = 1.0f / cell.RoofLightmap.UnitSize;
+
+            Vector2 startPos = cell.FindMinXY();
+
+            Plane plane = cell.GetRoofPlane();
+
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    Vector3 pos = new Vector3();
+                    pos.X = startPos.X + (x * pixelInUnits);
+                    pos.Y = startPos.Y + (y * pixelInUnits);
+                    pos.Z = Cell.GetZInPlane(plane, pos.X, pos.Y) - 0.01f;
+
+                    bitmap.SetPixel(x, y, GetColorForLightmapPos(pos, cell.RoofNormal, bitmap.GetPixel(x, y)));
+                }
+            }
+        }
+
+        public void ComputeLightmaps ()
+        {
+            viewRenderer.debugRays.Clear();
+
+            LightmapProgress progress = new LightmapProgress();
+
+            progress.Progress.Step = 1;
+            progress.Progress.Maximum = map.CountFaces();
+            progress.Progress.Minimum = 0;
+
+            progress.ProgressText.Text = "Starting Lightmaping";
+
+            progress.Show(frame);
+            progress.Update();
+
+            SetDirty();
+            Byte v = (Byte)(255*map.AmbientLight);
+            ambientLightColor = Color.FromArgb(255, v, v, v);
+
+            colModel = buildCollisionModel();
+
+            int cellCount = 0;
+            foreach(CellGroup group in map.CellGroups)
+            {
+                foreach (EditorCell cell in group.Cells)
+                {
+                    cellCount++;
+
+                    progress.Progress.PerformStep();
+                    progress.ProgressText.Text = "Floor for cell " + cellCount.ToString();
+                    progress.Update();
+                    BuildLightmapForCellFloor(cell);
+
+                    progress.Progress.PerformStep();
+                    progress.ProgressText.Text = "Roof for cell " + cellCount.ToString();
+                    progress.Update();
+                    BuildLightmapForCellRoof(cell);
+
+                    int edgeCount = 0;
+                    foreach (CellEdge edge in cell.Edges)
+                    {
+                        edgeCount++;
+                        progress.ProgressText.Text = "Edge " +edgeCount.ToString() + " for cell " + cellCount.ToString();
+                        progress.Update();
+
+                        foreach (CellWallGeometry geo in edge.Geometry)
+                        {
+                            progress.Progress.PerformStep();
+                            progress.Update();
+                            BuildLightmapForCellWall(cell, geo, edge);
+                        }
+                    }
+                }
+            }
+            progress.ProgressText.Text = "Done";
+            progress.Update();
+            progress.Close();
+
+            colModel = null;
             TextureSystem.system.FlushAllImageTextures();
             RebuildMapGeo();
             ResetViews();
