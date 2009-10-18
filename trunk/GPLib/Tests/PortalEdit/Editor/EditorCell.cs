@@ -167,7 +167,7 @@ namespace PortalEdit
 
             material = EditorCell.GetGeoMaterial(geo.Material);
 
-            Items.Add(new MultiTexturedDrawable( new ListableEvent.GenerateEventHandler(GenerateGeo),TextureSystem.system.FromImage(geo.Lightmap),material.GetTexture()));
+            Items.Add(new MultiTexturedDrawable( new ListableEvent.GenerateEventHandler(GenerateGeo),TextureSystem.system.FromImage(geo.Lightmap.Map,true),material.GetTexture()));
             Items.Add(new MultiTexturedDrawable(new ListableEvent.GenerateEventHandler(GenerateOutline), new SingleListDrawableItem.ShouldDrawItemHandler(wallOutline_ShouldDrawItem)));
         }
 
@@ -215,8 +215,8 @@ namespace PortalEdit
             float highestPoint = Math.Max(geo.UpperZ[0], geo.UpperZ[1]);
             float lowestPoint = Math.Min(geo.LowerZ[0], geo.LowerZ[1]);
 
-            float lightmapX = geo.Lightmap.Width / geo.lightampUnitSize;
-            float lightmapY = geo.Lightmap.Height / geo.lightampUnitSize;
+            float lightmapX = geo.Lightmap.Map.Width / geo.Lightmap.UnitSize;
+            float lightmapY = geo.Lightmap.Map.Height / geo.Lightmap.UnitSize;
 
             float edgeDistance = cell.EdgeDistance(edge);
 
@@ -336,6 +336,7 @@ namespace PortalEdit
         public bool floor = true;
 
         Material material;
+        LightmapInfo lightmap;
 
         public CellGeometry(bool f, Cell c)
         {
@@ -343,16 +344,20 @@ namespace PortalEdit
             floor = f;
 
             if (f)
+            {
                 material = EditorCell.GetGeoMaterial(cell.FloorMaterial);
+                lightmap = cell.FloorLightmap;
+            }
             else
+            {
                 material = EditorCell.GetGeoMaterial(cell.RoofMaterial);
+                lightmap = cell.RoofLightmap;
+            }
 
-            Items.Add(new MultiTexturedDrawable(new ListableEvent.GenerateEventHandler(GenerateGeo),material.GetTexture()));
+            Items.Add(new MultiTexturedDrawable(new ListableEvent.GenerateEventHandler(GenerateGeo), TextureSystem.system.FromImage(lightmap.Map, true), material.GetTexture()));
 
             if (floor)
-            {
                 Items.Add(new MultiTexturedDrawable(new ListableEvent.GenerateEventHandler(GenerateOutline), new SingleListDrawableItem.ShouldDrawItemHandler(outline_ShouldDrawItem), TextureSystem.system.GetTexture(material.textureName)));
-            }
         }
 
         void outline_ShouldDrawItem(object sender, ref bool draw)
@@ -369,6 +374,12 @@ namespace PortalEdit
 
             material.baseColor.glColor(alpha);
 
+
+            Vector2 minPoint = cell.FindMinXY();
+
+            float lightmapX = lightmap.Map.Width /lightmap.UnitSize;
+            float lightmapY = lightmap.Map.Height / lightmap.UnitSize;
+
             CellVert start = cell.Verts[cell.Edges[0].Start];
             if (floor)
             {
@@ -381,7 +392,11 @@ namespace PortalEdit
                 foreach (CellEdge edge in cell.Edges)
                 {
                     CellVert vert = cell.Verts[edge.End];
-                    GL.TexCoord2(cell.FloorMaterial.GetFinalUV(vert.Bottom.X - start.Bottom.X, start.Bottom.Y-vert.Bottom.Y));
+                    float vertU = (vert.Bottom.X - minPoint.X) / lightmapX;
+                    float vertV = (vert.Bottom.Y - minPoint.Y) / lightmapY;
+
+                    GL.MultiTexCoord2(TextureUnit.Texture0, vertU, vertV);
+                    GL.MultiTexCoord2(TextureUnit.Texture1, cell.FloorMaterial.GetFinalU(vert.Bottom.X - start.Bottom.X), cell.FloorMaterial.GetFinalV(start.Bottom.Y - vert.Bottom.Y));
                     GL.Vertex3(vert.Bottom);
                 }
                 GL.End();
@@ -396,7 +411,12 @@ namespace PortalEdit
                 for (int i = cell.Edges.Count - 1; i >= 0; i--)
                 {
                     CellVert vert = cell.Verts[cell.Edges[i].End];
-                    GL.TexCoord2(cell.FloorMaterial.GetFinalUV(vert.Bottom.X - start.Bottom.X, start.Bottom.Y-vert.Bottom.Y));
+                    float vertU = (vert.Bottom.X - minPoint.X) / lightmapX;
+                    float vertV = (vert.Bottom.Y - minPoint.Y) / lightmapY;
+
+                    GL.MultiTexCoord2(TextureUnit.Texture0, vertU, vertV);
+                    GL.MultiTexCoord2(TextureUnit.Texture1, cell.RoofMaterial.GetFinalU(vert.Bottom.X - start.Bottom.X), cell.RoofMaterial.GetFinalV(start.Bottom.Y - vert.Bottom.Y));
+                   
                     GL.Vertex3(vert.Bottom.X, vert.Bottom.Y, vert.GetTopZ(cell.HeightIsIncremental));
                 }
                 GL.End();
@@ -669,6 +689,9 @@ namespace PortalEdit
                 edge.EdgePlane = Plane.Empty;
                 GetEdgePlane(edge);
 
+                GenerateLightmapForFloor();
+                GenerateLightmapForRoof();
+
                 Vector2 p1 = new Vector2(Verts[edge.Start].Bottom.X, Verts[edge.Start].Bottom.Y);
                 Vector2 p2 = new Vector2(Verts[edge.End].Bottom.X, Verts[edge.End].Bottom.Y);
                 List<Cell> cellsWithEdge = map.CellsThatContainEdge(p1, p2,this);
@@ -880,7 +903,25 @@ namespace PortalEdit
             edge.Geometry = generateWallDefs(edge);
         }
 
-        public void GenerateLightmapForGeo ( CellWallGeometry geo, CellEdge edge )
+
+        protected void SetLigtmapDefaultImage ( Image img )
+        {
+            Graphics graphics = Graphics.FromImage(img);
+            graphics.Clear(Color.White);
+
+            Pen p = new Pen(Color.DarkGray, 1);
+            for (int x = 0; x < img.Width; x += 5)
+                graphics.DrawLine(p, x, 0, x, img.Height);
+
+            for (int y = 0; y < img.Width; y += 5)
+                graphics.DrawLine(p, 0, y, img.Width, y);
+
+            p.Dispose();
+
+            graphics.Dispose();
+        }
+
+        public void GenerateLightmapForWall ( CellWallGeometry geo, CellEdge edge )
         {
             float edgeDistance = EdgeDistance(edge);
 
@@ -889,20 +930,37 @@ namespace PortalEdit
 
             float deltaZ = highestPoint - lowestPoint;
 
-            geo.Lightmap = new Bitmap((int)Math.Ceiling(edgeDistance * PortalWorld.LightmapUnitSize), (int)Math.Ceiling(deltaZ * PortalWorld.LightmapUnitSize));
-            Graphics graphics = Graphics.FromImage(geo.Lightmap);
-            graphics.Clear(Color.White);
+            geo.Lightmap.UnitSize = PortalWorld.LightmapUnitSize;
+            geo.Lightmap.Map = new Bitmap((int)Math.Ceiling(edgeDistance * PortalWorld.LightmapUnitSize), (int)Math.Ceiling(deltaZ * PortalWorld.LightmapUnitSize));
+            SetLigtmapDefaultImage(geo.Lightmap.Map);
+        }
 
-            Pen p = new Pen(Color.DarkGray, 1);
-            for (int x = 0; x < geo.Lightmap.Width; x += 5)
-                graphics.DrawLine(p, x, 0, x, geo.Lightmap.Height);
-            
-            for (int y = 0; y < geo.Lightmap.Width; y += 5)
-                graphics.DrawLine(p, 0, y, geo.Lightmap.Width,y);
+        public void GenerateLightmapForFloor ()
+        {
+            // find the lower left
+            Vector2 min = FindMinXY();
+            Vector2 max = FindMaxXY();
 
-            p.Dispose();
+            Vector2 delta = VectorHelper2.Subtract(max, min);
 
-            graphics.Dispose();
+            FloorLightmap.UnitSize = PortalWorld.LightmapUnitSize;
+            FloorLightmap.Map = new Bitmap((int)Math.Ceiling(delta.X * PortalWorld.LightmapUnitSize), (int)Math.Ceiling(delta.Y * PortalWorld.LightmapUnitSize));
+
+            SetLigtmapDefaultImage(FloorLightmap.Map);
+        }
+
+        public void GenerateLightmapForRoof()
+        {
+            // find the lower left
+            Vector2 min = FindMinXY();
+            Vector2 max = FindMaxXY();
+
+            Vector2 delta = VectorHelper2.Subtract(max, min);
+
+            RoofLightmap.UnitSize = PortalWorld.LightmapUnitSize;
+            RoofLightmap.Map = new Bitmap((int)Math.Ceiling(delta.X * PortalWorld.LightmapUnitSize), (int)Math.Ceiling(delta.Y * PortalWorld.LightmapUnitSize));
+
+            SetLigtmapDefaultImage(RoofLightmap.Map);
         }
 
         List<CellWallGeometry> generateWallDefs ( CellEdge edge )
@@ -924,7 +982,7 @@ namespace PortalEdit
                 geo.Bottom = ID;
                 geo.Top = ID;
 
-                GenerateLightmapForGeo(geo, edge);
+                GenerateLightmapForWall(geo, edge);
                 Geometry.Add(geo);
             }
             else
@@ -1014,7 +1072,7 @@ namespace PortalEdit
                         geo.Bottom = ID;
                         geo.Top = topDest.ID;
 
-                        GenerateLightmapForGeo(geo, edge);
+                        GenerateLightmapForWall(geo, edge);
                         Geometry.Add(geo);
                     }
 
@@ -1076,7 +1134,7 @@ namespace PortalEdit
                                 geo.Bottom = topDest.ID;
                                 geo.Top = bestDest.ID;
 
-                                GenerateLightmapForGeo(geo, edge);
+                                GenerateLightmapForWall(geo, edge);
                                 Geometry.Add(geo);
 
                                 // set the next cell as the "top" and do it again
@@ -1126,7 +1184,7 @@ namespace PortalEdit
                         geo.Bottom = bestDest.ID;
                         geo.Top = ID;
 
-                        GenerateLightmapForGeo(geo, edge);
+                        GenerateLightmapForWall(geo, edge);
                         Geometry.Add(geo);
                     }
                 }
@@ -1150,7 +1208,7 @@ namespace PortalEdit
                         geo.Bottom = topDest.ID;
                         geo.Top = ID;
 
-                        GenerateLightmapForGeo(geo, edge);
+                        GenerateLightmapForWall(geo, edge);
                         Geometry.Add(geo);
                     }
                 }

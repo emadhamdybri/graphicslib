@@ -17,8 +17,19 @@ using World;
 
 namespace PortalEdit
 {
+    public class RayTestDebugInfo
+    {
+        public Vector3 Origin;
+        public Vector3 vector;
+        public float mag;
+        public Vector3 HitDist = Vector3.Zero;
+    }
+
     public class MapViewRenderer
     {
+
+        public List<RayTestDebugInfo> debugRays = new List<RayTestDebugInfo>();
+
         GLControl control;
         PortalWorld map;
 
@@ -573,12 +584,40 @@ namespace PortalEdit
             if (map == null)
                 return;
 
+            IntPtr q = Glu.NewQuadric();
+
             GL.Disable(EnableCap.Lighting);
             foreach(CellGroup group in map.CellGroups)
             {
                 foreach (EditorCell cell in group.Cells)
                     cell.Draw();
             }
+
+            GL.Disable(EnableCap.Lighting);
+            GL.Disable(EnableCap.Texture2D);
+            foreach (RayTestDebugInfo ray in debugRays)
+            {
+                GL.Color3(Color.Red);
+                GL.LineWidth(1);
+                GL.Begin(BeginMode.Lines);
+                Vector3 ep = ray.Origin + ray.vector * ray.mag;
+                GL.Vertex3(ray.Origin);
+                GL.Color3(Color.WhiteSmoke);
+                GL.Vertex3(ep);
+                GL.End();
+
+                if (ray.HitDist != Vector3.Zero)
+                {
+                    GL.Color3(Color.Green);
+                    GL.LineWidth(4);
+                    GL.Begin(BeginMode.Lines);
+                    GL.Vertex3(ray.Origin);
+                    GL.Vertex3(ray.HitDist);
+                    GL.End();
+                }
+            }
+            GL.LineWidth(1);
+            GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Lighting);
 
             // draw the objects
@@ -588,7 +627,9 @@ namespace PortalEdit
                 Objects.EditorDraw(obj);
                 GL.PopMatrix();
             }
+            Glu.DeleteQuadric(q);
             DrawSelections();
+
         }
 
         void DrawOverlay()
