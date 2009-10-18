@@ -704,9 +704,8 @@ namespace World
                 info.ID = string.Empty;
                 return;
             }
-            Random rand = new Random();
             LightmapBitmap bitmap = new LightmapBitmap();
-            bitmap.ID = rand.Next().ToString() + rand.Next().ToString();
+            bitmap.ID = info.Map.GetHashCode().ToString();
             info.ID = bitmap.ID;
 
             MemoryStream stream = new MemoryStream(1000000);
