@@ -789,7 +789,7 @@ namespace PortalEdit
                 vecToLight.Normalize();
 
                 float dot = Vector3.Dot(vecToLight, normal);
-             //   if (dot < 0)
+                if (dot < 0)
                 {
                     if (!colModel.RayCollision(light.Position, vecToLight, false, 0.1f, mag - 0.1f))
                     {
@@ -853,9 +853,30 @@ namespace PortalEdit
             return returnColor;
         }
 
+        protected Color GetDarkestColor ( List<Color> colors )
+        {
+            float luminance = (colors[0].R + colors[0].B + colors[0].G) / 3f;
+
+            Color retColor = colors[0];
+
+            for ( int i = 1; i < colors.Count; i++)
+            {
+                float l = (colors[i].R + colors[i].B + colors[i].G) / 3f;
+                if (l < luminance)
+                {
+                    luminance = l;
+                    retColor = colors[i];
+                }
+            }
+
+            return retColor;
+        }
+
         protected void BuildLightmapForCellWall ( EditorCell cell, CellWallGeometry geo, CellEdge edge )
         {
             cell.GenerateLightmapForWall(geo, edge);
+            Application.DoEvents();
+            
             Graphics graphics = Graphics.FromImage(geo.Lightmap.Map);
             graphics.Clear(ambientLightColor);
             graphics.Dispose();
@@ -871,10 +892,30 @@ namespace PortalEdit
             {
                 for (int x = 0; x < bitmap.Width; x++)
                 {
+                    // compute the color at all 4 corners of the pixel and take the darkest one
+                    List<Color> colors = new List<Color>();
                     Vector3 pos = Start + (XStep * (x * pixelInUnits));
                     pos.Z += y * pixelInUnits;
+                    
+                    Vector3 realNormal = new Vector3(edge.Normal);
 
-                    bitmap.SetPixel(x, y, GetColorForLightmapPos(pos, new Vector3(edge.Normal), bitmap.GetPixel(x, y)));
+                    bool debug = GetSelectedWallGeo() == geo;
+
+                    colors.Add(GetColorForLightmapPos(pos, realNormal, bitmap.GetPixel(x, y)));
+
+                  /*  pos = Start + (XStep * ((x + 1) * pixelInUnits));
+                    pos.Z += y * pixelInUnits;
+                    colors.Add(GetColorForLightmapPos(pos, realNormal, bitmap.GetPixel(x, y)));
+
+                    pos = Start + (XStep * ((x + 1) * pixelInUnits));
+                    pos.Z += (y+1) * pixelInUnits;
+                    colors.Add(GetColorForLightmapPos(pos, realNormal, bitmap.GetPixel(x, y)));
+
+                    pos = Start + (XStep * ((x) * pixelInUnits));
+                    pos.Z += (y + 1) * pixelInUnits;
+                    colors.Add(GetColorForLightmapPos(pos, realNormal, bitmap.GetPixel(x, y))); */
+
+                    bitmap.SetPixel(x, y, GetDarkestColor(colors));
                 }
             }
         }
@@ -882,6 +923,7 @@ namespace PortalEdit
         protected void BuildLightmapForCellFloor(EditorCell cell )
         {
             cell.GenerateLightmapForFloor();
+            Application.DoEvents();
 
             Graphics graphics = Graphics.FromImage(cell.FloorLightmap.Map);
             graphics.Clear(ambientLightColor);
@@ -912,6 +954,8 @@ namespace PortalEdit
         {
             cell.GenerateLightmapForRoof();
 
+            Application.DoEvents();
+
             Graphics graphics = Graphics.FromImage(cell.RoofLightmap.Map);
             graphics.Clear(ambientLightColor);
             graphics.Dispose();
@@ -930,7 +974,7 @@ namespace PortalEdit
                     Vector3 pos = new Vector3();
                     pos.X = startPos.X + (x * pixelInUnits);
                     pos.Y = startPos.Y + (y * pixelInUnits);
-                    pos.Z = Cell.GetZInPlane(plane, pos.X, pos.Y) - 0.01f;
+                    pos.Z = Cell.GetZInPlane(plane, pos.X, pos.Y);
 
                     bitmap.SetPixel(x, y, GetColorForLightmapPos(pos, cell.RoofNormal, bitmap.GetPixel(x, y)));
                 }
