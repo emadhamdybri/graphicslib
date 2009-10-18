@@ -129,7 +129,6 @@ namespace PortalEdit
             GL.Color4(Color.White);
             Geometry.Call();
         }
-
     }
 
     public class GeometryBase : IDisposable
