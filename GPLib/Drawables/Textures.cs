@@ -94,7 +94,7 @@ namespace Drawables.Textures
             }
         }
 
-        public void Bind ()
+        public void Load ()
         {
             GL.Enable(EnableCap.Texture2D);
             Bitmap bitmap;
@@ -138,6 +138,23 @@ namespace Drawables.Textures
             GL.BindTexture(TextureTarget.Texture2D, boundID);
         }
 
+        public void Bind ()
+        {
+            if (boundID == -1)
+            {
+                Invalidate();
+                Load();
+            }
+
+            if (boundID != -1)
+            {
+                GL.Enable(EnableCap.Texture2D);
+                GL.BindTexture(TextureTarget.Texture2D, boundID);
+            }
+            else
+                GL.Disable(EnableCap.Texture2D);
+        }
+
         public void Execute()
         {
             // easy out, do this most of the time
@@ -154,7 +171,7 @@ namespace Drawables.Textures
             if (boundID == -1 || !listID.Valid())
                 Invalidate(); // we know one is bad, so make sure all is free;
 
-            Bind();
+            Load();
 
             listID.Start(true);
             if (boundID != -1)
