@@ -617,6 +617,22 @@ namespace PortalEdit
                 }
             }
             GL.LineWidth(1);
+
+            foreach( LightInstance light in map.Lights)
+            {
+                GL.PushMatrix();
+
+                GL.DepthMask(false);
+                GL.Translate(light.Position);
+                GL.Color4(light.Inensity, light.Inensity, light.Inensity, 0.75f);
+                Glu.Sphere(q, 0.1f, 6, 6);
+                GL.Color4(light.Inensity, light.Inensity, light.Inensity, 0.125f);
+              //  Glu.Sphere(q, light.MaxRadius, 20, 20);
+
+                GL.DepthMask(true);
+                GL.PopMatrix();
+            }
+            GL.Color4(1f, 1f, 1f, 1f);
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Lighting);
 

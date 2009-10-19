@@ -778,6 +778,23 @@ namespace PortalEdit
             return GetColorForLightmapPos(pos, normal, initalColor, false);
         }
 
+        protected float GetLightAttenuationFactor ( LightInstance light, float dotToSurface, float distance )
+        {
+            float attenuation = 1;
+
+            if (distance > light.MinRadius)
+            {
+                float scaler = distance - light.MinRadius;
+                attenuation = (1f / (distance * distance)) * light.Inensity;
+            }
+
+            float intensity = light.Inensity * attenuation;
+            if (intensity > 1f)
+                intensity = 1f;
+
+            return intensity * (float)Math.Abs(dotToSurface);
+        }
+
         protected Color GetColorForLightmapPos ( Vector3 pos, Vector3 normal, Color initalColor, bool showDebugRay )
         {
             Color returnColor = Color.FromArgb(initalColor.A,initalColor.R,initalColor.G,initalColor.B);
@@ -791,19 +808,7 @@ namespace PortalEdit
                 float dot = Vector3.Dot(vecToLight, normal);
                 if (dot < 0)
                 {
-                    float attenuation = 1f;
-                    if (mag > light.MinRadius)
-                    {
-                        if (mag > light.MaxRadius)
-                            attenuation = 0;
-                        else
-                        {
-                            float scaler = mag - light.MinRadius;
-                            attenuation = 1f - (scaler / (light.MaxRadius - light.MinRadius));
-                        }
-                    }
-
-                    float lightValue = light.Inensity * attenuation * (float)Math.Abs(dot);
+                    float lightValue = GetLightAttenuationFactor(light, dot, mag);
                     
                     if (lightValue > 0.01f && !colModel.RayCollision(light.Position, vecToLight, false, 0.1f, mag - 0.1f))
                     {

@@ -92,6 +92,8 @@
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.renameCellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteCellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.computeLightmapsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MousePositionStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.MapTreeIcons = new System.Windows.Forms.ImageList(this.components);
@@ -161,15 +163,18 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LightInfo = new System.Windows.Forms.TabPage();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.AmbientLabel = new System.Windows.Forms.Label();
+            this.MinRad = new System.Windows.Forms.NumericUpDown();
+            this.AmbientLevel = new System.Windows.Forms.NumericUpDown();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.LightIntensity = new System.Windows.Forms.NumericUpDown();
             this.LightList = new System.Windows.Forms.ListView();
             this.LightListRMM = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.NewLight = new System.Windows.Forms.ToolStripMenuItem();
             this.RemoveLight = new System.Windows.Forms.ToolStripMenuItem();
-            this.AmbientLevel = new System.Windows.Forms.NumericUpDown();
-            this.AmbientLabel = new System.Windows.Forms.Label();
             this.DefaultImages = new System.Windows.Forms.ImageList(this.components);
-            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-            this.computeLightmapsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -211,8 +216,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.ObjectPosX)).BeginInit();
             this.ObjectListMenuStrip.SuspendLayout();
             this.LightInfo.SuspendLayout();
-            this.LightListRMM.SuspendLayout();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MinRad)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AmbientLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LightIntensity)).BeginInit();
+            this.LightListRMM.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainContainer
@@ -848,6 +856,18 @@
             this.deleteCellToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.deleteCellToolStripMenuItem.Text = "Delete Cell";
             this.deleteCellToolStripMenuItem.Click += new System.EventHandler(this.DeleteCell_Click);
+            // 
+            // toolStripSeparator9
+            // 
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(206, 6);
+            // 
+            // computeLightmapsToolStripMenuItem
+            // 
+            this.computeLightmapsToolStripMenuItem.Name = "computeLightmapsToolStripMenuItem";
+            this.computeLightmapsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.computeLightmapsToolStripMenuItem.Text = "Compute Lightmaps";
+            this.computeLightmapsToolStripMenuItem.Click += new System.EventHandler(this.computeLightmapsToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -1647,9 +1667,8 @@
             // 
             // LightInfo
             // 
+            this.LightInfo.Controls.Add(this.panel2);
             this.LightInfo.Controls.Add(this.LightList);
-            this.LightInfo.Controls.Add(this.AmbientLevel);
-            this.LightInfo.Controls.Add(this.AmbientLabel);
             this.LightInfo.Location = new System.Drawing.Point(4, 49);
             this.LightInfo.Name = "LightInfo";
             this.LightInfo.Size = new System.Drawing.Size(246, 278);
@@ -1657,15 +1676,122 @@
             this.LightInfo.Text = "Lights";
             this.LightInfo.UseVisualStyleBackColor = true;
             // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.AmbientLabel);
+            this.panel2.Controls.Add(this.MinRad);
+            this.panel2.Controls.Add(this.AmbientLevel);
+            this.panel2.Controls.Add(this.label13);
+            this.panel2.Controls.Add(this.label12);
+            this.panel2.Controls.Add(this.LightIntensity);
+            this.panel2.Location = new System.Drawing.Point(3, 210);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(243, 65);
+            this.panel2.TabIndex = 7;
+            // 
+            // AmbientLabel
+            // 
+            this.AmbientLabel.AutoSize = true;
+            this.AmbientLabel.Location = new System.Drawing.Point(4, 36);
+            this.AmbientLabel.Name = "AmbientLabel";
+            this.AmbientLabel.Size = new System.Drawing.Size(45, 13);
+            this.AmbientLabel.TabIndex = 0;
+            this.AmbientLabel.Text = "Ambient";
+            // 
+            // MinRad
+            // 
+            this.MinRad.DecimalPlaces = 2;
+            this.MinRad.Increment = new decimal(new int[] {
+            25,
+            0,
+            0,
+            131072});
+            this.MinRad.Location = new System.Drawing.Point(174, 8);
+            this.MinRad.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.MinRad.Name = "MinRad";
+            this.MinRad.Size = new System.Drawing.Size(65, 20);
+            this.MinRad.TabIndex = 6;
+            this.MinRad.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            131072});
+            this.MinRad.ValueChanged += new System.EventHandler(this.MinRad_ValueChanged);
+            // 
+            // AmbientLevel
+            // 
+            this.AmbientLevel.DecimalPlaces = 4;
+            this.AmbientLevel.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.AmbientLevel.Location = new System.Drawing.Point(55, 34);
+            this.AmbientLevel.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.AmbientLevel.Name = "AmbientLevel";
+            this.AmbientLevel.Size = new System.Drawing.Size(65, 20);
+            this.AmbientLevel.TabIndex = 1;
+            this.AmbientLevel.ValueChanged += new System.EventHandler(this.AmbientLevel_ValueChanged);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(125, 10);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(44, 13);
+            this.label13.TabIndex = 5;
+            this.label13.Text = "MinRad";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(3, 10);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(46, 13);
+            this.label12.TabIndex = 3;
+            this.label12.Text = "Intensity";
+            // 
+            // LightIntensity
+            // 
+            this.LightIntensity.DecimalPlaces = 2;
+            this.LightIntensity.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.LightIntensity.Location = new System.Drawing.Point(54, 8);
+            this.LightIntensity.Name = "LightIntensity";
+            this.LightIntensity.Size = new System.Drawing.Size(65, 20);
+            this.LightIntensity.TabIndex = 4;
+            this.LightIntensity.ValueChanged += new System.EventHandler(this.LightIntensity_ValueChanged);
+            // 
             // LightList
             // 
+            this.LightList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.LightList.AutoArrange = false;
             this.LightList.ContextMenuStrip = this.LightListRMM;
+            this.LightList.HideSelection = false;
+            this.LightList.LabelWrap = false;
             this.LightList.Location = new System.Drawing.Point(0, 0);
+            this.LightList.MultiSelect = false;
             this.LightList.Name = "LightList";
-            this.LightList.Size = new System.Drawing.Size(246, 220);
+            this.LightList.Size = new System.Drawing.Size(246, 204);
             this.LightList.TabIndex = 2;
             this.LightList.UseCompatibleStateImageBehavior = false;
             this.LightList.View = System.Windows.Forms.View.List;
+            this.LightList.SelectedIndexChanged += new System.EventHandler(this.LightList_SelectedIndexChanged);
             // 
             // LightListRMM
             // 
@@ -1689,52 +1815,12 @@
             this.RemoveLight.Text = "Remove";
             this.RemoveLight.Click += new System.EventHandler(this.RemoveLight_Click);
             // 
-            // AmbientLevel
-            // 
-            this.AmbientLevel.DecimalPlaces = 4;
-            this.AmbientLevel.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            this.AmbientLevel.Location = new System.Drawing.Point(55, 243);
-            this.AmbientLevel.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.AmbientLevel.Name = "AmbientLevel";
-            this.AmbientLevel.Size = new System.Drawing.Size(65, 20);
-            this.AmbientLevel.TabIndex = 1;
-            this.AmbientLevel.ValueChanged += new System.EventHandler(this.AmbientLevel_ValueChanged);
-            // 
-            // AmbientLabel
-            // 
-            this.AmbientLabel.AutoSize = true;
-            this.AmbientLabel.Location = new System.Drawing.Point(4, 245);
-            this.AmbientLabel.Name = "AmbientLabel";
-            this.AmbientLabel.Size = new System.Drawing.Size(45, 13);
-            this.AmbientLabel.TabIndex = 0;
-            this.AmbientLabel.Text = "Ambient";
-            // 
             // DefaultImages
             // 
             this.DefaultImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("DefaultImages.ImageStream")));
             this.DefaultImages.TransparentColor = System.Drawing.Color.Transparent;
             this.DefaultImages.Images.SetKeyName(0, "Grid.png");
             this.DefaultImages.Images.SetKeyName(1, "Folder - Pictures.png");
-            // 
-            // toolStripSeparator9
-            // 
-            this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(206, 6);
-            // 
-            // computeLightmapsToolStripMenuItem
-            // 
-            this.computeLightmapsToolStripMenuItem.Name = "computeLightmapsToolStripMenuItem";
-            this.computeLightmapsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.computeLightmapsToolStripMenuItem.Text = "Compute Lightmaps";
-            this.computeLightmapsToolStripMenuItem.Click += new System.EventHandler(this.computeLightmapsToolStripMenuItem_Click);
             // 
             // EditFrame
             // 
@@ -1800,9 +1886,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.ObjectPosX)).EndInit();
             this.ObjectListMenuStrip.ResumeLayout(false);
             this.LightInfo.ResumeLayout(false);
-            this.LightInfo.PerformLayout();
-            this.LightListRMM.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MinRad)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AmbientLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LightIntensity)).EndInit();
+            this.LightListRMM.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1950,6 +2039,11 @@
         private System.Windows.Forms.Button LightingModeButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripMenuItem computeLightmapsToolStripMenuItem;
+        private System.Windows.Forms.NumericUpDown MinRad;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.NumericUpDown LightIntensity;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

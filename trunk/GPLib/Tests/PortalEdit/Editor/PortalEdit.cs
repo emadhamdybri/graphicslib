@@ -1190,5 +1190,64 @@ namespace PortalEdit
         {
             editor.ComputeLightmaps();
         }
+
+        private void LightList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(loadingUI)
+                return;
+
+            loadingUI = true;
+            MinRad.Enabled = false;
+            LightIntensity.Enabled = false;
+
+            if (LightList.SelectedItems.Count > 0)
+            {
+                LightInstance light = (LightInstance)LightList.SelectedItems[0].Tag;
+                if (light != null)
+                {
+                    MinRad.Enabled = true;
+                    LightIntensity.Enabled = true;
+
+                    MinRad.Value = (Decimal)light.MinRadius;
+                    LightIntensity.Value = (Decimal)light.Inensity;
+                }
+            }
+
+            loadingUI = false;
+        }
+
+        private void MinRad_ValueChanged(object sender, EventArgs e)
+        {
+            if (loadingUI)
+                return;
+
+            if (LightList.SelectedItems.Count > 0)
+            {
+                LightInstance light = (LightInstance)LightList.SelectedItems[0].Tag;
+                if (light != null)
+                {
+                    Editor.SetDirty();
+                    light.MinRadius = (float)MinRad.Value;
+                }
+            }
+        }
+
+        private void LightIntensity_ValueChanged(object sender, EventArgs e)
+        {
+            if (loadingUI)
+                return;
+
+            if (LightList.SelectedItems.Count > 0)
+            {
+                LightInstance light = (LightInstance)LightList.SelectedItems[0].Tag;
+                if (light != null)
+                {
+                    Editor.SetDirty();
+                    light.Inensity = (float)LightIntensity.Value;
+
+                    Invalidate(true);
+                }
+            }
+        }
     }
 }

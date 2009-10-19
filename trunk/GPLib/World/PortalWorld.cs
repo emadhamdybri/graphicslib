@@ -665,7 +665,6 @@ namespace World
         public float cone = 45.0f;
         public float Inensity = 1.0f;
         public float MinRadius = 1.0f;
-        public float MaxRadius = 10.0f;
 
         public override string ToString()
         {
@@ -685,7 +684,7 @@ namespace World
     public class PortalWorld
     {
         [System.Xml.Serialization.XmlIgnoreAttribute]
-        public static float LightmapUnitSize = 8f;
+        public static float LightmapUnitSize =8;
 
         public List<CellGroup> CellGroups = new List<CellGroup>();
         public PortalMapAttributes MapAttributes = new PortalMapAttributes();
@@ -695,7 +694,6 @@ namespace World
         public float AmbientLight = 0.25f;
 
         public List<LightmapBitmap> Lightmaps = new List<LightmapBitmap>();
-
 
         protected void StoreLightmap (ref LightmapInfo info )
         {
