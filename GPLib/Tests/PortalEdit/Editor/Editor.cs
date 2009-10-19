@@ -791,7 +791,21 @@ namespace PortalEdit
                 float dot = Vector3.Dot(vecToLight, normal);
                 if (dot < 0)
                 {
-                    if (!colModel.RayCollision(light.Position, vecToLight, false, 0.1f, mag - 0.1f))
+                    float attenuation = 1f;
+                    if (mag > light.MinRadius)
+                    {
+                        if (mag > light.MaxRadius)
+                            attenuation = 0;
+                        else
+                        {
+                            float scaler = mag - light.MinRadius;
+                            attenuation = 1f - (scaler / (light.MaxRadius - light.MinRadius));
+                        }
+                    }
+
+                    float lightValue = light.Inensity * attenuation * (float)Math.Abs(dot);
+                    
+                    if (lightValue > 0.01f && !colModel.RayCollision(light.Position, vecToLight, false, 0.1f, mag - 0.1f))
                     {
                         if (showDebugRay)
                         {
@@ -802,18 +816,7 @@ namespace PortalEdit
                             viewRenderer.debugRays.Add(info);
                         }
 
-                        float attenuation = 1f;
-                        if (mag > light.MinRadius)
-                        {
-                            if (mag > light.MaxRadius)
-                                attenuation = 0;
-                            else
-                            {
-                                float scaler = mag - light.MinRadius;
-                                attenuation = 1f - (scaler / (light.MaxRadius - light.MinRadius));
-                            }
-                        }
-                        Byte c = (Byte)(255 * light.Inensity * attenuation * (float)Math.Abs(dot));
+                        Byte c = (Byte)(255 * lightValue);
                         Byte R = returnColor.R;
                         Byte G = returnColor.G;
                         Byte B = returnColor.B;
