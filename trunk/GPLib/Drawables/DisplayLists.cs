@@ -143,14 +143,39 @@ namespace Drawables.DisplayLists
 
         public object tag = null;
 
-        protected DisplayList list = DisplayListSystem.system.newList();
+        protected DisplayList list;
+
+        DisplayListSystem system = null;
 
         public ListableEvent()
-        {}
+        {
+            list = DisplayListSystem.system.newList();
+        }
+
+        public ListableEvent(DisplayListSystem s)
+        {
+            system = s;
+            list = system.newList();
+        }
 
         public ListableEvent ( GenerateEventHandler handler )
         {
+            list = DisplayListSystem.system.newList();
             Generate += handler;
+        }
+
+        public ListableEvent(GenerateEventHandler handler, DisplayListSystem s)
+        {
+            system = s;
+            list = system.newList();
+            Generate += handler;
+        }
+
+        protected DisplayListSystem GetSystem ()
+        {
+            if (system != null)
+                return system;
+            return DisplayListSystem.system;
         }
 
         public void Dispose()
@@ -159,7 +184,7 @@ namespace Drawables.DisplayLists
 
             if (list != null)
             {
-                DisplayListSystem.system.deleteList(list);
+                GetSystem().deleteList(list);
                 list = null;
             }
 
