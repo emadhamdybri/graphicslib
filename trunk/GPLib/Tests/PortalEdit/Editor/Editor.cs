@@ -25,7 +25,7 @@ namespace PortalEdit
         Paint,
     }
 
-    public delegate void MapLoadedHandler ( object sender, EventArgs args );
+    public delegate void MapLoadedHandler ( object sender, EventArgs args, PortalWorld map );
 
     public delegate void EditorSelectonChanged ( object sender, EventArgs args );
 
@@ -88,6 +88,7 @@ namespace PortalEdit
             viewRenderer.CellClicked += new MapViewRenderer.CellClickedEventHandler(viewRenderer_CellClicked);
 
             NewGroup(false);
+            NewLight();
         }
 
         void viewRenderer_CellClicked(object sender, MapViewRenderer.CellClickedEventArgs e)
@@ -301,6 +302,14 @@ namespace PortalEdit
             return null;
         }
 
+        public LightInstance GetSelectedLight()
+        {
+            if (frame.LightList.SelectedItems.Count == 0)
+                return null;
+
+            return (LightInstance)frame.LightList.SelectedItems[0].Tag;
+        }
+
         public void EditVert ()
         {
             CellVert vert = GetSelectedVert();
@@ -426,19 +435,18 @@ namespace PortalEdit
         {
             FileName = string.Empty;
             mapRenderer.ClearEditPolygon();
-
             viewRenderer.UnloadMapGraphics();
 
-            map.MapObjects.Clear();
-            map.CellGroups.Clear();
-            map.MapAttributes.Clear();
+            map = null;
+            map = new PortalWorld();
+            lastSelectionArgs = null;
             NewGroup();
+            NewLight();
 
             Dirty = false;
 
             if (MapLoaded != null)
-                MapLoaded(this, EventArgs.Empty);
-
+                MapLoaded(this, EventArgs.Empty,map);
 
             ResetViews();
         }
@@ -475,7 +483,7 @@ namespace PortalEdit
             Dirty = false;
 
             if (MapLoaded != null)
-                MapLoaded(this, EventArgs.Empty);
+                MapLoaded(this, EventArgs.Empty, map);
 
             ResetViews();
             return true;

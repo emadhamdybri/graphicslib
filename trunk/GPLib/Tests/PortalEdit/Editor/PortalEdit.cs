@@ -153,7 +153,7 @@ namespace PortalEdit
             editor = Editor.instance;
             editor.SelectionChanged += new EditorSelectonChanged(editor_SelectionChanged);
             editor.MapLoaded += new MapLoadedHandler(editor_MapLoaded);
-            editor_MapLoaded(null, EventArgs.Empty);
+            editor_MapLoaded(null, EventArgs.Empty,null);
 
             Objects.RegisterDefaults();
             SetupObjectNewMenu();
@@ -186,7 +186,7 @@ namespace PortalEdit
             return Resources.File(file);
         }
 
-        void editor_MapLoaded(object sender, EventArgs args)
+        void editor_MapLoaded(object sender, EventArgs args, PortalWorld map)
         {
             TextureSystem.system.LocateFile = new TextureSystem.LocateFileHandler(LocateTexture);
             NamedDepthPresets.Items.Clear();
@@ -1159,6 +1159,9 @@ namespace PortalEdit
         public void LoadLightList()
         {
             LightList.Items.Clear();
+            if (editor == null)
+                return;
+
             foreach (LightInstance light in editor.map.Lights)
                 LightList.Items.Add(light.ToString()).Tag = light;
 
