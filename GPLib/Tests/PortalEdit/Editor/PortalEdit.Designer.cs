@@ -2032,7 +2032,6 @@
         private System.Windows.Forms.TabPage LightInfo;
         private System.Windows.Forms.Label AmbientLabel;
         private System.Windows.Forms.NumericUpDown AmbientLevel;
-        private System.Windows.Forms.ListView LightList;
         private System.Windows.Forms.ContextMenuStrip LightListRMM;
         private System.Windows.Forms.ToolStripMenuItem NewLight;
         private System.Windows.Forms.ToolStripMenuItem RemoveLight;
@@ -2044,6 +2043,7 @@
         private System.Windows.Forms.NumericUpDown LightIntensity;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Panel panel2;
+        public System.Windows.Forms.ListView LightList;
     }
 }
 

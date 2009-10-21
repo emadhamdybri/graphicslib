@@ -84,8 +84,9 @@ namespace PortalEdit
             Editor.instance.MapLoaded += new MapLoadedHandler(MapLoaded);
         }
 
-        void MapLoaded(object sender, EventArgs args)
+        void MapLoaded(object sender, EventArgs args, PortalWorld _map)
         {
+            map = _map;
             CheckUnderlay();
         }
 
@@ -308,8 +309,7 @@ namespace PortalEdit
             if (EditMode == MapEditMode.EditVertMode)
                 DrawVertEditPoly(e.Graphics);
 
-            if (EditMode == MapEditMode.EditLightMode)
-                DrawEditLights(e.Graphics);
+            DrawEditLights(e.Graphics);
         }
 
 
@@ -326,12 +326,11 @@ namespace PortalEdit
                 graphics.DrawEllipse(outlinePen, pos.X - 10, pos.Y - 10, 20, 20);
             }
 
-            if (editLight != null)
+            if (EditMode == MapEditMode.EditLightMode && editLight != null)
             {
                 Point pos = VertToPoint(hoverPos);
                 graphics.FillEllipse(brush2, pos.X - 10, pos.Y - 10, 20, 20);
                 graphics.DrawEllipse(outlinePen, pos.X - 10, pos.Y - 10, 20, 20);
-
             }
 
             outlinePen.Dispose();

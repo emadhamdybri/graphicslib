@@ -1228,8 +1228,8 @@ namespace PortalEdit
                 floor.Dispose();
             if (roof != null)
                 roof.Dispose();
-            floor = null;
-            roof = null;
+            floor = new CellGeometry(true, this);
+            roof = new CellGeometry(false, this);
           
             foreach (WallGeometry wall in walls)
                 wall.Dispose();
@@ -1243,10 +1243,13 @@ namespace PortalEdit
 
         public void Draw ()
         {
-            floor.Draw();
-            roof.Draw();
+            if (FloorVizable)
+                floor.Draw();
 
-            foreach(WallGeometry wall in walls)
+            if (RoofVizable)
+                roof.Draw();
+
+            foreach (WallGeometry wall in walls)
                 wall.Draw();
 
             foreach(PortalGeometry portal in portals)

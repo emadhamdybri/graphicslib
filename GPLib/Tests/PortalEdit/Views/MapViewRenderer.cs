@@ -92,6 +92,12 @@ namespace PortalEdit
 
         public void UnloadMapGraphics ( )
         {
+            foreach(CellGroup group in map.CellGroups)
+            {
+                foreach(EditorCell cell in group.Cells)
+                    cell.Dispose();
+            }
+
             DrawablesSystem.system.removeAll();
             DisplayListSystem.system.Flush();
             if(underlay != null)
@@ -101,8 +107,9 @@ namespace PortalEdit
             }
         }
 
-        void MapLoaded(object sender, EventArgs args)
+        void MapLoaded(object sender, EventArgs args, PortalWorld _map)
         {
+            map = _map;
             CheckUnderlay();
         }
 
@@ -624,7 +631,10 @@ namespace PortalEdit
 
                 GL.DepthMask(false);
                 GL.Translate(light.Position);
-                GL.Color4(light.Inensity, light.Inensity, light.Inensity, 0.75f);
+                if (light == Editor.instance.GetSelectedLight())
+                    GL.Color4(light.Inensity, light.Inensity / 2f, light.Inensity / 2f, 0.95f);
+                else
+                    GL.Color4(light.Inensity, light.Inensity, light.Inensity, 0.75f);
                 Glu.Sphere(q, 0.1f, 6, 6);
                 GL.Color4(light.Inensity, light.Inensity, light.Inensity, 0.125f);
               //  Glu.Sphere(q, light.MaxRadius, 20, 20);
