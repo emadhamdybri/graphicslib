@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -114,12 +114,35 @@ namespace ModelEditor
 
         protected virtual void DrawView ()
         {
-
         }
 
         protected virtual void SetupView()
         {
+        }
 
+        public virtual string GetImportFilter()
+        {
+            return string.Empty;
+        }
+
+        public virtual string GetOpenFilter()
+        {
+            return string.Empty;
+        }
+
+        public virtual string GetSaveAsFilter()
+        {
+            return string.Empty;
+        }
+
+        public virtual bool Import ( FileInfo file )
+        {
+            return false;
+        }
+
+        protected void Redraw()
+        {
+            View.Invalidate();
         }
 
         void View_Paint(object sender, PaintEventArgs e)
