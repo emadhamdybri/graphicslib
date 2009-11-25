@@ -252,6 +252,20 @@ namespace PortalEdit
             GL.Vertex3(ep.Bottom.X, ep.Bottom.Y, geo.UpperZ[1]);
             GL.End();
         }
+
+        public void DrawCliper()
+        {
+            CellVert sp = cell.Verts[edge.Start];
+            CellVert ep = cell.Verts[edge.End];
+
+            GL.Begin(BeginMode.Quads);
+            GL.Vertex3(ep.Bottom.X, ep.Bottom.Y, geo.LowerZ[1]);
+            GL.Vertex3(ep.Bottom.X, ep.Bottom.Y, geo.UpperZ[1]);
+            GL.Vertex3(sp.Bottom.X, sp.Bottom.Y, geo.UpperZ[0]);
+            GL.Vertex3(sp.Bottom.X, sp.Bottom.Y, geo.LowerZ[0]);
+            GL.End();
+
+        }
     }
 
     public class PortalGeometry : GeometryBase
@@ -1254,6 +1268,12 @@ namespace PortalEdit
 
             foreach(PortalGeometry portal in portals)
                 portal.Draw();
+        }
+
+        public void DrawClipper()
+        {
+            foreach (WallGeometry wall in walls)
+                wall.DrawCliper();
         }
 
         public void GenerateDisplayGeometry ( )

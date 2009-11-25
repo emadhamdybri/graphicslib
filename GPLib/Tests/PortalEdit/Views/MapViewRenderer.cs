@@ -299,7 +299,7 @@ namespace PortalEdit
 
         protected virtual void SetupGL()
         {
-            GL.ClearColor(Color.SkyBlue);
+            GL.ClearColor(Color.Black);
 
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
@@ -602,6 +602,21 @@ namespace PortalEdit
 
             GL.Disable(EnableCap.Lighting);
             GL.Disable(EnableCap.Texture2D);
+
+            if (false)
+            {
+                GL.Color4(Color.Black);
+                GL.DepthMask(false);
+                GL.Disable(EnableCap.DepthTest);
+                foreach (CellGroup group in map.CellGroups)
+                {
+                    foreach (EditorCell cell in group.Cells)
+                        cell.DrawClipper();
+                }
+                GL.Enable(EnableCap.DepthTest);
+                GL.DepthMask(true);
+            }
+
             foreach (RayTestDebugInfo ray in debugRays)
             {
                 GL.Color3(Color.Red);
@@ -800,17 +815,17 @@ namespace PortalEdit
             Vector4 lightPos = new Vector4(10, 20, 20, 0);
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
 
-            DrawBasePlane();
-            DrawUnderlay(false);
+           // DrawBasePlane();
+          //  DrawUnderlay(false);
 
-            if (GridList != null)
-                GridList.Call();
-            DrawGridAxisMarker();
+          //  if (GridList != null)
+          //      GridList.Call();
+         //   DrawGridAxisMarker();
 
             DrawMap();
 
-            if (Settings.settings.ShowUnderlayWithDepth)
-                DrawUnderlay(true);
+           // if (Settings.settings.ShowUnderlayWithDepth)
+           //     DrawUnderlay(true);
 
             GL.PopMatrix();
 
