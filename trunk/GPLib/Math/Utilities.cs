@@ -258,6 +258,40 @@ namespace Math3D
         public static float m15(Matrix4 m) { return m.Row3.W; }
         public static void m15(ref Matrix4 m, float value) { m.Row3.W = value; }
 
+
+        public static void SetRotationRadians(ref Matrix4 mat, Vector3 angles)
+        {
+            double cr = Math.Cos(angles.X);
+            double sr = Math.Sin(angles.X);
+            double cp = Math.Cos(angles.Y);
+            double sp = Math.Sin(angles.Y);
+            double cy = Math.Cos(angles.Z);
+            double sy = Math.Sin(angles.Z);
+
+            mat.M11 = (float)(cp * cy);
+            mat.M12 = (float)(cp * sy);
+            mat.M13 = (float)(-sp);
+            mat.M14 = (float)(0.0f);
+
+            double srsp = sr * sp;
+            double crsp = cr * sp;
+
+            mat.M21 = (float)(srsp * cy - cr * sy);
+            mat.M22 = (float)(srsp * sy + cr * cy);
+            mat.M23 = (float)(sr * cp);
+
+            mat.M31 = (float)(crsp * cy + sr * sy);
+            mat.M32 = (float)(crsp * sy - sr * cy);
+            mat.M34 = (float)(cr * cp);
+        }
+
+        public static void SetTranslation(ref Matrix4 mat, Vector3 translation)
+        {
+            mat.M41 = translation.X;
+            mat.M42 = translation.Y;
+            mat.M43 = translation.Z;
+        }
+
     }
 
     public class VectorHelper3
