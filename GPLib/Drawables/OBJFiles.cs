@@ -13,17 +13,17 @@ namespace Drawables.Models.OBJ
 {
     public class OBJFile
     {
-        string[] splitOnDelim(string data, string delim, int count)
+        static string[] splitOnDelim(string data, string delim, int count)
         {
             return data.Split(delim.ToCharArray(), count);
         }
 
-        string[] splitOnDelim(string data, string delim)
+        static string[] splitOnDelim(string data, string delim)
         {
             return data.Split(delim.ToCharArray());
         }
 
-        Vector3 readV3D(string data)
+        static Vector3 readV3D(string data)
         {
             Vector3 v = new Vector3();
             string[] n = splitOnDelim(data, " ", 3);
@@ -36,7 +36,7 @@ namespace Drawables.Models.OBJ
             return v;
         }
 
-        GLColor readColor(string data)
+        static GLColor readColor(string data)
         {
             string[] n = splitOnDelim(data, " ", 5);
             if (n.Length > 2)
@@ -53,7 +53,7 @@ namespace Drawables.Models.OBJ
             return GLColor.White;
         }
 
-        Vector2 readV2D(string data)
+        static Vector2 readV2D(string data)
         {
             Vector2 v = new Vector2();
             string[] n = splitOnDelim(data, " ", 2);
@@ -65,7 +65,7 @@ namespace Drawables.Models.OBJ
             return v;
         }
 
-        List<FaceVert> readFaces(string data)
+        static List<FaceVert> readFaces(string data)
         {
             List<FaceVert> faces = new List<FaceVert>();
             string[] nubs = splitOnDelim(data, " ");
@@ -89,7 +89,7 @@ namespace Drawables.Models.OBJ
             return faces;
         }
 
-        bool readMaterialFile( FileInfo file, Model model )
+        static bool readMaterialFile(FileInfo file, Model model)
         {
             if (!file.Exists)
                 return false;
@@ -107,7 +107,7 @@ namespace Drawables.Models.OBJ
                 string[] nubs = splitOnDelim(line, " ",2);
                 if (nubs.Length >1)
                 {
-                    string code = nubs[0];
+                    string code = nubs[0].TrimStart();
                     if (code == "newmtl")
                     {
                         if (currentMat != null)
@@ -138,7 +138,7 @@ namespace Drawables.Models.OBJ
             return true;
         }
 
-        Vector3 getIndex(int index, List<Vector3> list)
+        static Vector3 getIndex(int index, List<Vector3> list)
         {
             if (index <= 0 && index + list.Count >= 0)
                 return list[list.Count - 1 + index];
@@ -149,7 +149,7 @@ namespace Drawables.Models.OBJ
             return list[index-1];
         }
 
-        Vector2 getIndex(int index, List<Vector2> list)
+        static Vector2 getIndex(int index, List<Vector2> list)
         {
             if (index <= 0 && index + list.Count >= 0)
                 return list[list.Count - 1 + index];
@@ -160,7 +160,7 @@ namespace Drawables.Models.OBJ
             return list[index - 1];
         }
 
-        public Model read(FileInfo file)
+        public static Model Read(FileInfo file)
         {
             Model model = new Model();
 

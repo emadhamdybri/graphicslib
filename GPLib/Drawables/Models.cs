@@ -63,6 +63,15 @@ namespace Drawables.Models
                 groupMap.Add(group.name,group);
         }
 
+        public void SwapYZ()
+        {
+            for (int i = 0; i < verts.Count; i++)
+                verts[i] = new Vector3(verts[i].X, -verts[i].Z, verts[i].Y);
+
+            for (int i = 0; i < normals.Count; i++)
+                normals[i] = new Vector3(normals[i].X, -normals[i].Z, normals[i].Y);
+        }
+
         public void build ( )
         {
             foreach (MeshGroup group in groups)
