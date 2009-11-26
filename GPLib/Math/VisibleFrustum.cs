@@ -96,15 +96,15 @@ namespace Math3D
             // compute projectionMatrix
             float s = 1.0f / (float)Math.Tan(fov / 2.0f);
             float fracHeight = 1.0f - (float)height / (float)height;
-            MatrixHelper4.M11(ref projection,s);
-            MatrixHelper4.M22(ref projection,(1.0f - fracHeight) * s * (float)width / (float)height);
-            MatrixHelper4.M31(ref projection,0.0f);
-            MatrixHelper4.M32(ref projection,-fracHeight);
-            MatrixHelper4.M33(ref projection,-(yon + hither) / (yon - hither));
-            MatrixHelper4.M34(ref projection,-1.0f);
-            MatrixHelper4.M41(ref projection,0.0f);
-            MatrixHelper4.M43(ref projection,-2.0f * yon * hither / (yon - hither));
-            MatrixHelper4.M44(ref projection,0.0f);
+            projection.M11 = s;
+            projection.M22 = (1.0f - fracHeight) * s * (float)width / (float)height;
+            projection.M31 = 0.0f;
+            projection.M32 = -fracHeight;
+            projection.M33 = -(yon + hither) / (yon - hither);
+            projection.M34 = -1.0f;
+            projection.M41 = 0.0f;
+            projection.M43 = -2.0f * yon * hither / (yon - hither);
+            projection.M44 = 0.0f;
 
             projection.Transpose();
 
