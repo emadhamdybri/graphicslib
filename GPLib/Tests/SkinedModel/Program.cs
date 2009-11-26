@@ -27,6 +27,18 @@ namespace SkinedModel
         }
     }
 
+    class AnimationEvent
+    {
+        public double time = 0;
+        public Vector3 value = Vector3.Zero;
+
+        public AnimationEvent(double t, Vector3 v)
+        {
+            time = t;
+            value = v;
+        }
+    }
+
     class Bone
     {
         public Matrix4 matrix = Matrix4.Identity;
@@ -34,8 +46,8 @@ namespace SkinedModel
         public Vector3 translation = Vector3.Zero;
         public Vector3 rotation = Vector3.Zero;
 
-        public List<Vector3> FrameTranslations = new List<Vector3>();
-        public List<Vector3> FrameRotations = new List<Vector3>();
+        public List<AnimationEvent> FrameTranslations = new List<AnimationEvent>();
+        public List<AnimationEvent> FrameRotations = new List<AnimationEvent>();
 
         public Matrix4 CachedWorldMatrix
         {
@@ -47,7 +59,6 @@ namespace SkinedModel
             }
         }
         Matrix4 worldMatrixCache;
-
 
         public Matrix4 CachedWorldMatrixInv
         {
@@ -119,23 +130,6 @@ namespace SkinedModel
                 child.CacheWorldMatrix();
         }
 
-        public Matrix4 GetFrameMatrix ( int frame )
-        {
-            Matrix4 parrentMatrix = Matrix4.Identity;
-            if (Parent != null)
-                parrentMatrix = Parent.GetFrameMatrix(frame);
-
-            Matrix4 rotMat = Matrix4.Identity;
-            if (frame < FrameRotations.Count)
-                rotMat = Matrix4.CreateRotationX(FrameRotations[frame].X) * Matrix4.CreateRotationY(FrameRotations[frame].Y) * Matrix4.CreateRotationZ(FrameRotations[frame].Z);
-
-            Matrix4 transMat = Matrix4.Identity;
-            if (frame < FrameTranslations.Count)
-                transMat = Matrix4.CreateTranslation(FrameTranslations[frame]);
-
-            return parrentMatrix * matrix * rotMat * transMat;
-        }
-
         public Vector3 GetVert(int index)
         {
             return Verts[index];
@@ -154,6 +148,160 @@ namespace SkinedModel
         public Vector3 GetNormalInvMatrix(Vector3 normal)
         {
             return Vector3.TransformNormal(normal, worldMatrixCacheInv);
+        }
+    }
+
+    public class AnimatedBoneMatrix
+    {
+        public Matrix4 CumulativeMatrix = Matrix4.Identity;
+        public Matrix4 LocalMatrix = Matrix4.Identity;
+
+        public int lastTransIndex = -1;
+        public int lastRotIndex = -1;
+    }
+
+    class AnimationHandler
+    {
+        public Dictionary<Bone, AnimatedBoneMatrix> BoneTransforms = new Dictionary<Bone, AnimatedBoneMatrix>();
+        public BoneModel model;
+
+        public AnimationHandler(BoneModel m)
+        {
+            model = m;
+
+            // walk the tree and push the bones.
+            PushBone(m.Root);
+        }
+
+        protected void PushBone(Bone bone)
+        {
+            BoneTransforms.Add(bone, new AnimatedBoneMatrix());
+            foreach (Bone b in bone.Children)
+                PushBone(b);
+        }
+
+        public AnimatedBoneMatrix GetMatrices(Bone bone)
+        {
+            if (BoneTransforms.ContainsKey(bone))
+                return BoneTransforms[bone];
+
+            return new AnimatedBoneMatrix();
+        }
+
+        public void SetTime ( double time )
+        {
+            // walk the bone tree from root up
+            // and compute the various matrices
+            SetBoneMatrix(model.Root, time, Matrix4.Identity);
+        }
+
+        int FindIndexForTime ( List<AnimationEvent> events, double time, int start)
+        {
+            if (events.Count < 1)
+                return -1;
+
+            if (time < events[0].time)
+                return 0;
+
+            int frame = start;
+            if (frame >= 0 && frame < events.Count)
+            {
+                if (events[frame].time <= time)
+                {
+                    int nextFrame = frame + 1;
+                    if (nextFrame < events.Count)
+                    {
+                        if (events[nextFrame].time > time)
+                            return frame; // this is the easy out
+                    }
+
+                    frame++;
+                    nextFrame++;
+
+                    while(true)
+                    {
+                        if (nextFrame < events.Count )
+                        {
+                            if (events[frame].time <= time && events[nextFrame].time > time)
+                                return frame;
+
+                            if (events[nextFrame].time == time)
+                                return nextFrame; // just in case this happens
+
+                            // nope so move on
+                            frame++;
+                            nextFrame++;
+                        }
+                        else
+                        {
+                            // shit we went over so shift the time back to the start
+                            time -= events[frame].time;
+
+                            //handle the non 0 start case
+                            if (time < events[0].time)
+                                return 0;
+
+                            frame = 0;
+                            nextFrame = 1;
+                        }
+                    }
+                }
+            }
+            return 0;
+        }
+
+        Vector3 InterpEvents(ref int lastIndex, List<AnimationEvent> events , Bone bone, double time, bool angles)
+        {
+            int lastFrame = FindIndexForTime(events, time, lastIndex);
+            lastIndex = lastFrame;
+
+            if (lastFrame < 0) // if there are no events, screw it we use 0 for the angles;
+                return new Vector3(0, 0, 0);
+
+            int nextFrame = lastFrame + 1;
+            if (nextFrame >= events.Count)
+                return events[lastFrame].value;
+
+            double timeDelta = events[nextFrame].time - events[lastFrame].time;
+            if (timeDelta == 0)
+                return events[lastFrame].value;
+
+            double interpTime = time - events[lastFrame].time;
+            if (interpTime < 0)
+                interpTime = 0;
+
+            double param = interpTime / timeDelta;
+
+            if (angles)
+            {
+                // TODO make them into quats, slurp them, then give em back
+            }
+
+            return events[lastFrame].value + (VectorHelper3.Subtract(events[nextFrame].value, events[lastFrame].value) * (float)param);
+        }
+
+        protected void SetBoneMatrix ( Bone bone, double time, Matrix4 parrentMatrix )
+        {
+            AnimatedBoneMatrix instance = GetMatrices(bone);
+
+            instance.LocalMatrix = bone.matrix;
+            if (time > 0)
+            {
+                // check the rots
+                Matrix4 rotMat = Matrix4.Identity;
+                Vector3 angles = InterpEvents(ref instance.lastRotIndex, bone.FrameRotations, bone, time,true);
+                rotMat = Matrix4.CreateRotationX(angles.X) * Matrix4.CreateRotationY(angles.Y) * Matrix4.CreateRotationZ(angles.Z);
+
+                Matrix4 transMat = Matrix4.Identity;
+                transMat = Matrix4.CreateTranslation(InterpEvents(ref instance.lastTransIndex, bone.FrameTranslations, bone, time, false));
+
+                instance.LocalMatrix = transMat * rotMat * instance.LocalMatrix;// *rotMat * transMat;
+            }
+
+            instance.CumulativeMatrix = instance.LocalMatrix * parrentMatrix;
+
+            foreach (Bone child in bone.Children)
+                SetBoneMatrix(child, time, instance.CumulativeMatrix);
         }
     }
 
@@ -185,7 +333,7 @@ namespace SkinedModel
             return Verts.Count - 1;
         }
 
-        public void Draw( int frame)
+        public void Draw(AnimationHandler anim)
         {
             if (!Show)
                 return;
@@ -199,19 +347,20 @@ namespace SkinedModel
                     Bone bone = Verts[face.Verts[i]].Key;
                     int boneVert = Verts[face.Verts[i]].Value;
 
-                    if (frame < 0)
+                    if (anim == null)
                     {
                         GL.Normal3(bone.GetNormal(face.Normals[i]));
                         GL.Vertex3(bone.GetVert(boneVert));
                     }
                     else
                     {
+                        AnimatedBoneMatrix matrix = anim.GetMatrices(bone);
                         // transform each vert BACK into the bone
                         Vector4 vec = bone.GetVertInvMatrix(boneVert);
                         Vector3 norm = bone.GetNormalInvMatrix(face.Normals[i]);
 
                         // get the frame matrix
-                        Matrix4 frameMatrix = bone.GetFrameMatrix(frame);
+                        Matrix4 frameMatrix = matrix.CumulativeMatrix;
 
                         // transform from the bone to the frame 
                         vec = Vector3.Transform(new Vector3(vec), frameMatrix);
@@ -231,48 +380,137 @@ namespace SkinedModel
         public Bone Root = new Bone();
         public List<BoneMesh> Meshes = new List<BoneMesh>();
 
-        public int frame = -1;
-
-        public void Draw ()
+        public void Draw(AnimationHandler anim)
         {
             Root.CacheWorldMatrix();
             foreach(BoneMesh mesh in Meshes)
-                mesh.Draw(frame);
+                mesh.Draw(anim);
         }
 
-        void DrawBone ( Bone bone )
+        void DrawBone ( Bone bone, AnimationHandler anim )
         {
             GL.PushMatrix();
-            GL.MultMatrix(ref bone.matrix);
+            Matrix4 mat = anim.GetMatrices(bone).LocalMatrix;
+
+            GL.MultMatrix(ref mat);
             GL.Color4(Color.Blue);
-            GL.LineWidth(2);
-
-            GL.Begin(BeginMode.Lines);
-            GL.Vertex3(0.05f, 0, 0);
-            GL.Vertex3(-0.05f, 0, 0);
-
-            GL.Vertex3(0,0.05f, 0);
-            GL.Vertex3(0,-0.05f, 0);
-          
-            GL.Vertex3(0, 0, 0.05f);
-            GL.Vertex3(0, 0, -0.05f);
-            GL.End();
             GL.LineWidth(1);
 
+            float markerSize = 0.03f;
+
+            GL.Begin(BeginMode.Lines);
+            GL.Vertex3(markerSize, 0, 0);
+            GL.Vertex3(-markerSize, 0, 0);
+
+            GL.Vertex3(0, markerSize, 0);
+            GL.Vertex3(0, -markerSize, 0);
+
+            GL.Vertex3(0, 0, markerSize);
+            GL.Vertex3(0, 0, -markerSize);
+            GL.End();
+
             foreach (Bone child in bone.Children)
-                DrawBone(child);
+            {
+                Matrix4 childMat = anim.GetMatrices(child).LocalMatrix;
+                GL.Begin(BeginMode.Lines);
+                
+                GL.Color3(Color.Red);
+                GL.Vertex3(0,0,0);
+
+                Vector4 v1 = Vector3.Transform(new Vector3(0, 0, 0),childMat);
+                GL.Vertex3(v1.X,v1.Y,v1.Z);
+                GL.End();
+
+                DrawBone(child, anim);
+            }
+            GL.LineWidth(1);
             GL.PopMatrix();
         }
 
-        public void DrawSkeliton()
+        public void DrawSkeliton(AnimationHandler anim)
         {
             GL.DepthMask(false);
             GL.Disable(EnableCap.DepthTest);
 
-            DrawBone(Root);
+            DrawBone(Root, anim);
 
             GL.DepthMask(true);
             GL.Enable(EnableCap.DepthTest);
+        }
+
+        public static BoneModel ReadFromMS3d ( string file )
+        {
+            MilkshapeModel msModel = new MilkshapeModel();
+            if (!msModel.Read(new FileInfo(file)))
+                return null;
+
+            BoneModel model = new BoneModel();
+
+            Dictionary<String, Bone> milkbones = new Dictionary<string, Bone>();
+
+            List<Bone> boneIndexes = new List<Bone>();
+
+            foreach(MilkshapeJoint joint in msModel.Joints)
+            {
+                Bone bone = new Bone();
+                bone.matrix = Matrix4.CreateRotationX(joint.Rotation.X) * Matrix4.CreateRotationY(joint.Rotation.Y) * Matrix4.CreateRotationZ(joint.Rotation.Z) * Matrix4.CreateTranslation(joint.Translation);
+                bone.translation = joint.Translation;
+                bone.rotation = joint.Rotation;
+
+                foreach(MilkshapeKeyframe keyframe in joint.RotationFrames)
+                    bone.FrameRotations.Add(new AnimationEvent(keyframe.time,keyframe.Paramater));
+
+                foreach (MilkshapeKeyframe keyframe in joint.TranslationFrames)
+                    bone.FrameTranslations.Add(new AnimationEvent(keyframe.time,keyframe.Paramater));
+
+                boneIndexes.Add(bone);
+                milkbones.Add(joint.Name, bone);
+            }
+
+            foreach (MilkshapeJoint joint in msModel.Joints)
+            {
+                if (milkbones.ContainsKey(joint.ParentName))
+                    milkbones[joint.ParentName].Add(milkbones[joint.Name]);
+            }
+
+            foreach (KeyValuePair<String,Bone> bone in milkbones)
+            {
+                if (bone.Value.Oprhan())
+                    model.Root.Add(bone.Value);
+            }
+
+            milkbones.Clear();
+
+            foreach (MilkshapeGroup group in msModel.Groups)
+            {
+                BoneMesh mesh = new BoneMesh();
+                if (group.MaterialIndex > msModel.Materials.Count)
+                    mesh.Material = msModel.Materials[group.MaterialIndex].Diffuse;
+
+                foreach (int index in group.Triangles)
+                {
+                    MilkshapeTriangle tri = msModel.Triangles[index];
+                    Polygon poly = new Polygon();
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector3 vertex = msModel.Verts[tri.Verts[i]].Location;
+                        // find bone
+                        Bone bone = model.Root;
+                        if (msModel.Verts[tri.Verts[i]].BoneID < boneIndexes.Count)
+                            bone = boneIndexes[msModel.Verts[tri.Verts[i]].BoneID];
+
+                        int vert = mesh.AddVert(bone, bone.Add(vertex));
+                        poly.Add(vert, tri.Normals[i], tri.UVs[i]);
+                    }
+
+                    mesh.Faces.Add(poly);
+                }
+
+                    model.Meshes.Add(mesh);
+            }
+            boneIndexes.Clear();
+
+            return model;
         }
     }
 
@@ -282,6 +520,8 @@ namespace SkinedModel
 
         BoneModel model;
 
+        AnimationHandler anim;
+
         Camera camera;
         Bone child;
 
@@ -289,6 +529,8 @@ namespace SkinedModel
         float bendDir = 1;
 
         float viewRot = 0;
+
+        double viewTime = 0;
 
         void BuildModel()
         {
@@ -356,78 +598,8 @@ namespace SkinedModel
 
         void BuidMilkshapeModel ( string filename )
         {
-            MilkshapeModel msModel = new MilkshapeModel();
-            if (!msModel.Read(new FileInfo(filename)))
-                return;
-
-            model = new BoneModel();
-
-            Dictionary<String, Bone> milkbones = new Dictionary<string, Bone>();
-
-            List<Bone> boneIndexes = new List<Bone>();
-
-            foreach(MilkshapeJoint joint in msModel.Joints)
-            {
-                Bone bone = new Bone();
-                bone.matrix = Matrix4.CreateRotationX(joint.Rotation.X) * Matrix4.CreateRotationY(joint.Rotation.Y) * Matrix4.CreateRotationZ(joint.Rotation.Z) * Matrix4.CreateTranslation(joint.Translation);
-                bone.translation = joint.Translation;
-                bone.rotation = joint.Rotation;
-
-                foreach(MilkshapeKeyframe keyframe in joint.RotationFrames)
-                    bone.FrameRotations.Add(new Vector3(keyframe.Paramater));
-
-                foreach (MilkshapeKeyframe keyframe in joint.TranslationFrames)
-                    bone.FrameTranslations.Add(new Vector3(keyframe.Paramater));
-
-                boneIndexes.Add(bone);
-                milkbones.Add(joint.Name, bone);
-            }
-
-            foreach (MilkshapeJoint joint in msModel.Joints)
-            {
-                if (milkbones.ContainsKey(joint.ParentName))
-                    milkbones[joint.ParentName].Add(milkbones[joint.Name]);
-            }
-
-            foreach (KeyValuePair<String,Bone> bone in milkbones)
-            {
-                if (bone.Value.Oprhan())
-                    model.Root.Add(bone.Value);
-            }
-
-            milkbones.Clear();
-
-            foreach (MilkshapeGroup group in msModel.Groups)
-            {
-                BoneMesh mesh = new BoneMesh();
-                if (group.MaterialIndex > msModel.Materials.Count)
-                    mesh.Material = msModel.Materials[group.MaterialIndex].Diffuse;
-
-                foreach (int index in group.Triangles)
-                {
-                    MilkshapeTriangle tri = msModel.Triangles[index];
-                    Polygon poly = new Polygon();
-                    for (int i = 0; i < 3; i++)
-                    {
-                        Vector3 vertex = msModel.Verts[tri.Verts[i]].Location;
-                        // find bone
-                        Bone bone = model.Root;
-                        if (msModel.Verts[tri.Verts[i]].BoneID < boneIndexes.Count)
-                            bone = boneIndexes[msModel.Verts[tri.Verts[i]].BoneID];
-
-                        int vert = mesh.AddVert(bone, bone.Add(vertex));
-                        poly.Add(vert, tri.Normals[i], tri.UVs[i]);
-                    }
-
-                    mesh.Faces.Add(poly);
-                }
-
-                model.Meshes.Add(mesh);
-           }
-           boneIndexes.Clear();
-           model.Meshes[3].Show = false;
-
-           model.frame = 0;
+            model = BoneModel.ReadFromMS3d(filename);
+            model.Meshes[3].Show = false;
         }
 
         public override void OnLoad(EventArgs e)
@@ -438,6 +610,8 @@ namespace SkinedModel
 
            // BuildModel();
             BuidMilkshapeModel("../../jill.ms3d");
+
+            anim = new AnimationHandler(model);
         }
 
         void SetupGL()
@@ -498,13 +672,9 @@ namespace SkinedModel
                 bendDir *= -1;
             }
 
-           // viewRot += (float)e.Time * 15;
-
-          //  model.frame += (int)e.Time*2;
-
-         //   child.matrix = Matrix4.CreateRotationY(MathHelper.DegreesToRadians(bendAngle));
-
-           // model.Root.matrix = model.Root.matrix * Matrix4.CreateRotationY(MathHelper.DegreesToRadians((float)e.Time * 15));
+          //  viewRot += (float)e.Time * 15;
+            viewTime += e.Time * 0.5;
+            anim.SetTime(viewTime);
         }
 
         protected override void OnResize(EventArgs e)
@@ -566,12 +736,11 @@ namespace SkinedModel
             GL.Rotate(90, 1, 0, 0);
 
             GL.Rotate(viewRot, 0, 1, 0);
-            model.Draw();
-
+            model.Draw(anim);
 
             GL.Disable(EnableCap.Lighting);
 
-            model.DrawSkeliton();
+            model.DrawSkeliton(anim);
             GL.PopMatrix();
         }
     }
