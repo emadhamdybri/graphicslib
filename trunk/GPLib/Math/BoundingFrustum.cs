@@ -500,23 +500,23 @@ namespace Math3D
         protected void CreatePlanes()
         {
             // Pre-calculate the different planes needed
-            this.left = new Plane(-MatrixHelper4.M14(this.matrix) - MatrixHelper4.M11(this.matrix), -MatrixHelper4.M24(this.matrix) - MatrixHelper4.M21(this.matrix),
-                                  -MatrixHelper4.M34(this.matrix) - MatrixHelper4.M31(this.matrix), -MatrixHelper4.M44(this.matrix) - MatrixHelper4.M41(this.matrix));
+            this.left = new Plane(-matrix.M14 - matrix.M11, -matrix.M24 - matrix.M21,
+                                  -matrix.M34 - matrix.M31, -matrix.M44 - matrix.M41);
 
-            this.right = new Plane(MatrixHelper4.M11(this.matrix) - MatrixHelper4.M14(this.matrix), MatrixHelper4.M21(this.matrix) - MatrixHelper4.M24(this.matrix),
-                                   MatrixHelper4.M31(this.matrix) - MatrixHelper4.M34(this.matrix), MatrixHelper4.M41(this.matrix) - MatrixHelper4.M44(this.matrix));
+            this.right = new Plane(matrix.M11 - matrix.M14, matrix.M21 - matrix.M24,
+                                   matrix.M31 - matrix.M34, matrix.M41 - matrix.M44);
 
-            this.top = new Plane(MatrixHelper4.M12(this.matrix) - MatrixHelper4.M14(this.matrix), MatrixHelper4.M22(this.matrix) - MatrixHelper4.M24(this.matrix),
-                                 MatrixHelper4.M32(this.matrix) - MatrixHelper4.M34(this.matrix), MatrixHelper4.M42(this.matrix) - MatrixHelper4.M44(this.matrix));
+            this.top = new Plane(matrix.M12 - matrix.M14, matrix.M22 - matrix.M24,
+                                 matrix.M32 - matrix.M34, matrix.M42 - matrix.M44);
 
-            this.bottom = new Plane(-MatrixHelper4.M14(this.matrix) - MatrixHelper4.M12(this.matrix), -MatrixHelper4.M24(this.matrix) - MatrixHelper4.M22(this.matrix),
-                                    -MatrixHelper4.M34(this.matrix) - MatrixHelper4.M32(this.matrix), -MatrixHelper4.M44(this.matrix) - MatrixHelper4.M42(this.matrix));
+            this.bottom = new Plane(-matrix.M14 - matrix.M12, -matrix.M24 - matrix.M22,
+                                    -matrix.M34 - matrix.M32, -matrix.M44 - matrix.M42);
 
-            this.near = new Plane(-MatrixHelper4.M13(this.matrix), -MatrixHelper4.M23(this.matrix), -MatrixHelper4.M33(this.matrix), -MatrixHelper4.M43(this.matrix));
+            this.near = new Plane(-matrix.M13, -matrix.M23, -matrix.M33, -matrix.M43);
 
 
-            this.far = new Plane(MatrixHelper4.M13(this.matrix) - MatrixHelper4.M14(this.matrix), MatrixHelper4.M23(this.matrix) - MatrixHelper4.M24(this.matrix),
-                                 MatrixHelper4.M33(this.matrix) - MatrixHelper4.M34(this.matrix), MatrixHelper4.M43(this.matrix) - MatrixHelper4.M44(this.matrix));
+            this.far = new Plane(matrix.M13 - matrix.M14, matrix.M23 - matrix.M24,
+                                 matrix.M33 - matrix.M34, matrix.M43 - matrix.M44);
 
             this.NormalizePlane(ref this.left);
             this.NormalizePlane(ref this.right);
