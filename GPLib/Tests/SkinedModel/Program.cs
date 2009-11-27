@@ -36,6 +36,7 @@ namespace SkinedModel
         AnimatedModel model;
 
         AnimationHandler anim;
+        Timer timer = new Timer();
 
         Camera camera;
 
@@ -53,13 +54,22 @@ namespace SkinedModel
             model.Meshes[3].Show = false;
         }
 
+        void BuildCal3dModel ( string meshFile, string animFile )
+        {
+            model = Call3dReader.Read(meshFile, animFile);
+
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
             SetupGL();
-            BuidMilkshapeModel("../../jill.ms3d");
+           // BuidMilkshapeModel("../../jill.ms3d");
+            BuildCal3dModel("../../enkif/enkif_torso_plate.CMF", "../../enkif/enkif.CSF");
             anim = new AnimationHandler(model);
+
+            anim.SetTime(0);
         }
 
         void SetupGL()
@@ -90,7 +100,7 @@ namespace SkinedModel
             loaded = true;
 
             camera = new Camera();
-            camera.set(new Vector3(0, -2, 0.0f), 0, 90);
+            camera.set(new Vector3(0, -4, 1.0f), 0, 90);
 
             OnResize(EventArgs.Empty);
         }
@@ -121,8 +131,6 @@ namespace SkinedModel
             }
 
             viewRot += (float)e.Time * 15;
-            viewTime += e.Time;
-            anim.SetTime(viewTime);
         }
 
         protected override void OnResize(EventArgs e)
@@ -157,6 +165,7 @@ namespace SkinedModel
             if (!loaded)
                 return;
 
+
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
 
@@ -171,9 +180,8 @@ namespace SkinedModel
 
             DrawModel();
 
-            Title = RenderFrequency.ToString();
+            this.Title = "FPS: " + string.Format("{0:F}", 1.0 / e.Time);
             
-
             SwapBuffers();
         }
 
@@ -184,9 +192,9 @@ namespace SkinedModel
 
             GL.PushMatrix();
 
-            GL.Rotate(90, 1, 0, 0);
+           // GL.Rotate(90, 1, 0, 0);
 
-            GL.Rotate(viewRot, 0, 1, 0);
+            GL.Rotate(viewRot, 0, 0, 1);
             model.Draw(anim);
 
            // GL.Disable(EnableCap.Lighting);
