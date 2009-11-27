@@ -5,8 +5,10 @@ using System.Windows.Forms;
 using System.IO;
 
 using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using OpenTK.Platform;
 using Math3D;
 
 using Drawables.Cameras;
@@ -169,6 +171,9 @@ namespace SkinedModel
 
             DrawModel();
 
+            Title = RenderFrequency.ToString();
+            
+
             SwapBuffers();
         }
 
@@ -184,10 +189,10 @@ namespace SkinedModel
             GL.Rotate(viewRot, 0, 1, 0);
             model.Draw(anim);
 
-            GL.Disable(EnableCap.Lighting);
+           // GL.Disable(EnableCap.Lighting);
 
-            model.DrawSkeliton(anim);
+          //  model.DrawSkeliton(anim);
             GL.PopMatrix();
-        }
+          }
     }
 }
