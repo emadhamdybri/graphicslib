@@ -7,7 +7,7 @@ using System.IO.Compression;
 using System.Xml;
 using System.Xml.Serialization;
 
-using Drawables.Models;
+using Drawables.StaticModels;
 using Drawables.Materials;
 using Utilities.Paths;
 
@@ -15,16 +15,16 @@ namespace Drawables.Models.XMDL
 {
     public class XMDLFile
     {
-        public Model read(FileInfo file)
+        public StaticModel read(FileInfo file)
         {
-            Model model = new Model();
+            StaticModel model = new StaticModel();
 
-            XmlSerializer xml = new XmlSerializer(typeof(Model));
+            XmlSerializer xml = new XmlSerializer(typeof(StaticModel));
             FileStream fs = file.OpenRead();
             GZipStream zip = new GZipStream(fs, CompressionMode.Decompress, false);
             StreamReader sr = new StreamReader(zip);
 
-            model = (Model)xml.Deserialize(sr);
+            model = (StaticModel)xml.Deserialize(sr);
             sr.Close();
             zip.Close();
             fs.Close();
@@ -35,12 +35,12 @@ namespace Drawables.Models.XMDL
             return model;
         }
 
-        public bool write(FileInfo file, Model model)
+        public bool write(FileInfo file, StaticModel model)
         {
             if (model == null || !model.valid())
                 return false;
 
-            XmlSerializer xml = new XmlSerializer(typeof(Model));
+            XmlSerializer xml = new XmlSerializer(typeof(StaticModel));
             FileStream fs = file.OpenWrite();
             GZipStream zip = new GZipStream(fs, CompressionMode.Compress, true);
             StreamWriter sr = new StreamWriter(zip);

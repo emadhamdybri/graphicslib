@@ -10,7 +10,7 @@ using System.IO;
 using Drawables.Materials;
 using Drawables.DisplayLists;
 
-namespace Drawables.Models
+namespace Drawables.StaticModels
 {
     public class FaceVert
     {
@@ -229,7 +229,7 @@ namespace Drawables.Models
         }
     }
 
-    public class Model 
+    public class StaticModel 
     {
         public string name = string.Empty;
 
