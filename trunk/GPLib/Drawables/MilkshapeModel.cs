@@ -8,6 +8,8 @@ using System.Drawing;
 
 using OpenTK;
 
+using Drawables.FileIOUtils;
+
 namespace MilkhapeModel
 {
     /// <summary> 
@@ -183,27 +185,27 @@ namespace MilkhapeModel
             Stream fs = file.OpenRead();
 
             long len = fs.Length;
-            MS3DHeader header = (MS3DHeader)ReadObject(fs, typeof(MS3DHeader));
+            MS3DHeader header = (MS3DHeader)BinUtils.ReadObject(fs, typeof(MS3DHeader));
                 
             ID = new string(header.ID);
             Vers = header.version.ToString();
 
-            int verts = GetNextStreamCount(fs);
+            int verts = BinUtils.GetNextStreamCount(fs);
 
             for (int i = 0; i < verts; i++ )
             {
-                MS3DVertex Vertex = (MS3DVertex)ReadObject(fs,typeof(MS3DVertex));
+                MS3DVertex Vertex = (MS3DVertex)BinUtils.ReadObject(fs, typeof(MS3DVertex));
                 MilkshapeVert vert = new MilkshapeVert();
                 vert.BoneID = Vertex.boneID;
                 vert.Location = new Vector3(Vertex.vertex[0], Vertex.vertex[1], Vertex.vertex[2]);
                 Verts.Add(vert);
             }
 
-            int triangles = GetNextStreamCount(fs);
+            int triangles = BinUtils.GetNextStreamCount(fs);
 
             for (int i = 0; i < triangles; i++)
             {
-                MS3DTriangle Triangle = (MS3DTriangle)ReadObject(fs, typeof(MS3DTriangle));
+                MS3DTriangle Triangle = (MS3DTriangle)BinUtils.ReadObject(fs, typeof(MS3DTriangle));
                 MilkshapeTriangle tri = new MilkshapeTriangle();
 
                 bool normalsFirst = true;
@@ -232,35 +234,35 @@ namespace MilkhapeModel
                 Triangles.Add(tri);
             }
 
-            int groups = GetNextStreamCount(fs);
+            int groups = BinUtils.GetNextStreamCount(fs);
             for (int i = 0; i < groups; i++)
             {
                 MilkshapeGroup group = new MilkshapeGroup();
 
-                ReadObject(fs, typeof(byte));
+                BinUtils.ReadObject(fs, typeof(byte));
  
                 byte[]b = new byte[32];
                 fs.Read(b, 0, b.Length); // name
                 group.Name = FixString(System.Text.Encoding.UTF8.GetString(b));
 
-                short indexCount = (short)ReadObject(fs,typeof(short));
+                short indexCount = (short)BinUtils.ReadObject(fs, typeof(short));
 
                 for (int t = 0; t < indexCount; t++ )
-                    group.Triangles.Add((short)ReadObject(fs, typeof(short)));
+                    group.Triangles.Add((short)BinUtils.ReadObject(fs, typeof(short)));
 
-                group.MaterialIndex = (char)ReadObject(fs, typeof(char));
+                group.MaterialIndex = (char)BinUtils.ReadObject(fs, typeof(char));
                 if (group.MaterialIndex > 128)
                     group.MaterialIndex = -1;
 
                 Groups.Add(group);
             }
 
-            int materials = GetNextStreamCount(fs);
+            int materials = BinUtils.GetNextStreamCount(fs);
             for (int i = 0; i < materials; i++)
             {
                 MilkshapeMaterial material = new MilkshapeMaterial();
 
-                MS3DMaterial Mat = (MS3DMaterial)ReadObject(fs, typeof(MS3DMaterial));
+                MS3DMaterial Mat = (MS3DMaterial)BinUtils.ReadObject(fs, typeof(MS3DMaterial));
 
                 material.Ambient = ConvertColor(Mat.ambient);
                 material.Diffuse = ConvertColor(Mat.diffuse);
@@ -272,17 +274,17 @@ namespace MilkhapeModel
                 Materials.Add(material);
             }
 
-            AnimationFPS = (float)ReadObject(fs, typeof(float));
-            float currentTime = (float)ReadObject(fs, typeof(float));
-            int frames = (int)ReadObject(fs, typeof(int));
+            AnimationFPS = (float)BinUtils.ReadObject(fs, typeof(float));
+            float currentTime = (float)BinUtils.ReadObject(fs, typeof(float));
+            int frames = (int)BinUtils.ReadObject(fs, typeof(int));
 
-            int joints = GetNextStreamCount(fs);
+            int joints = BinUtils.GetNextStreamCount(fs);
 
             for (int i = 0; i < joints; i++)
             {
                 MilkshapeJoint joint = new MilkshapeJoint();
 
-                MS3DJoint Joint = (MS3DJoint)ReadObject(fs,typeof(MS3DJoint));
+                MS3DJoint Joint = (MS3DJoint)BinUtils.ReadObject(fs, typeof(MS3DJoint));
 
                 joint.Name = FixString(new String(Joint.name));
                 joint.ParentName = FixString(new String(Joint.parentName));
@@ -291,7 +293,7 @@ namespace MilkhapeModel
 
                 for (int t = 0; t < Joint.numRotationKeyframes; t++ )
                 {
-                    MS3DKeyframe Frame = (MS3DKeyframe)ReadObject(fs, typeof(MS3DKeyframe));
+                    MS3DKeyframe Frame = (MS3DKeyframe)BinUtils.ReadObject(fs, typeof(MS3DKeyframe));
 
                     MilkshapeKeyframe frame = new MilkshapeKeyframe();
                     frame.Paramater = new Vector3(Frame.parameter[0], Frame.parameter[1], Frame.parameter[2]);
@@ -301,7 +303,7 @@ namespace MilkhapeModel
 
                 for (int t = 0; t < Joint.numTranslationKeyframes; t++ )
                 {
-                    MS3DKeyframe Frame = (MS3DKeyframe)ReadObject(fs, typeof(MS3DKeyframe));
+                    MS3DKeyframe Frame = (MS3DKeyframe)BinUtils.ReadObject(fs, typeof(MS3DKeyframe));
 
                     MilkshapeKeyframe frame = new MilkshapeKeyframe();
                     frame.Paramater = new Vector3(Frame.parameter[0], Frame.parameter[1], Frame.parameter[2]);
@@ -325,40 +327,5 @@ namespace MilkhapeModel
         {
             return Color.FromArgb(255, (int)(255 * color[0]), (int)(255 * color[1]), (int)(255 * color[2]));
         }
-
-        int GetNextStreamCount ( Stream fs )
-        {
-            byte[] b = new byte[Marshal.SizeOf(typeof(short))];
-            fs.Read(b, 0, Marshal.SizeOf(typeof(short)));
-            short i = (short)RawDeserializeEx(b, typeof(short));
-
-            return i;
-        }
-
-        byte[] GetNextStruct( Stream fs, Type anytype )
-        {
-            byte[] b = new byte[Marshal.SizeOf(anytype)];
-            fs.Read(b, 0, b.Length);
-
-            return b;
-        }
-
-        private object ReadObject(Stream fs, Type anytype)
-        {
-            return RawDeserializeEx(GetNextStruct(fs, anytype), anytype);
-        }
-
-        private object RawDeserializeEx(byte[] rawdatas, Type anytype)
-        {
-            int rawsize = Marshal.SizeOf(anytype);
-            if (rawsize > rawdatas.Length)
-                return null;
-            GCHandle handle = GCHandle.Alloc(rawdatas, GCHandleType.Pinned);
-            IntPtr buffer = handle.AddrOfPinnedObject();
-            object retobj = Marshal.PtrToStructure(buffer, anytype);
-            handle.Free();
-            return retobj;
-        }
-
     }
 }

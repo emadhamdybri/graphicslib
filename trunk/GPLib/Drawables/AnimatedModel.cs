@@ -11,6 +11,7 @@ using Math3D;
 using System.Drawing;
 
 using MilkhapeModel;
+using Cal3d;
 
 namespace Drawables.AnimateModels
 {
@@ -146,6 +147,8 @@ namespace Drawables.AnimateModels
 
         public int lastTransIndex = -1;
         public int lastRotIndex = -1;
+
+        public double lastTime = -1;
     }
 
     public class AnimationHandler
@@ -272,21 +275,25 @@ namespace Drawables.AnimateModels
         {
             AnimatedBoneMatrix instance = GetMatrices(bone);
 
-            instance.LocalMatrix = bone.matrix;
-            if (time > 0)
+            if (time != instance.lastTime)
             {
-                // check the rots
-                Matrix4 rotMat = Matrix4.Identity;
-                Vector3 angles = InterpEvents(ref instance.lastRotIndex, bone.FrameRotations, bone, time, true);
-                rotMat = Matrix4.CreateRotationX(angles.X) * Matrix4.CreateRotationY(angles.Y) * Matrix4.CreateRotationZ(angles.Z);
+                instance.lastTime = time;
+                instance.LocalMatrix = bone.matrix;
+                if (time > 0)
+                {
+                    // check the rots
+                    Matrix4 rotMat = Matrix4.Identity;
+                    Vector3 angles = InterpEvents(ref instance.lastRotIndex, bone.FrameRotations, bone, time, true);
+                    rotMat = Matrix4.CreateRotationX(angles.X) * Matrix4.CreateRotationY(angles.Y) * Matrix4.CreateRotationZ(angles.Z);
 
-                Matrix4 transMat = Matrix4.Identity;
-                transMat = Matrix4.CreateTranslation(InterpEvents(ref instance.lastTransIndex, bone.FrameTranslations, bone, time, false));
+                    Matrix4 transMat = Matrix4.Identity;
+                    transMat = Matrix4.CreateTranslation(InterpEvents(ref instance.lastTransIndex, bone.FrameTranslations, bone, time, false));
 
-                instance.LocalMatrix = transMat * rotMat * instance.LocalMatrix;// *rotMat * transMat;
+                    instance.LocalMatrix = transMat * rotMat * instance.LocalMatrix;// *rotMat * transMat;
+                }
+
+                instance.CumulativeMatrix = instance.LocalMatrix * parrentMatrix;
             }
-
-            instance.CumulativeMatrix = instance.LocalMatrix * parrentMatrix;
 
             foreach (Bone child in bone.Children)
                 SetBoneMatrix(child, time, instance.CumulativeMatrix);
@@ -307,7 +314,7 @@ namespace Drawables.AnimateModels
         }
     }
 
-    public class BoneMesh
+    public class BoneMesh : IDisposable
     {
         public Color Material = Color.White;
 
@@ -315,10 +322,104 @@ namespace Drawables.AnimateModels
         public List<Polygon> Faces = new List<Polygon>();
         public bool Show = true;
 
+        protected struct FaceVBO
+        {
+         //   public Vector2 uv;
+            public Vector3 normal;
+            public Vector3 vertex;
+
+            public static int SizeInBytes = Vector3.SizeInBytes*2;
+        }
+
+        FaceVBO[] VBO = null;
+        uint VBOHandle;
+
         public int AddVert(Bone bone, int index)
         {
             Verts.Add(new KeyValuePair<Bone, int>(bone, index));
             return Verts.Count - 1;
+        }
+
+        public void Dispose()
+        {
+            if (VBO != null)
+            {
+                GL.DeleteBuffers(1, ref VBOHandle);
+                VBO = null;
+            }
+        }
+
+        void FillVBO (AnimationHandler anim)
+        {
+            if (VBO == null)
+            {
+                GL.GenBuffers(1, out VBOHandle);
+
+                // Since there's only 1 VBO in the app, might aswell setup here.
+                GL.BindBuffer(BufferTarget.ArrayBuffer, VBOHandle);
+             //   GL.TexCoordPointer(2, TexCoordPointerType.Float, FaceVBO.SizeInBytes, 0);
+                GL.NormalPointer(NormalPointerType.Float, FaceVBO.SizeInBytes, (IntPtr)0);
+                GL.VertexPointer(3, VertexPointerType.Float, FaceVBO.SizeInBytes, (IntPtr)(Vector3.SizeInBytes));
+               
+                int count = 0;
+                foreach (Polygon face in Faces)
+                    count += face.Verts.Count;
+
+                VBO = new FaceVBO[Faces.Count*3];
+            }
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VBOHandle);
+            GL.NormalPointer(NormalPointerType.Float, FaceVBO.SizeInBytes, (IntPtr)0);
+            GL.VertexPointer(3, VertexPointerType.Float, FaceVBO.SizeInBytes, (IntPtr)(Vector3.SizeInBytes));
+
+            int n = 0;
+            foreach (Polygon face in Faces)
+            {
+                for (int i = 0; i < face.Verts.Count; i++)
+                {
+                    if (n >= VBO.Length)
+                    {
+                        int p = 0;
+                    }
+                    Bone bone = Verts[face.Verts[i]].Key;
+                    int boneVert = Verts[face.Verts[i]].Value;
+                    AnimatedBoneMatrix matrix = anim.GetMatrices(bone);
+
+                  //  VBO[n].uv = face.UVs[i];
+                    VBO[n].normal = Vector3.TransformNormal(bone.GetNormal(face.Normals[i]), matrix.CumulativeMatrix);
+                    VBO[n].vertex = Vector3.Transform(bone.GetVert(boneVert), matrix.CumulativeMatrix);
+
+                    n += 1;
+                }
+            }
+        }
+
+        public void DrawVBO(AnimationHandler anim)
+        {
+            if (!Show)
+                return;
+
+            // Setup VBO state
+            //    GL.EnableClientState(EnableCap.TextureCoordArray);
+            GL.EnableClientState(EnableCap.NormalArray);
+            GL.EnableClientState(EnableCap.VertexArray);
+
+
+            GL.Color3(Material);
+
+            FillVBO(anim);
+
+            // Tell OpenGL to discard old VBO when done drawing it and reserve memory _now_ for a new buffer.
+            // without this, GL would wait until draw operations on old VBO are complete before writing to it
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(FaceVBO.SizeInBytes * VBO.Length), IntPtr.Zero, BufferUsageHint.StreamDraw);
+          
+            // Fill newly allocated buffer
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(FaceVBO.SizeInBytes * VBO.Length), VBO, BufferUsageHint.StreamDraw);
+
+            GL.DrawArrays(BeginMode.Triangles, 0, VBO.Length);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.DisableClientState(EnableCap.NormalArray);
+            GL.DisableClientState(EnableCap.VertexArray);
         }
 
         public void Draw(AnimationHandler anim)
@@ -360,6 +461,8 @@ namespace Drawables.AnimateModels
         public static Color BoneColor = Color.Blue;
         public static Color JointColor = Color.CornflowerBlue;
 
+        public bool UseVBO = true;
+
         public void Draw()
         {
             Draw(null);
@@ -367,9 +470,16 @@ namespace Drawables.AnimateModels
 
         public void Draw(AnimationHandler anim)
         {
-            Root.CacheWorldMatrix();
-            foreach (BoneMesh mesh in Meshes)
-                mesh.Draw(anim);
+            if (!UseVBO || anim == null)
+            {
+                foreach (BoneMesh mesh in Meshes)
+                    mesh.Draw(anim);
+            }
+            else
+            {
+                foreach (BoneMesh mesh in Meshes)
+                    mesh.DrawVBO(anim);
+            }
         }
 
         void DrawBone(Bone bone, AnimationHandler anim)
@@ -506,6 +616,57 @@ namespace Drawables.AnimateModels
                 model.Meshes.Add(mesh);
             }
             boneIndexes.Clear();
+
+            return model;
+        }
+    }
+
+    public class Call3dReader 
+    {
+        public static AnimatedModel Read(string CMFFile, string CSFFile)
+        {
+            FileInfo file = new FileInfo(CMFFile);
+            if (!file.Exists)
+                return null;
+
+            CMFFile cmf = new CMFFile();
+            if (!cmf.Read(file))
+                return null;
+
+            file = new FileInfo(CSFFile);
+            if (!file.Exists)
+                return null;
+
+            CSFFile csf = new CSFFile();
+            if (!csf.Read(file))
+                return null;
+
+            AnimatedModel model = new AnimatedModel();
+
+            foreach(Cal3dMesh m in cmf.Meshes)
+            {
+                BoneMesh mesh = new BoneMesh();
+
+                foreach (Cal3dMeshFace f in m.Faces)
+                {
+                    Polygon poly = new Polygon();
+
+                    for ( int i = 0; i < f.Verts.Count; i++)
+                    {
+                        Cal3dMeshVert vert = m.Verts[f.Verts[i] ];
+                        // find bone
+                        Bone bone = model.Root;
+
+                        int vertIndex = mesh.AddVert(bone, bone.Add(Vector3.Transform(vert.Position, bone.WorldMatrixInv())));
+                        Vector2 uv = Vector2.Zero;
+                        if (vert.UVs.Count > 0)
+                            uv = vert.UVs[0];
+                        poly.Add(vertIndex, Vector3.TransformNormal(vert.Normal, bone.WorldMatrixInv()), uv);
+                    }
+                    mesh.Faces.Add(poly);
+                 }
+                model.Meshes.Add(mesh);
+            }
 
             return model;
         }
