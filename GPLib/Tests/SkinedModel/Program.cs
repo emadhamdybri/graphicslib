@@ -355,18 +355,8 @@ namespace SkinedModel
                     else
                     {
                         AnimatedBoneMatrix matrix = anim.GetMatrices(bone);
-                        // transform each vert BACK into the bone
-                        Vector4 vec = bone.GetVertInvMatrix(boneVert);
-                        Vector3 norm = bone.GetNormalInvMatrix(face.Normals[i]);
-
-                        // get the frame matrix
-                        Matrix4 frameMatrix = matrix.CumulativeMatrix;
-
-                        // transform from the bone to the frame 
-                        vec = Vector3.Transform(new Vector3(vec), frameMatrix);
-                        norm = Vector3.TransformNormal(norm, frameMatrix);
-                       
-                        GL.Normal3(norm.X,norm.Y,norm.Z);
+                        Vector4 vec = Vector3.Transform(bone.GetVert(boneVert), matrix.CumulativeMatrix);
+                        GL.Normal3(Vector3.TransformNormal(bone.GetNormal(face.Normals[i]), matrix.CumulativeMatrix));
                         GL.Vertex3(vec.X, vec.Y, vec.Z);
                     }
                 }
@@ -499,8 +489,12 @@ namespace SkinedModel
                         if (msModel.Verts[tri.Verts[i]].BoneID < boneIndexes.Count)
                             bone = boneIndexes[msModel.Verts[tri.Verts[i]].BoneID];
 
-                        int vert = mesh.AddVert(bone, bone.Add(vertex));
-                        poly.Add(vert, tri.Normals[i], tri.UVs[i]);
+                        // transform each vert BACK into the bone
+                        Vector4 vec = Vector3.Transform(vertex, bone.WorldMatrixInv());
+                        Vector3 norm = Vector3.TransformNormal(tri.Normals[i], bone.WorldMatrixInv());
+
+                        int vert = mesh.AddVert(bone, bone.Add(new Vector3(vec)));
+                        poly.Add(vert, norm, tri.UVs[i]);
                     }
 
                     mesh.Faces.Add(poly);
@@ -532,70 +526,7 @@ namespace SkinedModel
 
         double viewTime = 0;
 
-        void BuildModel()
-        {
-            model = new BoneModel();
-            model.Root.matrix = Matrix4.CreateTranslation(0, 0, 2);
-
-            child = model.Root.Add(new Bone());
-
-            model.Root.Add(new Vector3(1, 0, 1));
-            model.Root.Add(new Vector3(0, 0, 0));
-            model.Root.Add(new Vector3(1, 0, -1));
-
-            BoneMesh mesh = new BoneMesh();
-            mesh.Material = Color.Brown;
-
-            mesh.AddVert(model.Root, 0);
-            mesh.AddVert(model.Root, 1);
-            mesh.AddVert(model.Root, 2);
-
-            Polygon polygon = new Polygon();
-            polygon.Add(0, new Vector3(0, 1, 0), new Vector2(1, 1));
-            polygon.Add(1, new Vector3(0, 1, 0), new Vector2(1, 0));
-            polygon.Add(2, new Vector3(0, 1, 0), new Vector2(0, 0.5f));
-
-            mesh.Faces.Add(polygon);
-
-            child.Verts.Add(new Vector3(-1, 0, 1));
-            child.Verts.Add(new Vector3(-1, 0, -1));
-
-            mesh.AddVert(child, 0);
-            mesh.AddVert(child, 1);
-
-            polygon = new Polygon();
-            polygon.Add(1, new Vector3(0, 1, 0), new Vector2(0, 0.5f));
-            polygon.Add(3, new Vector3(0, 1, 0), new Vector2(1, 1));
-            polygon.Add(4, new Vector3(0, 1, 0), new Vector2(1, 0));
-
-            mesh.Faces.Add(polygon);
-
-            model.Meshes.Add(mesh);
-
-            mesh = new BoneMesh();
-            mesh.Material = Color.Red;
-
-            mesh.AddVert(model.Root, 0);
-            mesh.AddVert(model.Root, 1);
-            mesh.AddVert(child, 0);
-            mesh.AddVert(model.Root, 2);
-            mesh.AddVert(child, 1);
-
-            polygon = new Polygon();
-            polygon.Add(0, new Vector3(0, 1, 0), new Vector2(1, 1));
-            polygon.Add(2, new Vector3(0, 1, 0), new Vector2(0, 0.5f));
-            polygon.Add(1, new Vector3(0, 1, 0), new Vector2(1, 0));
-            mesh.Faces.Add(polygon);
-
-            polygon = new Polygon();
-            polygon.Add(1, new Vector3(0, 1, 0), new Vector2(0, 0.5f));
-            polygon.Add(4, new Vector3(0, 1, 0), new Vector2(1, 1));
-            polygon.Add(3, new Vector3(0, 1, 0), new Vector2(1, 0));
-            mesh.Faces.Add(polygon);
-
-            model.Meshes.Add(mesh);
-        }
-
+       
         void BuidMilkshapeModel ( string filename )
         {
             model = BoneModel.ReadFromMS3d(filename);
@@ -607,10 +538,7 @@ namespace SkinedModel
             base.OnLoad(e);
 
             SetupGL();
-
-           // BuildModel();
             BuidMilkshapeModel("../../jill.ms3d");
-
             anim = new AnimationHandler(model);
         }
 
