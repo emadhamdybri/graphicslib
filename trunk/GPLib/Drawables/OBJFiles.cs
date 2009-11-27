@@ -9,7 +9,7 @@ using OpenTK;
 using Drawables.Models;
 using Drawables.Materials;
 
-namespace Drawables.Models.OBJ
+namespace Drawables.StaticModels.OBJ
 {
     public class OBJFile
     {
@@ -89,7 +89,7 @@ namespace Drawables.Models.OBJ
             return faces;
         }
 
-        static bool readMaterialFile(FileInfo file, Model model)
+        static bool readMaterialFile(FileInfo file, StaticModel model)
         {
             if (!file.Exists)
                 return false;
@@ -160,9 +160,9 @@ namespace Drawables.Models.OBJ
             return list[index - 1];
         }
 
-        public static Model Read(FileInfo file)
+        public static StaticModel Read(FileInfo file)
         {
-            Model model = new Model();
+            StaticModel model = new StaticModel();
 
             model.name = Path.GetFileNameWithoutExtension(file.FullName);
 
