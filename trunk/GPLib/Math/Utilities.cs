@@ -111,6 +111,26 @@ namespace Math3D
 
     public class MatrixHelper4
     {
+        public static Matrix4 FromQuaternion ( Quaternion quat )
+        {
+            quat.Normalize();
+            Matrix4 mat = new Matrix4();
+            mat.M11 = 1 - 2 * (quat.Y * quat.Y) - 2 * (quat.Z * quat.Z);
+            mat.M12 = 2 * (quat.X * quat.Y) - 2 * (quat.Z * quat.W);
+            mat.M13 = 2 * (quat.X * quat.Z) + 2 * (quat.Y * quat.W);
+           
+            mat.M21 = 2 * (quat.X * quat.Y) + 2 * (quat.Z * quat.W);
+            mat.M22 = 1 - 2 * (quat.X * quat.X) - 2 * (quat.Z * quat.Z);
+            mat.M23 = 2 * (quat.Y * quat.Z) + 2 * (quat.X * quat.W);
+
+            mat.M31 = 2 * (quat.X * quat.Z) + 2 * (quat.Y * quat.W);
+            mat.M32 = 2 * (quat.Y * quat.Z) + 2 * (quat.X * quat.W);
+            mat.M32 = 1 - 2 * (quat.X * quat.X) - 2 * (quat.Y * quat.Y);
+
+            mat.Transpose();
+            return mat;
+        }
+
         // matrix grid methods
         public static float M11(Matrix4 m) { return m.Row0.X; }
         public static void M11(ref Matrix4 m, float value) { m.Row0.X = value; }
@@ -291,7 +311,28 @@ namespace Math3D
             mat.M42 = translation.Y;
             mat.M43 = translation.Z;
         }
+    }
+    public class QuaternionHelper
+    {
+        public static Quaternion FromEuler(Vector3 angles)
+        {
+            double x, y, z, w;
 
+            double c1 = Math.Cos(angles.Y * 0.5f);
+            double c2 = Math.Cos(angles.Z * 0.5f);
+            double c3 = Math.Cos(angles.X * 0.5f);
+
+            double s1 = Math.Sin(angles.Y * 0.5f);
+            double s2 = Math.Sin(angles.Z * 0.5f);
+            double s3 = Math.Sin(angles.X * 0.5f);
+
+            w = c1 * c2 * c3 - s1 * s2 * s3;
+            x = s1 * s2 * c3 + c1 * c2 * s3;
+            y = s1 * c2 * c3 + c1 * s2 * s3;
+            z = c1 * s2 * c3 - s1 * c2 * s3;
+
+            return new Quaternion((float)x, (float)y, (float)z, (float)w);
+        }
     }
 
     public class VectorHelper3
@@ -341,6 +382,26 @@ namespace Math3D
                 ret.Z = v2.Z;
 
             return ret;
+        }
+
+        public static Vector3 FromQuaternion ( Quaternion quat )
+        {
+            quat.Normalize();
+
+            Vector3 angs = new Vector3();
+            angs.Y = (float)Math.Asin(2.0f*quat.X*quat.Y+2.0f*quat.Z*quat.W);
+
+            if (quat.X*quat.Y+quat.Z*quat.W == 0.5f)
+                angs.X = 2.0f * (float)Math.Atan2(quat.X, quat.W);
+            else if (quat.X*quat.Y+quat.Z*quat.W == -0.5f)
+                angs.X = -2.0f * (float)Math.Atan2(quat.X, quat.W);
+            else
+            {
+                angs.X = (float)Math.Atan2(2.0f * quat.Y * quat.W - 2.0f * quat.X * quat.Z, 1.0f - 2.0f * (quat.Y * quat.Y) - 2 * (quat.Z * quat.Z));
+                angs.Z = (float)Math.Atan2(2.0f * quat.X * quat.W - 2.0f * quat.Y * quat.Z, 1.0f - 2.0f * (quat.X * quat.X) - 2 * (quat.Z * quat.Z));
+            }
+
+            return angs;
         }
     }
 
