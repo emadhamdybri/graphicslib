@@ -18,11 +18,29 @@ namespace Drawables.AnimateModels
     public class AnimationEvent
     {
         public double time = 0;
-        public Vector3 value = Vector3.Zero;
 
-        public AnimationEvent(double t, Vector3 v)
+        public AnimationEvent(double t)
         {
             time = t;
+        }
+    }
+
+    public class AnimationTranslation : AnimationEvent
+    {
+        public Vector3 value = Vector3.Zero;
+        public AnimationTranslation(double t, Vector3 v) 
+            : base(t)
+        {
+            value = v;
+        }
+    }
+
+    public class AnimationRotation : AnimationEvent
+    {
+        public Quaternion value = Quaternion.Identity;
+        public AnimationRotation(double t, Quaternion v)
+            : base(t)
+        {
             value = v;
         }
     }
@@ -36,6 +54,16 @@ namespace Drawables.AnimateModels
 
         public List<AnimationEvent> FrameTranslations = new List<AnimationEvent>();
         public List<AnimationEvent> FrameRotations = new List<AnimationEvent>();
+
+        public void AddRotatonEvent(AnimationRotation ev)
+        {
+            FrameRotations.Add(ev);
+        }
+
+        public void AddTranslationEvent(AnimationTranslation ev)
+        {
+            FrameTranslations.Add(ev);
+        }
 
         public Matrix4 CachedWorldMatrix
         {
@@ -241,7 +269,7 @@ namespace Drawables.AnimateModels
             return 0;
         }
 
-        Vector3 InterpEvents(ref int lastIndex, List<AnimationEvent> events, Bone bone, double time, bool angles)
+        Vector3 InterpTrans(ref int lastIndex, List<AnimationEvent> events, Bone bone, double time)
         {
             int lastFrame = FindIndexForTime(events, time, lastIndex);
             lastIndex = lastFrame;
@@ -249,26 +277,53 @@ namespace Drawables.AnimateModels
             if (lastFrame < 0) // if there are no events, screw it we use 0 for the angles;
                 return new Vector3(0, 0, 0);
 
+            AnimationTranslation thisTrans = (AnimationTranslation)events[lastFrame];
             int nextFrame = lastFrame + 1;
             if (nextFrame >= events.Count)
-                return events[lastFrame].value;
+                return thisTrans.value;
 
-            double timeDelta = events[nextFrame].time - events[lastFrame].time;
+            AnimationTranslation nextTrans = (AnimationTranslation)events[nextFrame];
+            double timeDelta = nextTrans.time - thisTrans.time;
             if (timeDelta == 0)
-                return events[lastFrame].value;
+                return thisTrans.value;
 
-            double interpTime = time - events[lastFrame].time;
+            double interpTime = time - thisTrans.time;
             if (interpTime < 0)
                 interpTime = 0;
 
             double param = interpTime / timeDelta;
 
-            if (angles)
-            {
-                // TODO make them into quats, slurp them, then give em back
-            }
+            return nextTrans.value + (VectorHelper3.Subtract(thisTrans.value, nextTrans.value) * (float)param);
+        }
 
-            return events[lastFrame].value + (VectorHelper3.Subtract(events[nextFrame].value, events[lastFrame].value) * (float)param);
+        Quaternion InterpRots(ref int lastIndex, List<AnimationEvent> events, Bone bone, double time)
+        {
+            int lastFrame = FindIndexForTime(events, time, lastIndex);
+            lastIndex = lastFrame;
+
+            if (lastFrame < 0) // if there are no events, screw it we use 0 for the angles;
+                return Quaternion.Identity;
+           
+            AnimationRotation thisRot = (AnimationRotation)events[lastFrame];
+
+            int nextFrame = lastFrame + 1;
+            if (nextFrame >= events.Count)
+                return thisRot.value;
+
+            AnimationRotation nextRot = (AnimationRotation)events[nextFrame];
+
+            double timeDelta = nextRot.time - thisRot.time;
+            if (timeDelta == 0)
+                return thisRot.value;
+
+            double interpTime = time - nextRot.time;
+            if (interpTime < 0)
+                interpTime = 0;
+
+            double param = interpTime / timeDelta;
+           
+            // slerp it
+            return Quaternion.Slerp(thisRot.value,nextRot.value,(float)param);
         }
 
         protected void SetBoneMatrix(Bone bone, double time, Matrix4 parrentMatrix)
@@ -282,14 +337,15 @@ namespace Drawables.AnimateModels
                 if (time > 0)
                 {
                     // check the rots
-                    Matrix4 rotMat = Matrix4.Identity;
-                    Vector3 angles = InterpEvents(ref instance.lastRotIndex, bone.FrameRotations, bone, time, true);
-                    rotMat = Matrix4.CreateRotationX(angles.X) * Matrix4.CreateRotationY(angles.Y) * Matrix4.CreateRotationZ(angles.Z);
+                    Quaternion interpQuat = InterpRots(ref instance.lastRotIndex, bone.FrameRotations, bone, time);
+                    Vector3 axis = new Vector3();
+                    float angle =0;
+                    interpQuat.ToAxisAngle(out axis,out angle);
+ 
+                    Matrix4 rotMat = Matrix4.CreateFromAxisAngle(axis,angle);
+                    Matrix4 transMat = Matrix4.CreateTranslation(InterpTrans(ref instance.lastTransIndex, bone.FrameTranslations, bone, time));
 
-                    Matrix4 transMat = Matrix4.Identity;
-                    transMat = Matrix4.CreateTranslation(InterpEvents(ref instance.lastTransIndex, bone.FrameTranslations, bone, time, false));
-
-                    instance.LocalMatrix = transMat * rotMat * instance.LocalMatrix;// *rotMat * transMat;
+                    instance.LocalMatrix = transMat * rotMat * instance.LocalMatrix;
                 }
 
                 instance.CumulativeMatrix = instance.LocalMatrix * parrentMatrix;
@@ -564,10 +620,10 @@ namespace Drawables.AnimateModels
                 bone.rotation = joint.Rotation;
 
                 foreach (MilkshapeKeyframe keyframe in joint.RotationFrames)
-                    bone.FrameRotations.Add(new AnimationEvent(keyframe.time, keyframe.Paramater));
+                    bone.AddRotatonEvent(new AnimationRotation(keyframe.time, QuaternionHelper.FromEuler(keyframe.Paramater)));
 
                 foreach (MilkshapeKeyframe keyframe in joint.TranslationFrames)
-                    bone.FrameTranslations.Add(new AnimationEvent(keyframe.time, keyframe.Paramater));
+                    bone.AddTranslationEvent(new AnimationTranslation(keyframe.time, keyframe.Paramater));
 
                 boneIndexes.Add(bone);
                 milkbones.Add(joint.Name, bone);
