@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project24", "Project24.csproj", "{2D4D4020-6AFC-4FBC-9228-CF4A83C7225F}"
@@ -17,11 +17,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Host", "..\Components\Host\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messages", "..\Messages\Messages.csproj", "{74ABA191-489F-47F6-9982-94C764B67F83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drawables", "..\Components\Drawables\Drawables.csproj", "{71452148-876E-4B8E-9244-A8F014CF72E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drawables", "..\..\GPLib\Drawables\Drawables.csproj", "{71452148-876E-4B8E-9244-A8F014CF72E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math3D", "..\Components\Math\Math3D.csproj", "{0BC4671F-FF72-4D3E-9889-44382F6C64F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math3D", "..\..\GPLib\Math\Math3D.csproj", "{0BC4671F-FF72-4D3E-9889-44382F6C64F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\Components\Utilities\Utilities.csproj", "{1CD2C5DC-F417-41D6-9704-CCC0FB501BF3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\..\GPLib\Utilities\Utilities.csproj", "{1CD2C5DC-F417-41D6-9704-CCC0FB501BF3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConfigurator", "..\Components\ServerConfigurator\ServerConfigurator.csproj", "{CA9368CE-BC6D-4028-9FF8-99F012201DC6}"
 EndProject
