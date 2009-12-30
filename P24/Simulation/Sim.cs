@@ -1,0 +1,125 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Simulation
+{
+    public class ShotEventArgs : EventArgs
+    {
+        public Shot shot;
+        public double time;
+
+        public ShotEventArgs ( Shot s, double t)
+        {
+            shot = s;
+            time = t;
+        }
+    }
+
+    public class PlayerEventArgs : EventArgs
+    {
+        public Player player;
+        public double time;
+
+        public PlayerEventArgs(Player p, double t)
+        {
+            player = p;
+            time = t;
+        }
+    }
+
+    public class PlayerUpdateEventArgs : PlayerEventArgs
+    {
+        ObjectState state;
+
+        public PlayerUpdateEventArgs(Player p, ObjectState s, double t) : base(p,t)
+        {
+            state = s;
+        }
+    }
+
+    public delegate void ShotEndedHandler(object sender, ShotEventArgs args );
+    public delegate void ShotStartedHandler(object sender, ShotEventArgs args);
+
+    public delegate void PlayerJoinedHandler(object sender, PlayerEventArgs args);
+    public delegate void PlayerRemovedHandler(object sender, PlayerEventArgs args);
+    public delegate void PlayerUpdateHandler(object sender, PlayerUpdateEventArgs args);
+
+    public class Sim
+    {
+        public MapDef Map = new MapDef();
+
+        public List<Player> Players = new List<Player>();
+        public List<Shot> Shots = new List<Shot>();
+
+        public event ShotStartedHandler ShotStarted;
+        public event ShotEndedHandler ShotEnded;
+        
+        public event PlayerJoinedHandler PlayerJoined;
+        public event PlayerRemovedHandler PlayerRemoved;
+        public event PlayerUpdateHandler PlayerUpdated;
+
+        double lastUpdateTime = -1;
+
+        public void Init ( )
+        {
+
+        }
+
+        public void AddPlayer ( Player player )
+        {
+            Players.Add(player);
+            if (PlayerJoined != null)
+                PlayerJoined(this, new PlayerEventArgs(player, lastUpdateTime));
+        }
+
+        public void AddShot(Shot shot)
+        {
+            Shots.Add(shot);
+            if (ShotStarted != null)
+                ShotStarted(this, new ShotEventArgs(shot, lastUpdateTime));
+        }
+
+        public void RemovePlayer ( Player player )
+        {
+            Players.Remove(player);
+            if (PlayerRemoved != null)
+                PlayerRemoved(this, new PlayerEventArgs(player, lastUpdateTime));
+        }
+
+        protected void RemoveShot ( Shot shot )
+        {
+            Shots.Remove(shot);
+            if (ShotEnded != null)
+                ShotEnded(this, new ShotEventArgs(shot, lastUpdateTime));
+        }
+
+        public void UpdatePlayer ( Player player, ObjectState state, double time )
+        {
+            player.LastUpdateState = state;
+            player.LastUpdateTime = time;
+            if (PlayerUpdated != null)
+                PlayerUpdated(this, new PlayerUpdateEventArgs(player, state, time));
+        }
+
+        public void Update ( double time )
+        {
+            lastUpdateTime = time;
+
+            foreach (Player player in Players)
+                player.Update(time);
+
+            List<Shot> deadShots = new List<Shot>();
+            foreach (Shot shot in Shots)
+            {
+                shot.Update(time);
+                if (shot.Expired(time))
+                    deadShots.Add(shot);
+            }
+
+            foreach (Shot shot in deadShots)
+                RemoveShot(shot);
+        }
+    }
+}

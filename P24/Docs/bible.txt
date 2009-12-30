@@ -1,0 +1,61 @@
+ships
+
+Normal One
+Fast One
+Agile One
+Strong One
+Tough One
+Minelayer
+
+
+Buffers
+
+Ships have 3 power buffers
+Shots: (blue)
+Shields: (white, yellow, red )
+Accessory: (Green )
+
+poweplant generates power, and each buffer can pull from it.
+if a buffer is full then it's allotment of power gets split between the others that are not full.
+
+Shots come off the shot buffer
+Hits Come off the shield buffer.
+Accessories and Fast Movement come off the Accessory Buffer.
+
+Once power is in a buffer it can not be transftered to another buffer.
+
+When Shields are down a ship explodes when it takes any damage.
+
+
+Shots:
+3 shot categorys:
+
+Shot:
+Shots forward, unguided, ether machine gun style or laser beams. B
+
+Rocket/Missiles
+Slower then shots, may be guided or unguided. Explode with splash damage.
+
+Bomb:
+Stays where it is, really a mine. Slowly falls on a paracute. has a proximity detector. Not all ships can lay em.
+
+Powerups:
+Activate new and better weapons on a ship.
+Double Shot
+Tripple Shot
+Bounce Shot
+Level 2 Shot
+Level 3 Shot
+Level 4 Shot
+Rapid Shot
+Laser Shot
+Missiles
+Proxy Range increase
+Level 2 rockets
+Level 3 rockets
+Level 4 rockets.
+Fast Rockets
+Power Upgrade
+Shot buffer upgrade
+Accesory Buffer upgrade
+Shield Buffer upgrade.
