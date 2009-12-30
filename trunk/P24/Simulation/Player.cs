@@ -9,7 +9,7 @@ namespace Simulation
 {
     public class Player : SimObject
     {
-        public virtual void Update(double time)
+        public override void Update(double time)
         {
             float delta = (float)(time - LastUpdateTime);
             Vector3 pos = PredictPosition(delta);
