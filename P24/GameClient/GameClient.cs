@@ -57,11 +57,19 @@ namespace Project24Client
                 NetBuffer buffer = client.GetPentMessage();
                 while (buffer != null)
                 {
-                    MessageClass msg = messageMapper.MessageFromID(buffer.ReadInt32());
-                    msg.Unpack(ref buffer);
+                    if (buffer.LengthBytes >= sizeof(Int32))
+                    {
+                        MessageClass msg = messageMapper.MessageFromID(buffer.ReadInt32());
+                        msg.Unpack(ref buffer);
 
-                    if (messageHandlers.ContainsKey(msg.GetType()))
-                        messageHandlers[msg.GetType()](msg);
+                        if (messageHandlers.ContainsKey(msg.GetType()))
+                            messageHandlers[msg.GetType()](msg);
+                    }
+                    else
+                    {
+                        int wtf = 0;
+                    }
+
 
                     buffer = client.GetPentMessage();
                 }
