@@ -54,10 +54,24 @@ namespace SkinedModel
             model.Meshes[3].Show = false;
         }
 
-        void BuildCal3dModel ( string meshFile, string animFile )
+        void BuildCal3dModel ( string folder )
         {
-            model = Call3dReader.Read(meshFile, animFile);
+            DirectoryInfo dir = new DirectoryInfo(folder);
+            if (!dir.Exists)
+                return;
+            List<string> meshFiles = new List<string>();
+            foreach (FileInfo file in dir.GetFiles("*.cmf"))
+                meshFiles.Add(file.FullName);
 
+            string skelly = string.Empty;
+            foreach (FileInfo file in dir.GetFiles("*.csf"))
+                skelly = file.FullName;
+         
+            string anim = string.Empty;
+            foreach (FileInfo file in dir.GetFiles("*.caf"))
+                anim = file.FullName;
+
+            model = Call3dReader.Read(meshFiles, skelly, anim);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -65,8 +79,8 @@ namespace SkinedModel
             base.OnLoad(e);
 
             SetupGL();
-           // BuidMilkshapeModel("../../jill.ms3d");
-            BuildCal3dModel("../../enkif/enkif_torso_plate.CMF", "../../enkif/enkif.CSF");
+            BuidMilkshapeModel("../../jill.ms3d");
+           // BuildCal3dModel("../../jill/");//"../../enkif/enkif.CMF", "../../enkif/enkif.CSF", "../../enkif/enkif_idle.CAF");
             anim = new AnimationHandler(model);
 
             anim.SetTime(0);
@@ -100,7 +114,7 @@ namespace SkinedModel
             loaded = true;
 
             camera = new Camera();
-            camera.set(new Vector3(0, -4, 1.0f), 0, 90);
+            camera.set(new Vector3(0, -3, 1.0f), 0, 90);
 
             OnResize(EventArgs.Empty);
         }
@@ -131,6 +145,9 @@ namespace SkinedModel
             }
 
             viewRot += (float)e.Time * 15;
+
+            viewTime += e.Time;
+            anim.SetTime(viewTime);
         }
 
         protected override void OnResize(EventArgs e)
@@ -165,7 +182,6 @@ namespace SkinedModel
             if (!loaded)
                 return;
 
-
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
 
@@ -192,14 +208,19 @@ namespace SkinedModel
 
             GL.PushMatrix();
 
-           // GL.Rotate(90, 1, 0, 0);
-
-            GL.Rotate(viewRot, 0, 0, 1);
+            if (false)
+            {
+                GL.Rotate(90, 1, 0, 0);
+                GL.Rotate(viewRot, 0, 1, 0);
+            }
+            else
+            {
+                GL.Rotate(viewRot, 0, 0, 1);
+            }
             model.Draw(anim);
 
-           // GL.Disable(EnableCap.Lighting);
-
-          //  model.DrawSkeliton(anim);
+            GL.Disable(EnableCap.Lighting);
+            model.DrawSkeliton(anim);
             GL.PopMatrix();
           }
     }
