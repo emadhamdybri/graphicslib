@@ -178,6 +178,27 @@ namespace Drawables.Textures
                 GL.BindTexture(TextureTarget.Texture2D, boundID);
             listID.End();
         }
+
+        public void Draw ( float scale )
+        {
+            Bind();
+            GL.Begin(BeginMode.Quads);
+
+            GL.Normal3(0, 0, 1);
+            GL.TexCoord2(0, 1);
+            GL.Vertex2(0, 0);
+
+            GL.TexCoord2(1, 1);
+            GL.Vertex2(Width * scale, 0);
+
+            GL.TexCoord2(1, 0);
+            GL.Vertex2(Width * scale, Height * scale);
+
+            GL.TexCoord2(0, 0);
+            GL.Vertex2(0, Height * scale);
+
+            GL.End();
+        }
     }
 
     public class TextureSystem
