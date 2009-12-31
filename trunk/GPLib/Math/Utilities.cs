@@ -20,6 +20,8 @@ namespace Math3D
 
     public class FloatHelper
     {
+        protected static Random rand = new Random();
+
         public static float DefaultTolerance = 0.0001f;
 
         public static bool Equals ( float f1, float f2 )
@@ -30,6 +32,16 @@ namespace Math3D
         public static bool Equals ( float f1, float f2, float tolerance )
         {
             return Math.Abs(f1 - f2) <= tolerance;
+        }
+
+        public static float Random ( float max )
+        {
+            return (float)(rand.NextDouble() * max);
+        }
+
+        public static float Random ( float min, float max )
+        {
+            return Random(max - min) + min;
         }
     }
 
