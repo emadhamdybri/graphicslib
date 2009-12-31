@@ -67,11 +67,42 @@ namespace Simulation
 
         }
 
+        public bool PlayerNameValid ( string name )
+        {
+            foreach (Player player in Players)
+            {
+                if (player.Callsign == name)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public Player FindPlayer ( UInt64 GUID )
+        {
+            foreach (Player player in Players)
+            {
+                if (player.ID == GUID)
+                    return player;
+            }
+            return null;
+        }
+
         public void AddPlayer ( Player player )
         {
-            Players.Add(player);
+            Player existing = FindPlayer(player.ID);
+            if (existing != null)
+            {
+                existing.Callsign = player.Callsign;
+                existing.Score = player.Score;
+            }
+            else
+            {
+                Players.Add(player);
+                existing = player;
+            }
             if (PlayerJoined != null)
-                PlayerJoined(this, new PlayerEventArgs(player, lastUpdateTime));
+                PlayerJoined(this, new PlayerEventArgs(existing, lastUpdateTime));
         }
 
         public void AddShot(Shot shot)

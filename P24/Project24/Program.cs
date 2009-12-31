@@ -25,16 +25,24 @@ namespace Project24
 
             while (!done)
             {
-                LoginForm login = new LoginForm();
-                login.Setup();
-                Application.Run(login);
-                if (login.play)
+                if (true)
                 {
-                    // play
                     new Game().Run();
+                    done = true;
                 }
                 else
-                    done = true;
+                {
+                    LoginForm login = new LoginForm();
+                    login.Setup();
+                    Application.Run(login);
+                    if (login.play)
+                    {
+                        // play
+                        new Game().Run();
+                    }
+                    else
+                        done = true;
+                }
             }
         }
 

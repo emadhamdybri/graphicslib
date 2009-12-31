@@ -17,6 +17,17 @@ namespace Simulation
         public Vector3 Spin = Vector3.Zero;
     }
 
+    public class GUIDManager
+    {
+        static UInt64 lastID = 1;
+
+        public static UInt64 NewGUID()
+        {
+            lastID++;
+            return lastID;
+        }
+    }
+
     public class SimObject : Object
     {
         public Object Tag = null;

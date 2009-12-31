@@ -149,4 +149,119 @@ namespace Messages
             return true;
         }
     }
+
+    public class PlayerInfo : MessageClass
+    {
+        public UInt64 PlayerID = 0;
+        public string Callsign = string.Empty;
+        public int Score = -1;
+
+        public PlayerInfo()
+        {
+            Name = 40;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(PlayerID);
+            buffer.Write(Callsign);
+            buffer.Write(Score);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            PlayerID = buffer.ReadUInt64();
+            Callsign = buffer.ReadString();
+            Score = buffer.ReadInt32();
+            return true;
+        }
+
+        public virtual NetChannel Channel()
+        {
+            return NetChannel.UnreliableInOrder2;
+        }
+    }
+
+    public class PlayerListDone : MessageClass
+    {
+        public PlayerListDone()
+        {
+            Name = 41;
+        }
+
+        public virtual NetChannel Channel()
+        {
+            return NetChannel.UnreliableInOrder2;
+        }
+    }
+
+    public class PlayerJoin : MessageClass
+    {
+        public string Callsign = string.Empty;
+
+        public PlayerJoin()
+        {
+            Name = 42;
+        }
+
+        public virtual NetChannel Channel()
+        {
+            return NetChannel.UnreliableInOrder3;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(Callsign);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            Callsign = buffer.ReadString();
+            return true;
+        }
+    }
+
+    public class PlayerJoinAccept : MessageClass
+    {
+        public UInt64 PlayerID = 0;
+        public string Callsign = string.Empty;
+
+        public PlayerJoinAccept()
+        {
+            Name = 43;
+        }
+
+        public virtual NetChannel Channel()
+        {
+            return NetChannel.UnreliableInOrder3;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(PlayerID);
+            buffer.Write(Callsign);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            PlayerID = buffer.ReadUInt64();
+            Callsign = buffer.ReadString();
+            return true;
+        }
+    }
 }

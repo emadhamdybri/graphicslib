@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Messages;
+using Simulation;
 
 namespace Project24Client
 {
@@ -14,6 +15,8 @@ namespace Project24Client
         protected void InitMessageHandlers()
         {
             messageHandlers.Add(typeof(Hail), new MessageHandler(HailHandler));
+            messageHandlers.Add(typeof(ServerVersInfo), new MessageHandler(ServerVersHandler));
+            messageHandlers.Add(typeof(PlayerInfo), new MessageHandler(PlayerInfoHandler));
         }
 
         protected void HailHandler(MessageClass message)
@@ -27,10 +30,36 @@ namespace Project24Client
             if (GetAuthentication != null)
                 GetAuthentication(ref username, ref token);
 
+            ThisPlayer.Callsign = username;
+
             Login login = new Login();
             login.username = username;
             login.token = token;
             client.SendMessage(login.Pack(), login.Channel());
+        }
+
+        protected void ServerVersHandler(MessageClass message)
+        {
+            ServerVersInfo info = message as ServerVersInfo;
+            if (info == null)
+                return;
+
+            if (ServerVersionEvent != null)
+                ServerVersionEvent(this, info.Vers);
+        }
+
+        protected void PlayerInfoHandler(MessageClass message)
+        {
+            PlayerInfo info = message as PlayerInfo;
+            if (info == null)
+                return;
+
+            Player player = new Player();
+            player.ID = info.PlayerID;
+            player.Callsign = info.Callsign;
+            player.Score = info.Score;
+
+            sim.AddPlayer(player);
         }
     }
 }
