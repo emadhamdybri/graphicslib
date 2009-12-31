@@ -47,10 +47,8 @@ namespace Drawables.AnimateModels
 
     public class Bone
     {
+        public String name = string.Empty;
         public Matrix4 matrix = Matrix4.Identity;
-
-        public Vector3 translation = Vector3.Zero;
-        public Vector3 rotation = Vector3.Zero;
 
         public List<AnimationEvent> FrameTranslations = new List<AnimationEvent>();
         public List<AnimationEvent> FrameRotations = new List<AnimationEvent>();
@@ -615,9 +613,8 @@ namespace Drawables.AnimateModels
             foreach (MilkshapeJoint joint in msModel.Joints)
             {
                 Bone bone = new Bone();
+                bone.name = joint.Name;
                 bone.matrix = Matrix4.CreateRotationX(joint.Rotation.X) * Matrix4.CreateRotationY(joint.Rotation.Y) * Matrix4.CreateRotationZ(joint.Rotation.Z) * Matrix4.CreateTranslation(joint.Translation);
-                bone.translation = joint.Translation;
-                bone.rotation = joint.Rotation;
 
                 foreach (MilkshapeKeyframe keyframe in joint.RotationFrames)
                     bone.AddRotatonEvent(new AnimationRotation(keyframe.time, QuaternionHelper.FromEuler(keyframe.Paramater)));
@@ -679,15 +676,22 @@ namespace Drawables.AnimateModels
 
     public class Call3dReader 
     {
-        public static AnimatedModel Read(string CMFFile, string CSFFile)
+        public static AnimatedModel Read(List<string> CMFFiles, string CSFFile, string CAFFile )
         {
-            FileInfo file = new FileInfo(CMFFile);
-            if (!file.Exists)
-                return null;
+            List<CMFFile> cmfs = new List<CMFFile>();
+            FileInfo file;
 
-            CMFFile cmf = new CMFFile();
-            if (!cmf.Read(file))
-                return null;
+            foreach(string filename in CMFFiles)
+            {
+                file = new FileInfo(filename);
+                if (file.Exists)
+                {
+                    CMFFile cmf = new CMFFile();
+                    if (cmf.Read(file))
+                        cmfs.Add(cmf);
+                }
+
+            }
 
             file = new FileInfo(CSFFile);
             if (!file.Exists)
@@ -697,31 +701,105 @@ namespace Drawables.AnimateModels
             if (!csf.Read(file))
                 return null;
 
+            file = new FileInfo(CAFFile);
+            if (!file.Exists)
+                return null;
+
+            CAFFile caf = new CAFFile();
+            if (!caf.Read(file))
+                return null;
+
             AnimatedModel model = new AnimatedModel();
 
-            foreach(Cal3dMesh m in cmf.Meshes)
+            List<Bone> modelBones = new List<Bone>();
+            foreach(Cal3dBone calBone in csf.Bones)
             {
-                BoneMesh mesh = new BoneMesh();
+                Bone bone = new Bone();
+                bone.name = calBone.Name;
 
-                foreach (Cal3dMeshFace f in m.Faces)
+                Vector3 axis = new Vector3();
+                float angle = 0;
+                calBone.Rotation.ToAxisAngle(out axis, out angle);
+                bone.matrix = Matrix4.CreateFromAxisAngle(axis, angle) * Matrix4.CreateTranslation(calBone.Translation);
+
+                modelBones.Add(bone);
+            }
+
+            for (int i = 0; i < csf.Bones.Count; i++)
+            {
+                Cal3dBone calBone = csf.Bones[i];
+                if (calBone.Parrent >= 0)
+                    modelBones[calBone.Parrent].Add(modelBones[i]);
+            }
+
+            foreach(Bone bone in modelBones)
+            {
+                if (bone.Oprhan())
+                    model.Root.Add(bone);
+            }
+
+            foreach(KeyValuePair<int,List<Cal3dKeyframe>> boneTrack in caf.Keyframes)
+            {
+                if (boneTrack.Key > 0)
                 {
-                    Polygon poly = new Polygon();
+                    Bone bone = modelBones[boneTrack.Key];
 
-                    for ( int i = 0; i < f.Verts.Count; i++)
+                    foreach (Cal3dKeyframe frame in boneTrack.Value)
                     {
-                        Cal3dMeshVert vert = m.Verts[f.Verts[i] ];
-                        // find bone
-                        Bone bone = model.Root;
-
-                        int vertIndex = mesh.AddVert(bone, bone.Add(Vector3.Transform(vert.Position, bone.WorldMatrixInv())));
-                        Vector2 uv = Vector2.Zero;
-                        if (vert.UVs.Count > 0)
-                            uv = vert.UVs[0];
-                        poly.Add(vertIndex, Vector3.TransformNormal(vert.Normal, bone.WorldMatrixInv()), uv);
+                        bone.AddRotatonEvent(new AnimationRotation(frame.Time,frame.Rotation));
+                        bone.AddTranslationEvent(new AnimationTranslation(frame.Time,frame.Translation));
                     }
-                    mesh.Faces.Add(poly);
-                 }
-                model.Meshes.Add(mesh);
+                }
+            }
+
+            foreach (CMFFile cmf in cmfs)
+            {
+                foreach (Cal3dMesh m in cmf.Meshes)
+                {
+                    BoneMesh mesh = new BoneMesh();
+
+                    foreach (Cal3dMeshFace f in m.Faces)
+                    {
+                        Polygon poly = new Polygon();
+
+                        for (int i = 0; i < f.Verts.Count; i++)
+                        {
+                            Cal3dMeshVert vert = m.Verts[f.Verts[i]];
+                            // find bone
+                            Bone bone = model.Root;
+                            Matrix4 toBoneMat = Matrix4.Identity;
+
+                            if (false)
+                            {
+                                float weight = 0;
+                                int boneID = 0;
+
+                                foreach (Cal3dMeshInfluence inf in vert.Influences)
+                                {
+                                    if (inf.Weight > weight)
+                                    {
+                                        boneID = inf.Bone;
+                                        bone = modelBones[inf.Bone];
+                                        weight = inf.Weight;
+                                    }
+                                }
+
+                                Vector3 axis = new Vector3();
+                                float angle = 0;
+                                csf.Bones[boneID].VertRotation.ToAxisAngle(out axis, out angle);
+                                toBoneMat = Matrix4.CreateFromAxisAngle(axis, angle) * Matrix4.CreateTranslation(csf.Bones[boneID].VertTranslation);
+                            }
+
+                            int vertIndex = mesh.AddVert(bone, bone.Add(Vector3.Transform(vert.Position, toBoneMat)));
+                            Vector2 uv = Vector2.Zero;
+                            if (vert.UVs.Count > 0)
+                                uv = vert.UVs[0];
+                            poly.Add(vertIndex, Vector3.TransformNormal(vert.Normal, toBoneMat), uv);
+                        }
+                        mesh.Faces.Add(poly);
+                    }
+                    model.Meshes.Add(mesh);
+                }
             }
 
             return model;
