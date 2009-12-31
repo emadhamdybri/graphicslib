@@ -17,6 +17,7 @@ namespace Project24Client
             messageHandlers.Add(typeof(Hail), new MessageHandler(HailHandler));
             messageHandlers.Add(typeof(ServerVersInfo), new MessageHandler(ServerVersHandler));
             messageHandlers.Add(typeof(PlayerInfo), new MessageHandler(PlayerInfoHandler));
+            messageHandlers.Add(typeof(PlayerListDone), new MessageHandler(PlayerListDoneHandler));
         }
 
         protected void HailHandler(MessageClass message)
@@ -60,6 +61,10 @@ namespace Project24Client
             player.Score = info.Score;
 
             sim.AddPlayer(player);
+        }
+
+        protected void PlayerListDoneHandler(MessageClass message)
+        {
         }
     }
 }

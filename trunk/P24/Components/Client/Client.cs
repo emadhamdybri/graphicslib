@@ -155,6 +155,7 @@ namespace Clients
                 msg = PendingMessages[0];
                 PendingMessages.RemoveAt(0);
             }
+            msg.Reset();
             return msg;
         }
 

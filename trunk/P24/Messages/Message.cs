@@ -36,7 +36,7 @@ namespace Messages
 
     public class MessageClass
     {
-        public int Name = -1;
+        public Int32 Name = -1;
 
         static int GetName ( ref NetBuffer  buffer )
         {
@@ -154,7 +154,7 @@ namespace Messages
     {
         public UInt64 PlayerID = 0;
         public string Callsign = string.Empty;
-        public int Score = -1;
+        public Int32 Score = -1;
 
         public PlayerInfo()
         {
@@ -181,7 +181,7 @@ namespace Messages
             return true;
         }
 
-        public virtual NetChannel Channel()
+        public override NetChannel Channel()
         {
             return NetChannel.UnreliableInOrder2;
         }
@@ -194,7 +194,7 @@ namespace Messages
             Name = 41;
         }
 
-        public virtual NetChannel Channel()
+        public override NetChannel Channel()
         {
             return NetChannel.UnreliableInOrder2;
         }
@@ -209,7 +209,7 @@ namespace Messages
             Name = 42;
         }
 
-        public virtual NetChannel Channel()
+        public override NetChannel Channel()
         {
             return NetChannel.UnreliableInOrder3;
         }
@@ -241,7 +241,7 @@ namespace Messages
             Name = 43;
         }
 
-        public virtual NetChannel Channel()
+        public override NetChannel Channel()
         {
             return NetChannel.UnreliableInOrder3;
         }
