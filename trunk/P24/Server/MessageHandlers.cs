@@ -20,6 +20,7 @@ namespace Project24Server
         protected void InitMessageHandlers()
         {
             messageHandlers.Add(typeof(Login), new MessageHandler(LoginHandler));
+            messageHandlers.Add(typeof(PlayerJoin), new MessageHandler(PlayerJoinHandler));
         }
 
         protected void ProcessMessage(Message msg)
@@ -46,6 +47,42 @@ namespace Project24Server
 
             ServerVersInfo vers = new ServerVersInfo();
             host.SendMessage(client.Connection, vers.Pack(), vers.Channel());
+
+            foreach( Player player in sim.Players)
+            {
+                PlayerInfo info = new PlayerInfo();
+                info.PlayerID = player.ID;
+                info.Callsign = player.Callsign;
+                info.Score = player.Score;
+                host.SendMessage(client.Connection, info.Pack(), info.Channel());
+            }
+
+            PlayerListDone done = new PlayerListDone();
+            host.SendMessage(client.Connection, done.Pack(), done.Channel());
+        }
+
+        protected void PlayerJoinHandler(Client client, MessageClass message)
+        {
+            PlayerJoin join = message as PlayerJoin;
+            if (join == null)
+                return;
+
+            Player player = new Player();
+            player.Tag = client;
+            player.ID = GUIDManager.NewGUID();
+
+            while (!sim.PlayerNameValid(join.Callsign))
+                join.Callsign += "X";
+
+            player.Callsign = join.Callsign;
+
+            sim.AddPlayer(player);
+
+            PlayerJoinAccept accept = new PlayerJoinAccept();
+            accept.Callsign = player.Callsign;
+            accept.PlayerID = player.ID;
+
+            host.SendMessage(client.Connection, accept.Pack(), accept.Channel());
         }
     }
 }

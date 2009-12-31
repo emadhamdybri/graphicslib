@@ -56,6 +56,7 @@ namespace Project24Server
             host.Disconnect += new MonitoringEvent(host_Message);
             host.DebugMessage += new MonitoringEvent(host_Message);
 
+            sim.PlayerJoined += new PlayerJoinedHandler(sim_PlayerJoined);
             sim.PlayerRemoved += new PlayerRemovedHandler(sim_PlayerRemoved);
 
             InitMessageHandlers();
@@ -64,6 +65,16 @@ namespace Project24Server
         public void Kill ( )
         {
             host.Kill();
+        }
+
+        protected void sim_PlayerJoined ( object sender, PlayerEventArgs args )
+        {           
+            PlayerInfo info = new PlayerInfo();
+            info.PlayerID = args.player.ID;
+            info.Callsign = args.player.Callsign;
+            info.Score = args.player.Score;
+
+            host.Broadcast(info.Pack(), info.Channel());
         }
 
         protected void sim_PlayerRemoved(object sender, PlayerEventArgs args)

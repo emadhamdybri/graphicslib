@@ -14,11 +14,17 @@ namespace Project24Client
 
     public delegate void AuthenticationCallback(ref string username, ref string token);
 
+    public delegate void ServerVersionHandler ( object sender, int version );
+    public delegate void PlayerEventHandler(object sender, Player player);
+
     public partial class GameClient
     {
         public Sim sim = new Sim();
-        Client client;
+        public Player ThisPlayer = new Player();
 
+        public event ServerVersionHandler ServerVersionEvent;
+
+        Client client;
         bool connected = false;
 
         public bool ConnectedToHost

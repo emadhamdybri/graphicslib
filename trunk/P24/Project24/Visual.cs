@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Drawing;
 using System.Text;
 
 using OpenTK;
@@ -15,6 +15,9 @@ namespace Project24
         Game game;
         Camera camera;
 
+        Cloudscape clouds = null;
+
+        Hud hud;
         public Visual ( Game g )
         {
             game = g;
@@ -38,7 +41,11 @@ namespace Project24
             GL.LightModel(LightModelParameter.LightModelColorControl, 1);
 
             camera = new Camera();
-            camera.set(new Vector3(0, 0, 10), -90, 0);
+            camera.set(new Vector3(0, 0, 25), 90, 90);
+
+            clouds = new Cloudscape(new Vector2(50, 50));
+
+            hud = new Hud(game);
         }
 
         public void Resize(int Width, int Height)
@@ -49,15 +56,33 @@ namespace Project24
 
         public void RenderWorld(double time)
         {
+            camera.Execute();
             if (game.Connected)
             {
-
+                clouds.Render(time, Vector3.UnitX);
             }
-        }
+            else
+            {
+                clouds.Render(time, Vector3.Zero);
+            }
+            
+            GL.Disable(EnableCap.Texture2D);
+            GL.Disable(EnableCap.Lighting);
 
-        public void RenderHud(double time)
-        {
+            GL.Begin(BeginMode.Lines);
 
+            GL.Color3(Color.Red);
+            GL.Vertex3(0, 0, 0);
+            GL.Vertex3(1, 0, 0);
+
+            GL.Color3(Color.Green);
+            GL.Vertex3(0, 0, 0);
+            GL.Vertex3(0, 1, 0);
+           
+            GL.Color3(Color.Blue);
+            GL.Vertex3(0, 0, 0);
+            GL.Vertex3(0, 0, 1);
+            GL.End();
         }
 
         public void Render ( double time)
@@ -65,19 +90,18 @@ namespace Project24
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.PushMatrix();
-            camera.Execute();
             GL.Disable(EnableCap.Texture2D);
-            GL.Enable(EnableCap.Lighting);
+            GL.Disable(EnableCap.Lighting);
 
             RenderWorld(time);
             GL.PopMatrix();
 
             GL.PushMatrix();
-            GL.Disable(EnableCap.Texture2D);
-            GL.Enable(EnableCap.Lighting);
+            GL.Disable(EnableCap.Lighting);
 
             camera.SetOrthographic();
-            RenderHud(time);
+            hud.Render(time);
+            camera.SetPersective();
             GL.PopMatrix();
 
         }

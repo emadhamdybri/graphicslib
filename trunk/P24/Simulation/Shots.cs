@@ -16,7 +16,7 @@ namespace Simulation
         ObjectState lastBounce = new ObjectState();
         double lastBounceTime = 0;
 
-        public virtual void Update(double time)
+        public override void Update(double time)
         {
             float delta = (float)(time - LastUpdateTime);
             Vector3 pos = PredictPosition(delta);
