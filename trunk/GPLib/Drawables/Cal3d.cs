@@ -234,9 +234,9 @@ namespace Cal3d
     {
         public string Name = string.Empty;
         public Vector3 Translation = Vector3.Zero;
-        public Vector4 Rotation = Vector4.Zero;
+        public Quaternion Rotation = Quaternion.Identity;
         public Vector3 VertTranslation = Vector3.Zero;
-        public Vector4 VertRotation = Vector4.Zero;
+        public Quaternion VertRotation = Quaternion.Identity;
         public int Parrent = -1;
         public List<int> Children = new List<int>();
     }
@@ -273,9 +273,11 @@ namespace Cal3d
                 bone.Translation = new Vector3(info.translation[0], info.translation[1], info.translation[2]);
                 bone.VertTranslation = new Vector3(info.localTranslation[0], info.localTranslation[1], info.localTranslation[2]);
 
-                bone.Rotation = new Vector4(info.rotation[0], info.rotation[1], info.rotation[2], info.rotation[3]);
-                bone.VertRotation = new Vector4(info.localRotation[0], info.localRotation[1], info.localRotation[2], info.localRotation[3]);
+                bone.Rotation = new Quaternion(info.rotation[0], info.rotation[1], info.rotation[2], info.rotation[3]);
+                bone.VertRotation = new Quaternion(info.localRotation[0], info.localRotation[1], info.localRotation[2], info.localRotation[3]);
                 bone.Parrent = info.parent;
+                bone.Rotation.Normalize();
+                bone.VertRotation.Normalize();
 
                 for( int c = 0; c < info.children; c++)
                     bone.Children.Add((int)BinUtils.ReadObject(fs, typeof(Int32)));
@@ -285,6 +287,145 @@ namespace Cal3d
 
             fs.Close();
             return true;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    struct CAFHeader
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public char[] magic;
+        public Int32 version;
+        [MarshalAs(UnmanagedType.R4)]
+        public float durration;
+
+        public Int32 tracks;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    struct CAFTrackInfo
+    {
+        public Int32 bone;
+        public Int32 keyframes;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    struct CAFKeyframeInfo
+    {
+        [MarshalAs(UnmanagedType.R4)]
+        public float time;
+
+        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.R4, SizeConst = 3)]
+        public float[] translation;
+        
+        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.R4, SizeConst = 4)]
+        public float[] rotation;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    struct CAFCompressedTrackInfo
+    {
+        public Int32 bone;
+        public Int32 keyframes;
+
+        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.R4, SizeConst = 3)]
+        public float[] minimum;
+
+        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.R4, SizeConst = 3)]
+        public float[] scale;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    struct CAFCompressedKeyframeInfo
+    {
+        public UInt16 time;
+
+        public UInt32 translation;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public UInt16[] rotation;
+    }
+
+    class Cal3dKeyframe
+    {
+        public float Time = -1;
+        public Vector3 Translation = Vector3.Zero;
+        public Quaternion Rotation = Quaternion.Identity;
+    }
+
+    class CAFFile
+    {
+        public Dictionary<int, List<Cal3dKeyframe>> Keyframes = new Dictionary<int, List<Cal3dKeyframe>>();
+
+        public bool Read(FileInfo file)
+        {
+            FileStream fs = file.OpenRead();
+            Keyframes.Clear();
+
+            CAFHeader header = (CAFHeader)BinUtils.ReadObject(fs, typeof(CAFHeader));
+
+            string magic = new string(header.magic);
+            if (magic != "CAF\0")
+            {
+                fs.Close();
+                return false;
+            }
+
+            bool compressed = false;
+            if (header.version >= 1200)
+            {
+                Int32 flags = (Int32)BinUtils.ReadObject(fs, typeof(Int32));
+                compressed = flags > 0;
+            }
+
+            if (compressed)
+            {
+                CAFCompressedTrackInfo trackInfo = (CAFCompressedTrackInfo)BinUtils.ReadObject(fs, typeof(CAFCompressedTrackInfo));
+
+                if (!Keyframes.ContainsKey(trackInfo.bone))
+                    Keyframes.Add(trackInfo.bone, new List<Cal3dKeyframe>());
+
+                List<Cal3dKeyframe> boneFrames = Keyframes[trackInfo.bone];
+
+                for (int k = 0; k < trackInfo.keyframes; k++)
+                {
+                    CAFCompressedKeyframeInfo keyframeInfo = (CAFCompressedKeyframeInfo)BinUtils.ReadObject(fs, typeof(CAFCompressedKeyframeInfo));
+                    Cal3dKeyframe keyframe = new Cal3dKeyframe();
+
+                    keyframe.Time = ((float)keyframeInfo.time / 65535f) * header.durration;
+                    // TODO read in the compressed trans and rotation
+                    boneFrames.Add(keyframe);
+                }
+            }
+            else
+            {
+                for ( int t = 0; t < header.tracks; t++ )
+                {
+                    CAFTrackInfo trackInfo = (CAFTrackInfo)BinUtils.ReadObject(fs, typeof(CAFTrackInfo));
+
+                    if (!Keyframes.ContainsKey(trackInfo.bone))
+                        Keyframes.Add(trackInfo.bone, new List<Cal3dKeyframe>());
+
+                    List<Cal3dKeyframe> boneFrames = Keyframes[trackInfo.bone];
+
+                    for( int k = 0; k < trackInfo.keyframes; k++ )
+                    {
+                        CAFKeyframeInfo keyframeInfo = (CAFKeyframeInfo)BinUtils.ReadObject(fs, typeof(CAFKeyframeInfo));
+                        Cal3dKeyframe keyframe = new Cal3dKeyframe();
+
+                        keyframe.Time = keyframeInfo.time;
+                        keyframe.Translation = new Vector3(keyframeInfo.translation[0], keyframeInfo.translation[1], keyframeInfo.translation[2]);
+                        keyframe.Rotation = new Quaternion(keyframeInfo.rotation[0], keyframeInfo.rotation[1], keyframeInfo.rotation[2], keyframeInfo.rotation[3]);
+                        keyframe.Rotation.Normalize();
+
+                        boneFrames.Add(keyframe);
+                    }
+                }
+            }
+
+            fs.Close();
+            return true;
+
         }
     }
 }
