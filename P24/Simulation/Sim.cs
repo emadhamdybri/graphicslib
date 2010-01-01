@@ -92,10 +92,7 @@ namespace Simulation
         {
             Player existing = FindPlayer(player.ID);
             if (existing != null)
-            {
-                existing.Callsign = player.Callsign;
-                existing.Score = player.Score;
-            }
+                existing.CopyFrom(player);
             else
             {
                 Players.Add(player);

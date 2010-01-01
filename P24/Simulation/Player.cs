@@ -11,6 +11,15 @@ namespace Simulation
     {
         public string Callsign = string.Empty;
         public int Score = -1;
+        public string Pilot = string.Empty;
+
+        public virtual void CopyFrom ( Player player )
+        {
+            base.CopyFrom(player);
+            Callsign = player.Callsign;
+            Score = player.Score;
+            Pilot = player.Pilot;
+        }
 
         public override void Update(double time)
         {

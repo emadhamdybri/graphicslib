@@ -48,12 +48,13 @@ namespace Project24Server
             ServerVersInfo vers = new ServerVersInfo();
             host.SendMessage(client.Connection, vers.Pack(), vers.Channel());
 
+            MapInfo map = new MapInfo();
+            map.Map = sim.Map;
+            host.SendMessage(client.Connection, map.Pack(), map.Channel());
+
             foreach( Player player in sim.Players)
             {
-                PlayerInfo info = new PlayerInfo();
-                info.PlayerID = player.ID;
-                info.Callsign = player.Callsign;
-                info.Score = player.Score;
+                PlayerInfo info = new PlayerInfo(player);
                 host.SendMessage(client.Connection, info.Pack(), info.Channel());
             }
 
@@ -70,6 +71,7 @@ namespace Project24Server
             Player player = new Player();
             player.Tag = client;
             player.ID = GUIDManager.NewGUID();
+            player.Pilot = join.Pilot;
 
             while (!sim.PlayerNameValid(join.Callsign))
                 join.Callsign += "X";

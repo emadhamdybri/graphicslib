@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.IO;
+
+using Simulation;
 
 using Drawables.Textures;
 
@@ -18,6 +21,8 @@ namespace Project24
         Font ChatHeaderFont = new Font(FontFamily.GenericSansSerif, 12);
         Font ChatFont = new Font(FontFamily.GenericSerif, 8);
 
+        Font PlayerFont = new Font(FontFamily.GenericSansSerif, 18);
+
         Game game;
 
         Texture Pilot;
@@ -26,23 +31,47 @@ namespace Project24
         public static float ChatHeight = 120;
         public static float ChatHeaderHeight = 24;
 
+        float NameWidth = 0;
+
         public Hud (Game g)
         {
             game = g;
 
-            Pilot = TextureSystem.system.GetTexture(ResourceManager.FindFile("pilots/Pilot2m.png"));
         }
 
         protected void ConnectionScreen ()
         {
             printer.Begin();
-            printer.Print("Connecting!", BigFont, Color.White, new RectangleF(0, game.Height / 2, game.Width, 0), OpenTK.Graphics.TextPrinterOptions.Default, OpenTK.Graphics.TextAlignment.Center);
+            if (!game.Connected)
+                printer.Print("Connecting to host...", BigFont, Color.White, new RectangleF(0, game.Height / 1.75f, game.Width, 0), OpenTK.Graphics.TextPrinterOptions.Default, OpenTK.Graphics.TextAlignment.Center);
+            else
+                printer.Print("Joining Game", BigFont, Color.White, new RectangleF(0, game.Height / 1.75f, game.Width, 0), OpenTK.Graphics.TextPrinterOptions.Default, OpenTK.Graphics.TextAlignment.Center);
+              
             printer.End();
         }
 
         protected void PrintText ( string text, Font font, Color color, float x, float y, float w, float h )
         {
             printer.Print(text, font, color, new RectangleF(x, game.Height-y, w, h));
+        }
+
+        protected void PrintTextCentered(string text, Font font, Color color, float x, float y, float w, float h)
+        {
+            printer.Print(text, font, color, new RectangleF(x, game.Height - y, w, h), OpenTK.Graphics.TextPrinterOptions.Default, OpenTK.Graphics.TextAlignment.Center);
+        }
+
+        protected void PrintTextRight (string text, Font font, Color color, float x, float y, float w, float h)
+        {
+            printer.Print(text, font, color, new RectangleF(x, game.Height - y, w, h), OpenTK.Graphics.TextPrinterOptions.Default, OpenTK.Graphics.TextAlignment.Far);
+        }
+
+        public void SetPlayerData ( Player player )
+        {
+            Pilot = TextureSystem.system.GetTexture(ResourceManager.FindFile(Path.Combine("pilots", player.Pilot + ".png")));
+            if (Pilot == null)
+                Pilot = TextureSystem.system.GetTexture(ResourceManager.FindFile(Path.Combine("pilots", "Pilot0u.png")));
+
+            NameWidth = printer.Measure(game.Client.ThisPlayer.Callsign, PlayerFont).BoundingBox.Width;
         }
 
         void DrawChatWindow ()
@@ -140,6 +169,7 @@ namespace Project24
             if (Pilot == null)
                 return;
 
+
             GL.Color4(0,0,0,0.25f);
             GL.PushMatrix();
             GL.Translate(game.Width - 136, game.Height - 136, -0.5f);
@@ -151,6 +181,11 @@ namespace Project24
                 GL.Vertex2(136, 136);
                 GL.Vertex2(0, 136);
 
+                GL.Vertex2(-NameWidth*1.25f, 100);
+                GL.Vertex2(0, 100);
+                GL.Vertex2(0, 136);
+                GL.Vertex2(-NameWidth * 1.25f, 136);
+
             GL.End();
 
             GL.Enable(EnableCap.Texture2D);
@@ -158,6 +193,11 @@ namespace Project24
             GL.Color4(Color.White);
             Pilot.Draw(0.5f);
             GL.PopMatrix();
+
+            printer.Begin();
+            PrintTextRight(game.Client.ThisPlayer.Callsign, PlayerFont, Color.White, game.Width - 550, game.Height, 400, 0);
+            printer.End();
+
         }
 
         protected void GameHud ()
@@ -173,7 +213,7 @@ namespace Project24
 
         public void Render ( double time )
         {
-            if (!game.Connected)
+            if (!game.Joined)
                 ConnectionScreen();
             else
                 GameHud();

@@ -13,6 +13,7 @@ namespace Project24Client
     public delegate void MessageHandler(MessageClass message);
 
     public delegate void AuthenticationCallback(ref string username, ref string token);
+    public delegate void JoinInfoCallback(ref string callsign, ref string pilot);
 
     public delegate void ServerVersionHandler ( object sender, int version );
     public delegate void PlayerEventHandler(object sender, Player player);
@@ -20,9 +21,10 @@ namespace Project24Client
     public partial class GameClient
     {
         public Sim sim = new Sim();
-        public Player ThisPlayer = new Player();
+        public Player ThisPlayer = null;
 
         public event ServerVersionHandler ServerVersionEvent;
+        public event PlayerEventHandler LocalPlayerJoinedEvent;
 
         Client client;
         bool connected = false;
@@ -33,6 +35,7 @@ namespace Project24Client
         }
 
         public AuthenticationCallback GetAuthentication;
+        public JoinInfoCallback GetJoinInfo;
 
         MessageMapper messageMapper = new MessageMapper();
 
@@ -65,12 +68,6 @@ namespace Project24Client
                         if (messageHandlers.ContainsKey(msg.GetType()))
                             messageHandlers[msg.GetType()](msg);
                     }
-                    else
-                    {
-                        int wtf = 0;
-                    }
-
-
                     buffer = client.GetPentMessage();
                 }
 

@@ -25,9 +25,9 @@ namespace Project24
 
             while (!done)
             {
-                if (true)
+                if (false)
                 {
-                    new Game().Run();
+                    new Game(new ConnectionInfo()).Run();
                     done = true;
                 }
                 else
@@ -38,7 +38,12 @@ namespace Project24
                     if (login.play)
                     {
                         // play
-                        new Game().Run();
+                        ConnectionInfo info = new ConnectionInfo();
+
+                        info.Avatar = login.GetAvatarName();
+                        info.Username = login.UserName;
+                        info.SelfServ = login.selfServ;
+                        new Game(info).Run();
                     }
                     else
                         done = true;

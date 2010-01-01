@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using Lidgren.Network;
+
+using Simulation;
 
 namespace Messages
 {
@@ -58,6 +62,60 @@ namespace Messages
         public virtual NetChannel Channel ()
         {
             return NetChannel.ReliableInOrder1;
+        }
+
+        protected void PackClass (ref NetBuffer buffer, object obj)
+        {
+            BinaryFormatter formater = new BinaryFormatter();
+            MemoryStream stream = new MemoryStream();
+            formater.Serialize(stream,obj);
+
+            byte[] b = stream.ToArray();
+            stream.Close();
+            buffer.Write(b.Length);
+            buffer.Write(b);
+        }
+
+        protected object UnpackClass ( ref NetBuffer buffer )
+        {
+            Int32 size = buffer.ReadInt32();
+            byte[] b = buffer.ReadBytes(size);
+
+            MemoryStream stream = new MemoryStream(b);
+
+            BinaryFormatter formater = new BinaryFormatter();
+            object obj = formater.Deserialize(stream);
+            stream.Close();
+            return obj;
+        }
+
+        protected void PackCompressedClass(ref NetBuffer buffer, object obj)
+        {
+            BinaryFormatter formater = new BinaryFormatter();
+            MemoryStream stream = new MemoryStream();
+            GZipStream gstream = new GZipStream(stream, CompressionMode.Compress);
+            formater.Serialize(gstream, obj);
+
+            byte[] b = stream.ToArray();
+            gstream.Close();
+            stream.Close();
+            buffer.Write(b.Length);
+            buffer.Write(b);
+        }
+
+        protected object UnpackCompressedClass(ref NetBuffer buffer)
+        {
+            Int32 size = buffer.ReadInt32();
+            byte[] b = buffer.ReadBytes(size);
+
+            MemoryStream stream = new MemoryStream(b);
+            GZipStream gstream = new GZipStream(stream, CompressionMode.Decompress);
+
+            BinaryFormatter formater = new BinaryFormatter();
+            object obj = formater.Deserialize(gstream);
+            gstream.Close();
+            stream.Close();
+            return obj;
         }
     }
 
@@ -154,11 +212,22 @@ namespace Messages
     {
         public UInt64 PlayerID = 0;
         public string Callsign = string.Empty;
+        public string Pilot = string.Empty;
         public Int32 Score = -1;
 
         public PlayerInfo()
         {
             Name = 40;
+        }
+
+        public PlayerInfo( Player player)
+        {
+            Name = 40;
+
+            PlayerID = player.ID;
+            Callsign = player.Callsign;
+            Score = player.Score;
+            Pilot = player.Pilot;
         }
 
         public override NetBuffer Pack()
@@ -167,6 +236,7 @@ namespace Messages
             buffer.Write(PlayerID);
             buffer.Write(Callsign);
             buffer.Write(Score);
+            buffer.Write(Pilot);
             return buffer;
         }
 
@@ -178,6 +248,7 @@ namespace Messages
             PlayerID = buffer.ReadUInt64();
             Callsign = buffer.ReadString();
             Score = buffer.ReadInt32();
+            Pilot = buffer.ReadString();
             return true;
         }
 
@@ -203,6 +274,7 @@ namespace Messages
     public class PlayerJoin : MessageClass
     {
         public string Callsign = string.Empty;
+        public string Pilot = string.Empty;
 
         public PlayerJoin()
         {
@@ -218,6 +290,7 @@ namespace Messages
         {
             NetBuffer buffer = base.Pack();
             buffer.Write(Callsign);
+            buffer.Write(Pilot);
             return buffer;
         }
 
@@ -227,6 +300,7 @@ namespace Messages
                 return false;
 
             Callsign = buffer.ReadString();
+            Pilot = buffer.ReadString();
             return true;
         }
     }
@@ -261,6 +335,40 @@ namespace Messages
 
             PlayerID = buffer.ReadUInt64();
             Callsign = buffer.ReadString();
+            return true;
+        }
+    }
+
+    public class RequestMapInfo : MessageClass
+    {
+        public RequestMapInfo()
+        {
+            Name = 50;
+        }
+    }
+
+    public class MapInfo : MessageClass
+    {
+        public MapDef Map = null;
+
+        public MapInfo()
+        {
+            Name = 51;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            base.PackClass(ref buffer, Map);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            Map = (MapDef)base.UnpackClass(ref buffer);
             return true;
         }
     }

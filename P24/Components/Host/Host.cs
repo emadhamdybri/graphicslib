@@ -112,12 +112,12 @@ namespace Hosts
 
         protected virtual NetBuffer ProcessOutboundMessage ( NetConnection to, NetBuffer message)
         {
-            return message;
+            return new NetBuffer(message.ToArray());
         }
 
         protected virtual NetBuffer ProcessInboundMessage ( NetConnection from, NetBuffer message)
         {
-            return message;
+            return new NetBuffer(message.ToArray());
         }
 
         public virtual void SendMessage ( NetConnection to, NetBuffer message, NetChannel channel )

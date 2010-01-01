@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 
+using Simulation;
+
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 using Drawables.Cameras;
+
+using Project24Client;
 
 namespace Project24
 {
@@ -46,6 +50,13 @@ namespace Project24
             clouds = new Cloudscape(new Vector2(50, 50));
 
             hud = new Hud(game);
+
+            game.Client.LocalPlayerJoinedEvent += new PlayerEventHandler(LocalPlayerJoined);
+        }
+
+        public void LocalPlayerJoined ( object sender, Player player )
+        {
+            hud.SetPlayerData(player);
         }
 
         public void Resize(int Width, int Height)
