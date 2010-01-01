@@ -69,10 +69,7 @@ namespace Project24Server
 
         protected void sim_PlayerJoined ( object sender, PlayerEventArgs args )
         {           
-            PlayerInfo info = new PlayerInfo();
-            info.PlayerID = args.player.ID;
-            info.Callsign = args.player.Callsign;
-            info.Score = args.player.Score;
+            PlayerInfo info = new PlayerInfo(args.player);
 
             host.Broadcast(info.Pack(), info.Channel());
         }

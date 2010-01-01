@@ -97,12 +97,12 @@ namespace Clients
 
         protected virtual NetBuffer ProcessOutboundMessage(NetBuffer message)
         {
-            return message;
+            return new NetBuffer(message.ToArray());
         }
 
         protected virtual NetBuffer ProcessInboundMessage(NetBuffer message)
         {
-            return message;
+            return new NetBuffer(message.ToArray());
         }
 
         public virtual void SendMessage(NetBuffer message, NetChannel channel)
@@ -121,7 +121,7 @@ namespace Clients
             lock(PendingMessages)
             {
                 NetBuffer data = ProcessInboundMessage(buffer);
-                if (data != null)
+                if (data != null && data.LengthBytes > 0)
                     PendingMessages.Add(data);
             }
         }
@@ -155,7 +155,6 @@ namespace Clients
                 msg = PendingMessages[0];
                 PendingMessages.RemoveAt(0);
             }
-            msg.Reset();
             return msg;
         }
 

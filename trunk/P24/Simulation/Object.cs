@@ -41,6 +41,16 @@ namespace Simulation
         public ObjectState LastUpdateState = new ObjectState();
         public double LastUpdateTime = -1;
 
+        public virtual void CopyFrom ( SimObject obj)
+        {
+            Tag = obj.Tag;
+            ID = obj.ID;
+            Radius = obj.Radius;
+            CurrentState = obj.CurrentState;
+            LastUpdateState = obj.LastUpdateState;
+            LastUpdateTime = obj.LastUpdateTime;
+        }
+
         protected Vector3 PredictPosition(float delta)
         {
             return LastUpdateState.Position + LastUpdateState.Movement * delta;

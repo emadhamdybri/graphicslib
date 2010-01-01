@@ -13,22 +13,42 @@ using OpenTK.Input;
 
 namespace Project24
 {
+    class ConnectionInfo
+    {
+        public string Avatar = "Pilot0u";
+        public string Username = "Developer";
+        public string Token = string.Empty;
+        public string Callsign = string.Empty;
+        public string Hostname = string.Empty;
+        public int Port = 0;
+        public bool SelfServ = true;
+    }
+
     class Game : GameWindow
     {
         Server server;
-        GameClient client;
+        public GameClient Client;
 
         Visual visual;
 
         public ChatLog Chat = new ChatLog();
 
-        public bool Connected
+        ConnectionInfo connectionInfo;
+
+        public bool Joined
         {
-            get { if (client == null) return false; return client.ConnectedToHost; }
+            get { if (Client == null) return false; return Client.ThisPlayer != null; }
         }
 
-        public Game() : base (1024,550)
+        public bool Connected
         {
+            get { if (Client == null) return false; return Client.ConnectedToHost; }
+        }
+
+        public Game( ConnectionInfo c) : base (1024,550,OpenTK.Graphics.GraphicsMode.Default,"Project24",GameWindowFlags.Default)
+        {
+            connectionInfo = c;
+
             VSync = VSyncMode.Off;
             Chat.CurrentChannel = ChatLog.GeneralChatChannel;
             Chat.AddMessage(ChatLog.GeneralChatChannel, "Project24 Client Startup");
@@ -46,42 +66,58 @@ namespace Project24
 
         protected override void OnLoad(EventArgs e)
         {
+            Start();
+
             visual = new Visual(this);
             visual.Setup();
-            Start(string.Empty, 0, true);
             visual.Resize(Width, Height);
             Chat.AddMessage(ChatLog.GeneralChatChannel, "Graphics Loaded");
-            Chat.AddMessage("Custom", "Create Channel");
         }
 
         protected override void OnUnload(EventArgs e)
         {
             base.OnUnload(e);
-            client.Kill();
+            Client.Kill();
             if (server != null)
                 server.Kill();
         }
 
-        public void Start ( string host, int port, bool selfServe )
+        public void Start ()
         {
-            if (selfServe)
+            if (connectionInfo.SelfServ)
             {
-                host = "localhost";
-                port = new Random().Next(1000) + 2500;
-                server = new Server(port);
-                Chat.AddMessage(ChatLog.GeneralChatChannel, "Starting selfserv host on port " + port.ToString());
+                connectionInfo.Hostname = "localhost";
+                connectionInfo.Port = new Random().Next(1000) + 2500;
+                server = new Server(connectionInfo.Port);
+                Chat.AddMessage(ChatLog.GeneralChatChannel, "Starting self-serv host on port " + connectionInfo.Port.ToString());
             }
 
-            client = new GameClient(host, port);
-            client.GetAuthentication = new AuthenticationCallback(GetAuth);
+            Client = new GameClient(connectionInfo.Hostname, connectionInfo.Port);
+            Client.GetAuthentication = new AuthenticationCallback(GetAuth);
 
-            client.ServerVersionEvent += new ServerVersionHandler(ClientServerVersion);
-            client.sim.PlayerJoined += new PlayerJoinedHandler(PlayerJoined);
+            Client.ServerVersionEvent += new ServerVersionHandler(ClientServerVersion);
+            Client.sim.PlayerJoined += new PlayerJoinedHandler(PlayerJoined);
+            Client.LocalPlayerJoinedEvent += new PlayerEventHandler(LocalPlayerJoined);
+
+            Client.GetJoinInfo = new JoinInfoCallback(GetJoin);
+        }
+
+        protected void LocalPlayerJoined ( object sender, Player player )
+        {
+            // trigger something to say we can spawn maybe?
+            connectionInfo.Callsign = player.Callsign;
+        }
+
+        protected void GetJoin(ref string callsign, ref string pilot)
+        {
+            callsign = connectionInfo.Username;
+            pilot = connectionInfo.Avatar;
         }
 
         protected void GetAuth(ref string username, ref string token)
         {
-            username = "player1";
+            username = connectionInfo.Username;
+            token = connectionInfo.Token;
         }
 
         protected override void OnResize(EventArgs e)
@@ -113,7 +149,7 @@ namespace Project24
 
             CheckInput();
 
-            client.Update(e.Time);
+            Client.Update(e.Time);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
