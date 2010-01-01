@@ -11,7 +11,7 @@ using Messages;
 
 using Lidgren.Network;
 
-namespace Project24Server
+namespace Project23Server
 {
     public partial class Server
     {
