@@ -31,14 +31,54 @@ namespace Project24
             Username.Text = "Pilot";
         }
 
+        protected void LoadSettings()
+        {
+            if (Settings.settings.fileLoc != null)
+                return;
+
+            DirectoryInfo AppSettingsDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Project24"));
+            if (!AppSettingsDir.Exists)
+                AppSettingsDir.Create();
+
+            DirectoryInfo appDir = AppSettingsDir.CreateSubdirectory("Client");
+
+            FileInfo prefsFile = new FileInfo(Path.Combine(appDir.FullName, "settings.xml"));
+            if (prefsFile.Exists)
+                Settings.settings = Settings.Read(prefsFile);
+            else
+                Settings.settings.fileLoc = prefsFile;
+
+            Settings.settings.Write();
+        }
+
         public void Setup ()
         {
+            LoadSettings();
             SetupIndexList();
+
+            AvatarIndex = Settings.settings.AvatarIndex;
+            Username.Text = Settings.settings.UserName;
+            AvatarGender = Settings.settings.gender;
+
+            if (AvatarIndex > 0)
+                AvatarList.SelectedIndex = AvatarIndex - 1;
+
+            if (AvatarGender != Gender.None)
+            {
+                Male.Checked = AvatarGender == Gender.Male;
+                Female.Checked = AvatarGender == Gender.Female;
+            }
+
             SetAvatar();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            Settings.settings.AvatarIndex = AvatarIndex;
+            Settings.settings.UserName = Username.Text;
+            Settings.settings.gender = AvatarGender;
+            Settings.settings.Write();
+
             UserName = Username.Text;
             selfServ = true;
             play = true;
