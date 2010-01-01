@@ -6,7 +6,7 @@ using System.Text;
 using Messages;
 using Simulation;
 
-namespace Project24Client
+namespace Project23Client
 {
     public partial class GameClient
     {

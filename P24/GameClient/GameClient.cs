@@ -8,7 +8,7 @@ using Clients;
 using Messages;
 using Lidgren.Network;
 
-namespace Project24Client
+namespace Project23Client
 {
     public delegate void MessageHandler(MessageClass message);
 

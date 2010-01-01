@@ -11,7 +11,7 @@ using System.Reflection;
 
 using Messages;
 
-namespace Project24Server
+namespace Project23Server
 {
     public class Client : System.Object
     {
