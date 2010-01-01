@@ -181,10 +181,10 @@ namespace Project24
                 GL.Vertex2(136, 136);
                 GL.Vertex2(0, 136);
 
-                GL.Vertex2(-NameWidth*1.25f, 100);
+                GL.Vertex2(-NameWidth*1.5f, 100);
                 GL.Vertex2(0, 100);
                 GL.Vertex2(0, 136);
-                GL.Vertex2(-NameWidth * 1.25f, 136);
+                GL.Vertex2(-NameWidth * 1.5f, 136);
 
             GL.End();
 
