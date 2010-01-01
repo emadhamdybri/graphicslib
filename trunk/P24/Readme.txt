@@ -1,0 +1,1 @@
+P24 needs lidgren-network and opentk in the root dir to build.
