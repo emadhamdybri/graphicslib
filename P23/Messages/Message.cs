@@ -117,13 +117,25 @@ namespace Messages
             stream.Close();
             return obj;
         }
+
+        public static int Hail = 10;
+        public static int Disconnect = 11;
+        public static int Login = 20;
+        public static int ServerVersInfo = 30;
+        public static int PlayerInfo = 40;
+        public static int PlayerListDone = 41;
+        public static int PlayerJoin = 42;
+        public static int PlayerJoinAccept = 43;
+        public static int RequestMapInfo = 50;
+        public static int MapInfo = 51;
+        public static int ChatMessage = 60;
     }
 
     public class Hail : MessageClass
     {
         public Hail()
         {
-            Name = 10;
+            Name = MessageClass.Hail;
         }
     }
 
@@ -133,7 +145,7 @@ namespace Messages
 
         public Disconnect()
         {
-            Name = 11;
+            Name = MessageClass.Disconnect;
         }
 
         public override NetBuffer Pack()
@@ -160,7 +172,7 @@ namespace Messages
 
         public Login()
         {
-            Name = 20;
+            Name = MessageClass.Login;
         }
 
         public override NetBuffer Pack()
@@ -188,7 +200,7 @@ namespace Messages
 
         public ServerVersInfo()
         {
-            Name = 30;
+            Name = MessageClass.ServerVersInfo;
         }
 
         public override NetBuffer Pack()
@@ -214,20 +226,22 @@ namespace Messages
         public string Callsign = string.Empty;
         public string Pilot = string.Empty;
         public Int32 Score = -1;
+        public PlayerStatus Status = PlayerStatus.Despawned;
 
         public PlayerInfo()
         {
-            Name = 40;
+            Name = MessageClass.PlayerInfo;
         }
 
         public PlayerInfo( Player player)
         {
-            Name = 40;
+            Name = MessageClass.PlayerInfo;
 
             PlayerID = player.ID;
             Callsign = player.Callsign;
             Score = player.Score;
             Pilot = player.Pilot;
+            Status = player.Status;
         }
 
         public override NetBuffer Pack()
@@ -237,6 +251,7 @@ namespace Messages
             buffer.Write(Callsign);
             buffer.Write(Score);
             buffer.Write(Pilot);
+            buffer.Write((byte)Status);
             return buffer;
         }
 
@@ -249,6 +264,7 @@ namespace Messages
             Callsign = buffer.ReadString();
             Score = buffer.ReadInt32();
             Pilot = buffer.ReadString();
+            Status = (PlayerStatus)Enum.ToObject(typeof(PlayerStatus), buffer.ReadByte());
             return true;
         }
 
@@ -262,7 +278,7 @@ namespace Messages
     {
         public PlayerListDone()
         {
-            Name = 41;
+            Name = MessageClass.PlayerListDone;
         }
 
         public override NetChannel Channel()
@@ -278,7 +294,7 @@ namespace Messages
 
         public PlayerJoin()
         {
-            Name = 42;
+            Name = MessageClass.PlayerJoin;
         }
 
         public override NetChannel Channel()
@@ -312,7 +328,7 @@ namespace Messages
 
         public PlayerJoinAccept()
         {
-            Name = 43;
+            Name = MessageClass.PlayerJoinAccept;
         }
 
         public override NetChannel Channel()
@@ -343,7 +359,7 @@ namespace Messages
     {
         public RequestMapInfo()
         {
-            Name = 50;
+            Name = MessageClass.RequestMapInfo;
         }
     }
 
@@ -353,7 +369,7 @@ namespace Messages
 
         public MapInfo()
         {
-            Name = 51;
+            Name = MessageClass.MapInfo;
         }
 
         public override NetBuffer Pack()
@@ -370,6 +386,38 @@ namespace Messages
 
             Map = (MapDef)base.UnpackClass(ref buffer);
             return true;
+        }
+    }
+
+    public class ChatMessage : MessageClass
+    {
+        public string Channel = string.Empty;
+        public string From = string.Empty;
+        public string Message = string.Empty;
+
+        public ChatMessage()
+        {
+            Name = MessageClass.ChatMessage;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(Channel);
+            buffer.Write(From);
+            buffer.Write(Message);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            Channel = buffer.ReadString();
+            From = buffer.ReadString();
+            Message = buffer.ReadString();
+           return true;
         }
     }
 }

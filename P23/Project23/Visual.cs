@@ -54,6 +54,11 @@ namespace Project23
             game.Client.LocalPlayerJoinedEvent += new PlayerEventHandler(LocalPlayerJoined);
         }
 
+        public void SetChatMode ( bool mode )
+        {
+            hud.ChatMode = mode;
+        }
+
         public void LocalPlayerJoined ( object sender, Player player )
         {
             hud.SetPlayerData(player);

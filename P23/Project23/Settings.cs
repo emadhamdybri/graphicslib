@@ -20,7 +20,8 @@ namespace Project23
         public int AvatarIndex = -1;
         public string UserName = "Pilot";
 
-     
+        public KeyManager Keys = new KeyManager();
+
         public static Settings Read(FileInfo file)
         {
             XmlSerializer XML = new XmlSerializer(typeof(Settings));
@@ -35,9 +36,12 @@ namespace Project23
             {
                 stream.Close();
                 file.Delete();
+                settings.Keys.SetDefaults();
                 s = settings;
             }
             s.fileLoc = file;
+
+            s.Keys.Deserialize();
             return s;
         }
 
@@ -45,6 +49,7 @@ namespace Project23
         {
             XmlSerializer XML = new XmlSerializer(typeof(Settings));
 
+            Keys.Serialize();
             fileLoc.Delete();
             FileStream stream = fileLoc.OpenWrite();
             XML.Serialize(stream, this);

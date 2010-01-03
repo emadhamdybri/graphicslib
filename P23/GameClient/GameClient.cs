@@ -18,6 +18,8 @@ namespace Project23Client
     public delegate void ServerVersionHandler ( object sender, int version );
     public delegate void PlayerEventHandler(object sender, Player player);
 
+    public delegate void ChatEventHandler ( object sender, string channel, string from, string message );
+
     public partial class GameClient
     {
         public Sim sim = new Sim();
@@ -25,6 +27,8 @@ namespace Project23Client
 
         public event ServerVersionHandler ServerVersionEvent;
         public event PlayerEventHandler LocalPlayerJoinedEvent;
+        public event ChatEventHandler ChatSentEvent;
+        public event ChatEventHandler ChatReceivedEvent;
 
         Client client;
         bool connected = false;
@@ -62,7 +66,8 @@ namespace Project23Client
                 {
                     if (buffer.LengthBytes >= sizeof(Int32))
                     {
-                        MessageClass msg = messageMapper.MessageFromID(buffer.ReadInt32());
+                        int name = buffer.ReadInt32();
+                        MessageClass msg = messageMapper.MessageFromID(name);
                         msg.Unpack(ref buffer);
 
                         if (messageHandlers.ContainsKey(msg.GetType()))
@@ -76,6 +81,20 @@ namespace Project23Client
             else
                 connected = client.IsConnected;
             return true;
+        }
+
+        public void SendChat ( string channel, string message )
+        {
+            if (message == string.Empty)
+                return;
+
+            if (ChatSentEvent != null)
+                ChatSentEvent(this, channel, ThisPlayer.Callsign, message);
+
+            ChatMessage msg = new ChatMessage();
+            msg.Channel = channel;
+            msg.Message = message;
+            client.SendMessage(msg.Pack(), msg.Channel());
         }
     }
 }

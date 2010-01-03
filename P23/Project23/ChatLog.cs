@@ -8,11 +8,13 @@ namespace Project23
     class ChatMessage
     {
         public String Message = string.Empty;
+        public String From = string.Empty;
         public DateTime TimeStamp = DateTime.Now;
 
-        public ChatMessage ( string msg )
+        public ChatMessage ( string from, string msg )
         {
             Message = msg;
+            From = from;
         }
     }
     class ChatChannel
@@ -50,12 +52,12 @@ namespace Project23
 
         protected Dictionary<string, ChatChannel> Channels = new Dictionary<string, ChatChannel>();
 
-        public void AddMessage ( string channel, string message )
+        public void AddMessage ( string channel, string from, string message )
         {
             if (!Channels.ContainsKey(channel))
                 Channels.Add(channel, new ChatChannel(channel));
 
-            Channels[channel].Add(new ChatMessage(message));
+            Channels[channel].Add(new ChatMessage(from,message));
         }
 
         public void ClearChannel ( string channel )
@@ -77,6 +79,11 @@ namespace Project23
         public string[] GetChannelNames()
         {
             return Channels.Keys.ToArray();
+        }
+
+        public int ChannelCount ()
+        {
+            return Channels.Count;
         }
     }
 }
