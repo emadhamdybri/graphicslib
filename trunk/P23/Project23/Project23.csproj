@@ -61,6 +61,8 @@
     <Compile Include="Cloudscape.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Hud.cs" />
+    <Compile Include="KeyboardHandler.cs" />
+    <Compile Include="KeyManager.cs" />
     <Compile Include="LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>

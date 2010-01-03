@@ -20,6 +20,7 @@ namespace Project23Client
             messageHandlers.Add(typeof(PlayerListDone), new MessageHandler(PlayerListDoneHandler));
             messageHandlers.Add(typeof(MapInfo), new MessageHandler(MapInfoHandler));
             messageHandlers.Add(typeof(PlayerJoinAccept), new MessageHandler(PlayerJoinAcceptHandler));
+            messageHandlers.Add(typeof(ChatMessage), new MessageHandler(ChatMessageHandler));
         }
 
         protected void HailHandler(MessageClass message)
@@ -58,6 +59,7 @@ namespace Project23Client
             player.Callsign = info.Callsign;
             player.Score = info.Score;
             player.Pilot = info.Pilot;
+            player.Status = info.Status;
 
             sim.AddPlayer(player);
 
@@ -113,6 +115,16 @@ namespace Project23Client
                 if (LocalPlayerJoinedEvent != null)
                     LocalPlayerJoinedEvent(this, ThisPlayer);
             }
+        }
+
+        protected void ChatMessageHandler ( MessageClass message )
+        {
+            ChatMessage msg = message as ChatMessage;
+            if (msg == null)
+                return;
+
+            if (ChatReceivedEvent != null)
+                ChatReceivedEvent(this, msg.Channel, msg.From, msg.Message);
         }
     }
 }

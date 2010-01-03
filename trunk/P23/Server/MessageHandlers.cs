@@ -21,6 +21,7 @@ namespace Project23Server
         {
             messageHandlers.Add(typeof(Login), new MessageHandler(LoginHandler));
             messageHandlers.Add(typeof(PlayerJoin), new MessageHandler(PlayerJoinHandler));
+            messageHandlers.Add(typeof(ChatMessage), new MessageHandler(ChatMessageHandler));
         }
 
         protected void ProcessMessage(Message msg)
@@ -68,23 +69,34 @@ namespace Project23Server
             if (join == null)
                 return;
 
-            Player player = new Player();
-            player.Tag = client;
-            player.ID = GUIDManager.NewGUID();
-            player.Pilot = join.Pilot;
+            client.Player = new Player();
+            client.Player.Tag = client;
+
+            client.Player.ID = GUIDManager.NewGUID();
+            client.Player.Pilot = join.Pilot;
 
             while (!sim.PlayerNameValid(join.Callsign))
                 join.Callsign += "X";
 
-            player.Callsign = join.Callsign;
+            client.Player.Callsign = join.Callsign;
 
-            sim.AddPlayer(player);
+            sim.AddPlayer(client.Player);
 
             PlayerJoinAccept accept = new PlayerJoinAccept();
-            accept.Callsign = player.Callsign;
-            accept.PlayerID = player.ID;
+            accept.Callsign = client.Player.Callsign;
+            accept.PlayerID = client.Player.ID;
 
             host.SendMessage(client.Connection, accept.Pack(), accept.Channel());
+        }
+
+        protected void ChatMessageHandler(Client client, MessageClass message)
+        {
+            ChatMessage msg = message as ChatMessage;
+            if (msg == null || client.Player == null)
+                return;
+
+            msg.From = client.Player.Callsign;
+            host.Broadcast(msg.Pack(), msg.Channel());
         }
     }
 }

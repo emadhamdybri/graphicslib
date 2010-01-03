@@ -30,6 +30,13 @@ namespace Project23
         public static float ChatWidth = 300;
         public static float ChatHeight = 120;
         public static float ChatHeaderHeight = 24;
+        public static float ChatLineHeight = 18;
+        public static float ChatLogLineHeight = 12;
+        public static float ChatStartLineOffset = 18;
+
+        public bool ShowTimestamps = true;
+
+        public bool ChatMode = false;
 
         float NameWidth = 0;
 
@@ -87,7 +94,6 @@ namespace Project23
             GL.Vertex2(ChatWidth, 0);
             GL.Vertex2(ChatWidth, ChatHeight);
             GL.Vertex2(0, ChatHeight);
-
             GL.End();
 
             GL.Color4(Color.DarkSlateBlue);
@@ -97,13 +103,11 @@ namespace Project23
             GL.Vertex3(ChatWidth+1, 1,0.1f);
             GL.Vertex3(ChatWidth+1, ChatHeight+1,0.1f);
             GL.Vertex3(1, ChatHeight+1,0.1f);
-
             GL.End();
 
             GL.Begin(BeginMode.Lines);
             GL.Vertex3(0, ChatHeight-ChatHeaderHeight, 0.1f);
             GL.Vertex3(ChatWidth + 1, ChatHeight - ChatHeaderHeight, 0.1f);
-
             GL.End();
 
             // count the tabs
@@ -134,7 +138,6 @@ namespace Project23
                     GL.Begin(BeginMode.Lines);
                     GL.Vertex3(pos + width + buffer + buffer, ChatHeight, 0.1f);
                     GL.Vertex3(pos + width + buffer + buffer, ChatHeight - ChatHeaderHeight, 0.1f);
-
                     GL.End();
                     pos += width + buffer + buffer + 1;
                     channel++;
@@ -149,18 +152,47 @@ namespace Project23
 
                 printer.Begin();
 
-                pos = ChatHeight - ChatHeaderHeight;
-                for ( int i = chatChannel.ChatMessages.Count-1; i >= 0; i-- )
+//                 pos = ChatHeight - ChatHeaderHeight;
+//                 for ( int i = chatChannel.ChatMessages.Count-1; i >= 0; i-- )
+//                 {
+//                     string msg = chatChannel.ChatMessages[i].Message;
+//                     if (pos > ChatLineHeight)
+//                     {
+//                         PrintText(msg, ChatFont, Color.White, buffer, pos, ChatWidth - 2 - buffer, 0);
+//                         pos -= ChatLogLineHeight;
+//                     }
+//                 }
+
+                pos = ChatLineHeight + ChatStartLineOffset;
+                for (int i = chatChannel.ChatMessages.Count - 1; i >= 0; i--)
                 {
-                    string msg = chatChannel.ChatMessages[i].Message;
-                    if ( pos > 8)
-                    {
-                        PrintText(msg, ChatFont, Color.White, buffer, pos, ChatWidth - 2 - buffer, 0);
-                        pos -= 10;
-                    }
+                    string message = string.Empty;
+                    if (ShowTimestamps)
+                        message = chatChannel.ChatMessages[i].TimeStamp.ToString() + " ";
+                    message += chatChannel.ChatMessages[i].From + ": " + chatChannel.ChatMessages[i].Message;
+                    PrintText(message, ChatFont, Color.White, buffer, pos, ChatWidth - 2 - buffer, 0);
+                    pos += ChatLogLineHeight;
+                    if (pos > ChatHeight - ChatHeaderHeight)
+                        i = -1;
                 }
+
                 printer.End();
 
+            }
+
+            if (ChatMode)
+                GL.Color3(Color.Yellow);
+
+            GL.Begin(BeginMode.Lines);
+            GL.Vertex3(0, ChatLineHeight, 0.1f);
+            GL.Vertex3(ChatWidth + 1, ChatLineHeight, 0.1f);
+            GL.End();
+
+            if (game.OutgoingChatString != string.Empty)
+            {
+                printer.Begin();
+                PrintText(game.OutgoingChatString, ChatFont, Color.LightGoldenrodYellow, buffer, ChatLineHeight, ChatWidth - 2 - buffer, 0);
+                printer.End();
             }
         }
 
@@ -168,7 +200,6 @@ namespace Project23
         {
             if (Pilot == null)
                 return;
-
 
             GL.Color4(0,0,0,0.25f);
             GL.PushMatrix();
@@ -197,7 +228,6 @@ namespace Project23
             printer.Begin();
             PrintTextRight(game.Client.ThisPlayer.Callsign, PlayerFont, Color.White, game.Width - 550, game.Height, 400, 0);
             printer.End();
-
         }
 
         protected void GameHud ()

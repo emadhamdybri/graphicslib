@@ -36,7 +36,7 @@ namespace Project23
             if (Settings.settings.fileLoc != null)
                 return;
 
-            DirectoryInfo AppSettingsDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Project24"));
+            DirectoryInfo AppSettingsDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Project23"));
             if (!AppSettingsDir.Exists)
                 AppSettingsDir.Create();
 
@@ -46,8 +46,10 @@ namespace Project23
             if (prefsFile.Exists)
                 Settings.settings = Settings.Read(prefsFile);
             else
+            {
                 Settings.settings.fileLoc = prefsFile;
-
+                Settings.settings.Keys.SetDefaults();
+            }
             Settings.settings.Write();
         }
 
