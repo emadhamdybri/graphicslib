@@ -13,7 +13,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Project23
 {
-    class Hud
+    class HudRenderer
     {
         OpenTK.Graphics.TextPrinter printer = new OpenTK.Graphics.TextPrinter();
         Font BigFont = new Font(FontFamily.GenericSansSerif,32);
@@ -22,6 +22,9 @@ namespace Project23
         Font ChatFont = new Font(FontFamily.GenericSerif, 8);
 
         Font PlayerFont = new Font(FontFamily.GenericSansSerif, 18);
+      
+        Font PlayerListHeaderFont = new Font(FontFamily.GenericSansSerif, 12);
+        Font PlayerListFont = new Font(FontFamily.GenericSerif, 8);
 
         Game game;
 
@@ -34,16 +37,30 @@ namespace Project23
         public static float ChatLogLineHeight = 12;
         public static float ChatStartLineOffset = 18;
 
+        public static float PlayerListWidth = 150;
+        public static float PlayerListFlySpeed = 250;
+        public static float PlayerListHeaderHeight = 24;
+        public static float PlayerListItemHeight = 18;
+
         public bool ShowTimestamps = true;
 
         public bool ChatMode = false;
 
         float NameWidth = 0;
 
-        public Hud (Game g)
+
+        enum PlayerListStatus
+        {
+            Holding,
+            Activating,
+            Deactivating,
+        }
+        PlayerListStatus playerListStatus = PlayerListStatus.Holding;
+        float playerListPosition = 0;
+
+        public HudRenderer (Game g)
         {
             game = g;
-
         }
 
         protected void ConnectionScreen ()
@@ -152,17 +169,6 @@ namespace Project23
 
                 printer.Begin();
 
-//                 pos = ChatHeight - ChatHeaderHeight;
-//                 for ( int i = chatChannel.ChatMessages.Count-1; i >= 0; i-- )
-//                 {
-//                     string msg = chatChannel.ChatMessages[i].Message;
-//                     if (pos > ChatLineHeight)
-//                     {
-//                         PrintText(msg, ChatFont, Color.White, buffer, pos, ChatWidth - 2 - buffer, 0);
-//                         pos -= ChatLogLineHeight;
-//                     }
-//                 }
-
                 pos = ChatLineHeight + ChatStartLineOffset;
                 for (int i = chatChannel.ChatMessages.Count - 1; i >= 0; i--)
                 {
@@ -203,7 +209,7 @@ namespace Project23
 
             GL.Color4(0,0,0,0.25f);
             GL.PushMatrix();
-            GL.Translate(game.Width - 136, game.Height - 136, -0.5f);
+            GL.Translate(0, game.Height - 136, -0.5f);
 
             GL.Disable(EnableCap.Texture2D);
             GL.Begin(BeginMode.Quads);
@@ -212,10 +218,10 @@ namespace Project23
                 GL.Vertex2(136, 136);
                 GL.Vertex2(0, 136);
 
-                GL.Vertex2(-NameWidth*1.5f, 100);
-                GL.Vertex2(0, 100);
-                GL.Vertex2(0, 136);
-                GL.Vertex2(-NameWidth * 1.5f, 136);
+                GL.Vertex2(136, 100);
+                GL.Vertex2(136 + NameWidth +10, 100);
+                GL.Vertex2(136+NameWidth+10, 136);
+                GL.Vertex2(136, 136);
 
             GL.End();
 
@@ -226,11 +232,116 @@ namespace Project23
             GL.PopMatrix();
 
             printer.Begin();
-            PrintTextRight(game.Client.ThisPlayer.Callsign, PlayerFont, Color.White, game.Width - 550, game.Height, 400, 0);
+            PrintText(game.Client.ThisPlayer.Callsign, PlayerFont, Color.White, 136, game.Height, 400, 0);
             printer.End();
         }
 
-        protected void GameHud ()
+
+        public void SetChatMode(bool mode)
+        {
+            ChatMode = mode;
+        }
+
+
+        public void ActivatePlayerList (bool val )
+        {
+            if (val) // want to turn it on
+                playerListStatus = PlayerListStatus.Activating;
+            else
+                playerListStatus = PlayerListStatus.Deactivating;
+        }
+
+        public void TogglePlayerList ( )
+        {
+            if (playerListStatus == PlayerListStatus.Deactivating)
+                playerListStatus = PlayerListStatus.Activating;
+            else if (playerListStatus == PlayerListStatus.Activating)
+                playerListStatus = PlayerListStatus.Deactivating;
+            else if (playerListPosition > 0)
+                playerListStatus = PlayerListStatus.Deactivating;
+            else
+                playerListStatus = PlayerListStatus.Activating;
+        }
+
+        protected void DrawPlayerList(double time)
+        {
+            // figure out the position
+            if (playerListStatus == PlayerListStatus.Activating)
+                playerListPosition += (float)time * PlayerListFlySpeed;
+            else if (playerListStatus == PlayerListStatus.Deactivating)
+                playerListPosition -= (float)time * PlayerListFlySpeed;
+            else if (playerListStatus == PlayerListStatus.Holding && playerListPosition > 0)
+                playerListPosition = PlayerListWidth;
+
+            if (playerListPosition >= PlayerListWidth)
+            {
+                playerListPosition = PlayerListWidth;
+                playerListStatus = PlayerListStatus.Holding;
+            }
+            else if (playerListPosition <=0)
+            {
+                playerListPosition = 0;
+                playerListStatus = PlayerListStatus.Holding;
+            }
+
+
+            float headerHeight = game.Height - 140;
+            if (playerListPosition > 0)
+            {
+                GL.Disable(EnableCap.Texture2D);
+
+                int playerCount = game.Client.sim.Players.Count;
+
+                float listHeight = PlayerListHeaderHeight + PlayerListItemHeight * playerCount;
+
+                GL.PushMatrix();
+                GL.Translate(playerListPosition, headerHeight, -0.5f);
+
+                GL.Color4(0, 0, 0, 0.5f);
+
+                GL.Begin(BeginMode.Quads);
+                    GL.Vertex2(-PlayerListWidth, -listHeight);
+                    GL.Vertex2(0, -listHeight);
+                    GL.Vertex2(0, 0);
+                    GL.Vertex2(-PlayerListWidth, 0);
+                GL.End();
+
+                GL.Translate(0, 0, 0.1f);
+                GL.Color4(1f, 1f, 1f, 1f);
+                GL.Begin(BeginMode.LineLoop);
+                    GL.Vertex2(-PlayerListWidth, -listHeight);
+                    GL.Vertex2(0, -listHeight);
+                    GL.Vertex2(0, 0);
+                    GL.Vertex2(-PlayerListWidth, 0);
+                GL.End();
+
+                GL.Begin(BeginMode.Lines);
+                    GL.Vertex2(-PlayerListWidth + 5, -PlayerListHeaderHeight);
+                    GL.Vertex2(-5, -PlayerListHeaderHeight);
+
+                    for (int i = 1; i < playerCount; i++)
+                    {
+                        GL.Vertex2(-PlayerListWidth + 50, -PlayerListHeaderHeight - (PlayerListItemHeight*i));
+                        GL.Vertex2(-50, -PlayerListHeaderHeight - (PlayerListItemHeight * i));
+                    }
+               GL.End();
+
+
+                printer.Begin();
+                PrintText("Players", PlayerListHeaderFont, Color.White, playerListPosition - PlayerListWidth + 2, headerHeight, PlayerListWidth, 0);
+
+                for (int i = 0; i < playerCount; i++)
+                {
+                    Player player = game.Client.sim.Players[i];
+                    PrintText(player.Callsign + " (" + player.Score.ToString() +")", PlayerListFont, Color.White, playerListPosition - PlayerListWidth + 10, headerHeight - PlayerListHeaderHeight - (PlayerListItemHeight * i), PlayerListWidth, 0);
+                }
+                printer.End();
+
+                GL.PopMatrix();
+            }
+        }
+
+        protected void GameHud(double time)
         {
             printer.Begin();
             printer.Print("Done!", BigFont, Color.White, new RectangleF(0, game.Height / 2, game.Width, 0), OpenTK.Graphics.TextPrinterOptions.Default, OpenTK.Graphics.TextAlignment.Center);
@@ -239,6 +350,8 @@ namespace Project23
             DrawChatWindow();
 
             DrawInfoWidget();
+
+            DrawPlayerList(time);
         }
 
         public void Render ( double time )
@@ -246,7 +359,7 @@ namespace Project23
             if (!game.Joined)
                 ConnectionScreen();
             else
-                GameHud();
+                GameHud(time);
         }
     }
 }

@@ -28,6 +28,7 @@ namespace Project23
         StartChat,
         ReplyTo,
         TeamChat,
+        PlayerList,
     }
 
     public class KeyManager
@@ -64,6 +65,7 @@ namespace Project23
             KeyEventMap.Add(KeyEvent.Chat3, Key.F3);
             KeyEventMap.Add(KeyEvent.Chat4, Key.F4);
             KeyEventMap.Add(KeyEvent.StartChat, Key.Enter);
+            KeyEventMap.Add(KeyEvent.PlayerList, Key.Tilde);
             Serialize();
         }
 
