@@ -21,7 +21,7 @@ namespace Project23
 
         Cloudscape clouds = null;
 
-        Hud hud;
+        public HudRenderer Hud;
         public Visual ( Game g )
         {
             game = g;
@@ -49,19 +49,14 @@ namespace Project23
 
             clouds = new Cloudscape(new Vector2(50, 50));
 
-            hud = new Hud(game);
+            Hud = new HudRenderer(game);
 
             game.Client.LocalPlayerJoinedEvent += new PlayerEventHandler(LocalPlayerJoined);
         }
 
-        public void SetChatMode ( bool mode )
-        {
-            hud.ChatMode = mode;
-        }
-
         public void LocalPlayerJoined ( object sender, Player player )
         {
-            hud.SetPlayerData(player);
+            Hud.SetPlayerData(player);
         }
 
         public void Resize(int Width, int Height)
@@ -116,7 +111,7 @@ namespace Project23
             GL.Disable(EnableCap.Lighting);
 
             camera.SetOrthographic();
-            hud.Render(time);
+            Hud.Render(time);
             camera.SetPersective();
             GL.PopMatrix();
 

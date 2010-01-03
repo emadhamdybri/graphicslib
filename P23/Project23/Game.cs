@@ -185,6 +185,10 @@ namespace Project23
             if (keys.Keydown(KeyEvent.StartChat))
                 InputRedirect = new ChatInputHandler(this, keyHandler);
 
+            if (keys.Keydown(KeyEvent.PlayerList))
+                visual.Hud.TogglePlayerList();
+
+
             keyHandler.FlushKeys();
         }
 
@@ -202,7 +206,7 @@ namespace Project23
                 keyboard.TextMode = true;
                 game.OutgoingChatString = keyboard.CurrentText;
                 keyboard.TextModeNewline += new NewLineHandler(keyboard_TextModeNewline);
-                game.visual.SetChatMode(true);
+                game.visual.Hud.SetChatMode(true);
             }
 
             void keyboard_TextModeNewline(object sender, Key key)
@@ -218,7 +222,7 @@ namespace Project23
                 keyboard.TextMode = false;
                 game.OutgoingChatString = string.Empty;
                 done = true;
-                game.visual.SetChatMode(false);
+                game.visual.Hud.SetChatMode(false);
             }
 
             public override bool Update()
