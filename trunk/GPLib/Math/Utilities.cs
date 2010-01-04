@@ -415,6 +415,11 @@ namespace Math3D
 
             return angs;
         }
+
+        public static Vector3 FromAngle( float angle )
+        {
+            return new Vector3((float)Math.Cos(Trig.DegreeToRadian(angle)), (float)Math.Sin(Trig.DegreeToRadian(angle)), 0);
+        }
     }
 
     public class VectorHelper2
@@ -452,6 +457,11 @@ namespace Math3D
         public static Vector2 Subtract(Vector3 v1, Vector2 v2)
         {
             return new Vector2(v1.X - v2.X, v1.Y - v2.Y);
+        }
+
+        public static Vector2 FromAngle(float angle)
+        {
+            return new Vector2((float)Math.Cos(Trig.DegreeToRadian(angle)), (float)Math.Sin(Trig.DegreeToRadian(angle)));
         }
     }
 }
