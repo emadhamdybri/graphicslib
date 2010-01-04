@@ -160,6 +160,11 @@ namespace Drawables.StaticModels.OBJ
             return list[index - 1];
         }
 
+        public static StaticModel Read(string file)
+        {
+            return Read(new FileInfo(file));
+        }
+
         public static StaticModel Read(FileInfo file)
         {
             StaticModel model = new StaticModel();
