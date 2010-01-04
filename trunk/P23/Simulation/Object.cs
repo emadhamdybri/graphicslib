@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
+using Math3D;
 using OpenTK;
 
 namespace Simulation
@@ -12,9 +12,10 @@ namespace Simulation
     {
         public Vector3 Position = Vector3.Zero;
         public Vector3 Heading = Vector3.Zero;
+        public float Rotation = 0;
        
         public Vector3 Movement = Vector3.Zero;
-        public Vector3 Spin = Vector3.Zero;
+        public float Spin = 0;
     }
 
     public class GUIDManager
@@ -56,9 +57,9 @@ namespace Simulation
             return LastUpdateState.Position + LastUpdateState.Movement * delta;
         }
 
-        protected Vector3 PredictHeading(float delta)
+        protected float PredictRotation(float delta)
         {
-            return LastUpdateState.Heading + LastUpdateState.Spin * delta;
+            return LastUpdateState.Rotation + LastUpdateState.Spin * delta;
         }
 
         public virtual void Update(double time)
@@ -66,7 +67,9 @@ namespace Simulation
             float delta = (float)(time - LastUpdateTime);
 
             CurrentState.Position = PredictPosition(delta);
-            CurrentState.Heading = PredictHeading(delta);
+            CurrentState.Rotation = PredictRotation(delta);
+
+            CurrentState.Heading = VectorHelper3.FromAngle(CurrentState.Rotation);
         }
     }
 }

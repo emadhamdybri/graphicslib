@@ -120,6 +120,13 @@ namespace Project23
             Client.GetJoinInfo = new JoinInfoCallback(GetJoin);
 
             Client.ChatReceivedEvent += new ChatEventHandler(Client_ChatReceivedEvent);
+
+            Mouse.WheelChanged += new EventHandler<MouseWheelEventArgs>(Mouse_WheelChanged);
+        }
+
+        void Mouse_WheelChanged(object sender, MouseWheelEventArgs e)
+        {
+            visual.ZoomView(-e.DeltaPrecise);
         }
 
         void Client_ChatReceivedEvent(object sender, string channel, string from, string message)
@@ -187,7 +194,6 @@ namespace Project23
 
             if (keys.Keydown(KeyEvent.PlayerList))
                 visual.Hud.TogglePlayerList();
-
 
             keyHandler.FlushKeys();
         }
