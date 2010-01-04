@@ -39,6 +39,11 @@ namespace Simulation
         }
     }
 
+    public class SimSettings
+    {
+        public float MaxSpeed = 10.0f;
+    }
+
     public delegate void ShotEndedHandler(object sender, ShotEventArgs args );
     public delegate void ShotStartedHandler(object sender, ShotEventArgs args);
 
@@ -60,11 +65,12 @@ namespace Simulation
         public event PlayerRemovedHandler PlayerRemoved;
         public event PlayerUpdateHandler PlayerUpdated;
 
+        public SimSettings Settings = new SimSettings();
+
         double lastUpdateTime = -1;
 
-        public void Init ( )
+        public void Init ()
         {
-
         }
 
         public bool PlayerNameValid ( string name )

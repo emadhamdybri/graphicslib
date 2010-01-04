@@ -102,6 +102,8 @@ namespace Project23
         {
             string[] channels = game.Chat.GetChannelNames();
 
+            GL.Disable(EnableCap.Texture2D);
+
             GL.Color4(0.5f,0.5f,0.6f,0.5f);
             GL.Translate(0, 0, -1f);
 
@@ -284,7 +286,6 @@ namespace Project23
                 playerListStatus = PlayerListStatus.Holding;
             }
 
-
             float headerHeight = game.Height - 140;
             if (playerListPosition > 0)
             {
@@ -324,8 +325,7 @@ namespace Project23
                         GL.Vertex2(-PlayerListWidth + 50, -PlayerListHeaderHeight - (PlayerListItemHeight*i));
                         GL.Vertex2(-50, -PlayerListHeaderHeight - (PlayerListItemHeight * i));
                     }
-               GL.End();
-
+                GL.End();
 
                 printer.Begin();
                 PrintText("Players", PlayerListHeaderFont, Color.White, playerListPosition - PlayerListWidth + 2, headerHeight, PlayerListWidth, 0);
@@ -343,10 +343,6 @@ namespace Project23
 
         protected void GameHud(double time)
         {
-            printer.Begin();
-            printer.Print("Done!", BigFont, Color.White, new RectangleF(0, game.Height / 2, game.Width, 0), OpenTK.Graphics.TextPrinterOptions.Default, OpenTK.Graphics.TextAlignment.Center);
-            printer.End();
-
             DrawChatWindow();
 
             DrawInfoWidget();
@@ -356,6 +352,8 @@ namespace Project23
 
         public void Render ( double time )
         {
+            GL.Disable(EnableCap.Lighting);
+
             if (!game.Joined)
                 ConnectionScreen();
             else

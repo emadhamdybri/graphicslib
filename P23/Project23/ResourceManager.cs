@@ -53,5 +53,17 @@ namespace Project23
 
             return files;
         }
+
+        public static string FindDirectory(string name)
+        {
+            foreach (string searchpath in SearchPaths)
+            {
+                DirectoryInfo dir = new DirectoryInfo(Path.Combine(searchpath, name));
+                if (dir.Exists)
+                    return dir.FullName;
+            }
+
+            return string.Empty;
+        }
     }
 }

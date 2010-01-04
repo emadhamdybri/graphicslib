@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using OpenTK;
+using Math3D;
 
 namespace Simulation
 {
@@ -37,12 +38,13 @@ namespace Simulation
             {
                 float delta = (float)(time - LastUpdateTime);
                 Vector3 pos = PredictPosition(delta);
-                Vector3 heading = PredictHeading(delta);
+                float rot= PredictRotation(delta);
 
                 // do bounce collisions
 
                 CurrentState.Position = pos;
-                CurrentState.Heading = heading;
+                CurrentState.Rotation = rot;
+                CurrentState.Heading = VectorHelper3.FromAngle(rot);
             }
         }
     }
