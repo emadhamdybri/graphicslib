@@ -199,6 +199,16 @@ namespace Drawables.Textures
 
             GL.End();
         }
+
+        public void DrawAtWidth ( float newWidth )
+        {
+            Draw(newWidth / Width);
+        }
+
+        public void DrawAtHeight(float newHeight)
+        {
+            Draw(newHeight / Height);
+        }
     }
 
     public class TextureSystem
