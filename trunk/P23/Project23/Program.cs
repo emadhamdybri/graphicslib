@@ -35,7 +35,7 @@ namespace Project23
                     LoginForm login = new LoginForm();
                     login.Setup();
                     Application.Run(login);
-                    if (login.play)
+                    if (login.Play)
                     {
                         // play
                         ConnectionInfo info = new ConnectionInfo();
@@ -43,6 +43,15 @@ namespace Project23
                         info.Avatar = login.GetAvatarName();
                         info.Username = login.UserName;
                         info.SelfServ = login.selfServ;
+                        info.Port = 2501;
+                        if (login.Hostname.Contains(":"))
+                        {
+                            string[] spliter = login.Hostname.Split(new char[]{':'});
+                            info.Hostname = spliter[0];
+                            info.Port = int.Parse(spliter[1]);
+                        }
+                        else
+                            info.Hostname = login.Hostname;
                         new Game(info).Run();
                     }
                     else

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Text;
 
 using Simulation;
@@ -35,6 +35,11 @@ namespace Project23Client
         public event HostConnectionHandler HostConnectionEvent;
         public event HostConnectionHandler HostDisconnectionEvent;
 
+        public double Time
+        {
+            get { return lastUpdateTime; }
+        }
+
         Client client;
         bool connected = false;
 
@@ -50,11 +55,51 @@ namespace Project23Client
 
         MessageMapper messageMapper = new MessageMapper();
 
+        double serverTimeOffset = 0;
         double lastUpdateTime = -1;
+        Stopwatch stopwatch = new Stopwatch();
+
+        bool haveSyncedTime = false;
+        bool gotAllowSpawn = false;
+
+        UInt64 lastPing = 0;
+        double lastPingTime = -1;
+        Dictionary<UInt64, double> OutStandingPings = new Dictionary<UInt64, double>();
+
+        List<double> latencyList = new List<double>();
+
+        double averageLatency = -1;
+        double jitter = 0;
+        double packetloss = 0;
+        public static int LatencySamples = 5;
+        public static double PingTime = 60;
+
+        public double AverageLatency
+        {
+            get { return averageLatency; }
+        }
+
+        public double LastLatency
+        {
+            get { if (latencyList.Count == 0) return 0; else return latencyList[latencyList.Count-1]; }
+        }
+
+        public double Jitter
+        {
+            get {return jitter;}
+        }
+
+        public double Packetloss
+        {
+            get { return packetloss; }
+        }
 
         public GameClient ( string address, int port )
         {
+            gotAllowSpawn = false;
+            stopwatch.Start();
             InitMessageHandlers();
+            lastPingTime = RawTime() + PingTime * 100;
             client = new Client(address, port);
         }
 
@@ -63,12 +108,15 @@ namespace Project23Client
             client.Kill();
         }
 
-        public bool Update (double time)
+        public bool Update ()
         {
-            lastUpdateTime = time;
+            lastUpdateTime = Now();
 
-            if (!connected && client.IsConnected && HostConnectionEvent != null)
-                HostConnectionEvent(this, "Connected");
+            if (!connected && client.IsConnected)
+            {
+                if (HostConnectionEvent != null)
+                    HostConnectionEvent(this, "Connected");
+            }
 
             if (connected)
             {
@@ -94,11 +142,24 @@ namespace Project23Client
                     buffer = client.GetPentMessage();
                 }
 
-                sim.Update(time);
+                sim.Update(lastUpdateTime);
+
+                if (lastPingTime + PingTime < RawTime())
+                    SendPing();
             }
             else
                 connected = client.IsConnected;
             return true;
+        }
+
+        public double RawTime ()
+        {
+            return stopwatch.ElapsedMilliseconds * 0.001;
+        }
+
+        public double Now()
+        {
+            return RawTime() + serverTimeOffset;
         }
 
         public void RequestSpawn ()
@@ -109,6 +170,26 @@ namespace Project23Client
             requestedSpawn = true;
             RequestSpawn msg = new RequestSpawn();
             client.SendMessage(msg.Pack(), msg.Channel());
+        }
+
+        public void SendClockUpdate ( )
+        {
+            WhatTimeIsIt wti = new WhatTimeIsIt();
+            lastPing++;
+            wti.ID = lastPing;
+            OutStandingPings.Add(lastPing,RawTime());
+            client.SendMessage(wti.Pack(), wti.Channel());
+            lastPingTime = RawTime();
+        }
+
+        public void SendPing()
+        {
+            Ping p = new Ping();
+            lastPing++;
+            p.ID = lastPing;
+            OutStandingPings.Add(lastPing, RawTime());
+            client.SendMessage(p.Pack(), p.Channel());
+            lastPingTime = RawTime();
         }
 
         public void SendChat ( string channel, string message )

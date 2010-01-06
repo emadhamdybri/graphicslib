@@ -19,6 +19,7 @@ namespace Project23
         public LoginForm.Gender gender = LoginForm.Gender.None;
         public int AvatarIndex = -1;
         public string UserName = "Pilot";
+        public string LastHost = string.Empty;
 
         public KeyManager Keys = new KeyManager();
 
@@ -36,12 +37,12 @@ namespace Project23
             {
                 stream.Close();
                 file.Delete();
-                settings.Keys.SetDefaults();
                 s = settings;
             }
             s.fileLoc = file;
 
-            s.Keys.Deserialize();
+            s.Keys.Deserialize(); // build up the keymap
+            s.Keys.SetDefaults(); // now check the keymap and make sure that it has the defaults
             return s;
         }
 

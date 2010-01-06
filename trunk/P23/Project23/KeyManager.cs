@@ -53,20 +53,26 @@ namespace Project23
 
         public void SetDefaults ()
         {
-            KeyEventMap.Add(KeyEvent.Menu, Key.Escape);
-            KeyEventMap.Add(KeyEvent.Accept, Key.End);
-            KeyEventMap.Add(KeyEvent.Forward, Key.W);
-            KeyEventMap.Add(KeyEvent.Backward, Key.S);
-            KeyEventMap.Add(KeyEvent.Left, Key.A);
-            KeyEventMap.Add(KeyEvent.Right, Key.D);
-            KeyEventMap.Add(KeyEvent.Activate, Key.Tab);
-            KeyEventMap.Add(KeyEvent.Chat1, Key.F1);
-            KeyEventMap.Add(KeyEvent.Chat2, Key.F2);
-            KeyEventMap.Add(KeyEvent.Chat3, Key.F3);
-            KeyEventMap.Add(KeyEvent.Chat4, Key.F4);
-            KeyEventMap.Add(KeyEvent.StartChat, Key.Enter);
-            KeyEventMap.Add(KeyEvent.PlayerList, Key.Tilde);
+            AddKeyConditional(KeyEvent.Menu, Key.Escape);
+            AddKeyConditional(KeyEvent.Accept, Key.End);
+            AddKeyConditional(KeyEvent.Forward, Key.W);
+            AddKeyConditional(KeyEvent.Backward, Key.S);
+            AddKeyConditional(KeyEvent.Left, Key.A);
+            AddKeyConditional(KeyEvent.Right, Key.D);
+            AddKeyConditional(KeyEvent.Activate, Key.Tab);
+            AddKeyConditional(KeyEvent.Chat1, Key.F1);
+            AddKeyConditional(KeyEvent.Chat2, Key.F2);
+            AddKeyConditional(KeyEvent.Chat3, Key.F3);
+            AddKeyConditional(KeyEvent.Chat4, Key.F4);
+            AddKeyConditional(KeyEvent.StartChat, Key.Enter);
+            AddKeyConditional(KeyEvent.PlayerList, Key.Tilde);
             Serialize();
+        }
+
+        protected void AddKeyConditional ( KeyEvent e, Key key )
+        {
+            if (!KeyEventMap.ContainsKey(e))
+                KeyEventMap.Add(e, key);
         }
 
         public void Deserialize ()

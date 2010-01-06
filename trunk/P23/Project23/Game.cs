@@ -60,8 +60,10 @@ namespace Project23
             get { if (Client == null) return false; return Client.ConnectedToHost; }
         }
 
-        public Game( ConnectionInfo c) : base (1024,550,OpenTK.Graphics.GraphicsMode.Default,"Project24",GameWindowFlags.Default)
+        public Game( ConnectionInfo c) : base (1024,550,OpenTK.Graphics.GraphicsMode.Default,"Project23",GameWindowFlags.Default)
         {
+            this.Icon = Resource1.Project23;
+
             connectionInfo = c;
             keyHandler = new KeyboardHandler(this);
             keys = Settings.settings.Keys;
@@ -69,7 +71,7 @@ namespace Project23
 
             VSync = VSyncMode.Off;
             Chat.CurrentChannel = ChatLog.GeneralChatChannel;
-            Chat.AddMessage(ChatLog.GeneralChatChannel,string.Empty, "Project24 Client Startup");
+            Chat.AddMessage(ChatLog.GeneralChatChannel,string.Empty, "Project23 Client Startup");
         }
 
         protected void ClientServerVersion ( object sender, int version )
@@ -282,16 +284,16 @@ namespace Project23
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             if (server != null)
-                server.Update(e.Time);
+                server.Update();
 
             CheckInput();
 
-            Client.Update(e.Time);
+            Client.Update();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
-            visual.Render(e.Time);
+            visual.Render(Client.Time, e.Time);
             SwapBuffers();
         }
     }

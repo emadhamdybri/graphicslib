@@ -14,6 +14,8 @@ namespace Project23Client
 
         protected void InitMessageHandlers()
         {
+            messageHandlers.Add(typeof(Ping), new MessageHandler(PingHandler));
+            messageHandlers.Add(typeof(Pong), new MessageHandler(PongHandler));
             messageHandlers.Add(typeof(Hail), new MessageHandler(HailHandler));
             messageHandlers.Add(typeof(ServerVersInfo), new MessageHandler(ServerVersHandler));
             messageHandlers.Add(typeof(PlayerInfo), new MessageHandler(PlayerInfoHandler));
@@ -23,6 +25,71 @@ namespace Project23Client
             messageHandlers.Add(typeof(ChatMessage), new MessageHandler(ChatMessageHandler));
             messageHandlers.Add(typeof(AllowSpawn), new MessageHandler(AllowSpawnHandler));
             messageHandlers.Add(typeof(PlayerSpawn), new MessageHandler(PlayerSpawnHandler));
+            messageHandlers.Add(typeof(TheTimeIsNow), new MessageHandler(TheTimeIsNowHandler));
+        }
+
+        protected void PingHandler(MessageClass message)
+        {
+            Ping msg = message as Ping;
+            if (msg == null)
+                return;
+
+            Pong pong = new Pong();
+            pong.ID = msg.ID;
+            client.SendMessage(pong.Pack(), pong.Channel());
+        }
+
+        protected void AddLatencyUpdate ( double latency )
+        {
+            if (latency < 0)
+                return; // can't go back in time
+
+            latencyList.Add(latency);
+            if (latencyList.Count > LatencySamples)
+                latencyList.RemoveRange(0, latencyList.Count - LatencySamples);
+
+            double min = latency;
+            double max = latency;
+            double sum = 0;
+
+            foreach(double d in latencyList)
+            {
+                sum += d;
+                if (d > max)
+                    max = d;
+                if (d < min)
+                    min = d;
+            }
+
+            averageLatency = sum / latencyList.Count;
+            jitter = (max - min)/2;
+
+            double t = RawTime() - (averageLatency * 4);
+
+            int lostPings = 0;
+
+            foreach(KeyValuePair<UInt64,double> ping in OutStandingPings)
+            {
+                if (ping.Value < t)
+                    lostPings++;
+            }
+
+            packetloss = (double)lostPings / (double)lastPing;
+            packetloss *= 100;
+        }
+
+        protected void PongHandler(MessageClass message)
+        {
+            Pong msg = message as Pong;
+            if (msg == null)
+                return;
+
+            if (!OutStandingPings.ContainsKey(msg.ID))
+                return;
+
+            double delta = RawTime() - OutStandingPings[msg.ID];
+            OutStandingPings.Remove(msg.ID);
+            AddLatencyUpdate(delta);
         }
 
         protected void HailHandler(MessageClass message)
@@ -30,6 +97,8 @@ namespace Project23Client
             Hail hail = message as Hail;
             if (hail == null)
                 return;
+
+            SendClockUpdate();
 
             Login login = new Login();
             login.username = string.Empty;
@@ -85,6 +154,7 @@ namespace Project23Client
                 GetJoinInfo(ref join.Callsign, ref join.Pilot);
 
             client.SendMessage(join.Pack(), join.Channel());
+            SendPing();
         }
 
         protected void PlayerJoinAcceptHandler ( MessageClass message )
@@ -105,6 +175,7 @@ namespace Project23Client
 
             player.Callsign = msg.Callsign;
             ThisPlayer = player;
+            SendPing();
         }
 
         protected void ChatMessageHandler ( MessageClass message )
@@ -117,16 +188,24 @@ namespace Project23Client
                 ChatReceivedEvent(this, msg.Channel, msg.From, msg.Message);
         }
 
+        protected void CallAllowSpawn ()
+        {
+            requestedSpawn = false;
+            ThisPlayer.Status = PlayerStatus.Despawned;
+            if (AllowSpawnEvent != null)
+                AllowSpawnEvent(this, ThisPlayer);
+        }
+
         protected void AllowSpawnHandler(MessageClass message)
         {
             AllowSpawn msg = message as AllowSpawn;
             if (msg == null)
                 return;
 
-            requestedSpawn = false;
-            ThisPlayer.Status = PlayerStatus.Despawned;
-            if (AllowSpawnEvent != null)
-                AllowSpawnEvent(this, ThisPlayer);
+            gotAllowSpawn = true;
+
+            if (haveSyncedTime)
+                CallAllowSpawn();
         }    
     
         protected void PlayerSpawnHandler ( MessageClass message )
@@ -142,6 +221,35 @@ namespace Project23Client
             player.Status = PlayerStatus.Alive;
             player.Update(player.LastUpdateTime);
             sim.SetPlayerStatus(player, PlayerStatus.Alive,lastUpdateTime);
+            SendPing();
         }
+
+        protected void TheTimeIsNowHandler(MessageClass message)
+        {
+            TheTimeIsNow msg = message as TheTimeIsNow;
+            if (msg == null)
+                return;
+
+            if (!OutStandingPings.ContainsKey(msg.ID))
+            {
+                SendClockUpdate();
+                return; // something bad happened, fire off another one just to be safe
+            }
+
+            double timeSent = OutStandingPings[msg.ID];
+            double delta = RawTime()-timeSent;
+            OutStandingPings.Remove(msg.ID);
+
+            double serverTimeNow = msg.Time + delta*0.5;
+
+            serverTimeOffset = serverTimeNow - RawTime();
+
+            AddLatencyUpdate(delta);
+
+            haveSyncedTime = true;
+
+            if (ThisPlayer != null && ThisPlayer.Status == PlayerStatus.Connecting && gotAllowSpawn)
+                CallAllowSpawn(); // if we haven't synced clock yet, then do it
+        }    
     }
 }

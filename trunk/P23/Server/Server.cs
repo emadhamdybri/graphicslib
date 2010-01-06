@@ -8,6 +8,7 @@ using Simulation;
 using Lidgren.Network;
 using System.Threading;
 using System.Reflection;
+using System.Diagnostics;
 
 using Messages;
 
@@ -49,8 +50,12 @@ namespace Project23Server
 
         double lastUpdateTime = -1;
 
+        Stopwatch timer;
+
         public Server ( int port )
         {
+            timer = new Stopwatch();
+            timer.Start();
             host = new Host(port);
             sim.Init();
 
@@ -106,11 +111,16 @@ namespace Project23Server
                 if (client.Player != null)
                     sim.RemovePlayer(client.Player);
             }
-        }        
-
-        public void Update ( double time )
+        }     
+   
+        protected double Now ()
         {
-            lastUpdateTime = time;
+            return timer.ElapsedMilliseconds * 0.001;
+        }
+
+        public void Update ()
+        {
+            lastUpdateTime = Now();
 
             NetConnection newConnect = host.GetPentConnection();
             while (newConnect != null)
@@ -135,7 +145,7 @@ namespace Project23Server
                 msg = host.GetPentMessage();
             }
 
-            sim.Update(time);
+            sim.Update(lastUpdateTime);
         }
 
         public String PopHostMessage ( )

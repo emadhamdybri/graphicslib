@@ -26,6 +26,8 @@ namespace Project23
         Font PlayerListHeaderFont = new Font(FontFamily.GenericSansSerif, 12);
         Font PlayerListFont = new Font(FontFamily.GenericSerif, 8);
 
+        Font LagstatsFont = new Font(FontFamily.GenericMonospace, 6);
+
         Game game;
 
         Texture Pilot;
@@ -36,6 +38,11 @@ namespace Project23
         public static float ChatLineHeight = 18;
         public static float ChatLogLineHeight = 12;
         public static float ChatStartLineOffset = 18;
+
+        public static float PlayerInfoHeight = 24;
+        public static float PlayerInfoBorder = 5;
+        public static float PlayerInfoPicture = 128;
+        public static float PlayerInfoNameHegith = 32;
 
         public static float PlayerListWidth = 150;
         public static float PlayerListFlySpeed = 250;
@@ -199,46 +206,63 @@ namespace Project23
             }
         }
 
+        protected void DrawLagstats()
+        {
+            float TotalHeight = PlayerInfoPicture + PlayerInfoBorder;
+            printer.Begin();
+            string lagLine = "L:" + (game.Client.LastLatency * 1000).ToString("F2") + "ms AL:" + (game.Client.AverageLatency * 1000).ToString("F2") + "ms J:" + (game.Client.Jitter * 1000).ToString("F2") + "ms PL:" + game.Client.Packetloss.ToString("F2") + "%";
+
+            if (false)
+                lagLine += " N:" + game.Client.Now().ToString("F2") + " S:" + game.Client.RawTime().ToString("F2");
+            PrintText(lagLine, LagstatsFont, Color.White, 0, game.Height - TotalHeight, PlayerInfoPicture + PlayerInfoBorder + PlayerInfoBorder, PlayerInfoHeight + 10);
+            printer.End();
+        }
+
         protected void DrawInfoWidget()
         {
             if (Pilot == null)
                 return;
 
+            float TotalHeight = PlayerInfoPicture + PlayerInfoHeight + PlayerInfoBorder + PlayerInfoBorder;
+
             GL.Color4(0,0,0,0.25f);
             GL.PushMatrix();
-            GL.Translate(0, game.Height - 136, -0.5f);
+            GL.Translate(0, game.Height - TotalHeight, -0.5f);
+
+
+            float pictureBoxWidth = PlayerInfoPicture + PlayerInfoBorder + PlayerInfoBorder;
 
             GL.Disable(EnableCap.Texture2D);
             GL.Begin(BeginMode.Quads);
                 GL.Vertex2(0, 0);
-                GL.Vertex2(136, 0);
-                GL.Vertex2(136, 136);
-                GL.Vertex2(0, 136);
+                GL.Vertex2(pictureBoxWidth, 0);
+                GL.Vertex2(pictureBoxWidth, TotalHeight);
+                GL.Vertex2(0, TotalHeight);
 
-                GL.Vertex2(136, 100);
-                GL.Vertex2(136 + NameWidth +10, 100);
-                GL.Vertex2(136+NameWidth+10, 136);
-                GL.Vertex2(136, 136);
+                GL.Vertex2(pictureBoxWidth, TotalHeight - PlayerInfoNameHegith);
+                GL.Vertex2(pictureBoxWidth + NameWidth + 10, TotalHeight - PlayerInfoNameHegith);
+                GL.Vertex2(pictureBoxWidth + NameWidth + 10, TotalHeight);
+                GL.Vertex2(pictureBoxWidth, TotalHeight);
 
             GL.End();
 
             GL.Enable(EnableCap.Texture2D);
-            GL.Translate(3, 3, 0.1f);
+            GL.Translate(PlayerInfoBorder, PlayerInfoHeight + PlayerInfoBorder, 0.1f);
             GL.Color4(Color.White);
-            Pilot.Draw(0.5f);
+            Pilot.DrawAtWidth(PlayerInfoPicture);
             GL.PopMatrix();
 
             printer.Begin();
-            PrintText(game.Client.ThisPlayer.Callsign, PlayerFont, Color.White, 136, game.Height, 400, 0);
+            PrintText(game.Client.ThisPlayer.Callsign, PlayerFont, Color.White, pictureBoxWidth, game.Height, NameWidth + 20, 0);
             printer.End();
-        }
 
+            DrawLagstats();
+        }
 
         public void SetChatMode(bool mode)
         {
             ChatMode = mode;
         }
-
 
         public void ActivatePlayerList (bool val )
         {
