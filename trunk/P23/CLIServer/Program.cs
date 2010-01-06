@@ -16,12 +16,14 @@ namespace CLIServer
             if (args.Length > 0)
                 port = int.Parse(args[0]);
 
+            int sleepTime = 10;
+
             Server server = new Server(port);
 
             while (true)
             {
-                server.Update();
-                Thread.Sleep(10);
+                server.Service();
+                Thread.Sleep(sleepTime);
             }
         }
     }
