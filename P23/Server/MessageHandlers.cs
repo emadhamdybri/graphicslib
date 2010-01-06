@@ -25,6 +25,8 @@ namespace Project23Server
             messageHandlers.Add(typeof(PlayerJoin), new MessageHandler(PlayerJoinHandler));
             messageHandlers.Add(typeof(ChatMessage), new MessageHandler(ChatMessageHandler));
             messageHandlers.Add(typeof(RequestSpawn), new MessageHandler(RequestSpawnHandler));
+            messageHandlers.Add(typeof(Ping), new MessageHandler(PingHandler));
+            messageHandlers.Add(typeof(WhatTimeIsIt), new MessageHandler(WhatTimeIsItHandler));
         }
 
         protected void ProcessMessage(Message msg)
@@ -39,6 +41,17 @@ namespace Project23Server
 
             if (messageHandlers.ContainsKey(message.GetType()))
                 messageHandlers[message.GetType()](client, message);
+        }
+
+        protected void PingHandler(Client client, MessageClass message)
+        {
+            Ping msg = message as Ping;
+            if (msg == null)
+                return;
+
+            Pong pong = new Pong();
+            pong.ID = msg.ID;
+            host.SendMessage(client.Connection, pong.Pack(), pong.Channel());
         }
 
         protected void LoginHandler(Client client, MessageClass message)
@@ -112,6 +125,18 @@ namespace Project23Server
                 return;
 
             sim.SpawnPlayer(client.Player, lastUpdateTime);
+        }
+
+        protected void WhatTimeIsItHandler(Client client, MessageClass message)
+        {
+            WhatTimeIsIt msg = message as WhatTimeIsIt;
+            if (msg == null)
+                return;
+
+            TheTimeIsNow time = new TheTimeIsNow();
+            time.ID = msg.ID;
+            time.Time = Now();
+            host.SendMessage(client.Connection, time.Pack(), time.Channel());
         }
     }
 }

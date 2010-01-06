@@ -143,20 +143,91 @@ namespace Messages
             return state;
         }
 
+        public static int Ping = 1;
+        public static int Pong = 2;
+
         public static int Hail = 10;
         public static int Disconnect = 11;
+
         public static int Login = 20;
         public static int ServerVersInfo = 30;
+
         public static int PlayerInfo = 40;
         public static int PlayerListDone = 41;
         public static int PlayerJoin = 42;
         public static int PlayerJoinAccept = 43;
+
         public static int RequestMapInfo = 50;
         public static int MapInfo = 51;
+
         public static int ChatMessage = 60;
+
         public static int AllowSpawn = 70;
         public static int RequestSpawn = 71;
         public static int PlayerSpawn = 72;
+
+        public static int WhatTimeIsIt = 80;
+        public static int TheTimeIsNow = 81;
+    }
+
+    public class Ping : MessageClass
+    {
+        public UInt64 ID = 0;
+        public Ping()
+        {
+            Name = MessageClass.Ping;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(ID);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            ID = buffer.ReadUInt64();
+            return true;
+        }
+
+        public override NetChannel Channel()
+        {
+            return NetChannel.Unreliable;
+        }
+    }
+
+    public class Pong : MessageClass
+    {
+        public UInt64 ID = 0;
+        public Pong()
+        {
+            Name = MessageClass.Pong;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(ID);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            ID = buffer.ReadUInt64();
+            return true;
+        }
+
+        public override NetChannel Channel()
+        {
+            return NetChannel.Unreliable;
+        }
     }
 
     public class Hail : MessageClass
@@ -508,6 +579,71 @@ namespace Messages
             PlayerState = UnpackObjectState(ref buffer);
             Time = buffer.ReadDouble();
             return true;
+        }
+    }
+
+    public class WhatTimeIsIt : MessageClass
+    {
+        public UInt64 ID = 0;
+
+        public WhatTimeIsIt()
+        {
+            Name = MessageClass.WhatTimeIsIt;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(ID);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            ID = buffer.ReadUInt64();
+            return true;
+        }
+
+        public override NetChannel Channel()
+        {
+            return NetChannel.Unreliable;
+        }
+    }
+
+    public class TheTimeIsNow : MessageClass
+    {
+        public double Time = -1;
+        public UInt64 ID = 0;
+
+        public TheTimeIsNow()
+        {
+            Name = MessageClass.TheTimeIsNow;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(ID);
+            buffer.Write(Time);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            ID = buffer.ReadUInt64();
+            Time = buffer.ReadDouble();
+            return true;
+        }
+
+        public override NetChannel Channel()
+        {
+            return NetChannel.Unreliable;
         }
     }
 }

@@ -19,11 +19,13 @@ namespace Project23
         }
 
         public string UserName = string.Empty;
-        public bool play = false;
+        public bool Play = false;
         public bool selfServ = false;
 
         public int AvatarIndex = -1;
         public Gender AvatarGender = Gender.None;
+
+        public string Hostname = string.Empty;
 
         public LoginForm()
         {
@@ -46,10 +48,8 @@ namespace Project23
             if (prefsFile.Exists)
                 Settings.settings = Settings.Read(prefsFile);
             else
-            {
                 Settings.settings.fileLoc = prefsFile;
-                Settings.settings.Keys.SetDefaults();
-            }
+                
             Settings.settings.Write();
         }
 
@@ -58,6 +58,8 @@ namespace Project23
             LoadSettings();
             SetupIndexList();
 
+            Hostname = Settings.settings.LastHost;
+            Host.Text = Hostname;
             AvatarIndex = Settings.settings.AvatarIndex;
             Username.Text = Settings.settings.UserName;
             AvatarGender = Settings.settings.gender;
@@ -74,16 +76,24 @@ namespace Project23
             SetAvatar();
         }
 
+        private void SaveDlogData ()
+        {
+            Hostname = Host.Text;
+            UserName = Username.Text;
+           
+            Settings.settings.AvatarIndex = AvatarIndex;
+            Settings.settings.UserName = UserName;
+            Settings.settings.gender = AvatarGender;
+            Settings.settings.LastHost = Hostname;
+            Settings.settings.Write();
+          
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            Settings.settings.AvatarIndex = AvatarIndex;
-            Settings.settings.UserName = Username.Text;
-            Settings.settings.gender = AvatarGender;
-            Settings.settings.Write();
-
-            UserName = Username.Text;
+            SaveDlogData();
             selfServ = true;
-            play = true;
+            Play = true;
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
@@ -145,6 +155,20 @@ namespace Project23
         protected void SetAvatar ( )
         {
             AvatarPixture.Image = new Bitmap(ResourceManager.FindFile("pilots/" + GetAvatarName() + ".png"));
+        }
+
+        private void JoinHost_Click(object sender, EventArgs e)
+        {
+            if (Host.Text == string.Empty)
+                button1_Click(sender, e);
+            else
+            {
+                SaveDlogData();
+                selfServ = false;
+                Play = true;
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
         }
     }
 }

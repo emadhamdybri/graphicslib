@@ -171,7 +171,7 @@ namespace Project23
             }
         }
 
-        public void Render ( double time)
+        public void Render ( double time, double delta )
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -183,8 +183,8 @@ namespace Project23
             camera.Execute();
             GL.Light(LightName.Light0, LightParameter.Position, new Vector4(10, 15, 10, 1.0f));
 
-            RenderWorld(time);
-            RenderPlayers(time);
+            RenderWorld(delta);
+            RenderPlayers(delta);
 
             GL.PopMatrix();
 
@@ -192,7 +192,7 @@ namespace Project23
             GL.Disable(EnableCap.Lighting);
 
             camera.SetOrthographic();
-            Hud.Render(time);
+            Hud.Render(delta);
             camera.SetPersective();
             GL.PopMatrix();
 
