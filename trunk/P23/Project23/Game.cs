@@ -90,6 +90,7 @@ namespace Project23
             visual.Setup();
             visual.Resize(Width, Height);
             Chat.AddMessage(ChatLog.GeneralChatChannel, string.Empty, "Graphics Loaded");
+            visual.Hud.SetStatusText("Connecting to host " + connectionInfo.Hostname + "(" + connectionInfo.Port.ToString() + ")...");
         }
 
         protected override void OnUnload(EventArgs e)
@@ -112,16 +113,52 @@ namespace Project23
 
             Client = new GameClient(connectionInfo.Hostname, connectionInfo.Port);
             Client.GetAuthentication = new AuthenticationCallback(GetAuth);
+            Client.GetJoinInfo = new JoinInfoCallback(GetJoin);
+            Client.HostConnectionEvent += new HostConnectionHandler(Client_HostConnectionEvent);
 
             Client.ServerVersionEvent += new ServerVersionHandler(ClientServerVersion);
             Client.sim.PlayerJoined += new PlayerJoinedHandler(PlayerJoined);
-            Client.LocalPlayerJoinedEvent += new PlayerEventHandler(LocalPlayerJoined);
+            Client.sim.PlayerStatusChanged += new PlayerStatusChangeHandler(sim_PlayerStatusChanged);
 
-            Client.GetJoinInfo = new JoinInfoCallback(GetJoin);
-
+            Client.AllowSpawnEvent += new PlayerEventHandler(Client_AllowSpawnEvent);
             Client.ChatReceivedEvent += new ChatEventHandler(Client_ChatReceivedEvent);
 
             Mouse.WheelChanged += new EventHandler<MouseWheelEventArgs>(Mouse_WheelChanged);
+            Mouse.ButtonDown += new EventHandler<MouseButtonEventArgs>(Mouse_ButtonDown);
+            Mouse.Move += new EventHandler<MouseMoveEventArgs>(Mouse_Move);
+
+        }
+
+        void Mouse_Move(object sender, MouseMoveEventArgs e)
+        {
+        }
+
+        void Mouse_ButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (Client.ThisPlayer != null && Client.ThisPlayer.Status == PlayerStatus.Despawned)
+            {
+                visual.Hud.SetStatusText(string.Empty);
+                Client.RequestSpawn();
+            }
+        }
+
+        void Client_AllowSpawnEvent(object sender, Player player)
+        {
+            player.Status = PlayerStatus.Despawned;
+            visual.Hud.SetStatusText("Click to Spawn");
+        }
+
+        void sim_PlayerStatusChanged(object sender, PlayerEventArgs args)
+        {
+            if (args.player.Status == PlayerStatus.Alive)
+            {
+                // do a spawn event for the graphical dealy
+            }
+        }
+
+        void Client_HostConnectionEvent(object sender, string error)
+        {
+            visual.Hud.SetStatusText("Connected to host...");
         }
 
         void Mouse_WheelChanged(object sender, MouseWheelEventArgs e)
@@ -134,11 +171,14 @@ namespace Project23
             Chat.AddMessage(channel, from, message);
         }
 
-        protected void LocalPlayerJoined ( object sender, Player player )
+        protected void ClientPlayerJoined ( object sender, Player player )
         {
-            // trigger something to say we can spawn maybe?
-            connectionInfo.Callsign = player.Callsign;
-            Chat.AddMessage(ChatLog.CombatChatChannel,"Simulation", "Sim Initialized");
+            if (player == Client.ThisPlayer)
+            {
+                connectionInfo.Callsign = player.Callsign;
+                Chat.AddMessage(ChatLog.CombatChatChannel,"Simulation", "Sim Initialized");
+                visual.Hud.SetStatusText("Joined game...");
+            }
         }
 
         protected void GetJoin(ref string callsign, ref string pilot)

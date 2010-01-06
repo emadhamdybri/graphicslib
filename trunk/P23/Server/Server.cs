@@ -47,6 +47,8 @@ namespace Project23Server
 
         public List<String> PendingHostMessages = new List<String>();
 
+        double lastUpdateTime = -1;
+
         public Server ( int port )
         {
             host = new Host(port);
@@ -58,19 +60,28 @@ namespace Project23Server
 
             sim.PlayerJoined += new PlayerJoinedHandler(sim_PlayerJoined);
             sim.PlayerRemoved += new PlayerRemovedHandler(sim_PlayerRemoved);
+            sim.PlayerStatusChanged += new PlayerStatusChangeHandler(sim_PlayerStatusChanged);
 
             InitMessageHandlers();
         }
 
-        public void Kill ( )
+        public void Kill()
         {
             host.Kill();
+        }
+
+        void sim_PlayerStatusChanged(object sender, PlayerEventArgs args)
+        {
+            if (args.player.Status == PlayerStatus.Alive)
+            {
+                PlayerSpawn spawn = new PlayerSpawn(args.player);
+                host.Broadcast(spawn.Pack(), spawn.Channel());
+            }
         }
 
         protected void sim_PlayerJoined ( object sender, PlayerEventArgs args )
         {           
             PlayerInfo info = new PlayerInfo(args.player);
-
             host.Broadcast(info.Pack(), info.Channel());
         }
 
@@ -99,6 +110,8 @@ namespace Project23Server
 
         public void Update ( double time )
         {
+            lastUpdateTime = time;
+
             NetConnection newConnect = host.GetPentConnection();
             while (newConnect != null)
             {

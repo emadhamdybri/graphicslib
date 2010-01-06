@@ -84,7 +84,7 @@ namespace Project23
         {
             GL.PushMatrix();
             GL.Translate(player.CurrentState.Position);
-            GL.Rotate(player.CurrentState.Rotation, 0, 0, 1f);
+//            GL.Rotate(player.CurrentState.Rotation, 0, 0, 1f);
 
             float speed = player.CurrentState.Movement.Length;
             float factor = 0;

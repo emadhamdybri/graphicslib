@@ -21,6 +21,8 @@ namespace Project23Client
             messageHandlers.Add(typeof(MapInfo), new MessageHandler(MapInfoHandler));
             messageHandlers.Add(typeof(PlayerJoinAccept), new MessageHandler(PlayerJoinAcceptHandler));
             messageHandlers.Add(typeof(ChatMessage), new MessageHandler(ChatMessageHandler));
+            messageHandlers.Add(typeof(AllowSpawn), new MessageHandler(AllowSpawnHandler));
+            messageHandlers.Add(typeof(PlayerSpawn), new MessageHandler(PlayerSpawnHandler));
         }
 
         protected void HailHandler(MessageClass message)
@@ -62,12 +64,6 @@ namespace Project23Client
             player.Status = info.Status;
 
             sim.AddPlayer(player);
-
-            if (ThisPlayer != null && ThisPlayer.ID == info.PlayerID)// we already got the join accept so fire it off
-            {
-                if (LocalPlayerJoinedEvent != null)
-                    LocalPlayerJoinedEvent(this, ThisPlayer);
-            }
         }
 
         protected void MapInfoHandler ( MessageClass message )
@@ -109,12 +105,6 @@ namespace Project23Client
 
             player.Callsign = msg.Callsign;
             ThisPlayer = player;
-
-            if (playerExisted) // we have not gotten our info yet
-            {
-                if (LocalPlayerJoinedEvent != null)
-                    LocalPlayerJoinedEvent(this, ThisPlayer);
-            }
         }
 
         protected void ChatMessageHandler ( MessageClass message )
@@ -125,6 +115,33 @@ namespace Project23Client
 
             if (ChatReceivedEvent != null)
                 ChatReceivedEvent(this, msg.Channel, msg.From, msg.Message);
+        }
+
+        protected void AllowSpawnHandler(MessageClass message)
+        {
+            AllowSpawn msg = message as AllowSpawn;
+            if (msg == null)
+                return;
+
+            requestedSpawn = false;
+            ThisPlayer.Status = PlayerStatus.Despawned;
+            if (AllowSpawnEvent != null)
+                AllowSpawnEvent(this, ThisPlayer);
+        }    
+    
+        protected void PlayerSpawnHandler ( MessageClass message )
+        {
+            PlayerSpawn msg = message as PlayerSpawn;
+            if (msg == null)
+                return;
+
+            Player player = sim.FindPlayer(msg.PlayerID);
+
+            player.LastUpdateTime = msg.Time;
+            player.LastUpdateState = msg.PlayerState;
+            player.Status = PlayerStatus.Alive;
+            player.Update(player.LastUpdateTime);
+            sim.SetPlayerStatus(player, PlayerStatus.Alive,lastUpdateTime);
         }
     }
 }

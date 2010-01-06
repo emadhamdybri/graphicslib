@@ -16,7 +16,7 @@ namespace Project23
     class HudRenderer
     {
         OpenTK.Graphics.TextPrinter printer = new OpenTK.Graphics.TextPrinter();
-        Font BigFont = new Font(FontFamily.GenericSansSerif,32);
+        Font StatusFont = new Font(FontFamily.GenericSansSerif,24);
 
         Font ChatHeaderFont = new Font(FontFamily.GenericSansSerif, 12);
         Font ChatFont = new Font(FontFamily.GenericSerif, 8);
@@ -48,6 +48,7 @@ namespace Project23
 
         float NameWidth = 0;
 
+        string statusText = string.Empty;
 
         enum PlayerListStatus
         {
@@ -63,15 +64,9 @@ namespace Project23
             game = g;
         }
 
-        protected void ConnectionScreen ()
+        public void SetStatusText ( string text )
         {
-            printer.Begin();
-            if (!game.Connected)
-                printer.Print("Connecting to host...", BigFont, Color.White, new RectangleF(0, game.Height / 1.75f, game.Width, 0), OpenTK.Graphics.TextPrinterOptions.Default, OpenTK.Graphics.TextAlignment.Center);
-            else
-                printer.Print("Joining Game", BigFont, Color.White, new RectangleF(0, game.Height / 1.75f, game.Width, 0), OpenTK.Graphics.TextPrinterOptions.Default, OpenTK.Graphics.TextAlignment.Center);
-              
-            printer.End();
+            statusText = text;
         }
 
         protected void PrintText ( string text, Font font, Color color, float x, float y, float w, float h )
@@ -341,6 +336,30 @@ namespace Project23
             }
         }
 
+        void DrawStatusText ()
+        {
+            if (statusText == string.Empty)
+                return;
+
+            GL.PushMatrix();
+            GL.Disable(EnableCap.Texture2D);
+            GL.Translate(0, 0, -0.25f);
+            GL.Color4(0, 0, 0, 0.5f);
+
+            GL.Begin(BeginMode.Quads);
+                GL.Vertex2(50, game.Height/2-24);
+                GL.Vertex2(game.Width - 50, game.Height / 2 - 24);
+                GL.Vertex2(game.Width - 50, game.Height / 2 + 24);
+                GL.Vertex2(50, game.Height / 2 + 24);
+            GL.End();
+
+            printer.Begin();
+            printer.Print(statusText, StatusFont, Color.White, new RectangleF(0, game.Height / 2 - 24, game.Width - 10, 48), OpenTK.Graphics.TextPrinterOptions.Default, OpenTK.Graphics.TextAlignment.Center);
+
+            printer.End();
+            GL.PopMatrix();
+        }
+
         protected void GameHud(double time)
         {
             DrawChatWindow();
@@ -354,9 +373,9 @@ namespace Project23
         {
             GL.Disable(EnableCap.Lighting);
 
-            if (!game.Joined)
-                ConnectionScreen();
-            else
+            DrawStatusText();
+
+            if (game.Joined)
                 GameHud(time);
         }
     }

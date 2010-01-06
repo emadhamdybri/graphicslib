@@ -76,11 +76,16 @@ namespace Project23
 
             Hud = new HudRenderer(game);
 
-            game.Client.LocalPlayerJoinedEvent += new PlayerEventHandler(LocalPlayerJoined);
             game.Client.sim.PlayerJoined += new PlayerJoinedHandler(sim_PlayerJoined);
             game.Client.sim.PlayerRemoved += new PlayerRemovedHandler(sim_PlayerRemoved);
+            game.Client.AllowSpawnEvent += new PlayerEventHandler(Client_AllowSpawnEvent);
 
             shipModel1 = new PlayerModel(ResourceManager.FindDirectory("ships/1/"));
+        }
+
+        void Client_AllowSpawnEvent(object sender, Player player)
+        {
+            Hud.SetPlayerData(player);
         }
 
         void sim_PlayerRemoved(object sender, PlayerEventArgs args)
@@ -96,11 +101,6 @@ namespace Project23
             vis.player = args.player;
             vis.model = new PlayerModelInstance(shipModel1);
             playerVisuals.Add(args.player, vis);
-        }
-
-        public void LocalPlayerJoined ( object sender, Player player )
-        {
-            Hud.SetPlayerData(player);
         }
 
         public void ZoomView ( float dir )
@@ -163,8 +163,12 @@ namespace Project23
             GL.Color4(Color.White);
 
             GL.Enable(EnableCap.Texture2D);
-            if (game.Client.ThisPlayer != null)
-                playerVisuals[game.Client.ThisPlayer].model.Draw(time, game.Client.ThisPlayer,game.Client.sim);
+
+            foreach( KeyValuePair<Player,VisualPlayer> player in playerVisuals)
+            {
+                if (player.Key.Status == PlayerStatus.Alive)
+                    player.Value.model.Draw(time, player.Key, game.Client.sim);
+            }
         }
 
         public void Render ( double time)
@@ -174,7 +178,7 @@ namespace Project23
             GL.PushMatrix();
 
             if (game.Client.ThisPlayer != null)
-                camera.move(game.Client.ThisPlayer.CurrentState.Position);
+                camera.setPos(game.Client.ThisPlayer.CurrentState.Position.X, game.Client.ThisPlayer.CurrentState.Position.Y,camera.EyePoint.Z);
 
             camera.Execute();
             GL.Light(LightName.Light0, LightParameter.Position, new Vector4(10, 15, 10, 1.0f));

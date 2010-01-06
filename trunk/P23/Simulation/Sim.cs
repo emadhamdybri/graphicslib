@@ -50,6 +50,8 @@ namespace Simulation
     public delegate void PlayerJoinedHandler(object sender, PlayerEventArgs args);
     public delegate void PlayerRemovedHandler(object sender, PlayerEventArgs args);
     public delegate void PlayerUpdateHandler(object sender, PlayerUpdateEventArgs args);
+    public delegate void PlayerStatusChangeHandler(object sender, PlayerEventArgs args);
+
 
     public class Sim
     {
@@ -64,6 +66,8 @@ namespace Simulation
         public event PlayerJoinedHandler PlayerJoined;
         public event PlayerRemovedHandler PlayerRemoved;
         public event PlayerUpdateHandler PlayerUpdated;
+
+        public event PlayerStatusChangeHandler PlayerStatusChanged;
 
         public SimSettings Settings = new SimSettings();
 
@@ -135,6 +139,25 @@ namespace Simulation
             player.LastUpdateTime = time;
             if (PlayerUpdated != null)
                 PlayerUpdated(this, new PlayerUpdateEventArgs(player, state, time));
+        }
+
+        public void SpawnPlayer ( Player player, double time )
+        {
+            if (SpawnGenerator.SpawnPlayer(player, this))
+            {
+                player.Status = PlayerStatus.Alive;
+                player.LastUpdateTime = time;
+
+                if (PlayerStatusChanged != null)
+                    PlayerStatusChanged(this, new PlayerEventArgs(player, time));
+            }
+        }
+
+        public void SetPlayerStatus ( Player player, PlayerStatus status, double time)
+        {
+            player.Status = status;
+            if (PlayerStatusChanged != null)
+                PlayerStatusChanged(this, new PlayerEventArgs(player, time));
         }
 
         public void Update ( double time )
