@@ -109,6 +109,25 @@ namespace Drawables.Cameras
             spin = _spin;
         }
 
+        public void set(Vector3 pos)
+        {
+            position = pos;
+        }
+
+        public void setPos(float x, float y, float z)
+        {
+            position.X = x;
+            position.Y = y;
+            position.Z = z;
+        }
+
+        public void set(float _tilt, float _spin)
+        {
+            tilt = _tilt;
+            spin = _spin;
+        }
+
+
         public float HeadingAngle ()
         {
             return spin;
