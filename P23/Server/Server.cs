@@ -52,6 +52,10 @@ namespace Project23Server
 
         Stopwatch timer;
 
+        Thread ServerThread = null;
+
+        public int ServerSleepTime = 10;
+
         public Server ( int port )
         {
             timer = new Stopwatch();
@@ -70,9 +74,27 @@ namespace Project23Server
             InitMessageHandlers();
         }
 
+        public void Run ()
+        {
+            ServerThread = new Thread(new ThreadStart(PrivateRun));
+            ServerThread.Start();
+        }
+
+        protected void PrivateRun()
+        {
+            while(true)
+            {
+                Update();
+                Thread.Sleep(ServerSleepTime);
+            }
+        }
+
         public void Kill()
         {
+            if (ServerThread != null)
+                ServerThread.Abort();
             host.Kill();
+            ServerThread = null;
         }
 
         void sim_PlayerStatusChanged(object sender, PlayerEventArgs args)
@@ -118,7 +140,15 @@ namespace Project23Server
             return timer.ElapsedMilliseconds * 0.001;
         }
 
-        public void Update ()
+        public void Service ()
+        {
+            if (ServerThread != null)
+                return;
+
+            Update();
+        }
+
+        protected void Update ()
         {
             lastUpdateTime = Now();
 

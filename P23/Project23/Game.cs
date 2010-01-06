@@ -110,6 +110,7 @@ namespace Project23
                 connectionInfo.Hostname = "localhost";
                 connectionInfo.Port = new Random().Next(1000) + 2500;
                 server = new Server(connectionInfo.Port);
+                server.Run();
                 Chat.AddMessage(ChatLog.GeneralChatChannel, string.Empty, "Starting self-serv host on port " + connectionInfo.Port.ToString());
             }
 
@@ -283,9 +284,6 @@ namespace Project23
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            if (server != null)
-                server.Update();
-
             CheckInput();
 
             Client.Update();
