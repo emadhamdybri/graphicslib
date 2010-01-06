@@ -10,9 +10,10 @@ namespace Simulation
 {
     public enum PlayerStatus
     {
-        Despawned = 0,
-        Alive = 1,
-        Dead = 2,
+        Connecting = 0,
+        Despawned = 1,
+        Alive = 2,
+        Dead = 3,
     }
 
     public class Player : SimObject
@@ -21,7 +22,7 @@ namespace Simulation
         public int Score = -1;
         public string Pilot = string.Empty;
 
-        public PlayerStatus Status = PlayerStatus.Despawned;
+        public PlayerStatus Status = PlayerStatus.Connecting;
 
         public virtual void CopyFrom ( Player player )
         {

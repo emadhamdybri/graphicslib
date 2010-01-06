@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 
 using Lidgren.Network;
-
+using OpenTK;
 using Simulation;
 
 namespace Messages
@@ -118,6 +118,31 @@ namespace Messages
             return obj;
         }
 
+        protected void PackObjectState (ref NetBuffer buffer, ObjectState state )
+        {
+            buffer.Write(state.Position.X);
+            buffer.Write(state.Position.Y);
+            buffer.Write(state.Position.Z);
+
+            buffer.Write(state.Movement.X);
+            buffer.Write(state.Movement.Y);
+            buffer.Write(state.Movement.Z);
+
+            buffer.Write(state.Rotation);
+            buffer.Write(state.Spin);
+        }
+
+        protected ObjectState UnpackObjectState(ref NetBuffer buffer)
+        {
+            ObjectState state = new ObjectState();
+            state.Position = new Vector3(buffer.ReadFloat(), buffer.ReadFloat(), buffer.ReadFloat());
+            state.Movement = new Vector3(buffer.ReadFloat(), buffer.ReadFloat(), buffer.ReadFloat());
+            state.Rotation = buffer.ReadFloat();
+            state.Spin = buffer.ReadFloat();
+
+            return state;
+        }
+
         public static int Hail = 10;
         public static int Disconnect = 11;
         public static int Login = 20;
@@ -129,6 +154,9 @@ namespace Messages
         public static int RequestMapInfo = 50;
         public static int MapInfo = 51;
         public static int ChatMessage = 60;
+        public static int AllowSpawn = 70;
+        public static int RequestSpawn = 71;
+        public static int PlayerSpawn = 72;
     }
 
     public class Hail : MessageClass
@@ -418,6 +446,68 @@ namespace Messages
             From = buffer.ReadString();
             Message = buffer.ReadString();
            return true;
+        }
+    }
+
+    public class AllowSpawn : MessageClass
+    {
+        public AllowSpawn()
+        {
+            Name = MessageClass.AllowSpawn;
+        }
+
+        public override NetChannel Channel()
+        {
+            return NetChannel.UnreliableInOrder3;
+        }
+    }
+
+    public class RequestSpawn : MessageClass
+    {
+        // todo, ship type goes here
+        public RequestSpawn()
+        {
+            Name = MessageClass.RequestSpawn;
+        }
+    }
+
+    public class PlayerSpawn : MessageClass
+    {
+        public UInt64 PlayerID = 0;
+        public ObjectState PlayerState;
+        public double Time = -1;
+
+        public PlayerSpawn()
+        {
+            Name = MessageClass.PlayerSpawn;
+        }
+
+        public PlayerSpawn ( Player player )
+        {
+            Name = MessageClass.PlayerSpawn;
+            PlayerID = player.ID;
+            PlayerState = player.LastUpdateState;
+            Time = player.LastUpdateTime;  
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(PlayerID);
+            PackObjectState(ref buffer, PlayerState);
+            buffer.Write(Time);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            PlayerID = buffer.ReadUInt64();
+            PlayerState = UnpackObjectState(ref buffer);
+            Time = buffer.ReadDouble();
+            return true;
         }
     }
 }

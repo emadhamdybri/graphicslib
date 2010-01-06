@@ -20,18 +20,25 @@ namespace Project23Client
 
     public delegate void ChatEventHandler ( object sender, string channel, string from, string message );
 
+    public delegate void HostConnectionHandler ( object sender, string error );
+
     public partial class GameClient
     {
         public Sim sim = new Sim();
         public Player ThisPlayer = null;
 
         public event ServerVersionHandler ServerVersionEvent;
-        public event PlayerEventHandler LocalPlayerJoinedEvent;
+        public event PlayerEventHandler AllowSpawnEvent;
         public event ChatEventHandler ChatSentEvent;
         public event ChatEventHandler ChatReceivedEvent;
 
+        public event HostConnectionHandler HostConnectionEvent;
+        public event HostConnectionHandler HostDisconnectionEvent;
+
         Client client;
         bool connected = false;
+
+        bool requestedSpawn = false;
 
         public bool ConnectedToHost
         {
@@ -42,6 +49,8 @@ namespace Project23Client
         public JoinInfoCallback GetJoinInfo;
 
         MessageMapper messageMapper = new MessageMapper();
+
+        double lastUpdateTime = -1;
 
         public GameClient ( string address, int port )
         {
@@ -56,10 +65,19 @@ namespace Project23Client
 
         public bool Update (double time)
         {
+            lastUpdateTime = time;
+
+            if (!connected && client.IsConnected && HostConnectionEvent != null)
+                HostConnectionEvent(this, "Connected");
+
             if (connected)
             {
                 if (!client.IsConnected)
+                {
+                    if (HostDisconnectionEvent != null)
+                        HostDisconnectionEvent(this, "Disconnected");
                     return false;
+                }
 
                 NetBuffer buffer = client.GetPentMessage();
                 while (buffer != null)
@@ -81,6 +99,16 @@ namespace Project23Client
             else
                 connected = client.IsConnected;
             return true;
+        }
+
+        public void RequestSpawn ()
+        {
+            if (requestedSpawn || ThisPlayer == null || ThisPlayer.Status != PlayerStatus.Despawned)
+                return;
+
+            requestedSpawn = true;
+            RequestSpawn msg = new RequestSpawn();
+            client.SendMessage(msg.Pack(), msg.Channel());
         }
 
         public void SendChat ( string channel, string message )

@@ -9,6 +9,8 @@ using Hosts;
 using Simulation;
 using Messages;
 
+using Simulation;
+
 using Lidgren.Network;
 
 namespace Project23Server
@@ -22,6 +24,7 @@ namespace Project23Server
             messageHandlers.Add(typeof(Login), new MessageHandler(LoginHandler));
             messageHandlers.Add(typeof(PlayerJoin), new MessageHandler(PlayerJoinHandler));
             messageHandlers.Add(typeof(ChatMessage), new MessageHandler(ChatMessageHandler));
+            messageHandlers.Add(typeof(RequestSpawn), new MessageHandler(RequestSpawnHandler));
         }
 
         protected void ProcessMessage(Message msg)
@@ -87,6 +90,9 @@ namespace Project23Server
             accept.PlayerID = client.Player.ID;
 
             host.SendMessage(client.Connection, accept.Pack(), accept.Channel());
+
+            AllowSpawn spawn = new AllowSpawn();
+            host.SendMessage(client.Connection, spawn.Pack(), spawn.Channel());
         }
 
         protected void ChatMessageHandler(Client client, MessageClass message)
@@ -97,6 +103,15 @@ namespace Project23Server
 
             msg.From = client.Player.Callsign;
             host.Broadcast(msg.Pack(), msg.Channel());
+        }
+        
+        protected void RequestSpawnHandler(Client client, MessageClass message)
+        {
+            RequestSpawn msg = message as RequestSpawn;
+            if (msg == null || client.Player == null)
+                return;
+
+            sim.SpawnPlayer(client.Player, lastUpdateTime);
         }
     }
 }
