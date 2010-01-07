@@ -24,6 +24,16 @@ namespace Simulation
 
         public PlayerStatus Status = PlayerStatus.Connecting;
 
+        public virtual float TurningSpeed
+        {
+            get { return sim.Settings.MaxTurnSpeed; }
+        }
+
+        internal Player ( Sim s ) :base(s)
+        {
+
+        }
+
         public virtual void CopyFrom ( Player player )
         {
             base.CopyFrom(player);
@@ -47,6 +57,11 @@ namespace Simulation
                 CurrentState.Rotation = rot;
                 CurrentState.Heading = VectorHelper3.FromAngle(rot);
             }
+        }
+
+        public virtual void Turn ( float param )
+        {
+            LastUpdateState.Spin = TurningSpeed * param;
         }
     }
 }

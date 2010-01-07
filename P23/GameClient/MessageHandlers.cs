@@ -125,7 +125,7 @@ namespace Project23Client
             if (info == null)
                 return;
 
-            Player player = new Player();
+            Player player = sim.NewPlayer();
             player.ID = info.PlayerID;
             player.Callsign = info.Callsign;
             player.Score = info.Score;
@@ -168,7 +168,7 @@ namespace Project23Client
             if (player == null)
             {
                 playerExisted = false;
-                player = new Player();
+                player = sim.NewPlayer();
                 player.ID = msg.PlayerID;
                 sim.AddPlayer(player);
             }

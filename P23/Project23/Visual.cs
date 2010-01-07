@@ -23,7 +23,7 @@ namespace Project23
     class Visual
     {
         Game game;
-        Camera camera;
+        TopCam camera;
 
         Cloudscape clouds = null;
 
@@ -68,9 +68,8 @@ namespace Project23
             GL.Light(LightName.Light0, LightParameter.Diffuse, lightInfo);
             GL.Light(LightName.Light0, LightParameter.Specular, lightInfo);
 
-
-            camera = new Camera();
-            camera.set(new Vector3(0, 0, ViewZoom), 90, 90);
+            camera = new TopCam();
+            camera.Zoom(ViewZoom);
 
             clouds = new Cloudscape(new Vector2(50, 50));
 
@@ -111,13 +110,13 @@ namespace Project23
             else if (ViewZoom < ViewZoomMin)
                 ViewZoom = ViewZoomMin;
             else
-                camera.move(0,0,dir*ViewZoomIncrement);
+                camera.Zoom(dir*ViewZoomIncrement);
         }
 
         public void Resize(int Width, int Height)
         {
             GL.Viewport(0, 0, Width, Height);
-            camera.Resize(Width, Height);
+            camera.Resize((float)Width, (float)Height);
         }
 
         protected void RenderWorld(double time)
@@ -178,7 +177,7 @@ namespace Project23
             GL.PushMatrix();
 
             if (game.Client.ThisPlayer != null)
-                camera.setPos(game.Client.ThisPlayer.CurrentState.Position.X, game.Client.ThisPlayer.CurrentState.Position.Y,camera.EyePoint.Z);
+                camera.SetXY(game.Client.ThisPlayer.CurrentState.Position);
 
             camera.Execute();
             GL.Light(LightName.Light0, LightParameter.Position, new Vector4(10, 15, 10, 1.0f));
@@ -191,9 +190,9 @@ namespace Project23
             GL.PushMatrix();
             GL.Disable(EnableCap.Lighting);
 
-            camera.SetOrthographic();
+            camera.Orthographic();
             Hud.Render(delta);
-            camera.SetPersective();
+            camera.Perspective();
             GL.PopMatrix();
 
         }

@@ -85,7 +85,7 @@ namespace Project23Server
             if (join == null)
                 return;
 
-            client.Player = new Player();
+            client.Player = sim.NewPlayer();
             client.Player.Tag = client;
 
             client.Player.ID = GUIDManager.NewGUID();

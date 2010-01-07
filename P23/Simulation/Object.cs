@@ -42,6 +42,13 @@ namespace Simulation
         public ObjectState LastUpdateState = new ObjectState();
         public double LastUpdateTime = -1;
 
+        protected Sim sim;
+
+        internal SimObject ( Sim s )
+        {
+            sim = s;
+        }
+
         public virtual void CopyFrom ( SimObject obj)
         {
             Tag = obj.Tag;
