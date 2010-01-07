@@ -17,6 +17,12 @@ namespace Simulation
         ObjectState lastBounce = new ObjectState();
         double lastBounceTime = 0;
 
+        internal Shot(Sim s)
+            : base(s)
+        {
+
+        }
+
         public override void Update(double time)
         {
             float delta = (float)(time - LastUpdateTime);

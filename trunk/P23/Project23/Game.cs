@@ -11,6 +11,8 @@ using Simulation;
 using OpenTK;
 using OpenTK.Input;
 
+using Math3D;
+
 namespace Project23
 {
     class ConnectionInfo
@@ -45,6 +47,8 @@ namespace Project23
 
         KeyboardHandler keyHandler; // shitty class to manage keyboard since openTK punted on keyboard support;
         KeyManager keys;
+
+        Vector2 mousePos = new Vector2(0, 0);
 
         public InputRedirector InputRedirect;
 
@@ -134,6 +138,8 @@ namespace Project23
 
         void Mouse_Move(object sender, MouseMoveEventArgs e)
         {
+            mousePos.X = e.X - Width / 2.0f;
+            mousePos.Y = e.Y - Height / 2.0f;
         }
 
         void Mouse_ButtonDown(object sender, MouseButtonEventArgs e)
@@ -237,6 +243,14 @@ namespace Project23
 
             if (keys.Keydown(KeyEvent.PlayerList))
                 visual.Hud.TogglePlayerList();
+
+            //mouse pos into angle
+            Vector2 mouseVec = new Vector2(mousePos);
+            mouseVec.Normalize();
+            float ang = Math3D.Trig.RadianToDegree((float)Math.Atan2(mouseVec.Y, mouseVec.X));
+
+            float delta = 
+
 
             keyHandler.FlushKeys();
         }

@@ -42,6 +42,7 @@ namespace Simulation
     public class SimSettings
     {
         public float MaxSpeed = 10.0f;
+        public float MaxTurnSpeed = 90.0f;
     }
 
     public delegate void ShotEndedHandler(object sender, ShotEventArgs args );
@@ -98,6 +99,11 @@ namespace Simulation
             return null;
         }
 
+        public Player NewPlayer()
+        {
+            return new Player(this);
+        }
+
         public void AddPlayer ( Player player )
         {
             Player existing = FindPlayer(player.ID);
@@ -110,6 +116,11 @@ namespace Simulation
             }
             if (PlayerJoined != null)
                 PlayerJoined(this, new PlayerEventArgs(existing, lastUpdateTime));
+        }
+
+        public Shot NewShot()
+        {
+            return new Shot(this);
         }
 
         public void AddShot(Shot shot)
