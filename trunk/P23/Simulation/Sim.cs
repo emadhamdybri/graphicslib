@@ -41,8 +41,10 @@ namespace Simulation
 
     public class SimSettings
     {
-        public float MaxSpeed = 10.0f;
-        public float MaxTurnSpeed = 90.0f;
+        public float BaseSpeed = 10.0f;
+        public float BaseTurnSpeed = 90.0f;
+        public float BaseAcceleration = 5f;
+        public float BaseTurnAcceleration = 90f;
     }
 
     public delegate void ShotEndedHandler(object sender, ShotEventArgs args );

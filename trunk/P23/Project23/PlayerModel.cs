@@ -89,7 +89,7 @@ namespace Project23
             float speed = player.CurrentState.Movement.Length;
             float factor = 0;
             if (speed != 0)
-                factor = sim.Settings.MaxSpeed / speed;
+                factor = player.ForwardSpeed / speed;
             if (factor > 0.75f)
                 factor = 1f;
 
