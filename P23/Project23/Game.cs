@@ -249,7 +249,7 @@ namespace Project23
             mouseVec.Normalize();
             float ang = Math3D.Trig.RadianToDegree((float)Math.Atan2(mouseVec.Y, mouseVec.X));
 
-            float delta = 
+           // float delta = 
 
 
             keyHandler.FlushKeys();
