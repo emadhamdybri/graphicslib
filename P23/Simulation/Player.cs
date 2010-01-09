@@ -23,7 +23,9 @@ namespace Simulation
         public string Pilot = string.Empty;
 
         float intendedAngle = 0;
-        Vector2 intendedSpeed = new Vector2(0,0);
+        public Vector2 intendedSpeed = new Vector2(0,0);
+        public float forAftSpeed = 0;
+        float sideSpeed = 0;
 
         public PlayerStatus Status = PlayerStatus.Connecting;
 
@@ -54,6 +56,17 @@ namespace Simulation
             get { return sim.Settings.BaseSpeed * 0.25f; }
         }
 
+        public virtual float ForeAftAccelration
+        {
+            get { return sim.Settings.BaseAcceleration; }
+        }
+
+        public virtual float SidewaysAccelration
+        {
+            get { return sim.Settings.BaseAcceleration * 0.5f; }
+        }
+
+
         internal Player ( Sim s ) :base(s)
         {
 
@@ -78,29 +91,73 @@ namespace Simulation
             // rotation
             // check the intended angle and see if we are close to being there (we will be this update)
             // if so just snap to it.
-            float delta = CurrentState.Rotation - intendedAngle;
-            if (Math.Abs(delta) < LastUpdateState.Spin * timeDelta)
+            float delta = intendedAngle - LastUpdateState.Rotation;
+            if (Math.Abs(delta) > 180)
+            {
+                float sign = delta / (float)Math.Abs(delta);
+
+                delta = (float)Math.Abs(delta) - 180;
+                delta = 180 - delta;
+                delta *= -sign;
+            }
+
+            if (Math.Abs(delta) <= Math.Abs(LastUpdateState.Spin * timeDelta) || delta == 0)
             {
                 CurrentState.Rotation = LastUpdateState.Rotation = intendedAngle;
                 CurrentState.Spin = LastUpdateState.Spin = 0;
-                LastUpdateTime = time;
             }
             else 
             {
-                if (Math.Abs(LastUpdateState.Spin) < TurningSpeed)// see if we are turning at max speed, if not go faster
-                    LastUpdateState.Spin += TurningAcceleration * (float)timeDelta;
-                else if (Math.Abs(LastUpdateState.Spin) > TurningSpeed)
-                    LastUpdateState.Spin = TurningSpeed;
+                LastUpdateState.Spin = (delta / Math.Abs(delta)) * TurningSpeed;
 
-                LastUpdateTime = time;
-                LastUpdateState.Spin = delta / delta;
+                LastUpdateState.Rotation += LastUpdateState.Spin * (float)timeDelta;
+
+                if (LastUpdateState.Rotation > 180)
+                    LastUpdateState.Rotation = -360 + LastUpdateState.Rotation;
+                if (LastUpdateState.Rotation < -180)
+                    LastUpdateState.Rotation = 360 - LastUpdateState.Rotation;
+                
+                CurrentState.Rotation = LastUpdateState.Rotation;
             }
 
             //thrust
-            float speed = LastUpdateState.Movement.Length;
 
-            // see if we are going forward or backwards
+            // see what way we want to go
+            float speedDelta = intendedSpeed.X - forAftSpeed;
+            
+            if (intendedSpeed.X < 0 && forAftSpeed <= 0) // going backwards and want to go backwards
+            {
+                if (Math.Abs(speedDelta) < ForeAftAccelration * timeDelta)
+                    forAftSpeed = intendedSpeed.X;
+                else
+                    forAftSpeed -= ForeAftAccelration * (float)timeDelta;
 
+                if (forAftSpeed < -BackwardSpeed)
+                    forAftSpeed = -BackwardSpeed;
+            }
+            else if (intendedSpeed.X > 0 && forAftSpeed >= 0) // going forward and want to go forwards
+            {
+                if (Math.Abs(speedDelta) < ForeAftAccelration * timeDelta)
+                    forAftSpeed = intendedSpeed.X;
+                else
+                    forAftSpeed += ForeAftAccelration * (float)timeDelta;
+
+                if (forAftSpeed > ForwardSpeed)
+                    forAftSpeed = ForwardSpeed;
+            }
+            else if (intendedSpeed.X != forAftSpeed) // if we are going as fast as we want we are done
+            {
+                if (intendedSpeed.X > forAftSpeed)
+                    forAftSpeed += ForeAftAccelration * (float)timeDelta;
+                else
+                    forAftSpeed -= ForeAftAccelration * (float)timeDelta;
+            }
+
+            LastUpdateState.Movement = VectorHelper3.FromAngle(LastUpdateState.Rotation) * forAftSpeed;
+
+            CurrentState.Movement = LastUpdateState.Movement;
+            LastUpdateState.Position += LastUpdateState.Movement * (float)timeDelta;
+            LastUpdateTime = time;
         }
 
         public override void Update(double time)
@@ -140,6 +197,17 @@ namespace Simulation
                 intendedSpeed.X = ForwardSpeed * param;
             else
                 intendedSpeed.X = BackwardSpeed * param;
+        }
+
+        public virtual void ThrustOff( double delta )
+        {
+            if (intendedSpeed.X > 0)
+                intendedSpeed.X -= 25f * (float)delta;
+            else if (intendedSpeed.X < 0)
+                intendedSpeed.X += 25f * (float)delta;
+
+            if (Math.Abs(intendedSpeed.X) < 0.05f)
+                intendedSpeed.X = 0;
         }
 
         public virtual void Sideswipe ( float param )
