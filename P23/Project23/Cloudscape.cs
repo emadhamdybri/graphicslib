@@ -161,13 +161,16 @@ namespace Project23
 
         protected void Update(double time, Vector3 movement)
         {
+            int layer = 0;
             foreach(List<Cloud> layerList in CloudLayers)
             {
+                Vector3 vec = movement * (layer + 1) * 0.25f;
                 foreach(Cloud cloud in layerList)
                 {
-                    cloud.Update(time, movement);
+                    cloud.Update(time, vec);
                     WrapCloud(cloud);
                 }
+                layer++;
             }
         }
 

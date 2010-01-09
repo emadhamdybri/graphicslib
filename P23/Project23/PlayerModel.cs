@@ -86,16 +86,31 @@ namespace Project23
             GL.Translate(player.CurrentState.Position);
             GL.Rotate(player.CurrentState.Rotation, 0, 0, 1f);
 
-            float speed = player.CurrentState.Movement.Length;
-            float factor = 0;
-            if (speed != 0)
-                factor = player.ForwardSpeed / speed;
-            if (factor > 0.75f)
-                factor = 1f;
+            float mainRot = 90f;
+            if (player.MovementSpeed > 0.1f)
+            {
+                mainRot = player.MovementSpeed/ player.ForwardSpeed;
+                if (mainRot > 0.85f)
+                    mainRot = 1f;
+                mainRot *= 90f;
+                mainRot = 90f - mainRot;
+            }
+            else if (player.MovementSpeed < -0.1f)
+            {
+                mainRot = Math.Abs(player.MovementSpeed)/ player.BackwardSpeed ;
+                if (mainRot > 0.85f)
+                    mainRot = 1f;
+                mainRot *= 45f;
+                mainRot += 90f;
+            }
 
-            factor = 1f-factor;
-
-            model.Draw(time, factor * -90, factor * -90);
+            float turnFactor = 0;
+            if (player.CurrentState.Spin != 0)
+            {
+                turnFactor = player.CurrentState.Spin / player.TurningSpeed;
+                turnFactor *= 5;
+            }
+            model.Draw(time, -mainRot + turnFactor, -mainRot - turnFactor);
 
             GL.PopMatrix();
         }

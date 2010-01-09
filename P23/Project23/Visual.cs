@@ -31,9 +31,9 @@ namespace Project23
 
         PlayerModel shipModel1;
 
-        public static float ViewZoomIncrement = 0.25f;
-        public static float ViewZoomMax = 100;
-        public static float ViewZoomMin = 5;
+        public static float ViewZoomIncrement = 0.5f;
+        public static float ViewZoomMax = 200;
+        public static float ViewZoomMin = 15;
         float ViewZoom = ViewZoomMax;
 
         public HudRenderer Hud;
@@ -124,9 +124,9 @@ namespace Project23
             GL.Enable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Lighting);
 
-            if (game.Connected)
+            if (game.Client.ThisPlayer != null && game.Client.ThisPlayer.Status == PlayerStatus.Alive)
             {
-                clouds.Render(time, Vector3.UnitX);
+                clouds.Render(time, game.Client.ThisPlayer.CurrentState.Movement  * -0.5f);
             }
             else
             {
@@ -150,16 +150,16 @@ namespace Project23
             GL.Vertex3(0, 0, 0);
             GL.Vertex3(0, 0, 1);
 
-            GL.Color3(Color.DarkOliveGreen);
+            GL.Color4(0,0,0,0.25f);
 
-            for (int x = -1000; x <= 1000; x += 10)
+            for (int x = -2000; x <= 2000; x += 25)
             {
-                for (int y = -1000; y <= 1000; y += 10)
+                for (int y = -2000; y <= 2000; y += 25)
                 {
-                    GL.Vertex3(x - 0.25f, y, 0);
-                    GL.Vertex3(x + 0.25f, y, 0);
-                    GL.Vertex3(x, y - 0.25f, 0);
-                    GL.Vertex3(x, y + 0.25f, 0);
+                    GL.Vertex3(x - 0.5f, y, 0);
+                    GL.Vertex3(x + 0.5f, y, 0);
+                    GL.Vertex3(x, y - 0.5f, 0);
+                    GL.Vertex3(x, y + 0.5f, 0);
                 }
             }
             GL.End();

@@ -41,9 +41,9 @@ namespace Simulation
 
     public class SimSettings
     {
-        public float BaseSpeed = 50.0f;
+        public float BaseSpeed = 70.0f;
         public float BaseTurnSpeed = 180.0f;
-        public float BaseAcceleration = 10f;
+        public float BaseAcceleration = 25f;
         public float BaseTurnAcceleration = 10f;
     }
 
