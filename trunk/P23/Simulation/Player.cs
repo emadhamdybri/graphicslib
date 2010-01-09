@@ -22,9 +22,14 @@ namespace Simulation
         public int Score = -1;
         public string Pilot = string.Empty;
 
+        public float MovementSpeed
+        {
+            get { return forAftSpeed; }
+        }
+
         float intendedAngle = 0;
-        public Vector2 intendedSpeed = new Vector2(0,0);
-        public float forAftSpeed = 0;
+        Vector2 intendedSpeed = new Vector2(0,0);
+        float forAftSpeed = 0;
         float sideSpeed = 0;
 
         public PlayerStatus Status = PlayerStatus.Connecting;
@@ -172,6 +177,7 @@ namespace Simulation
 
                 // do bounce collisions
 
+                CurrentState.Spin = LastUpdateState.Spin;
                 CurrentState.Position = pos;
                 CurrentState.Rotation = rot;
                 CurrentState.Heading = VectorHelper3.FromAngle(rot);

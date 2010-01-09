@@ -84,8 +84,9 @@ namespace Clients
             client.Connect(host, port, Encoding.ASCII.GetBytes("Hail"));
 
             client.SetMessageTypeEnabled(NetMessageType.ConnectionRejected, true);
-			client.SetMessageTypeEnabled(NetMessageType.DebugMessage, true);
-
+#if DEBUG
+            client.SetMessageTypeEnabled(NetMessageType.DebugMessage, true);
+#endif
             buffer = client.CreateBuffer();
 
             while (true)
