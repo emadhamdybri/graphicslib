@@ -212,8 +212,8 @@ namespace Project23
             printer.Begin();
             string lagLine = "L:" + (game.Client.LastLatency * 1000).ToString("F2") + "ms AL:" + (game.Client.AverageLatency * 1000).ToString("F2") + "ms J:" + (game.Client.Jitter * 1000).ToString("F2") + "ms PL:" + game.Client.Packetloss.ToString("F2") + "%";
 
-            if (false)
-                lagLine += " N:" + game.Client.Now().ToString("F2") + " S:" + game.Client.RawTime().ToString("F2");
+            if (game.Client.ThisPlayer != null)
+                lagLine += " F:" + game.Client.ThisPlayer.forAftSpeed.ToString("F2") + " I:" + game.Client.ThisPlayer.intendedSpeed.X.ToString("F2");
             PrintText(lagLine, LagstatsFont, Color.White, 0, game.Height - TotalHeight, PlayerInfoPicture + PlayerInfoBorder + PlayerInfoBorder, PlayerInfoHeight + 10);
             printer.End();
         }

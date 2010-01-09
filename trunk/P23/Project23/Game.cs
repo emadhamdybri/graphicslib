@@ -216,7 +216,7 @@ namespace Project23
             visual.Resize(Width, Height);
         }
 
-        protected void CheckInput()
+        protected void CheckInput( double frameDelta )
         {
             if (keys.Keydown(KeyEvent.Quit))
                 Exit();
@@ -244,15 +244,22 @@ namespace Project23
             if (keys.Keydown(KeyEvent.PlayerList))
                 visual.Hud.TogglePlayerList();
 
-            //mouse pos into angle
-            Vector2 mouseVec = new Vector2(mousePos);
-            mouseVec.Normalize();
-            float ang = Math3D.Trig.RadianToDegree((float)Math.Atan2(mouseVec.Y, mouseVec.X));
+            if (Client.ThisPlayer != null && Client.ThisPlayer.Status == PlayerStatus.Alive)
+            {
+                //mouse pos into angle
+                Vector2 mouseVec = new Vector2(mousePos);
+                mouseVec.Normalize();
+                float ang = -Math3D.Trig.RadianToDegree((float)Math.Atan2(mouseVec.Y, mouseVec.X));
 
-           // float delta = 
+                Client.ThisPlayer.TurnTo(ang);
 
-
-            keyHandler.FlushKeys();
+                if (keys.Keydown(KeyEvent.Forward))
+                    Client.ThisPlayer.Thrust(1);
+                else if (keys.Keydown(KeyEvent.Backward))
+                    Client.ThisPlayer.Thrust(-1);
+                else
+                    Client.ThisPlayer.Thrust(0);
+            }
         }
 
         class ChatInputHandler : InputRedirector
@@ -298,7 +305,7 @@ namespace Project23
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            CheckInput();
+            CheckInput(e.Time);
 
             Client.Update();
         }

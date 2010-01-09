@@ -39,7 +39,7 @@ namespace Project23
 
         public event NewLineHandler TextModeNewline;
 
-        public bool FlushKeysOnUp = false;
+        public bool FlushKeysOnUp = true;
 
         List<Key> Keys = new List<Key>();
 

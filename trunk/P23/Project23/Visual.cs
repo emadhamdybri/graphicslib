@@ -149,6 +149,19 @@ namespace Project23
             GL.Color3(Color.Blue);
             GL.Vertex3(0, 0, 0);
             GL.Vertex3(0, 0, 1);
+
+            GL.Color3(Color.DarkOliveGreen);
+
+            for (int x = -1000; x <= 1000; x += 10)
+            {
+                for (int y = -1000; y <= 1000; y += 10)
+                {
+                    GL.Vertex3(x - 0.25f, y, 0);
+                    GL.Vertex3(x + 0.25f, y, 0);
+                    GL.Vertex3(x, y - 0.25f, 0);
+                    GL.Vertex3(x, y + 0.25f, 0);
+                }
+            }
             GL.End();
 
             // do the world crap
