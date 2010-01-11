@@ -32,6 +32,17 @@ namespace Project23
 
         Texture Pilot;
 
+        Texture RadarFrame;
+        Texture RadarBackground;
+        Texture RadarSweep;
+
+        float radarAngle = 0;
+
+        public static float RadarSize = 128;
+        public static float RadarSpeed = 25f;
+
+        public static float RadarOpacity = 0.5f;
+
         public static float ChatWidth = 300;
         public static float ChatHeight = 120;
         public static float ChatHeaderHeight = 24;
@@ -69,6 +80,18 @@ namespace Project23
         public HudRenderer (Game g)
         {
             game = g;
+
+            RadarFrame = TextureSystem.system.GetTexture(ResourceManager.FindFile("ui/radar/overlay.png"));
+            RadarSweep = TextureSystem.system.GetTexture(ResourceManager.FindFile("ui/radar/sweep.png"));
+            RadarBackground = TextureSystem.system.GetTexture(ResourceManager.FindFile("ui/radar/background.png"));
+        }
+
+        public void Resize(int width, int height)
+        {
+            if (width > 1024)
+                RadarSize = 256;
+            else
+                RadarSize = 128;
         }
 
         public void SetStatusText ( string text )
@@ -229,7 +252,6 @@ namespace Project23
             GL.PushMatrix();
             GL.Translate(0, game.Height - TotalHeight, -0.5f);
 
-
             float pictureBoxWidth = PlayerInfoPicture + PlayerInfoBorder + PlayerInfoBorder;
 
             GL.Disable(EnableCap.Texture2D);
@@ -384,6 +406,32 @@ namespace Project23
             GL.PopMatrix();
         }
 
+        protected void DrawRadar ( double time )
+        {
+            GL.Color4(1f, 1f, 1f, RadarOpacity);
+            GL.Enable(EnableCap.Texture2D);
+            GL.PushMatrix();
+            GL.Translate(game.Width - RadarSize, game.Height - RadarSize, -0.5f);
+
+            RadarBackground.DrawAtWidth(RadarSize);
+            GL.Translate(0,0, 0.01f);
+            GL.PushMatrix();
+
+            radarAngle += RadarSpeed * (float)time;
+            if (radarAngle > 360f)
+                radarAngle = radarAngle - 360f;
+            GL.Translate(RadarSize / 2f, RadarSize / 2f, 0);
+            GL.Rotate(radarAngle, 0, 0, 1f);
+            GL.Translate(-RadarSize / 2f, -RadarSize / 2f, 0);
+            RadarSweep.DrawAtWidth(RadarSize);
+
+            GL.PopMatrix();
+            GL.Translate(0, 0, 0.01f);
+            RadarFrame.DrawAtWidth(RadarSize);
+
+            GL.PopMatrix();
+        }
+
         protected void GameHud(double time)
         {
             DrawChatWindow();
@@ -391,6 +439,8 @@ namespace Project23
             DrawInfoWidget();
 
             DrawPlayerList(time);
+
+            DrawRadar(time);
         }
 
         public void Render ( double time )

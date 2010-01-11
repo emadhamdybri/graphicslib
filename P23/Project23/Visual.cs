@@ -117,6 +117,8 @@ namespace Project23
         {
             GL.Viewport(0, 0, Width, Height);
             camera.Resize((float)Width, (float)Height);
+
+            Hud.Resize(Width, Height);
         }
 
         protected void RenderWorld(double time)
