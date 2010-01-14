@@ -87,7 +87,6 @@
     <Compile Include="Camera.cs" />
     <Compile Include="DisplayLists.cs" />
     <Compile Include="Drawables.cs" />
-    <Compile Include="FileIOUtils.cs" />
     <Compile Include="Materials.cs" />
     <Compile Include="MilkshapeModel.cs" />
     <Compile Include="StaticModels.cs" />
