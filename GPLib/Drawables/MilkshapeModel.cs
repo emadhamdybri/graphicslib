@@ -8,7 +8,7 @@ using System.Drawing;
 
 using OpenTK;
 
-using Drawables.FileIOUtils;
+using Utilities.FileIO;
 
 namespace MilkhapeModel
 {

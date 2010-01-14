@@ -4,9 +4,9 @@ using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Drawables.FileIOUtils
+namespace Utilities.FileIO
 {
-    class BinUtils
+    public class BinUtils
     {
         public static int GetNextStreamCount(Stream fs)
         {
