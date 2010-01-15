@@ -41,5 +41,27 @@ namespace Utilities.FileIO
             handle.Free();
             return retobj;
         }
+
+        public static String FixString ( String input )
+        {
+            return input.TrimEnd("\0".ToCharArray());
+        }
+
+        public static String FixString( char[] input)
+        {
+            return FixString(input.ToString());
+        }
+
+        public static String FixString(byte[] input)
+        {
+            return FixString(System.Text.Encoding.UTF8.GetString(input));
+        }
+
+        public static String ReadString ( Stream fs, int count )
+        {
+            byte[] b = new byte[count];
+            fs.Read(b, 0, b.Length); // name
+            return FixString(System.Text.Encoding.UTF8.GetString(b));
+        }
     }
 }
