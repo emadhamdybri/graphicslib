@@ -206,9 +206,14 @@ namespace MD3
                     return null;
                 }
 
-                List<MD3Tag> tags = new List<MD3Tag>();
+                List<List<MD3Tag>> tagFrames = new List<List<MD3Tag>>();
                 for (int i = 0; i < tagCount; i++)
-                    tags.Add((MD3Tag)BinUtils.ReadObject(fs, typeof(MD3Tag)));
+                {
+                    List<MD3Tag> tags = new List<MD3Tag>();
+                    tagFrames.Add(tags);
+                    for (int f = 0; f < frameCount; f++)
+                       tags.Add((MD3Tag)BinUtils.ReadObject(fs, typeof(MD3Tag)));
+                }
 
                 if (!runStreamToOffset(fs, surfaceOffset))
                 {
@@ -283,6 +288,56 @@ namespace MD3
                 }
                 model.Frames = modelFrames.ToArray();
 
+                List<Tag> modelTags = new List<Tag>();
+                foreach (List<MD3Tag> tagList in tagFrames)
+                {
+                    if (tagList.Count > 0)
+                    {
+                        Tag tag = new Tag();
+                        tag.Name = BinUtils.FixString(tagList[0].Name);
+                        List<Matrix4> frameMats = new List<Matrix4>();
+                        foreach (MD3Tag t in tagList)
+                            frameMats.Add(new Matrix4(t.R1[0], t.R1[1], t.R1[2], 0, t.R2[0], t.R2[1], t.R2[3], 0, t.R3[0], t.R3[1], t.R3[2], 0, t.Origin[0], t.Origin[1], t.Origin[2], 1.0f));
+                        tag.Frames = frameMats.ToArray();
+                        modelTags.Add(tag);
+                    }
+                }
+                model.Tags = modelTags.ToArray();
+
+                foreach (MD3Surface surface in Surfaces)
+                {
+                    Mesh mesh = new Mesh();
+                    mesh.Name = BinUtils.FixString(surface.Header.Name);
+
+                    List<Triangle> tris = new List<Triangle>();
+                    foreach (MD3Triangle triangle in surface.Triangles)
+                    {
+                        Triangle tri = new Triangle();
+                        tri.Verts = triangle.Indexes;
+                        tris.Add(tri);
+                    }
+
+                    mesh.Triangles = tris.ToArray();
+
+                    List<Frame> fList = new List<Frame>();
+                    foreach (List<MD3Vertex> frameVerts in surface.Frames)
+                    {
+                        Frame frame = new Frame();
+                        List<Vertex> vList = new List<Vertex>();
+                        foreach (MD3Vertex v in frameVerts)
+                        {
+                            Vertex vert = new Vertex();
+                            vert.Position = convertCoordinate(v);
+                            vert.Normal = convertNormal(v);
+                            vList.Add(vert);
+                        }
+                        frame.Verts = vList.ToArray();
+                        fList.Add(frame);
+                    }
+                    mesh.Frames = fList.ToArray();
+
+                    model.
+                }
 
                 return model;
             }
