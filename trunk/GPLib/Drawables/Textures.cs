@@ -9,6 +9,7 @@ using System.IO;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Drawables.DisplayLists;
+using Drawables.TGA;
 
 namespace Drawables.Textures
 {
@@ -99,7 +100,12 @@ namespace Drawables.Textures
             GL.Enable(EnableCap.Texture2D);
             Bitmap bitmap;
             if (file != null && file.Exists)
-                bitmap = new Bitmap(file.FullName);
+            {
+                if (file.Extension.ToLower() == "tga")
+                    bitmap = (Bitmap)TGAFile.Read(file);
+                else
+                    bitmap = new Bitmap(file.FullName);
+            }
             else
                 bitmap = new Bitmap(image);
 
