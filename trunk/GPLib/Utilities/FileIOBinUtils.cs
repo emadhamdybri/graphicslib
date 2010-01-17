@@ -49,7 +49,7 @@ namespace Utilities.FileIO
 
         public static String FixString( char[] input)
         {
-            return FixString(input.ToString());
+            return FixString(new string(input));
         }
 
         public static String FixString(byte[] input)
