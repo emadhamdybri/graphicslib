@@ -63,5 +63,17 @@ namespace MD3
 
         public FrameInfo[] Frames;
         public Tag[] Tags;
+        public Mesh[] Meshes;
+
+        public Tag FindTag ( string name )
+        {
+            foreach (Tag tag in Tags)
+            {
+                if (tag.Name == name)
+                    return tag;
+            }
+
+            return null;
+        }
     }
 }

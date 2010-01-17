@@ -11,8 +11,8 @@ namespace MD3ReaderTest
     {
         static void Main(string[] args)
         {
-            FileInfo file = new FileInfo(args[0]);
-            Reader.ReadComponent(file);
+            DirectoryInfo dir = new DirectoryInfo(args[0]);
+            Reader.Read(dir);
         }
     }
 }

@@ -22,9 +22,172 @@ namespace MD3
             List<Component> models = new List<Component>();
             foreach(FileInfo file in dir.GetFiles("*.md3"))
                 models.Add(ReadComponent(file));
-
             character.Componenets = models.ToArray();
+
+            foreach (FileInfo file in dir.GetFiles("*.cfg"))
+                ReadAnimationConfig(character,file);
+
+            foreach (FileInfo file in dir.GetFiles("*.skin"))
+                ReadSkin(character, file);
+
+            buildCharacterTree(character);
+
             return character;
+        }
+
+        internal static void linkTreeChildren ( ConnectedComponent node, Dictionary<string, List<Component>> componentsWithTags )
+        {
+           foreach (Tag tag in node.Part.Tags)
+           {
+               if (tag.Name != "tag.floor")
+               {
+                   if (componentsWithTags.ContainsKey(tag.Name))
+                   {
+                       if (!node.Children.ContainsKey(tag))
+                           node.Children.Add(tag,new List<ConnectedComponent>());
+
+                       List<Component> linkedComponents = componentsWithTags[tag.Name];
+                       foreach (Component c in linkedComponents)
+                       {
+                           ConnectedComponent child = new ConnectedComponent();
+                           child.Part = c;
+                           node.Children[tag].Add(child);
+                           linkTreeChildren(child, componentsWithTags);
+                       }
+                   }
+               }
+           }
+        }
+
+        protected static void buildCharacterTree(Character character)
+        {
+            Component root = null;
+            Dictionary<string, List<Component>> componentsWithTags = new Dictionary<string, List<Component>>();
+
+            foreach(Component part in character.Componenets)
+            {
+                Tag tag = part.FindTag("tag.floor");
+                if (tag != null)
+                    root = part;
+
+                foreach (Tag t in part.Tags)
+                {
+                    if (!componentsWithTags.ContainsKey(t.Name))
+                        componentsWithTags.Add(t.Name, new List<Component>());
+
+                    componentsWithTags[t.Name].Add(part);
+                }
+            }
+
+            if (root == null)
+                return;
+
+            character.RootNode = new ConnectedComponent();
+            character.RootNode.Part = root;
+
+            linkTreeChildren(character.RootNode, componentsWithTags);
+        }
+
+        public static void ReadSkin(Character character, FileInfo file)
+        {
+            if (!file.Exists)
+                return;
+            
+            string name = string.Empty;
+
+            string[] nugs = file.Name.Split("_".ToCharArray(), 2);
+            if (nugs.Length == 1)
+                name = nugs[0];
+            else
+                name = nugs[1];
+
+            Skin skin = character.GetSkin(name);
+            FileStream fs = file.OpenRead();
+            StreamReader sr = new StreamReader(fs);
+
+            string line = sr.ReadLine();
+            while (line != null)
+            {
+                if (line.Length > 0)
+                {
+                    nugs = line.Split(",".ToCharArray(),2);
+                    if (nugs.Length > 1)
+                    {
+                        if (skin.Surfaces.ContainsKey(nugs[0]))
+                            skin.Surfaces[nugs[0]] = nugs[1];
+                        else
+                            skin.Surfaces.Add(nugs[0], nugs[1]);
+                    }
+                }
+                line = sr.ReadLine();
+            }
+
+            sr.Close();
+            fs.Close();
+        }
+
+        public static void ReadAnimationConfig ( Character character, FileInfo file )
+        {
+            if (!file.Exists)
+                return;
+
+            FileStream fs = file.OpenRead();
+            StreamReader sr = new StreamReader(fs);
+
+            string line = sr.ReadLine();
+
+            List<AnimationSequence> seqs;
+            if (character.Sequences != null)
+                seqs = new List<AnimationSequence>(character.Sequences);
+            else
+                seqs = new List<AnimationSequence>();
+
+            while (line != null)
+            {
+                string[] nugs = line.Split(" \t".ToCharArray());
+                if (nugs.Length > 0)
+                {
+                    string tag = nugs[0].ToLower();
+                    if (tag == "sex" && nugs.Length > 1)
+                    {
+                        string gender = nugs[1].ToLower();
+                        if (gender == "f")
+                            character.Gender = Gender.Female;
+                        else if (gender == "m")
+                            character.Gender = Gender.Male;
+                        else
+                            character.Gender = Gender.Unknown;
+                    }
+                    else if (tag == "headoffset" && nugs.Length > 3)
+                        character.HeadOffset = new Vector3(float.Parse(nugs[1]), float.Parse(nugs[2]), float.Parse(nugs[3]));
+                    else if (tag == "footsteps" && nugs.Length > 1)
+                        character.Footsetps = nugs[1];
+                    else if (tag.Length > 0 && char.IsNumber(tag[0]) && nugs.Length > 3)
+                    {
+                        AnimationSequence seq = new AnimationSequence();
+                        seq.StartFrame = int.Parse(tag);
+                        seq.EndFrame = seq.StartFrame + int.Parse(nugs[1]);
+                        int loop = int.Parse(nugs[2]);
+                        if (loop == 0)
+                            seq.LoopPoint = seq.StartFrame;
+                        else
+                            seq.LoopPoint = seq.EndFrame - loop;
+                        float fps = float.Parse(nugs[3]);
+                        if (fps > 0)
+                            seq.FPS = fps;
+
+                        if (nugs.Length > 5)
+                            seq.Name = nugs[5];
+
+                        seqs.Add(seq);
+                    }
+                }
+                line = sr.ReadLine();
+            }
+
+            character.Sequences = seqs.ToArray();
+            sr.Close();
+            fs.Close();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
@@ -297,13 +460,14 @@ namespace MD3
                         tag.Name = BinUtils.FixString(tagList[0].Name);
                         List<Matrix4> frameMats = new List<Matrix4>();
                         foreach (MD3Tag t in tagList)
-                            frameMats.Add(new Matrix4(t.R1[0], t.R1[1], t.R1[2], 0, t.R2[0], t.R2[1], t.R2[3], 0, t.R3[0], t.R3[1], t.R3[2], 0, t.Origin[0], t.Origin[1], t.Origin[2], 1.0f));
+                            frameMats.Add(new Matrix4(t.R1[0], t.R1[1], t.R1[2], 0, t.R2[0], t.R2[1], t.R2[2], 0, t.R3[0], t.R3[1], t.R3[2], 0, t.Origin[0], t.Origin[1], t.Origin[2], 1.0f));
                         tag.Frames = frameMats.ToArray();
                         modelTags.Add(tag);
                     }
                 }
                 model.Tags = modelTags.ToArray();
 
+                List<Mesh> meshes = new List<Mesh>();
                 foreach (MD3Surface surface in Surfaces)
                 {
                     Mesh mesh = new Mesh();
@@ -336,8 +500,21 @@ namespace MD3
                     }
                     mesh.Frames = fList.ToArray();
 
-                    model.
+                    List<Vector2> uvs = new List<Vector2>();
+                    foreach(MD3TexCoord coord in surface.UVs)
+                        uvs.Add(new Vector2(coord.UV[0], coord.UV[1]));
+
+                    mesh.UVs = uvs.ToArray();
+
+                    List<String> shaders = new List<String>();
+                    foreach(MD3Shader shader in surface.Shaders)
+                        shaders.Add(BinUtils.FixString(shader.Name));
+
+                    mesh.ShaderFiles = shaders.ToArray();
+
+                    meshes.Add(mesh);
                 }
+                model.Meshes = meshes.ToArray();
 
                 return model;
             }
