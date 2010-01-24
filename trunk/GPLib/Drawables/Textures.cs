@@ -101,7 +101,7 @@ namespace Drawables.Textures
             Bitmap bitmap;
             if (file != null && file.Exists)
             {
-                if (file.Extension.ToLower() == "tga")
+                if (file.Extension.ToLower() == ".tga")
                     bitmap = (Bitmap)TGAFile.Read(file);
                 else
                     bitmap = new Bitmap(file.FullName);
@@ -300,7 +300,7 @@ namespace Drawables.Textures
             if (t == string.Empty)
                 return false;
             string extension = Path.GetExtension(t);
-            if (extension != ".png" && extension != ".jpg" && extension != ".jpeg" && extension != ".tiff")
+            if (extension != ".png" && extension != ".jpg" && extension != ".jpeg" && extension != ".tiff" && extension != ".tga")
                 return false;
 
             return true;
