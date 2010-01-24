@@ -110,7 +110,7 @@ namespace Drawables.TGA
             }
             else if (colorType == 0)
             {
-                if (imageType != 2)
+                if (imageType != 2 && imageType != 10)
                     throw new System.NotImplementedException("Uncompressed images only");
 
                 if (bpp > 24)
@@ -118,23 +118,100 @@ namespace Drawables.TGA
                 else
                     bitmap = new Bitmap(width,height,PixelFormat.Format24bppRgb);
 
-                for (int y = 0; y < height; y++)
+                if (imageType == 2) // raw RGB
                 {
-                    for ( int x = 0; x < width; x++)
+                    for (int y = 0; y < height; y++)
                     {
-                        byte[] pixel;
-                        if (bpp > 24)
-                            pixel = new byte[4];
-                        else
-                            pixel = new byte[3];
+                        for (int x = 0; x < width; x++)
+                        {
+                            byte[] pixel;
+                            if (bpp > 24)
+                                pixel = new byte[4];
+                            else
+                                pixel = new byte[3];
 
-                        stream.Read(pixel, 0, pixel.Length);
+                            stream.Read(pixel, 0, pixel.Length);
 
-                        byte A = 255;
-                        if (bpp>24)
-                            A = pixel[3];
+                            byte A = 255;
+                            if (bpp > 24)
+                                A = pixel[3];
 
-                        bitmap.SetPixel(x, (height-1)-y, Color.FromArgb(A, pixel[2], pixel[1], pixel[0]));
+                            bitmap.SetPixel(x, (height - 1) - y, Color.FromArgb(A, pixel[2], pixel[1], pixel[0]));
+                        }
+                    }
+                }
+                else // rle
+                {
+                    int totalPixels = height * width;
+                    int pixelCount = 0;
+                    int x = 0;
+                    int y = 0;
+                    while ( pixelCount < totalPixels)
+                    {
+                        byte packetHeader = 0;
+                        packetHeader = (byte)stream.ReadByte();
+
+                        byte type = (byte)(packetHeader >> 7);
+                        byte count = (byte)((byte)(packetHeader << 1) >> 1);
+
+                        if (count == 0)
+                            continue;
+
+                        if (type > 0) // RLE packet
+                        {
+                            byte[] pixel;
+                            if (bpp > 24)
+                                pixel = new byte[4];
+                            else
+                                pixel = new byte[3];
+
+                            stream.Read(pixel, 0, pixel.Length);
+
+                            byte A = 255;
+                            if (bpp > 24)
+                                A = pixel[3];
+
+                            Color color = Color.FromArgb(A, pixel[2], pixel[1], pixel[0]);
+                            pixelCount += count;
+                            for (int i = 0; i < count; i++ )
+                            {
+                                bitmap.SetPixel(x, (height - 1) - y, color);
+                                x++;
+                                if ( x >= width)
+                                {
+                                    x = 0;
+                                    y++;
+                                }
+                            }
+                        }
+                        else // raw packet
+                        {
+                            pixelCount += count;
+
+                            for (int i = 0; i < count; i++)
+                            {
+                                byte[] pixel;
+                                if (bpp > 24)
+                                    pixel = new byte[4];
+                                else
+                                    pixel = new byte[3];
+
+                                stream.Read(pixel, 0, pixel.Length);
+
+                                byte A = 255;
+                                if (bpp > 24)
+                                    A = pixel[3];
+
+                                bitmap.SetPixel(x, (height - 1) - y, Color.FromArgb(A, pixel[2], pixel[1], pixel[0]));
+
+                                x++;
+                                if (x >= width)
+                                {
+                                    x = 0;
+                                    y++;
+                                }
+                            }
+                        }
                     }
                 }
             }
