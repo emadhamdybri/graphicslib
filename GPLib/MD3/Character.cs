@@ -26,7 +26,7 @@ namespace MD3
     public class Skin
     {
         public string Name = string.Empty;
-        public Dictionary<string, string> Surfaces = new Dictionary<string, string>();
+        public Dictionary<string,Dictionary<string, string>> Surfaces = new Dictionary<string,Dictionary<string, string>>();
 
         public Skin ( string n )
         {
@@ -37,12 +37,19 @@ namespace MD3
     internal class ConnectedComponent
     {
         internal Component Part;
-        internal Dictionary<Tag, List<ConnectedComponent>> Children;
+        internal Dictionary<Tag, List<ConnectedComponent>> Children = new Dictionary<Tag, List<ConnectedComponent>>();
+    }
+
+    public class LODLevel
+    {
+        public Component[] Componenets = null;
     }
 
     public class Character
     {
         public Component[] Componenets = null;
+
+        public LODLevel[] LODs = null;
 
         public String Name = string.Empty;
 
@@ -91,17 +98,32 @@ namespace MD3
 
             foreach (Component component in Componenets)
             {
+                skin.Surfaces.Add(component.Name, new Dictionary<string, string>());
+
+                Dictionary<string,string> comps = skin.Surfaces[component.Name];
+
                 foreach (Mesh mesh in component.Meshes)
                 {
                     if (mesh.ShaderFiles.Length > 0)
-                        skin.Surfaces.Add(mesh.Name, mesh.ShaderFiles[0]);
+                        comps.Add(mesh.Name, mesh.ShaderFiles[0]);
                     else
-                        skin.Surfaces.Add(mesh.Name, mesh.Name + ".tga");
+                        comps.Add(mesh.Name, mesh.Name + ".tga");
                 }
             }
 
             Skins.Add(skin);
             return skin;
+        }
+
+        public Component FindComponent ( string name )
+        {
+            foreach ( Component comp in Componenets )
+            {
+                if (comp.FileName == name)
+                    return comp;
+            }
+
+            return null;
         }
 
         public AnimationSequence FindSequence ( string name )

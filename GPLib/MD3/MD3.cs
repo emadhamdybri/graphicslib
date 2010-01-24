@@ -16,10 +16,16 @@ namespace MD3
         public float Radius = 0;
     }
 
+    public class FrameMatrix
+    {
+        public Matrix4 Matrix = Matrix4.Identity;
+        public Matrix4 Inverse = Matrix4.Identity;
+    }
+
     public class Tag
     {
         public string Name = string.Empty;
-        public Matrix4[] Frames;
+        public FrameMatrix[] Frames;
     }
 
     public class Triangle
@@ -61,6 +67,8 @@ namespace MD3
             name = n;
         }
 
+        public string FileName = string.Empty;
+
         public FrameInfo[] Frames;
         public Tag[] Tags;
         public Mesh[] Meshes;
@@ -71,6 +79,17 @@ namespace MD3
             {
                 if (tag.Name == name)
                     return tag;
+            }
+
+            return null;
+        }
+
+        public Mesh FindMesh ( string name )
+        {
+            foreach (Mesh mesh in Meshes)
+            {
+                if (mesh.Name == name)
+                    return mesh;
             }
 
             return null;

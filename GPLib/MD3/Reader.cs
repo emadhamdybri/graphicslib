@@ -12,17 +12,60 @@ namespace MD3
 {
     public class Reader
     {
+        public static bool CCWWinding = true;
+
         public static Character Read(DirectoryInfo dir)
+        {
+            return Read(dir, true);
+        }
+
+        public static Character Read(DirectoryInfo dir, bool useLOD)
         {
             if (!dir.Exists)
                 return null;
 
             Character character = new Character();
 
-            List<Component> models = new List<Component>();
-            foreach(FileInfo file in dir.GetFiles("*.md3"))
-                models.Add(ReadComponent(file));
-            character.Componenets = models.ToArray();
+            List<List<Component>> LODs = new List<List<Component>>();
+            foreach (FileInfo file in dir.GetFiles("*.md3"))
+            {
+                Component compnent = ReadComponent(file);
+                if (compnent == null)
+                    continue;
+
+                int LOD = 0;
+
+                if (file.Name.Contains("_"))
+                {
+                    string[] nugs = Path.GetFileNameWithoutExtension(file.Name).Split("_".ToCharArray());
+                    if (nugs.Length > 0 && char.IsNumber(nugs[nugs.Length - 1][0]))
+                        LOD = int.Parse(nugs[nugs.Length - 1]);
+                }
+
+                if (!useLOD && LOD > 0)
+                    continue;
+
+                if (LOD+1 > LODs.Count)
+                {
+                    for (int i = LODs.Count; i < LOD + 1; i++)
+                        LODs.Add(new List<Component>());
+                }
+                LODs[LOD].Add(compnent);
+            }
+            if (LODs.Count == 0)
+                return null;
+ 
+            character.Componenets = LODs[0].ToArray();
+
+            character.LODs = new LODLevel[LODs.Count];
+
+            int j = 0;
+            foreach(List<Component> lod in LODs)
+            {
+                character.LODs[j] = new LODLevel();
+                character.LODs[j].Componenets = lod.ToArray();
+                j++;
+            }
 
             foreach (FileInfo file in dir.GetFiles("*.cfg"))
                 ReadAnimationConfig(character,file);
@@ -35,11 +78,11 @@ namespace MD3
             return character;
         }
 
-        internal static void linkTreeChildren ( ConnectedComponent node, Dictionary<string, List<Component>> componentsWithTags )
+        internal static void linkTreeChildren ( Component parrent, ConnectedComponent node, Dictionary<string, List<Component>> componentsWithTags )
         {
            foreach (Tag tag in node.Part.Tags)
            {
-               if (tag.Name != "tag.floor")
+               if (tag.Name != "tag_floor")
                {
                    if (componentsWithTags.ContainsKey(tag.Name))
                    {
@@ -49,10 +92,13 @@ namespace MD3
                        List<Component> linkedComponents = componentsWithTags[tag.Name];
                        foreach (Component c in linkedComponents)
                        {
+                           if (c == node.Part || c == parrent)
+                               continue;
+
                            ConnectedComponent child = new ConnectedComponent();
                            child.Part = c;
                            node.Children[tag].Add(child);
-                           linkTreeChildren(child, componentsWithTags);
+                           linkTreeChildren(node.Part,child, componentsWithTags);
                        }
                    }
                }
@@ -66,16 +112,15 @@ namespace MD3
 
             foreach(Component part in character.Componenets)
             {
-                Tag tag = part.FindTag("tag.floor");
-                if (tag != null)
+                if (part.FileName == "lower")
                     root = part;
 
-                foreach (Tag t in part.Tags)
+                foreach (Tag tag in part.Tags)
                 {
-                    if (!componentsWithTags.ContainsKey(t.Name))
-                        componentsWithTags.Add(t.Name, new List<Component>());
+                    if (!componentsWithTags.ContainsKey(tag.Name))
+                        componentsWithTags.Add(tag.Name, new List<Component>());
 
-                    componentsWithTags[t.Name].Add(part);
+                    componentsWithTags[tag.Name].Add(part);
                 }
             }
 
@@ -85,7 +130,7 @@ namespace MD3
             character.RootNode = new ConnectedComponent();
             character.RootNode.Part = root;
 
-            linkTreeChildren(character.RootNode, componentsWithTags);
+            linkTreeChildren(null,character.RootNode, componentsWithTags);
         }
 
         public static void ReadSkin(Character character, FileInfo file)
@@ -95,15 +140,24 @@ namespace MD3
             
             string name = string.Empty;
 
-            string[] nugs = file.Name.Split("_".ToCharArray(), 2);
-            if (nugs.Length == 1)
-                name = nugs[0];
-            else
-                name = nugs[1];
+            string component = string.Empty;
+
+            string[] nugs = Path.GetFileNameWithoutExtension(file.Name).Split("_".ToCharArray(), 2);
+            if (nugs.Length > 0 )
+                component = nugs[0].ToLower();
+            
+            if (nugs.Length >1)
+                name = nugs[1].ToLower();
 
             Skin skin = character.GetSkin(name);
             FileStream fs = file.OpenRead();
             StreamReader sr = new StreamReader(fs);
+
+
+            if (!skin.Surfaces.ContainsKey(component))
+                skin.Surfaces.Add(component, new Dictionary<string, string>());
+
+            Dictionary<string, string> skinMeshes = skin.Surfaces[component];
 
             string line = sr.ReadLine();
             while (line != null)
@@ -113,10 +167,10 @@ namespace MD3
                     nugs = line.Split(",".ToCharArray(),2);
                     if (nugs.Length > 1)
                     {
-                        if (skin.Surfaces.ContainsKey(nugs[0]))
-                            skin.Surfaces[nugs[0]] = nugs[1];
+                        if (skinMeshes.ContainsKey(nugs[0].ToLower()))
+                            skinMeshes[nugs[0].ToLower()] = nugs[1].ToLower();
                         else
-                            skin.Surfaces.Add(nugs[0], nugs[1]);
+                            skinMeshes.Add(nugs[0].ToLower(), nugs[1].ToLower());
                     }
                 }
                 line = sr.ReadLine();
@@ -341,6 +395,12 @@ namespace MD3
                 Int32 MD3Version = (Int32)BinUtils.ReadObject(fs, typeof(Int32));
                 Component model = new Component(BinUtils.ReadString(fs, 64));
 
+                string filename = Path.GetFileNameWithoutExtension(file.FullName);
+                if (filename.Contains("_"))
+                    filename = filename.Split("_".ToCharArray())[0];
+
+                model.FileName = filename.ToLower();
+
                 UInt32 flags = (UInt32)BinUtils.ReadObject(fs, typeof(UInt32));
 
                 Int32 frameCount = (Int32)BinUtils.ReadObject(fs, typeof(Int32));
@@ -371,11 +431,12 @@ namespace MD3
 
                 List<List<MD3Tag>> tagFrames = new List<List<MD3Tag>>();
                 for (int i = 0; i < tagCount; i++)
+                    tagFrames.Add(new List<MD3Tag>());
+
+                for (int f = 0; f < frameCount; f++)
                 {
-                    List<MD3Tag> tags = new List<MD3Tag>();
-                    tagFrames.Add(tags);
-                    for (int f = 0; f < frameCount; f++)
-                       tags.Add((MD3Tag)BinUtils.ReadObject(fs, typeof(MD3Tag)));
+                    for ( int i = 0; i < tagCount; i++)
+                        tagFrames[i].Add((MD3Tag)BinUtils.ReadObject(fs, typeof(MD3Tag)));
                 }
 
                 if (!runStreamToOffset(fs, surfaceOffset))
@@ -442,7 +503,7 @@ namespace MD3
                 foreach(MD3Frame frame in frames)
                 {
                     FrameInfo info = new FrameInfo();
-                    info.Name = BinUtils.FixString(frame.Name);
+                    info.Name = BinUtils.FixString(frame.Name).ToLower();
                     info.Max = convertVectorF(frame.MaxBounds);
                     info.Min = convertVectorF(frame.MinBounds);
                     info.Origin = convertVectorF(frame.LocalOrigin);
@@ -457,10 +518,15 @@ namespace MD3
                     if (tagList.Count > 0)
                     {
                         Tag tag = new Tag();
-                        tag.Name = BinUtils.FixString(tagList[0].Name);
-                        List<Matrix4> frameMats = new List<Matrix4>();
+                        tag.Name = BinUtils.FixString(tagList[0].Name).ToLower();
+                        List<FrameMatrix> frameMats = new List<FrameMatrix>();
                         foreach (MD3Tag t in tagList)
-                            frameMats.Add(new Matrix4(t.R1[0], t.R1[1], t.R1[2], 0, t.R2[0], t.R2[1], t.R2[2], 0, t.R3[0], t.R3[1], t.R3[2], 0, t.Origin[0], t.Origin[1], t.Origin[2], 1.0f));
+                        {
+                            FrameMatrix mat = new FrameMatrix();
+                            mat.Matrix = new Matrix4(t.R1[0], t.R1[1], t.R1[2], 0, t.R2[0], t.R2[1], t.R2[2], 0, t.R3[0], t.R3[1], t.R3[2], 0, t.Origin[0], t.Origin[1], t.Origin[2], 1.0f);
+                            mat.Inverse = Matrix4.Invert(mat.Matrix);
+                            frameMats.Add(mat);
+                        }
                         tag.Frames = frameMats.ToArray();
                         modelTags.Add(tag);
                     }
@@ -471,13 +537,15 @@ namespace MD3
                 foreach (MD3Surface surface in Surfaces)
                 {
                     Mesh mesh = new Mesh();
-                    mesh.Name = BinUtils.FixString(surface.Header.Name);
+                    mesh.Name = BinUtils.FixString(surface.Header.Name).ToLower();
 
                     List<Triangle> tris = new List<Triangle>();
                     foreach (MD3Triangle triangle in surface.Triangles)
                     {
                         Triangle tri = new Triangle();
                         tri.Verts = triangle.Indexes;
+                        if (CCWWinding)
+                            Array.Reverse(tri.Verts);
                         tris.Add(tri);
                     }
 
