@@ -44,7 +44,10 @@ namespace Utilities.FileIO
 
         public static String FixString ( String input )
         {
-            return input.TrimEnd("\0".ToCharArray());
+            string[] nugs = input.Split("\0".ToCharArray());
+            if (nugs.Length > 0)
+                return nugs[0];
+            return input;
         }
 
         public static String FixString( char[] input)
