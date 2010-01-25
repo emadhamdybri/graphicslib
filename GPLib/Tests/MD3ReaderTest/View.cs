@@ -13,6 +13,7 @@ using OpenTK;
 using OpenTK.Graphics;
 
 using Drawables.DisplayLists;
+using Math3D;
 
 namespace MD3ReaderTest
 {
@@ -26,7 +27,7 @@ namespace MD3ReaderTest
         float pullback = 100f;
         Point lastMouse = Point.Empty;
 
-        int fps = 1;
+        int fps = 60;
 
         float GridSubDivisions = 1.0f;
         float GridSize = 50;
@@ -37,21 +38,41 @@ namespace MD3ReaderTest
         string dir = string.Empty;
         public View(string[] args)
         {
-            InitializeComponent();
+           CharacterInstance.ProcessSurfacePath = new ProcessSurfacePathHandler(GetTexturePath);
+           CharacterInstance.DrawTags = true;
+
+           InitializeComponent();
 
             if (args.Length > 0)
             {
                 character = Reader.Read(new DirectoryInfo(args[0]));
                 instance = new CharacterInstance(character);
                 dir = args[0];
+                
+                if (args.Length > 1)
+                    instance.SetSkin(args[1]);
+
+                instance.AnimationEnded += new CharacterInstance.SequenceEvent(instance_AnimationEnded);
+                instance.FrameChanged += new CharacterInstance.SequenceFrameEvent(instance_FrameChanged);
             }
             glControl1.MouseWheel += new MouseEventHandler(glControl1_MouseWheel);
 
-            if (args.Length > 1)
-                instance.SetSkin(args[1]);
+        }
 
-            CharacterInstance.ProcessSurfacePath = new ProcessSurfacePathHandler(GetTexturePath);
-            CharacterInstance.DrawTags = true;
+        void instance_FrameChanged(CharacterInstance sender, int frame, ComponentType part)
+        {
+            if (part == ComponentType.Torso)
+                TorsoFrame.Text = frame.ToString();
+            else if (part == ComponentType.Legs)
+                LegsFrame.Text = frame.ToString();
+        }
+
+        void instance_AnimationEnded(CharacterInstance sender, string name, ComponentType part)
+        {
+            if (part == ComponentType.Torso && torsoForceLoop.Checked)
+                instance.SetTorsoSequence(name);
+            else if (part == ComponentType.Legs && legsForceLoop.Checked)
+                instance.SetLegSequence(name);
         }
 
         string GetTexturePath ( string path )
@@ -132,13 +153,25 @@ namespace MD3ReaderTest
             frameTimer.Interval = 1000 / fps;
             frameTimer.Tick += new EventHandler(frameTimer_Tick);
             frameTimer.Start();
+
+            torsoList.Items.Clear();
+            legsList.Items.Clear();
+
+            if (character.Sequences.ContainsKey("torso"))
+            {
+                foreach (AnimationSequence seq in character.Sequences["torso"])
+                    torsoList.Items.Add(seq);
+            }
+
+            if (character.Sequences.ContainsKey("legs"))
+            {
+                foreach (AnimationSequence seq in character.Sequences["legs"])
+                    legsList.Items.Add(seq);
+            }
         }
 
         void frameTimer_Tick(object sender, EventArgs e)
         {
-            if (instance != null)
-                instance.IncremntFullFrame();
-
             Render3dView();
         }
 
@@ -331,7 +364,7 @@ namespace MD3ReaderTest
             GL.PushMatrix();
 
             GL.Enable(EnableCap.Light0);
-            Vector4 lightPos = new Vector4(10, 20, 20, 0);
+            Vector4 lightPos = new Vector4(100, -200, 200, 0);
             GL.Light(LightName.Light0, LightParameter.Position, lightPos);
             GridList_Generate(null, null);
             DrawGridAxisMarker();
@@ -341,6 +374,76 @@ namespace MD3ReaderTest
             GL.PopMatrix();
 
             glControl1.SwapBuffers();
+        }
+
+        private void torsoList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (instance == null)
+                return;
+
+            if (torsoList.SelectedItem == null)
+                instance.SetTorsoSequence(string.Empty);
+            else
+            {
+                AnimationSequence seq = (AnimationSequence)torsoList.SelectedItem;
+                instance.SetTorsoSequence(seq.Name);
+
+                TorsoStartFrame.Text = seq.StartFrame.ToString();
+                TorsoEndFrame.Text = seq.EndFrame.ToString();
+                TorsoLoopFrame.Text = seq.LoopPoint.ToString();
+            }
+
+            Render3dView();
+        }
+
+        private void legsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (instance == null)
+                return;
+
+            if (legsList.SelectedItem == null)
+                instance.SetTorsoSequence(string.Empty);
+            else
+            {
+                AnimationSequence seq = (AnimationSequence)legsList.SelectedItem;
+                instance.SetLegSequence(seq.Name);
+
+                LegsStartFrame.Text = seq.StartFrame.ToString();
+                LegsEndFrame.Text = seq.EndFrame.ToString();
+                LegsLoopFrame.Text = seq.LoopPoint.ToString();
+            }
+
+            Render3dView();
+        }
+
+        private void ComputeLegTorsoMatrix ()
+        {
+            instance.LegTorsoMatrix = Matrix4.CreateRotationZ(Trig.DegreeToRadian((float)LegTorsoSpin.Value)) * Matrix4.CreateRotationY(Trig.DegreeToRadian((float)LegTorsoTilt.Value));
+
+        }
+
+        private void LegTorsoSpin_ValueChanged(object sender, EventArgs e)
+        {
+            if (instance == null)
+                return;
+
+            ComputeLegTorsoMatrix();
+        }
+
+        private void LegTorsoTilt_ValueChanged(object sender, EventArgs e)
+        {
+            if (instance == null)
+                return;
+
+            ComputeLegTorsoMatrix();
+        }
+
+        private void SlowMo_CheckedChanged(object sender, EventArgs e)
+        {
+            if (SlowMo.Checked)
+                CharacterInstance.FPSScale = 0.01f;
+            else
+                CharacterInstance.FPSScale = 1.0f;
         }
     }
 }

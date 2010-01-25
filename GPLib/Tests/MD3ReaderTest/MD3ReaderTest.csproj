@@ -75,6 +75,10 @@
       <Project>{71452148-876E-4B8E-9244-A8F014CF72E6}</Project>
       <Name>Drawables</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Math\Math3D.csproj">
+      <Project>{0BC4671F-FF72-4D3E-9889-44382F6C64F2}</Project>
+      <Name>Math3D</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\MD3\MD3.csproj">
       <Project>{51A52FB3-4BB7-4404-B168-CAFF5524496C}</Project>
       <Name>MD3</Name>

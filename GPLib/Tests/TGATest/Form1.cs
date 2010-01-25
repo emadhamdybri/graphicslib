@@ -17,7 +17,7 @@ namespace TGATest
         {
             InitializeComponent();
 
-            this.pictureBox1.Image = TGAFile.Read("test32.tga");
+            this.pictureBox1.Image = TGAFile.Read("head_rocketbra.tga");
           //  this.pictureBox1.Image = TGAFile.Read("test8.tga");
         }
     }
