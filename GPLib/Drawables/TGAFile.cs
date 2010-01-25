@@ -38,6 +38,11 @@ namespace Drawables.TGA
             return ReadTGA(stream);
         }
 
+        internal static int GetBits(byte b, int offset, int count)
+        {
+            return (b >> offset) & ((1 << count) - 1);
+        }
+
         protected static Bitmap ReadTGA ( Stream stream )
         {
             int IDLen = stream.ReadByte();
@@ -151,8 +156,8 @@ namespace Drawables.TGA
                         byte packetHeader = 0;
                         packetHeader = (byte)stream.ReadByte();
 
-                        byte type = (byte)(packetHeader >> 7);
-                        byte count = (byte)((byte)(packetHeader << 1) >> 1);
+                        int type = GetBits(packetHeader, 7, 1);
+                        int count = GetBits(packetHeader, 0, 7) + 1;
 
                         if (count == 0)
                             continue;
