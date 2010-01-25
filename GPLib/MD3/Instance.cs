@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Diagnostics;
 
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -12,10 +13,84 @@ namespace MD3
 {
     public delegate string ProcessSurfacePathHandler ( string name );
 
+    internal class AnimationTracker
+    {
+        AnimationSequence sequence;
+        double lastTime = -1;
+        int thisFrame = 0;
+
+        public delegate void SequenceEvent ( AnimationTracker sender, string name );
+        public event SequenceEvent AnimationLooped;
+        public event SequenceEvent AnimationEnded;
+        public event SequenceEvent FrameChanged;
+
+        public int ThisFrame 
+        {
+            get { return thisFrame; }
+        }
+
+        Stopwatch timer;
+
+        public AnimationTracker ( AnimationSequence seq )
+        {
+            sequence = seq;
+            timer = new Stopwatch();
+            timer.Start();
+            thisFrame = seq.StartFrame;
+        }
+
+        public void Update ()
+        {
+            double now = timer.ElapsedMilliseconds / 1000.0;
+
+            if (thisFrame < sequence.StartFrame || thisFrame > sequence.EndFrame || lastTime < 0) // starting over
+            {
+                thisFrame = sequence.StartFrame;
+                lastTime = now;
+            }
+            else
+            {
+                float fps = sequence.FPS * CharacterInstance.FPSScale;
+
+                if (now > lastTime + (1.0 / fps))
+                {
+                    thisFrame++;
+                    if (thisFrame > sequence.EndFrame)
+                    {
+                        thisFrame = sequence.LoopPoint;
+                        if (sequence.LoopPoint == sequence.EndFrame)
+                        {
+                            if (AnimationEnded != null)
+                                AnimationEnded(this, sequence.Name);
+                        }
+                        else
+                        {
+                            if (AnimationLooped != null)
+                                AnimationLooped(this, sequence.Name);
+                        }
+                    }
+                    lastTime = now;
+                    if (FrameChanged != null)
+                        FrameChanged(this, sequence.Name);
+                }
+            }
+        }
+    }
+
     public class CharacterInstance
     {
+        public static float FPSScale = 1.0f;
+
+        public delegate void SequenceEvent ( CharacterInstance sender, string name, ComponentType part );
+        public delegate void SequenceFrameEvent(CharacterInstance sender, int frame, ComponentType part);
+
+        public event SequenceEvent AnimationLooped;
+        public event SequenceEvent AnimationEnded;
+        public event SequenceFrameEvent FrameChanged;
+
         protected Character character;
-        protected AnimationSequence sequence;
+        internal AnimationTracker legSequence;
+        internal AnimationTracker torsoSequence;
 
         protected Dictionary<Tag,Matrix4> TagMatrixOffsets = new Dictionary<Tag,Matrix4>();
 
@@ -28,10 +103,8 @@ namespace MD3
 
         public static bool DrawTags = false;
 
-        int lastFrame = -1;
-        float lastTime = -1;
-
-        int thisFrame = 0;
+        public Matrix4 LegTorsoMatrix = Matrix4.Identity;
+        public Matrix4 TorsoHeadMatrix = Matrix4.Identity;
 
         public CharacterInstance(Character c)
         {
@@ -54,7 +127,6 @@ namespace MD3
 
             if (skin == null)
                 return;
-
 
             foreach (KeyValuePair<string,Dictionary<string,string>> SkinComponent in skin.Surfaces)
             {
@@ -97,6 +169,8 @@ namespace MD3
 
         public bool Draw()
         {
+            UpdateSequence();
+
             if (character.RootNode == null)
                 return false;
 
@@ -107,10 +181,39 @@ namespace MD3
             return true;
         }
 
+        void UpdateSequence()
+        {
+            if (legSequence != null)
+                legSequence.Update();
+
+            if (torsoSequence != null)
+                torsoSequence.Update();
+        }
+
+        internal int getFrame ( AnimationTracker tracker )
+        {
+            if (tracker == null)
+                return 0;
+
+            return tracker.ThisFrame;
+        }
+
+        internal AnimationTracker getTracker(ComponentType part)
+        {
+            if (part == ComponentType.Head || part == ComponentType.Other)
+                return null;
+
+            if (part == ComponentType.Legs)
+                return legSequence;
+            else
+                return torsoSequence;
+        }
+
         internal void DrawCompoenent(ConnectedComponent component)
         {
+            int thisFrame = getFrame(getTracker(component.Part.PartType));
             foreach (Mesh mesh in component.Part.Meshes)
-                DrawMesh(mesh);
+                DrawMesh(mesh, thisFrame);
 
             foreach (KeyValuePair<Tag,List<ConnectedComponent>> child in component.Children)
             {
@@ -152,7 +255,13 @@ namespace MD3
                         Tag destTag = c.Part.FindTag(child.Key.Name);
                         if (destTag == null)
                             continue;
+
                         GL.PushMatrix();
+                        if (component.Part.PartType == ComponentType.Legs && c.Part.PartType == ComponentType.Torso)
+                            GL.MultMatrix(ref LegTorsoMatrix);
+                        else if (component.Part.PartType == ComponentType.Torso && c.Part.PartType == ComponentType.Head)
+                            GL.MultMatrix(ref TorsoHeadMatrix);
+
                         Matrix4 m = destTag.Frames[0].Matrix;
                         if (thisFrame < destTag.Frames.Length)
                             m = destTag.Frames[thisFrame].Matrix;
@@ -165,7 +274,7 @@ namespace MD3
             }
         }
 
-        protected void DrawMesh ( Mesh mesh )
+        protected void DrawMesh ( Mesh mesh, int thisFrame )
         {
             if (HiddenMeshes.Contains(mesh) || mesh.Frames.Length < 1)
                 return;
@@ -236,18 +345,74 @@ namespace MD3
             BindSkin();
         }
 
-        public bool SetSequence(string name)
+        public bool SetTorsoSequence(string name)
         {
-            sequence = character.FindSequence(name);
+            AnimationSequence sequence = character.FindSequence("torso",name);
+            if (sequence == null)
+            {
+                torsoSequence = null;
+                return false;
+            }
 
-            return sequence != null;
+            torsoSequence = new AnimationTracker(sequence);
+            torsoSequence.AnimationEnded += new AnimationTracker.SequenceEvent(torsoSequence_AnimationEnded);
+            torsoSequence.AnimationLooped += new AnimationTracker.SequenceEvent(torsoSequence_AnimationLooped);
+            if (FrameChanged != null)
+                torsoSequence.FrameChanged += new AnimationTracker.SequenceEvent(torsoSequence_FrameChanged);
+            return true;
         }
 
-        public void IncremntFullFrame ( )
+        void torsoSequence_FrameChanged(AnimationTracker sender, string name)
         {
-            thisFrame++;
-            if (thisFrame > character.RootNode.Part.Frames.Length)
-                thisFrame = 0;
+            if (FrameChanged != null)
+                FrameChanged(this, sender.ThisFrame, ComponentType.Torso);
+        }
+
+        void torsoSequence_AnimationLooped(AnimationTracker sender, string name)
+        {
+            if (AnimationLooped != null)
+                AnimationLooped(this, name, ComponentType.Torso);
+        }
+
+        void torsoSequence_AnimationEnded(AnimationTracker sender, string name)
+        {
+            if (AnimationEnded != null)
+                AnimationEnded(this, name, ComponentType.Torso);
+        }
+
+        public bool SetLegSequence(string name)
+        {
+            AnimationSequence sequence = character.FindSequence("legs", name);
+            if (sequence == null)
+            {
+                legSequence = null;
+                return false;
+            }
+
+            legSequence = new AnimationTracker(sequence);
+            legSequence.AnimationEnded += new AnimationTracker.SequenceEvent(legSequence_AnimationEnded);
+            legSequence.AnimationLooped += new AnimationTracker.SequenceEvent(legSequence_AnimationLooped);
+            if (FrameChanged != null)
+                legSequence.FrameChanged += new AnimationTracker.SequenceEvent(legSequence_FrameChanged);
+            return true;
+        }
+
+        void legSequence_FrameChanged(AnimationTracker sender, string name)
+        {
+            if (FrameChanged != null)
+                FrameChanged(this, sender.ThisFrame, ComponentType.Legs);
+        }
+
+        void legSequence_AnimationLooped(AnimationTracker sender, string name)
+        {
+            if (AnimationLooped != null)
+                AnimationLooped(this, name, ComponentType.Legs);
+        }
+
+        void legSequence_AnimationEnded(AnimationTracker sender, string name)
+        {
+            if (AnimationEnded != null)
+                AnimationEnded(this, name, ComponentType.Legs);
         }
     }
 }
