@@ -21,6 +21,11 @@ namespace MD3
         public int EndFrame = -1;
         public int LoopPoint = -1;
         public float FPS = 30f;
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class Skin
@@ -57,11 +62,11 @@ namespace MD3
         public Vector3 HeadOffset = Vector3.Zero;
         public string Footsetps = string.Empty;
 
-        public AnimationSequence[] Sequences;
+        public Dictionary<string,List<AnimationSequence>> Sequences;
 
         public List<Skin> Skins = new List<Skin>();
 
-        protected Dictionary<string, AnimationSequence> SequenceCache;
+        protected Dictionary<string, Dictionary<string,AnimationSequence>> SequenceCache;
 
         internal ConnectedComponent RootNode;
 
@@ -126,21 +131,32 @@ namespace MD3
             return null;
         }
 
-        public AnimationSequence FindSequence ( string name )
+        public AnimationSequence FindSequence ( string part, string name )
         {
             if (SequenceCache == null)
             {
-                SequenceCache = new Dictionary<string, AnimationSequence>();
-                foreach (AnimationSequence seq in Sequences)
+                SequenceCache = new Dictionary<string, Dictionary<string,AnimationSequence>>();
+                foreach (KeyValuePair<string,List<AnimationSequence>> partSeq in Sequences)
                 {
-                    if (!SequenceCache.ContainsKey(seq.Name))
-                        SequenceCache.Add(seq.Name, seq);
+                    if (!SequenceCache.ContainsKey(partSeq.Key))
+                        SequenceCache.Add(partSeq.Key, new Dictionary<string, AnimationSequence>());
+
+                    Dictionary<string, AnimationSequence> seqs = SequenceCache[partSeq.Key];
+                    foreach(AnimationSequence seq in partSeq.Value)
+                    {
+                        if (!seqs.ContainsKey(seq.Name))
+                            seqs.Add(seq.Name, seq);
+                    }
                 }
             }
-            if (!SequenceCache.ContainsKey(name))
+
+            if (!SequenceCache.ContainsKey(part))
                 return null;
 
-            return SequenceCache[name];
+            if (!SequenceCache[part].ContainsKey(name))
+                return null;
+
+            return SequenceCache[part][name];
         }
     }
 }

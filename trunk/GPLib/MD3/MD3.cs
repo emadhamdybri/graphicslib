@@ -54,6 +54,14 @@ namespace MD3
         public Vector2[] UVs;
     }
 
+    public enum ComponentType
+    {
+        Legs,
+        Torso,
+        Head,
+        Other
+    }
+
     public class Component
     {
         public string Name
@@ -66,6 +74,8 @@ namespace MD3
         {
             name = n;
         }
+
+        public ComponentType PartType = ComponentType.Other;
 
         public string FileName = string.Empty;
 
