@@ -722,15 +722,15 @@ namespace MD3
                     foreach (List<MD3Vertex> frameVerts in surface.Frames)
                     {
                         Frame frame = new Frame();
-                        List<Vertex> vList = new List<Vertex>();
+                        List<Vector3> verts = new List<Vector3>();
+                        List<Vector3> nroms = new List<Vector3>();
                         foreach (MD3Vertex v in frameVerts)
                         {
-                            Vertex vert = new Vertex();
-                            vert.Position = convertCoordinate(v);
-                            vert.Normal = convertNormal(v);
-                            vList.Add(vert);
+                            verts.Add(convertCoordinate(v));
+                            nroms.Add(convertNormal(v));
                         }
-                        frame.Verts = vList.ToArray();
+                        frame.Positions = verts.ToArray();
+                        frame.Normals = nroms.ToArray();
                         fList.Add(frame);
                     }
                     mesh.Frames = fList.ToArray();
@@ -753,7 +753,7 @@ namespace MD3
 
                 return model;
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 fs.Close();
                 return null;

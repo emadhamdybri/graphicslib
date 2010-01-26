@@ -33,15 +33,10 @@ namespace MD3
         public int[] Verts;
     }
 
-    public class Vertex
-    {
-        public Vector3 Position = Vector3.Zero;
-        public Vector3 Normal = Vector3.Zero;
-    }
-
     public class Frame
     {
-        public Vertex[] Verts;
+        public Vector3[] Positions;
+        public Vector3[] Normals;
     }
 
     public class Mesh
