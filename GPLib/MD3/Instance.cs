@@ -18,6 +18,8 @@ namespace MD3
         AnimationSequence sequence;
         double lastTime = -1;
         int thisFrame = 0;
+        int nextFrame = 0;
+        double param;
 
         public delegate void SequenceEvent ( AnimationTracker sender, string name );
         public event SequenceEvent AnimationLooped;
@@ -29,6 +31,16 @@ namespace MD3
             get { return thisFrame; }
         }
 
+        public int NextFrame
+        {
+            get { return nextFrame; }
+        }
+
+        public float Paramater
+        {
+            get { return (float)param; }
+        }
+
         Stopwatch timer;
 
         public AnimationTracker ( AnimationSequence seq )
@@ -37,15 +49,35 @@ namespace MD3
             timer = new Stopwatch();
             timer.Start();
             thisFrame = seq.StartFrame;
+            nextFrame = thisFrame + 1;
+            param = 0;
         }
 
         public void Update ()
         {
             double now = timer.ElapsedMilliseconds / 1000.0;
 
+            if (sequence.StartFrame == sequence.EndFrame) // no animation so let it go
+            {
+                thisFrame = sequence.StartFrame;
+                nextFrame = thisFrame;
+                param = 0;
+                return;
+            }
+
+            if (thisFrame == sequence.LoopPoint && sequence.LoopPoint == sequence.EndFrame) // hold at the end, so just let it go
+            {
+                thisFrame = sequence.EndFrame;
+                nextFrame = thisFrame;
+                param = 0;
+                return;
+            }
+
             if (thisFrame < sequence.StartFrame || thisFrame > sequence.EndFrame || lastTime < 0) // starting over
             {
                 thisFrame = sequence.StartFrame;
+                nextFrame = thisFrame + 1;
+                param = 0;
                 lastTime = now;
             }
             else
@@ -54,8 +86,13 @@ namespace MD3
 
                 if (now > lastTime + (1.0 / fps))
                 {
-                    thisFrame++;
-                    if (thisFrame > sequence.EndFrame)
+                    thisFrame = nextFrame;
+                    nextFrame++;
+                    param = 0;
+                    if (nextFrame > sequence.EndFrame)
+                        nextFrame = sequence.LoopPoint;
+
+                    if (thisFrame == sequence.EndFrame && param == 0)
                     {
                         thisFrame = sequence.LoopPoint;
                         if (sequence.LoopPoint == sequence.EndFrame)
@@ -73,6 +110,8 @@ namespace MD3
                     if (FrameChanged != null)
                         FrameChanged(this, sequence.Name);
                 }
+                else
+                    param = (now - lastTime) / (1.0f / fps);
             }
         }
     }
@@ -105,6 +144,10 @@ namespace MD3
 
         public Matrix4 LegTorsoMatrix = Matrix4.Identity;
         public Matrix4 TorsoHeadMatrix = Matrix4.Identity;
+
+        public bool InterpolateMeshes = false;
+        public bool InterpolateNormals = false;
+  //      public bool InterpolateTags = false;
 
         public CharacterInstance(Character c)
         {
@@ -198,6 +241,22 @@ namespace MD3
             return tracker.ThisFrame;
         }
 
+        internal int getNextFrame(AnimationTracker tracker)
+        {
+            if (tracker == null)
+                return 0;
+
+            return tracker.NextFrame;
+        }
+
+        internal float getParam(AnimationTracker tracker)
+        {
+            if (tracker == null)
+                return 0;
+
+            return tracker.Paramater;
+        }
+
         internal AnimationTracker getTracker(ComponentType part)
         {
             if (part == ComponentType.Head || part == ComponentType.Other)
@@ -213,7 +272,7 @@ namespace MD3
         {
             int thisFrame = getFrame(getTracker(component.Part.PartType));
             foreach (Mesh mesh in component.Part.Meshes)
-                DrawMesh(mesh, thisFrame);
+                DrawMesh(mesh, component.Part.PartType);
 
             foreach (KeyValuePair<Tag,List<ConnectedComponent>> child in component.Children)
             {
@@ -274,7 +333,7 @@ namespace MD3
             }
         }
 
-        protected void DrawMesh ( Mesh mesh, int thisFrame )
+        protected void DrawMesh ( Mesh mesh, ComponentType part )
         {
             if (HiddenMeshes.Contains(mesh) || mesh.Frames.Length < 1)
                 return;
@@ -290,19 +349,46 @@ namespace MD3
             GL.Color4(Color.White);
             GL.Begin(BeginMode.Triangles);
 
-            Frame frame;
-            if (thisFrame >= mesh.Frames.Length)
-                frame = mesh.Frames[0];
+            int thisFrame = getFrame(getTracker(part));
+            int nextFrame = getNextFrame(getTracker(part));
+            float param = getParam(getTracker(part));
+
+
+            Vertex[] theseVerts;
+            if (!InterpolateMeshes || thisFrame == nextFrame || thisFrame >= mesh.Frames.Length)
+            {
+                if (thisFrame >= mesh.Frames.Length)
+                    theseVerts = mesh.Frames[0].Verts;
+                else
+                    theseVerts = mesh.Frames[thisFrame].Verts;
+            }
             else
-                frame = mesh.Frames[thisFrame];
+            {
+                theseVerts = new Vertex[mesh.Frames[thisFrame].Verts.Length];
+                
+                for(int i = 0; i < theseVerts.Length; i++ )
+                {
+                    theseVerts[i] = new Vertex();
+
+                    theseVerts[i].Position = mesh.Frames[thisFrame].Verts[i].Position + ((mesh.Frames[nextFrame].Verts[i].Position - mesh.Frames[thisFrame].Verts[i].Position) *param);
+
+                    if (InterpolateNormals)
+                    {
+                        theseVerts[i].Normal = mesh.Frames[thisFrame].Verts[i].Normal + ((mesh.Frames[nextFrame].Verts[i].Normal - mesh.Frames[thisFrame].Verts[i].Normal) * param);
+                        theseVerts[i].Normal.NormalizeFast();
+                    }
+                    else
+                        theseVerts[i].Normal = mesh.Frames[thisFrame].Verts[i].Normal;
+                }
+            }
 
             foreach(Triangle triangle in mesh.Triangles)
             {
                 foreach (int index in triangle.Verts)
                 {
                     GL.TexCoord2(mesh.UVs[index]);
-                    GL.Normal3(frame.Verts[index].Normal);
-                    GL.Vertex3(frame.Verts[index].Position);
+                    GL.Normal3(theseVerts[index].Normal);
+                    GL.Vertex3(theseVerts[index].Position);
                 }
             }
 
