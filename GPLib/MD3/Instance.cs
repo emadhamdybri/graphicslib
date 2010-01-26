@@ -199,10 +199,6 @@ namespace MD3
                                         tex = TextureSystem.system.GetTexture(file.FullName);
                                     if (tex != null)
                                         skinTextures.Add(mesh, tex);
-                                    else
-                                    {
-                                        int i = 0;
-                                    }
                                 }
                             }
                         }
@@ -355,31 +351,38 @@ namespace MD3
             float param = getParam(getTracker(part));
 
 
-            Vertex[] theseVerts;
+            Vector3[] theseVerts;
+            Vector3[] theseNorms;
+
             if (!InterpolateMeshes || thisFrame == nextFrame || thisFrame >= mesh.Frames.Length)
             {
                 if (thisFrame >= mesh.Frames.Length)
-                    theseVerts = mesh.Frames[0].Verts;
+                {
+                    theseVerts = mesh.Frames[0].Positions;
+                    theseNorms = mesh.Frames[0].Normals;
+                }
                 else
-                    theseVerts = mesh.Frames[thisFrame].Verts;
+                {
+                    theseVerts = mesh.Frames[thisFrame].Positions;
+                    theseNorms = mesh.Frames[thisFrame].Normals;
+                }
             }
             else
             {
-                theseVerts = new Vertex[mesh.Frames[thisFrame].Verts.Length];
-                
+                theseVerts = new Vector3[mesh.Frames[thisFrame].Positions.Length];
+                theseNorms = new Vector3[mesh.Frames[thisFrame].Normals.Length];
+
                 for(int i = 0; i < theseVerts.Length; i++ )
                 {
-                    theseVerts[i] = new Vertex();
-
-                    theseVerts[i].Position = mesh.Frames[thisFrame].Verts[i].Position + ((mesh.Frames[nextFrame].Verts[i].Position - mesh.Frames[thisFrame].Verts[i].Position) *param);
+                    theseVerts[i] = mesh.Frames[thisFrame].Positions[i] + ((mesh.Frames[nextFrame].Positions[i] - mesh.Frames[thisFrame].Positions[i]) *param);
 
                     if (InterpolateNormals)
                     {
-                        theseVerts[i].Normal = mesh.Frames[thisFrame].Verts[i].Normal + ((mesh.Frames[nextFrame].Verts[i].Normal - mesh.Frames[thisFrame].Verts[i].Normal) * param);
-                        theseVerts[i].Normal.NormalizeFast();
+                        theseNorms[i] = mesh.Frames[thisFrame].Normals[i] + ((mesh.Frames[nextFrame].Normals[i] - mesh.Frames[thisFrame].Normals[i]) * param);
+                        theseNorms[i].NormalizeFast();
                     }
                     else
-                        theseVerts[i].Normal = mesh.Frames[thisFrame].Verts[i].Normal;
+                        theseNorms[i] = mesh.Frames[thisFrame].Normals[i];
                 }
             }
 
@@ -388,8 +391,8 @@ namespace MD3
                 foreach (int index in triangle.Verts)
                 {
                     GL.TexCoord2(mesh.UVs[index]);
-                    GL.Normal3(theseVerts[index].Normal);
-                    GL.Vertex3(theseVerts[index].Position);
+                    GL.Normal3(theseNorms[index]);
+                    GL.Vertex3(theseVerts[index]);
                 }
             }
 
