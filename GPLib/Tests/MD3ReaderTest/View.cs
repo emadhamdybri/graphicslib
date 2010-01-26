@@ -23,11 +23,11 @@ namespace MD3ReaderTest
         CharacterInstance instance;
 
         Vector3 offset = new Vector3(0, 0, 5);
-        Vector2 rotation = new Vector2(0, 0);
+        Vector2 rotation = new Vector2(60, 30);
         float pullback = 100f;
         Point lastMouse = Point.Empty;
 
-        int fps = 60;
+        int fps = 120;
 
         float GridSubDivisions = 1.0f;
         float GridSize = 50;
@@ -43,20 +43,27 @@ namespace MD3ReaderTest
 
            InitializeComponent();
 
-            if (args.Length > 0)
+           string model = "tifa";
+           if (args.Length > 0)
+               model = args[0];
+
+            character = Reader.Read(new DirectoryInfo(model));
+            if (character == null)
             {
-                character = Reader.Read(new DirectoryInfo(args[0]));
-                instance = new CharacterInstance(character);
-                dir = args[0];
-                
-                if (args.Length > 1)
-                    instance.SetSkin(args[1]);
-
-                instance.AnimationEnded += new CharacterInstance.SequenceEvent(instance_AnimationEnded);
-                instance.FrameChanged += new CharacterInstance.SequenceFrameEvent(instance_FrameChanged);
+                MessageBox.Show("Unable to read file " + model);
+                Application.Exit();
+                return;
             }
-            glControl1.MouseWheel += new MouseEventHandler(glControl1_MouseWheel);
+            instance = new CharacterInstance(character);
+            instance.InterpolateMeshes = true;
+            dir = model;
+            
+            if (args.Length > 1)
+                instance.SetSkin(args[1]);
 
+            instance.AnimationEnded += new CharacterInstance.SequenceEvent(instance_AnimationEnded);
+            instance.FrameChanged += new CharacterInstance.SequenceFrameEvent(instance_FrameChanged);
+            glControl1.MouseWheel += new MouseEventHandler(glControl1_MouseWheel);
         }
 
         void instance_FrameChanged(CharacterInstance sender, int frame, ComponentType part)
@@ -82,7 +89,7 @@ namespace MD3ReaderTest
 
         void glControl1_MouseWheel(object sender, MouseEventArgs e)
         {
-            float zoomSpeed = 0.5f;
+            float zoomSpeed = 5f;
             if (Control.ModifierKeys == Keys.Shift)
                 zoomSpeed *= 5f;
 
@@ -157,17 +164,31 @@ namespace MD3ReaderTest
             torsoList.Items.Clear();
             legsList.Items.Clear();
 
+            AnimationSequence torsoSelect = null;
+            AnimationSequence legSelet = null;
+
             if (character.Sequences.ContainsKey("torso"))
             {
                 foreach (AnimationSequence seq in character.Sequences["torso"])
+                {
                     torsoList.Items.Add(seq);
+                    if (seq.Name == "stand")
+                        torsoSelect = seq;
+                }
             }
 
             if (character.Sequences.ContainsKey("legs"))
             {
                 foreach (AnimationSequence seq in character.Sequences["legs"])
+                {
                     legsList.Items.Add(seq);
+                    if (seq.Name == "idle")
+                        legSelet = seq;
+                }
             }
+
+            torsoList.SelectedItem = torsoSelect;
+            legsList.SelectedItem = legSelet;
         }
 
         void frameTimer_Tick(object sender, EventArgs e)
@@ -204,9 +225,9 @@ namespace MD3ReaderTest
             Vector4 lightInfo = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
             GL.Light(LightName.Light0, LightParameter.Ambient, lightInfo);
 
-            lightInfo = new Vector4(0.7f, 0.7f, 0.7f, 1.0f);
+            lightInfo = new Vector4(1f, 1f, 1f, 1.0f);
             GL.Light(LightName.Light0, LightParameter.Diffuse, lightInfo);
-            GL.Light(LightName.Light0, LightParameter.Specular, lightInfo);
+        //    GL.Light(LightName.Light0, LightParameter.Specular, lightInfo);
         }
 
         protected virtual void SetViewPort()
@@ -441,7 +462,7 @@ namespace MD3ReaderTest
         private void SlowMo_CheckedChanged(object sender, EventArgs e)
         {
             if (SlowMo.Checked)
-                CharacterInstance.FPSScale = 0.01f;
+                CharacterInstance.FPSScale = 0.1f;
             else
                 CharacterInstance.FPSScale = 1.0f;
         }
