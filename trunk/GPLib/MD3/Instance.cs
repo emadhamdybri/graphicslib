@@ -26,6 +26,8 @@ namespace MD3
         public event SequenceEvent AnimationEnded;
         public event SequenceEvent FrameChanged;
 
+        bool animated = false;
+
         public int ThisFrame 
         {
             get { return thisFrame; }
@@ -49,29 +51,28 @@ namespace MD3
             timer = new Stopwatch();
             timer.Start();
             thisFrame = seq.StartFrame;
-            nextFrame = thisFrame + 1;
+            if (seq.StartFrame != seq.EndFrame)
+            {
+                nextFrame = thisFrame + 1;
+                animated = true;
+            }
+            else
+                nextFrame = thisFrame;
+
             param = 0;
         }
 
         public void Update ()
         {
-            double now = timer.ElapsedMilliseconds / 1000.0;
-
-            if (sequence.StartFrame == sequence.EndFrame) // no animation so let it go
-            {
-                thisFrame = sequence.StartFrame;
-                nextFrame = thisFrame;
-                param = 0;
-                return;
-            }
-
-            if (thisFrame == sequence.LoopPoint && sequence.LoopPoint == sequence.EndFrame) // hold at the end, so just let it go
+            if (!animated)
             {
                 thisFrame = sequence.EndFrame;
                 nextFrame = thisFrame;
                 param = 0;
                 return;
             }
+
+            double now = timer.ElapsedMilliseconds / 1000.0;
 
             if (thisFrame < sequence.StartFrame || thisFrame > sequence.EndFrame || lastTime < 0) // starting over
             {
@@ -82,19 +83,20 @@ namespace MD3
             }
             else
             {
-                float fps = sequence.FPS * CharacterInstance.FPSScale;
+                float frameTime = 1.0f/(sequence.FPS * CharacterInstance.FPSScale);
 
-                if (now > lastTime + (1.0 / fps))
+                param = (now - lastTime) / frameTime;
+
+                if (param >= 1)
                 {
+                    param = 0;
                     thisFrame = nextFrame;
                     nextFrame++;
-                    param = 0;
                     if (nextFrame > sequence.EndFrame)
-                        nextFrame = sequence.LoopPoint;
-
-                    if (thisFrame == sequence.EndFrame && param == 0)
+                        nextFrame = sequence.LoopPoint;  
+                
+                    if (thisFrame == sequence.EndFrame) // we hit the end of the loop
                     {
-                        thisFrame = sequence.LoopPoint;
                         if (sequence.LoopPoint == sequence.EndFrame)
                         {
                             if (AnimationEnded != null)
@@ -106,12 +108,11 @@ namespace MD3
                                 AnimationLooped(this, sequence.Name);
                         }
                     }
+
                     lastTime = now;
                     if (FrameChanged != null)
                         FrameChanged(this, sequence.Name);
                 }
-                else
-                    param = (now - lastTime) / (1.0f / fps);
             }
         }
     }
