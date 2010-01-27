@@ -32,36 +32,37 @@
             this.torsoList = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.TorsoLoopFrame = new System.Windows.Forms.TextBox();
-            this.TorsoStartFrame = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.TorsoEndFrame = new System.Windows.Forms.TextBox();
+            this.SlowMo = new System.Windows.Forms.CheckBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.LegTorsoSpin = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
+            this.LegTorsoTilt = new System.Windows.Forms.NumericUpDown();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.LegsFrame = new System.Windows.Forms.TextBox();
+            this.legsForceLoop = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.legsList = new System.Windows.Forms.ComboBox();
             this.LegsLoopFrame = new System.Windows.Forms.TextBox();
             this.LegsStartFrame = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.LegsEndFrame = new System.Windows.Forms.TextBox();
-            this.torsoForceLoop = new System.Windows.Forms.CheckBox();
-            this.legsForceLoop = new System.Windows.Forms.CheckBox();
-            this.LegTorsoTilt = new System.Windows.Forms.NumericUpDown();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.LegTorsoSpin = new System.Windows.Forms.NumericUpDown();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.TorsoFrame = new System.Windows.Forms.TextBox();
-            this.LegsFrame = new System.Windows.Forms.TextBox();
-            this.SlowMo = new System.Windows.Forms.CheckBox();
+            this.torsoForceLoop = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.TorsoLoopFrame = new System.Windows.Forms.TextBox();
+            this.TorsoStartFrame = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.TorsoEndFrame = new System.Windows.Forms.TextBox();
+            this.FrameTime = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.LegTorsoTilt)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LegTorsoSpin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LegTorsoTilt)).BeginInit();
+            this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // glControl1
@@ -104,6 +105,7 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.FrameTime);
             this.panel1.Controls.Add(this.SlowMo);
             this.panel1.Controls.Add(this.label10);
             this.panel1.Controls.Add(this.LegTorsoSpin);
@@ -116,93 +118,70 @@
             this.panel1.Size = new System.Drawing.Size(163, 642);
             this.panel1.TabIndex = 3;
             // 
-            // groupBox1
+            // SlowMo
             // 
-            this.groupBox1.Controls.Add(this.TorsoFrame);
-            this.groupBox1.Controls.Add(this.torsoForceLoop);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.torsoList);
-            this.groupBox1.Controls.Add(this.TorsoLoopFrame);
-            this.groupBox1.Controls.Add(this.TorsoStartFrame);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.TorsoEndFrame);
-            this.groupBox1.Location = new System.Drawing.Point(11, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(149, 237);
-            this.groupBox1.TabIndex = 9;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Torso";
+            this.SlowMo.AutoSize = true;
+            this.SlowMo.Location = new System.Drawing.Point(11, 587);
+            this.SlowMo.Name = "SlowMo";
+            this.SlowMo.Size = new System.Drawing.Size(67, 17);
+            this.SlowMo.TabIndex = 15;
+            this.SlowMo.Text = "Slow-Mo";
+            this.SlowMo.UseVisualStyleBackColor = true;
+            this.SlowMo.CheckedChanged += new System.EventHandler(this.SlowMo_CheckedChanged);
             // 
-            // label4
+            // label10
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(10, 141);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(63, 13);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Loop Frame";
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(8, 529);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(96, 13);
+            this.label10.TabIndex = 14;
+            this.label10.Text = "Leg-Torso Rotoate";
             // 
-            // TorsoLoopFrame
+            // LegTorsoSpin
             // 
-            this.TorsoLoopFrame.Location = new System.Drawing.Point(13, 157);
-            this.TorsoLoopFrame.Name = "TorsoLoopFrame";
-            this.TorsoLoopFrame.ReadOnly = true;
-            this.TorsoLoopFrame.Size = new System.Drawing.Size(113, 20);
-            this.TorsoLoopFrame.TabIndex = 7;
+            this.LegTorsoSpin.Location = new System.Drawing.Point(11, 545);
+            this.LegTorsoSpin.Maximum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.LegTorsoSpin.Minimum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            -2147483648});
+            this.LegTorsoSpin.Name = "LegTorsoSpin";
+            this.LegTorsoSpin.Size = new System.Drawing.Size(120, 20);
+            this.LegTorsoSpin.TabIndex = 13;
+            this.LegTorsoSpin.ValueChanged += new System.EventHandler(this.LegTorsoSpin_ValueChanged);
             // 
-            // TorsoStartFrame
+            // label9
             // 
-            this.TorsoStartFrame.Location = new System.Drawing.Point(14, 79);
-            this.TorsoStartFrame.Name = "TorsoStartFrame";
-            this.TorsoStartFrame.ReadOnly = true;
-            this.TorsoStartFrame.Size = new System.Drawing.Size(113, 20);
-            this.TorsoStartFrame.TabIndex = 3;
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(8, 490);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(107, 13);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "Leg-Torso Fore-Back";
             // 
-            // label3
+            // LegTorsoTilt
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(11, 102);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(58, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "End Frame";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(11, 63);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(61, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Start Frame";
-            // 
-            // TorsoEndFrame
-            // 
-            this.TorsoEndFrame.Location = new System.Drawing.Point(14, 118);
-            this.TorsoEndFrame.Name = "TorsoEndFrame";
-            this.TorsoEndFrame.ReadOnly = true;
-            this.TorsoEndFrame.Size = new System.Drawing.Size(113, 20);
-            this.TorsoEndFrame.TabIndex = 5;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 19);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(56, 13);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "Sequence";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(10, 141);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(63, 13);
-            this.label6.TabIndex = 8;
-            this.label6.Text = "Loop Frame";
+            this.LegTorsoTilt.Location = new System.Drawing.Point(11, 506);
+            this.LegTorsoTilt.Maximum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.LegTorsoTilt.Minimum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            -2147483648});
+            this.LegTorsoTilt.Name = "LegTorsoTilt";
+            this.LegTorsoTilt.Size = new System.Drawing.Size(120, 20);
+            this.LegTorsoTilt.TabIndex = 11;
+            this.LegTorsoTilt.ValueChanged += new System.EventHandler(this.LegTorsoTilt_ValueChanged);
             // 
             // groupBox2
             // 
@@ -222,6 +201,42 @@
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Legs";
+            // 
+            // LegsFrame
+            // 
+            this.LegsFrame.Location = new System.Drawing.Point(14, 206);
+            this.LegsFrame.Name = "LegsFrame";
+            this.LegsFrame.ReadOnly = true;
+            this.LegsFrame.Size = new System.Drawing.Size(100, 20);
+            this.LegsFrame.TabIndex = 11;
+            // 
+            // legsForceLoop
+            // 
+            this.legsForceLoop.AutoSize = true;
+            this.legsForceLoop.Location = new System.Drawing.Point(14, 183);
+            this.legsForceLoop.Name = "legsForceLoop";
+            this.legsForceLoop.Size = new System.Drawing.Size(80, 17);
+            this.legsForceLoop.TabIndex = 10;
+            this.legsForceLoop.Text = "Force Loop";
+            this.legsForceLoop.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 19);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(56, 13);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Sequence";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(10, 141);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(63, 13);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "Loop Frame";
             // 
             // legsList
             // 
@@ -275,6 +290,33 @@
             this.LegsEndFrame.Size = new System.Drawing.Size(113, 20);
             this.LegsEndFrame.TabIndex = 5;
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.TorsoFrame);
+            this.groupBox1.Controls.Add(this.torsoForceLoop);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.torsoList);
+            this.groupBox1.Controls.Add(this.TorsoLoopFrame);
+            this.groupBox1.Controls.Add(this.TorsoStartFrame);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.TorsoEndFrame);
+            this.groupBox1.Location = new System.Drawing.Point(11, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(149, 237);
+            this.groupBox1.TabIndex = 9;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Torso";
+            // 
+            // TorsoFrame
+            // 
+            this.TorsoFrame.Location = new System.Drawing.Point(14, 207);
+            this.TorsoFrame.Name = "TorsoFrame";
+            this.TorsoFrame.ReadOnly = true;
+            this.TorsoFrame.Size = new System.Drawing.Size(100, 20);
+            this.TorsoFrame.TabIndex = 10;
+            // 
             // torsoForceLoop
             // 
             this.torsoForceLoop.AutoSize = true;
@@ -285,96 +327,64 @@
             this.torsoForceLoop.Text = "Force Loop";
             this.torsoForceLoop.UseVisualStyleBackColor = true;
             // 
-            // legsForceLoop
+            // label4
             // 
-            this.legsForceLoop.AutoSize = true;
-            this.legsForceLoop.Location = new System.Drawing.Point(14, 183);
-            this.legsForceLoop.Name = "legsForceLoop";
-            this.legsForceLoop.Size = new System.Drawing.Size(80, 17);
-            this.legsForceLoop.TabIndex = 10;
-            this.legsForceLoop.Text = "Force Loop";
-            this.legsForceLoop.UseVisualStyleBackColor = true;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(10, 141);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(63, 13);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Loop Frame";
             // 
-            // LegTorsoTilt
+            // TorsoLoopFrame
             // 
-            this.LegTorsoTilt.Location = new System.Drawing.Point(17, 527);
-            this.LegTorsoTilt.Maximum = new decimal(new int[] {
-            90,
-            0,
-            0,
-            0});
-            this.LegTorsoTilt.Minimum = new decimal(new int[] {
-            90,
-            0,
-            0,
-            -2147483648});
-            this.LegTorsoTilt.Name = "LegTorsoTilt";
-            this.LegTorsoTilt.Size = new System.Drawing.Size(120, 20);
-            this.LegTorsoTilt.TabIndex = 11;
-            this.LegTorsoTilt.ValueChanged += new System.EventHandler(this.LegTorsoTilt_ValueChanged);
+            this.TorsoLoopFrame.Location = new System.Drawing.Point(13, 157);
+            this.TorsoLoopFrame.Name = "TorsoLoopFrame";
+            this.TorsoLoopFrame.ReadOnly = true;
+            this.TorsoLoopFrame.Size = new System.Drawing.Size(113, 20);
+            this.TorsoLoopFrame.TabIndex = 7;
             // 
-            // label9
+            // TorsoStartFrame
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(14, 511);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(107, 13);
-            this.label9.TabIndex = 12;
-            this.label9.Text = "Leg-Torso Fore-Back";
+            this.TorsoStartFrame.Location = new System.Drawing.Point(14, 79);
+            this.TorsoStartFrame.Name = "TorsoStartFrame";
+            this.TorsoStartFrame.ReadOnly = true;
+            this.TorsoStartFrame.Size = new System.Drawing.Size(113, 20);
+            this.TorsoStartFrame.TabIndex = 3;
             // 
-            // label10
+            // label3
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(14, 550);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(96, 13);
-            this.label10.TabIndex = 14;
-            this.label10.Text = "Leg-Torso Rotoate";
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(11, 102);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(58, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "End Frame";
             // 
-            // LegTorsoSpin
+            // label2
             // 
-            this.LegTorsoSpin.Location = new System.Drawing.Point(17, 566);
-            this.LegTorsoSpin.Maximum = new decimal(new int[] {
-            90,
-            0,
-            0,
-            0});
-            this.LegTorsoSpin.Minimum = new decimal(new int[] {
-            90,
-            0,
-            0,
-            -2147483648});
-            this.LegTorsoSpin.Name = "LegTorsoSpin";
-            this.LegTorsoSpin.Size = new System.Drawing.Size(120, 20);
-            this.LegTorsoSpin.TabIndex = 13;
-            this.LegTorsoSpin.ValueChanged += new System.EventHandler(this.LegTorsoSpin_ValueChanged);
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(11, 63);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(61, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Start Frame";
             // 
-            // TorsoFrame
+            // TorsoEndFrame
             // 
-            this.TorsoFrame.Location = new System.Drawing.Point(14, 207);
-            this.TorsoFrame.Name = "TorsoFrame";
-            this.TorsoFrame.ReadOnly = true;
-            this.TorsoFrame.Size = new System.Drawing.Size(100, 20);
-            this.TorsoFrame.TabIndex = 10;
+            this.TorsoEndFrame.Location = new System.Drawing.Point(14, 118);
+            this.TorsoEndFrame.Name = "TorsoEndFrame";
+            this.TorsoEndFrame.ReadOnly = true;
+            this.TorsoEndFrame.Size = new System.Drawing.Size(113, 20);
+            this.TorsoEndFrame.TabIndex = 5;
             // 
-            // LegsFrame
+            // FrameTime
             // 
-            this.LegsFrame.Location = new System.Drawing.Point(14, 206);
-            this.LegsFrame.Name = "LegsFrame";
-            this.LegsFrame.ReadOnly = true;
-            this.LegsFrame.Size = new System.Drawing.Size(100, 20);
-            this.LegsFrame.TabIndex = 11;
-            // 
-            // SlowMo
-            // 
-            this.SlowMo.AutoSize = true;
-            this.SlowMo.Location = new System.Drawing.Point(17, 608);
-            this.SlowMo.Name = "SlowMo";
-            this.SlowMo.Size = new System.Drawing.Size(67, 17);
-            this.SlowMo.TabIndex = 15;
-            this.SlowMo.Text = "Slow-Mo";
-            this.SlowMo.UseVisualStyleBackColor = true;
-            this.SlowMo.CheckedChanged += new System.EventHandler(this.SlowMo_CheckedChanged);
+            this.FrameTime.Location = new System.Drawing.Point(11, 614);
+            this.FrameTime.Name = "FrameTime";
+            this.FrameTime.ReadOnly = true;
+            this.FrameTime.Size = new System.Drawing.Size(113, 20);
+            this.FrameTime.TabIndex = 12;
             // 
             // View
             // 
@@ -388,12 +398,12 @@
             this.Load += new System.EventHandler(this.View_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LegTorsoSpin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LegTorsoTilt)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.LegTorsoTilt)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LegTorsoSpin)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -429,5 +439,6 @@
         private System.Windows.Forms.TextBox LegsFrame;
         private System.Windows.Forms.TextBox TorsoFrame;
         private System.Windows.Forms.CheckBox SlowMo;
+        private System.Windows.Forms.TextBox FrameTime;
     }
 }

@@ -56,6 +56,10 @@ namespace MD3ReaderTest
             }
             instance = new CharacterInstance(character);
             instance.InterpolateMeshes = true;
+         //   instance.InterpolateNormals = true;
+            instance.InterpolateTagPosition = true;
+         //   instance.InterpolateTagRotation = true;
+
             dir = model;
             
             if (args.Length > 1)
@@ -395,6 +399,9 @@ namespace MD3ReaderTest
             GL.PopMatrix();
 
             glControl1.SwapBuffers();
+
+            if (instance != null)
+                FrameTime.Text = (1.0/instance.FrameTime).ToString();
         }
 
         private void torsoList_SelectedIndexChanged(object sender, EventArgs e)
