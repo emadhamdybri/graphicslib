@@ -19,7 +19,8 @@ namespace MD3
     public class FrameMatrix
     {
         public Matrix4 Matrix = Matrix4.Identity;
-        public Matrix4 Inverse = Matrix4.Identity;
+        public Matrix4 Rotation = Matrix4.Identity;
+        public Vector3 Position = Vector3.Zero;
     }
 
     public class Tag
