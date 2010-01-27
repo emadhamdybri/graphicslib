@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
+using System.Drawing;
 
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using Drawables.Textures;
-using System.Drawing;
+using Math3D;
 
 namespace MD3
 {
@@ -148,11 +149,22 @@ namespace MD3
 
         public bool InterpolateMeshes = false;
         public bool InterpolateNormals = false;
-  //      public bool InterpolateTags = false;
+        public bool InterpolateTagPosition = false;
+        public bool InterpolateTagRotation = false;
+
+        Stopwatch frameTimer = new Stopwatch();
+
+        double lastFrameTime = 0;
+
+        public double FrameTime
+        {
+            get { return lastFrameTime; }
+        }
 
         public CharacterInstance(Character c)
         {
             character = c;
+            frameTimer.Start();
         }
 
         public void BindSkin ()
@@ -209,6 +221,8 @@ namespace MD3
 
         public bool Draw()
         {
+            double current = frameTimer.ElapsedMilliseconds / 1000.0;
+
             UpdateSequence();
 
             if (character.RootNode == null)
@@ -218,6 +232,9 @@ namespace MD3
                 BindSkin();
 
             DrawCompoenent(character.RootNode);
+
+            double now = frameTimer.ElapsedMilliseconds / 1000.0;
+            lastFrameTime = now - current;
             return true;
         }
 
@@ -265,6 +282,40 @@ namespace MD3
                 return torsoSequence;
         }
 
+        protected bool PartAnimated ( ComponentType part )
+        {
+            AnimationTracker tracker = getTracker(part);
+            if (tracker == null)
+                return false;
+
+            return tracker.ThisFrame != tracker.NextFrame;
+        }
+
+        protected Matrix4 GetTagMatrix(ComponentType part, FrameMatrix[] frames)
+        {
+            if (frames.Length == 1)
+                return frames[0].Matrix;
+
+            if ((!InterpolateTagPosition && !InterpolateTagRotation) || !PartAnimated(part))
+                return frames[getFrame(getTracker(part))].Matrix;
+
+            AnimationTracker tracker = getTracker(part);
+            if (frames.Length <= tracker.ThisFrame)
+                return frames[0].Matrix;
+
+            Vector3 newTrans = frames[tracker.ThisFrame].Position + ((frames[tracker.NextFrame].Position - frames[tracker.ThisFrame].Position) * tracker.Paramater);
+           
+            if (!InterpolateTagRotation)
+                return frames[tracker.ThisFrame].Rotation * Matrix4.CreateTranslation(newTrans);
+
+            Quaternion thisRot = QuaternionHelper.FromMatrix(frames[tracker.ThisFrame].Rotation);
+            Quaternion nextRot = QuaternionHelper.FromMatrix(frames[tracker.NextFrame].Rotation);
+
+            Quaternion frameQuat = Quaternion.Slerp(thisRot, nextRot, tracker.Paramater);
+            frameQuat.Normalize();
+            return MatrixHelper4.FromQuaternion(frameQuat) * Matrix4.CreateTranslation(newTrans);
+        }
+
         internal void DrawCompoenent(ConnectedComponent component)
         {
             int thisFrame = getFrame(getTracker(component.Part.PartType));
@@ -281,8 +332,8 @@ namespace MD3
                     if (thisFrame < child.Key.Frames.Length)
                         realFrame = thisFrame;
 
-                    FrameMatrix mat = child.Key.Frames[realFrame];
-                    GL.MultMatrix(ref mat.Matrix);
+                    Matrix4 m = GetTagMatrix(component.Part.PartType, child.Key.Frames);
+                    GL.MultMatrix(ref m);
 
                     if (DrawTags)
                     {
@@ -318,10 +369,8 @@ namespace MD3
                         else if (component.Part.PartType == ComponentType.Torso && c.Part.PartType == ComponentType.Head)
                             GL.MultMatrix(ref TorsoHeadMatrix);
 
-                        Matrix4 m = destTag.Frames[0].Matrix;
-                        if (thisFrame < destTag.Frames.Length)
-                            m = destTag.Frames[thisFrame].Matrix;
-                        GL.MultMatrix(ref m);
+                        Matrix4 destMat = GetTagMatrix(c.Part.PartType, destTag.Frames);
+                        GL.MultMatrix(ref destMat);
                         DrawCompoenent(c);
                         GL.PopMatrix();
                     }
@@ -349,7 +398,6 @@ namespace MD3
             int thisFrame = getFrame(getTracker(part));
             int nextFrame = getNextFrame(getTracker(part));
             float param = getParam(getTracker(part));
-
 
             Vector3[] theseVerts;
             Vector3[] theseNorms;

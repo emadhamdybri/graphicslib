@@ -691,7 +691,8 @@ namespace MD3
                         {
                             FrameMatrix mat = new FrameMatrix();
                             mat.Matrix = new Matrix4(t.R1[0], t.R1[1], t.R1[2], 0, t.R2[0], t.R2[1], t.R2[2], 0, t.R3[0], t.R3[1], t.R3[2], 0, t.Origin[0], t.Origin[1], t.Origin[2], 1.0f);
-                            mat.Inverse = Matrix4.Invert(mat.Matrix);
+                            mat.Rotation = new Matrix4(t.R1[0], t.R1[1], t.R1[2], 0, t.R2[0], t.R2[1], t.R2[2], 0, t.R3[0], t.R3[1], t.R3[2], 0, 0, 0, 0, 1.0f);
+                            mat.Position = new Vector3(t.Origin[0], t.Origin[1], t.Origin[2]);
                             frameMats.Add(mat);
                         }
                         tag.Frames = frameMats.ToArray();
