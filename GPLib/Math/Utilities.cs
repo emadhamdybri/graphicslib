@@ -43,6 +43,11 @@ namespace Math3D
         {
             return Random(max - min) + min;
         }
+
+        public static float CopySign ( float val, float sign )
+        {
+            return (float)(Math.Abs(val) * (sign / Math.Abs(sign)));
+        }
     }
 
     public class Trig
@@ -344,6 +349,29 @@ namespace Math3D
             z = c1 * s2 * c3 - s1 * c2 * s3;
 
             return new Quaternion((float)x, (float)y, (float)z, (float)w);
+        }
+
+        public static Quaternion FromMatrix (Matrix4 m1)
+        {
+//             if (false)
+//             {
+//                 float w = (float)Math.Sqrt(1.0 + m1.M11 + m1.M22 + m1.M33) / 2.0f;
+//                 float w4 = (4.0f * w);
+//                 float x = (m1.M32 - m1.M23) / w4;
+//                 float y = (m1.M13 - m1.M31) / w4;
+//                 float z = (m1.M21 - m1.M12) / w4;
+// 
+//                 return new Quaternion(x, y, z, w);
+//             }
+            
+            float w = (float)Math.Sqrt( Math.Max( 0, 1 + m1.M11 + m1.M22 + m1.M33 ) ) / 2f;
+            float x = (float)Math.Sqrt( Math.Max( 0, 1 + m1.M11 - m1.M22 - m1.M33 ) ) / 2f;
+            float y = (float)Math.Sqrt( Math.Max( 0, 1 - m1.M11 + m1.M22 - m1.M33 ) ) / 2f;
+            float z = (float)Math.Sqrt( Math.Max( 0, 1 - m1.M11 - m1.M22 + m1.M33 ) ) / 2f;
+            x = FloatHelper.CopySign( x, m1.M32 - m1.M23 );
+            y = FloatHelper.CopySign( y, m1.M12 - m1.M31);
+            z = FloatHelper.CopySign( z, m1.M21 - m1.M12);
+            return new Quaternion(x, y, z, w);
         }
     }
 
