@@ -27,6 +27,8 @@ namespace MD3
     {
         public string Name = string.Empty;
         public FrameMatrix[] Frames;
+
+        public static Tag Empty = new Tag();
     }
 
     public class Triangle
@@ -84,6 +86,17 @@ namespace MD3
             foreach (Tag tag in Tags)
             {
                 if (tag.Name == name)
+                    return tag;
+            }
+
+            return null;
+        }
+
+        public Tag SearchTag ( string name )
+        {
+            foreach (Tag tag in Tags)
+            {
+                if (tag.Name.ToLower().Contains(name.ToLower()))
                     return tag;
             }
 

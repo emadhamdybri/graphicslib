@@ -131,6 +131,19 @@ namespace MD3
             return null;
         }
 
+        public Component FindComponent ( int LOD, ComponentType part )
+        {
+            if (LOD >= LODs.Length || LOD < 0)
+                return null;
+
+            foreach(Component comp in LODs[LOD].Componenets)
+            {
+                if (comp.PartType == part)
+                    return comp;
+            }
+            return null;
+        }
+
         public AnimationSequence FindSequence ( string part, string name )
         {
             if (SequenceCache == null)

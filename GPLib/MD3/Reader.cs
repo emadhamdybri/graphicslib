@@ -102,18 +102,23 @@ namespace MD3
                    if (componentsWithTags.ContainsKey(tag.Name))
                    {
                        if (!node.Children.ContainsKey(tag))
-                           node.Children.Add(tag,new List<ConnectedComponent>());
-
-                       List<Component> linkedComponents = componentsWithTags[tag.Name];
-                       foreach (Component c in linkedComponents)
                        {
-                           if (c == node.Part || c == parrent)
-                               continue;
+                           List<Component> linkedComponents = componentsWithTags[tag.Name];
 
-                           ConnectedComponent child = new ConnectedComponent();
-                           child.Part = c;
-                           node.Children[tag].Add(child);
-                           linkTreeChildren(node.Part,child, componentsWithTags);
+                           List<ConnectedComponent> connectedComponents = new List<ConnectedComponent>();
+                           foreach (Component c in linkedComponents)
+                           {
+                               if (c == node.Part || c == parrent)
+                                   continue;
+
+                               ConnectedComponent child = new ConnectedComponent();
+                               child.Part = c;
+                               connectedComponents.Add(child);
+
+                               linkTreeChildren(node.Part, child, componentsWithTags);
+                           }
+                           if (connectedComponents.Count > 0)
+                            node.Children.Add(tag, connectedComponents);
                        }
                    }
                }
@@ -139,13 +144,53 @@ namespace MD3
                 }
             }
 
-            if (root == null)
+            if (root == null || root.Tags.Length == 0)
                 return;
 
             character.RootNode = new ConnectedComponent();
             character.RootNode.Part = root;
 
             linkTreeChildren(null,character.RootNode, componentsWithTags);
+
+            // Balls, it's a jacked up model, connect torso to legs, and head to torso
+            if (character.RootNode.Children.Count == 0)
+            {
+                // find the leg tag
+                Tag legTorsoTag = character.RootNode.Part.SearchTag("torso");
+                if (legTorsoTag == null)
+                    legTorsoTag = character.RootNode.Part.SearchTag("upper");
+                if (legTorsoTag == null)
+                    legTorsoTag = character.RootNode.Part.Tags[0];
+
+                Component torso = character.FindComponent(0, ComponentType.Torso);
+                if (torso == null)
+                    return;
+
+                ConnectedComponent torsoChild = new ConnectedComponent();
+                torsoChild.Part = torso;
+                character.RootNode.Children = new Dictionary<Tag, List<ConnectedComponent>>();
+                character.RootNode.Children.Add(legTorsoTag,new List<ConnectedComponent>());
+                character.RootNode.Children[legTorsoTag].Add(torsoChild);
+
+                if (torso.Tags.Length == 0)
+                    return;
+
+                // find the head tag
+                Tag torsoHeadTag = torso.SearchTag("head");
+                if (torsoHeadTag == null)
+                    torsoHeadTag = torso.Tags[0];
+
+                Component head = character.FindComponent(0, ComponentType.Head);
+                if (head == null)
+                    return;
+
+                ConnectedComponent headChild = new ConnectedComponent();
+                headChild.Part = head;
+
+                torsoChild.Children = new Dictionary<Tag, List<ConnectedComponent>>();
+                torsoChild.Children.Add(torsoHeadTag, new List<ConnectedComponent>());
+                torsoChild.Children[torsoHeadTag].Add(headChild);
+            }
         }
 
         public static void ReadSkin(Character character, FileInfo file)
