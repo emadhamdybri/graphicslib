@@ -178,6 +178,8 @@ namespace MD3
                 skin = character.GetSkin("default");
             else if (character.SkinExists(string.Empty))
                 skin = character.GetSkin(string.Empty);
+            else if (character.Skins.Count > 0)
+                skin = character.Skins[0];
             else
                 skin = character.SkinFromSurfs();
 
@@ -360,16 +362,17 @@ namespace MD3
                     foreach (ConnectedComponent c in child.Value)
                     {
                         Tag destTag = c.Part.FindTag(child.Key.Name);
-                        if (destTag == null)
-                            continue;
-
                         GL.PushMatrix();
+
                         if (component.Part.PartType == ComponentType.Legs && c.Part.PartType == ComponentType.Torso)
                             GL.MultMatrix(ref LegTorsoMatrix);
                         else if (component.Part.PartType == ComponentType.Torso && c.Part.PartType == ComponentType.Head)
                             GL.MultMatrix(ref TorsoHeadMatrix);
 
-                        Matrix4 destMat = GetTagMatrix(c.Part.PartType, destTag.Frames);
+                        Matrix4 destMat = Matrix4.Identity;
+                        if (destTag != null)
+                            destMat = GetTagMatrix(c.Part.PartType, destTag.Frames);
+
                         GL.MultMatrix(ref destMat);
                         DrawCompoenent(c);
                         GL.PopMatrix();
