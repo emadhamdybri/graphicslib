@@ -22,6 +22,10 @@ namespace MD3ReaderTest
         Character character;
         CharacterInstance instance;
 
+        ModelTree weapon;
+        AnimatedInstance weaponInstance;
+
+
         Vector3 offset = new Vector3(0, 0, 5);
         Vector2 rotation = new Vector2(60, 30);
         float pullback = 100f;
@@ -65,12 +69,16 @@ namespace MD3ReaderTest
             if (args.Length > 1)
                 instance.SetSkin(args[1]);
 
-            instance.AnimationEnded += new CharacterInstance.SequenceEvent(instance_AnimationEnded);
-            instance.FrameChanged += new CharacterInstance.SequenceFrameEvent(instance_FrameChanged);
+            instance.AnimationEnded += new AnimatedInstance.SequenceEvent(instance_AnimationEnded);
+            instance.FrameChanged += new AnimatedInstance.SequenceFrameEvent(instance_FrameChanged);
             glControl1.MouseWheel += new MouseEventHandler(glControl1_MouseWheel);
+
+            weapon = Reader.Read(new DirectoryInfo("railgun"), false, "weapon");
+            if (weapon != null && instance != null)
+                instance.AttatchWeapon(weapon);
         }
 
-        void instance_FrameChanged(CharacterInstance sender, int frame, ComponentType part)
+        void instance_FrameChanged(AnimatedInstance sender, int frame, ComponentType part)
         {
             if (part == ComponentType.Torso)
                 TorsoFrame.Text = frame.ToString();
@@ -78,7 +86,7 @@ namespace MD3ReaderTest
                 LegsFrame.Text = frame.ToString();
         }
 
-        void instance_AnimationEnded(CharacterInstance sender, string name, ComponentType part)
+        void instance_AnimationEnded(AnimatedInstance sender, string name, ComponentType part)
         {
             if (part == ComponentType.Torso && torsoForceLoop.Checked)
                 instance.SetTorsoSequence(name);
@@ -86,8 +94,10 @@ namespace MD3ReaderTest
                 instance.SetLegSequence(name);
         }
 
-        string GetTexturePath ( string path )
+        string GetTexturePath ( ModelTree model, string path )
         {
+            if (weapon == model)
+                return Path.Combine("railgun", Path.GetFileName(path));
             return Path.Combine(dir,Path.GetFileName(path));
         }
 

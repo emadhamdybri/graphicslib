@@ -14,18 +14,8 @@ namespace MD3
     {
         public static bool CCWWinding = true;
 
-        public static Character Read(DirectoryInfo dir)
+        protected static bool ReadModelTree ( ModelTree model, DirectoryInfo dir, bool useLOD)
         {
-            return Read(dir, true);
-        }
-
-        public static Character Read(DirectoryInfo dir, bool useLOD)
-        {
-            if (!dir.Exists)
-                return null;
-
-            Character character = new Character();
-
             List<List<Component>> LODs = new List<List<Component>>();
             foreach (FileInfo file in dir.GetFiles("*.md3"))
             {
@@ -60,7 +50,7 @@ namespace MD3
                 if (!useLOD && LOD > 0)
                     continue;
 
-                if (LOD+1 > LODs.Count)
+                if (LOD + 1 > LODs.Count)
                 {
                     for (int i = LODs.Count; i < LOD + 1; i++)
                         LODs.Add(new List<Component>());
@@ -68,25 +58,57 @@ namespace MD3
                 LODs[LOD].Add(compnent);
             }
             if (LODs.Count == 0)
-                return null;
- 
-            character.Componenets = LODs[0].ToArray();
+                return false;
 
-            character.LODs = new LODLevel[LODs.Count];
+            model.Componenets = LODs[0].ToArray();
+
+            model.LODs = new LODLevel[LODs.Count];
 
             int j = 0;
-            foreach(List<Component> lod in LODs)
+            foreach (List<Component> lod in LODs)
             {
-                character.LODs[j] = new LODLevel();
-                character.LODs[j].Componenets = lod.ToArray();
+                model.LODs[j] = new LODLevel();
+                model.LODs[j].Componenets = lod.ToArray();
                 j++;
             }
 
+            foreach (FileInfo file in dir.GetFiles("*.skin"))
+                ReadSkin(model, file);
+
+            return true;
+        }
+
+        public static ModelTree Read( DirectoryInfo dir, bool useLOD, string rootObject )
+        {
+            if (!dir.Exists)
+                return null;
+
+            ModelTree tree = new ModelTree();
+            if (!ReadModelTree(tree, dir, useLOD))
+                return null;
+
+            if (!buildGenericTree(tree, rootObject))
+                return null;
+
+            return tree;
+        }
+
+        public static Character Read(DirectoryInfo dir)
+        {
+            return Read(dir, true);
+        }
+
+        public static Character Read(DirectoryInfo dir, bool useLOD)
+        {
+            if (!dir.Exists)
+                return null;
+
+            Character character = new Character();
+            if (!ReadModelTree(character, dir, useLOD))
+                return null;
+
             foreach (FileInfo file in dir.GetFiles("*.cfg"))
                 ReadAnimationConfig(character,file);
-
-            foreach (FileInfo file in dir.GetFiles("*.skin"))
-                ReadSkin(character, file);
 
             buildCharacterTree(character);
 
@@ -193,7 +215,58 @@ namespace MD3
             }
         }
 
-        public static void ReadSkin(Character character, FileInfo file)
+        protected static bool buildGenericTree (ModelTree tree, string rootNode )
+        {
+            Component root = tree.SearchComponent(rootNode);
+            if (root == null)
+            {
+                foreach (Component comp in tree.Componenets)
+                {
+                    if (comp.SearchTag(rootNode) != null)
+                    {
+                        root = comp;
+                        break;
+                    }
+                }
+            }
+
+            if (root == null)
+            {
+                foreach (Component comp in tree.Componenets)
+                {
+                    if (comp.Tags.Length > 0)
+                    {
+                        root = comp;
+                        break;
+                    }
+                }
+            }
+
+            if (root == null)
+                return false;
+
+            Dictionary<string, List<Component>> componentsWithTags = new Dictionary<string, List<Component>>();
+
+            foreach (Component part in tree.Componenets)
+            {
+                foreach (Tag tag in part.Tags)
+                {
+                    if (!componentsWithTags.ContainsKey(tag.Name))
+                        componentsWithTags.Add(tag.Name, new List<Component>());
+
+                    componentsWithTags[tag.Name].Add(part);
+                }
+            }
+
+            tree.RootNode = new ConnectedComponent();
+            tree.RootNode.Part = root;
+
+            linkTreeChildren(null, tree.RootNode, componentsWithTags);
+
+            return true;
+        }
+
+        public static void ReadSkin(ModelTree character, FileInfo file)
         {
             if (!file.Exists)
                 return;
@@ -605,12 +678,28 @@ namespace MD3
                     return null;
 
                 Int32 MD3Version = (Int32)BinUtils.ReadObject(fs, typeof(Int32));
-                Component model = new Component(BinUtils.ReadString(fs, 64));
 
+                string name = BinUtils.ReadString(fs, 64);
+               
                 string filename = Path.GetFileNameWithoutExtension(file.FullName);
                 if (filename.Contains("_"))
-                    filename = filename.Split("_".ToCharArray())[0];
+                {
+                    string[] fileNugs = filename.Split("_".ToCharArray());
+                    foreach (string s in fileNugs)
+                    {
+                        if (s.Length > 0 && !char.IsDigit(s[0]))
+                        {
+                            if (filename.Length > 0)
+                                filename += "_";
+                            filename += s;
+                        }
+                    }
+                }
 
+                if (name.Length == 0)
+                    name = filename.ToLower();
+
+                Component model = new Component(name);
                 model.FileName = filename.ToLower();
 
                 UInt32 flags = (UInt32)BinUtils.ReadObject(fs, typeof(UInt32));
