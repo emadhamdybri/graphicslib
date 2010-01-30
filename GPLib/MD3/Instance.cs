@@ -12,15 +12,17 @@ using Math3D;
 
 namespace MD3
 {
-    public delegate string ProcessSurfacePathHandler ( string name );
+    public delegate string ProcessSurfacePathHandler ( ModelTree model, string name );
 
     internal class AnimationTracker
     {
-        AnimationSequence sequence;
+        public AnimationSequence Sequence;
         double lastTime = -1;
         int thisFrame = 0;
         int nextFrame = 0;
         double param;
+
+        public Component Part = null;
 
         public delegate void SequenceEvent ( AnimationTracker sender, string name );
         public event SequenceEvent AnimationLooped;
@@ -48,7 +50,7 @@ namespace MD3
 
         public AnimationTracker ( AnimationSequence seq )
         {
-            sequence = seq;
+            Sequence = seq;
             timer = new Stopwatch();
             timer.Start();
             thisFrame = seq.StartFrame;
@@ -63,11 +65,18 @@ namespace MD3
             param = 0;
         }
 
+        public void Reset ()
+        {
+            if (!animated)
+                return;
+            lastTime = -1;
+        }
+
         public void Update ()
         {
             if (!animated)
             {
-                thisFrame = sequence.EndFrame;
+                thisFrame = Sequence.EndFrame;
                 nextFrame = thisFrame;
                 param = 0;
                 return;
@@ -75,16 +84,16 @@ namespace MD3
 
             double now = timer.ElapsedMilliseconds / 1000.0;
 
-            if (thisFrame < sequence.StartFrame || thisFrame > sequence.EndFrame || lastTime < 0) // starting over
+            if (thisFrame < Sequence.StartFrame || thisFrame > Sequence.EndFrame || lastTime < 0) // starting over
             {
-                thisFrame = sequence.StartFrame;
+                thisFrame = Sequence.StartFrame;
                 nextFrame = thisFrame + 1;
                 param = 0;
                 lastTime = now;
             }
             else
             {
-                float frameTime = 1.0f/(sequence.FPS * CharacterInstance.FPSScale);
+                float frameTime = 1.0f / (Sequence.FPS * CharacterInstance.FPSScale);
 
                 param = (now - lastTime) / frameTime;
 
@@ -93,60 +102,54 @@ namespace MD3
                     param = 0;
                     thisFrame = nextFrame;
                     nextFrame++;
-                    if (nextFrame > sequence.EndFrame)
-                        nextFrame = sequence.LoopPoint;  
-                
-                    if (thisFrame == sequence.EndFrame) // we hit the end of the loop
+                    if (nextFrame > Sequence.EndFrame)
+                        nextFrame = Sequence.LoopPoint;
+
+                    if (thisFrame == Sequence.EndFrame) // we hit the end of the loop
                     {
-                        if (sequence.LoopPoint == sequence.EndFrame)
+                        if (Sequence.LoopPoint == Sequence.EndFrame)
                         {
                             if (AnimationEnded != null)
-                                AnimationEnded(this, sequence.Name);
+                                AnimationEnded(this, Sequence.Name);
                         }
                         else
                         {
                             if (AnimationLooped != null)
-                                AnimationLooped(this, sequence.Name);
+                                AnimationLooped(this, Sequence.Name);
                         }
                     }
 
                     lastTime = now;
                     if (FrameChanged != null)
-                        FrameChanged(this, sequence.Name);
+                        FrameChanged(this, Sequence.Name);
                 }
             }
         }
     }
 
-    public class CharacterInstance
+    public class AnimatedInstance
     {
         public static float FPSScale = 1.0f;
 
-        public delegate void SequenceEvent ( CharacterInstance sender, string name, ComponentType part );
-        public delegate void SequenceFrameEvent(CharacterInstance sender, int frame, ComponentType part);
+        public delegate void SequenceEvent(AnimatedInstance sender, string name, ComponentType part);
+        public delegate void SequenceFrameEvent(AnimatedInstance sender, int frame, ComponentType part);
 
         public event SequenceEvent AnimationLooped;
         public event SequenceEvent AnimationEnded;
         public event SequenceFrameEvent FrameChanged;
-
-        protected Character character;
-        internal AnimationTracker legSequence;
-        internal AnimationTracker torsoSequence;
-
-        protected Dictionary<Tag,Matrix4> TagMatrixOffsets = new Dictionary<Tag,Matrix4>();
-
+        
+        protected ModelTree model;
+       
+        protected Dictionary<Tag, Matrix4> TagMatrixOffsets = new Dictionary<Tag, Matrix4>();
         protected List<Mesh> HiddenMeshes = new List<Mesh>();
-
+       
         protected Dictionary<Mesh, Texture> skinTextures;
         protected string skinName = string.Empty;
-
+      
         public static ProcessSurfacePathHandler ProcessSurfacePath = null;
 
         public static bool DrawTags = false;
-
-        public Matrix4 LegTorsoMatrix = Matrix4.Identity;
-        public Matrix4 TorsoHeadMatrix = Matrix4.Identity;
-
+        
         public bool InterpolateMeshes = false;
         public bool InterpolateNormals = false;
         public bool InterpolateTagPosition = false;
@@ -154,41 +157,68 @@ namespace MD3
 
         Stopwatch frameTimer = new Stopwatch();
 
+        internal Dictionary<Component,AnimationTracker> ActiveTrackers = new Dictionary<Component,AnimationTracker>();
+
+        protected Dictionary<Component, Dictionary<Tag, ModelTree>> AttachedItems = new Dictionary<Component, Dictionary<Tag, ModelTree>>();
+
         double lastFrameTime = 0;
+
+        bool InUpdate = false;
+
+        protected List<KeyValuePair<Component, AnimationSequence>> animsToReplace = new List<KeyValuePair<Component, AnimationSequence>>();
 
         public double FrameTime
         {
             get { return lastFrameTime; }
         }
 
-        public CharacterInstance(Character c)
+        public AnimatedInstance ( ModelTree tree )
         {
-            character = c;
+            model = tree;
             frameTimer.Start();
+        }
+
+        public void AttatchItem(Component root, Tag tag, ModelTree item )
+        {
+            if (!AttachedItems.ContainsKey(root))
+                AttachedItems.Add(root, new Dictionary<Tag, ModelTree>());
+
+            if (AttachedItems[root].ContainsKey(tag))
+                AttachedItems[root][tag] = item;
+            else
+                AttachedItems[root].Add(tag, item);
+
+            SetSkin(skinName);
         }
 
         public void BindSkin ()
         {
-            skinTextures = new Dictionary<Mesh, Texture>();
+            BindSkin(model);
+        }
+
+        public void BindSkin (ModelTree tree)
+        {
+            if (skinTextures == null)
+                skinTextures = new Dictionary<Mesh, Texture>();
 
             Skin skin = null;
-            if (character.SkinExists(skinName))
-                skin = character.GetSkin(skinName);
-            else if (character.SkinExists("default"))
-                skin = character.GetSkin("default");
-            else if (character.SkinExists(string.Empty))
-                skin = character.GetSkin(string.Empty);
-            else if (character.Skins.Count > 0)
-                skin = character.Skins[0];
+            if (tree.SkinExists(skinName))
+                skin = model.GetSkin(skinName);
+            else if (tree.SkinExists("default"))
+                skin = model.GetSkin("default");
+            else if (tree.SkinExists(string.Empty))
+                skin = tree.GetSkin(string.Empty);
+            else if (tree.Skins.Count > 0)
+                skin = tree.Skins[0];
             else
-                skin = character.SkinFromSurfs();
+                skin = tree.SkinFromSurfs();
 
             if (skin == null)
                 return;
 
             foreach (KeyValuePair<string,Dictionary<string,string>> SkinComponent in skin.Surfaces)
             {
-                Component comp = character.FindComponent(SkinComponent.Key);
+                Component comp = tree.FindComponent(SkinComponent.Key);
                 if (comp != null)
                 {
                     foreach (KeyValuePair<string,string> meshTextures in SkinComponent.Value)
@@ -198,21 +228,42 @@ namespace MD3
                         {
                             string path = meshTextures.Value;
                             if (ProcessSurfacePath != null)
-                                path = ProcessSurfacePath(path);
+                                path = ProcessSurfacePath(tree,path);
                             Texture tex = TextureSystem.system.GetTexture(path);
                             if (tex != null)
                                 skinTextures.Add(mesh, tex);
                             else
                             {
                                 string name = Path.GetFileNameWithoutExtension(path);
-                                if (name[name.Length-1] == 'a')
+                                FileInfo file = null;
+                                if (name[name.Length - 1] == 'a')
                                 {
                                     name = name.TrimEnd("a".ToCharArray());
-                                    FileInfo file = new FileInfo(Path.Combine(Path.GetDirectoryName(path), name + Path.GetExtension(path)));
+                                    file = new FileInfo(Path.Combine(Path.GetDirectoryName(path), name + Path.GetExtension(path)));
                                     if (file.Exists)
                                         tex = TextureSystem.system.GetTexture(file.FullName);
                                     if (tex != null)
                                         skinTextures.Add(mesh, tex);
+                                }
+                                else
+                                {
+                                    name = Path.GetFileNameWithoutExtension(path) + ".tga";
+                                    file = new FileInfo(Path.Combine(Path.GetDirectoryName(path), name));
+
+                                    if (file.Exists)
+                                        tex = TextureSystem.system.GetTexture(file.FullName);
+                                    if (tex != null)
+                                        skinTextures.Add(mesh, tex);
+                                    else
+                                    {
+                                        name = Path.GetFileNameWithoutExtension(path) + ".jpg";
+                                        file = new FileInfo(Path.Combine(Path.GetDirectoryName(path), name));
+
+                                        if (file.Exists)
+                                            tex = TextureSystem.system.GetTexture(file.FullName);
+                                        if (tex != null)
+                                            skinTextures.Add(mesh, tex);
+                                    }
                                 }
                             }
                         }
@@ -220,33 +271,38 @@ namespace MD3
                 }
             }
         }
-
+     
         public bool Draw()
         {
             double current = frameTimer.ElapsedMilliseconds / 1000.0;
 
             UpdateSequence();
 
-            if (character.RootNode == null)
+            if (model.RootNode == null)
                 return false;
 
             if (skinTextures == null)
                 BindSkin();
 
-            DrawCompoenent(character.RootNode);
+            DrawCompoenent(model.RootNode);
 
             double now = frameTimer.ElapsedMilliseconds / 1000.0;
             lastFrameTime = now - current;
             return true;
         }
 
-        void UpdateSequence()
+        protected virtual void UpdateSequence()
         {
-            if (legSequence != null)
-                legSequence.Update();
+            InUpdate = true;
+            foreach (KeyValuePair<Component,AnimationTracker> tracker in ActiveTrackers)
+                tracker.Value.Update();
 
-            if (torsoSequence != null)
-                torsoSequence.Update();
+            InUpdate = false;
+
+            foreach (KeyValuePair<Component, AnimationSequence> replaceItems in animsToReplace)
+                SetAnimationTracker(replaceItems.Key, replaceItems.Value);
+
+            animsToReplace.Clear();
         }
 
         internal int getFrame ( AnimationTracker tracker )
@@ -273,35 +329,22 @@ namespace MD3
             return tracker.Paramater;
         }
 
-        internal AnimationTracker getTracker(ComponentType part)
+        protected bool PartAnimated ( Component component )
         {
-            if (part == ComponentType.Head || part == ComponentType.Other)
-                return null;
-
-            if (part == ComponentType.Legs)
-                return legSequence;
-            else
-                return torsoSequence;
-        }
-
-        protected bool PartAnimated ( ComponentType part )
-        {
-            AnimationTracker tracker = getTracker(part);
-            if (tracker == null)
+            if (!ActiveTrackers.ContainsKey(component))
                 return false;
 
-            return tracker.ThisFrame != tracker.NextFrame;
+            return ActiveTrackers[component].ThisFrame != ActiveTrackers[component].NextFrame;
         }
 
-        protected Matrix4 GetTagMatrix(ComponentType part, FrameMatrix[] frames)
+        internal Matrix4 GetTagMatrix(Component component, AnimationTracker tracker, FrameMatrix[] frames)
         {
             if (frames.Length == 1)
                 return frames[0].Matrix;
 
-            if ((!InterpolateTagPosition && !InterpolateTagRotation) || !PartAnimated(part))
-                return frames[getFrame(getTracker(part))].Matrix;
+            if (tracker == null || (!InterpolateTagPosition && !InterpolateTagRotation) || !PartAnimated(component))
+                return frames[getFrame(tracker)].Matrix;
 
-            AnimationTracker tracker = getTracker(part);
             if (frames.Length <= tracker.ThisFrame)
                 return frames[0].Matrix;
 
@@ -320,9 +363,42 @@ namespace MD3
 
         internal void DrawCompoenent(ConnectedComponent component)
         {
-            int thisFrame = getFrame(getTracker(component.Part.PartType));
+            AnimationTracker tracker = null;
+            if (ActiveTrackers.ContainsKey(component.Part))
+                tracker = ActiveTrackers[component.Part];
+
+            int thisFrame = getFrame(tracker);
             foreach (Mesh mesh in component.Part.Meshes)
-                DrawMesh(mesh, component.Part.PartType);
+                DrawMesh(mesh, tracker);
+
+            if (AttachedItems.ContainsKey(component.Part))
+            {
+                Dictionary<Tag, ModelTree> attachedItems = AttachedItems[component.Part];
+
+                foreach(Tag tag in component.Part.Tags)
+                {
+                    if (attachedItems.ContainsKey(tag))
+                    {
+                        GL.PushMatrix();
+
+                        ModelTree attatchedItem = attachedItems[tag];
+
+                        Tag attachTag = attatchedItem.FindTagInRoot(tag.Name);
+
+                        Matrix4 m = GetTagMatrix(component.Part, tracker, tag.Frames);
+                        GL.MultMatrix(ref m);
+
+                        Matrix4 attatchMat = Matrix4.Identity;
+                        if (attachTag != null)
+                            attatchMat = GetTagMatrix(attatchedItem.GetRootComponent(), tracker, attachTag.Frames);
+
+                        GL.MultMatrix(ref attatchMat);
+
+                        DrawCompoenent(attatchedItem.RootNode);
+                        GL.PopMatrix();
+                    }
+                }
+            }
 
             foreach (KeyValuePair<Tag,List<ConnectedComponent>> child in component.Children)
             {
@@ -330,11 +406,7 @@ namespace MD3
                 {
                     GL.PushMatrix();
 
-                    int realFrame = 0;
-                    if (thisFrame < child.Key.Frames.Length)
-                        realFrame = thisFrame;
-
-                    Matrix4 m = GetTagMatrix(component.Part.PartType, child.Key.Frames);
+                    Matrix4 m = GetTagMatrix(component.Part, tracker, child.Key.Frames);
                     GL.MultMatrix(ref m);
 
                     if (DrawTags)
@@ -364,25 +436,32 @@ namespace MD3
                         Tag destTag = c.Part.FindTag(child.Key.Name);
                         GL.PushMatrix();
 
-                        if (component.Part.PartType == ComponentType.Legs && c.Part.PartType == ComponentType.Torso)
-                            GL.MultMatrix(ref LegTorsoMatrix);
-                        else if (component.Part.PartType == ComponentType.Torso && c.Part.PartType == ComponentType.Head)
-                            GL.MultMatrix(ref TorsoHeadMatrix);
-
+                        if (TagMatrixOffsets.ContainsKey(child.Key))
+                        {
+                            Matrix4 offsetMat = TagMatrixOffsets[child.Key];
+                            GL.MultMatrix(ref offsetMat);
+                        }
+                     
                         Matrix4 destMat = Matrix4.Identity;
                         if (destTag != null)
-                            destMat = GetTagMatrix(c.Part.PartType, destTag.Frames);
+                        {
+                            AnimationTracker destTracker = null;
+                            if (ActiveTrackers.ContainsKey(c.Part))
+                                destTracker = ActiveTrackers[c.Part];
+                            destMat = GetTagMatrix(c.Part, destTracker, destTag.Frames);
+                        }
 
                         GL.MultMatrix(ref destMat);
                         DrawCompoenent(c);
                         GL.PopMatrix();
                     }
+
                     GL.PopMatrix();
                 }
             }
         }
 
-        protected void DrawMesh ( Mesh mesh, ComponentType part )
+        internal void DrawMesh ( Mesh mesh, AnimationTracker tracker )
         {
             if (HiddenMeshes.Contains(mesh) || mesh.Frames.Length < 1)
                 return;
@@ -398,9 +477,9 @@ namespace MD3
             GL.Color4(Color.White);
             GL.Begin(BeginMode.Triangles);
 
-            int thisFrame = getFrame(getTracker(part));
-            int nextFrame = getNextFrame(getTracker(part));
-            float param = getParam(getTracker(part));
+            int thisFrame = getFrame(tracker);
+            int nextFrame = getNextFrame(tracker);
+            float param = getParam(tracker);
 
             Vector3[] theseVerts;
             Vector3[] theseNorms;
@@ -452,7 +531,7 @@ namespace MD3
 
         public void HideMesh ( string name )
         {
-            foreach( Component c in character.Componenets )
+            foreach( Component c in model.Componenets )
             {
                 foreach (Mesh m in c.Meshes)
                 {
@@ -467,7 +546,7 @@ namespace MD3
 
         public void ShowMesh(string name)
         {
-            foreach (Component c in character.Componenets)
+            foreach (Component c in model.Componenets)
             {
                 foreach (Mesh m in c.Meshes)
                 {
@@ -483,77 +562,207 @@ namespace MD3
         public void SetSkin ( string name )
         {
             skinName = name;
+            skinTextures = null;
             BindSkin();
+
+            foreach(KeyValuePair<Component,Dictionary<Tag,ModelTree>> attach in AttachedItems)
+            {
+                foreach(KeyValuePair<Tag,ModelTree> item in attach.Value)
+                    BindSkin(item.Value);
+            }
         }
 
-        public bool SetTorsoSequence(string name)
+        public bool SetAnimationTracker ( Component component, AnimationSequence sequence )
         {
-            AnimationSequence sequence = character.FindSequence("torso",name);
-            if (sequence == null)
+            if (InUpdate)
             {
-                torsoSequence = null;
-                return false;
+                animsToReplace.Add(new KeyValuePair<Component, AnimationSequence>(component, sequence));
+                return true;
             }
 
-            torsoSequence = new AnimationTracker(sequence);
-            torsoSequence.AnimationEnded += new AnimationTracker.SequenceEvent(torsoSequence_AnimationEnded);
-            torsoSequence.AnimationLooped += new AnimationTracker.SequenceEvent(torsoSequence_AnimationLooped);
+            if (ActiveTrackers.ContainsKey(component))
+            {
+                if (ActiveTrackers[component].Sequence == sequence)
+                {
+                    ActiveTrackers[component].Reset();
+                    return true;
+                }
+
+                ActiveTrackers.Remove(component);
+            }
+
+            if (sequence == null)
+                return false;
+
+            AnimationTracker tracker = new AnimationTracker(sequence);
+            tracker.Part = component;
+            tracker.AnimationEnded += new AnimationTracker.SequenceEvent(Sequence_AnimationEnded);
+            tracker.AnimationLooped += new AnimationTracker.SequenceEvent(Sequence_AnimationLooped);
             if (FrameChanged != null)
-                torsoSequence.FrameChanged += new AnimationTracker.SequenceEvent(torsoSequence_FrameChanged);
+                tracker.FrameChanged += new AnimationTracker.SequenceEvent(Sequence_FrameChanged);
+
+            ActiveTrackers.Add(component, tracker);
             return true;
         }
 
-        void torsoSequence_FrameChanged(AnimationTracker sender, string name)
+        void Sequence_FrameChanged(AnimationTracker sender, string name)
         {
-            if (FrameChanged != null)
-                FrameChanged(this, sender.ThisFrame, ComponentType.Torso);
+            if (FrameChanged == null)
+                return;
+            FrameChanged(this, sender.ThisFrame, sender.Part.PartType);
         }
 
-        void torsoSequence_AnimationLooped(AnimationTracker sender, string name)
+        void Sequence_AnimationLooped(AnimationTracker sender, string name)
         {
             if (AnimationLooped != null)
-                AnimationLooped(this, name, ComponentType.Torso);
+                AnimationLooped(this, name, sender.Part.PartType);
         }
 
-        void torsoSequence_AnimationEnded(AnimationTracker sender, string name)
+        void Sequence_AnimationEnded(AnimationTracker sender, string name)
         {
             if (AnimationEnded != null)
-                AnimationEnded(this, name, ComponentType.Torso);
+                AnimationEnded(this, name, sender.Part.PartType);
+        }
+    }
+
+    public class CharacterInstance : AnimatedInstance
+    {
+        internal Component legComponent;
+        internal Component torsoComponent;
+
+        public Matrix4 LegTorsoMatrix
+        {
+            get 
+            {
+                if (LegTorsoTag == null || !TagMatrixOffsets.ContainsKey(LegTorsoTag))
+                    return Matrix4.Identity;
+
+                return TagMatrixOffsets[LegTorsoTag];
+            }
+
+            set 
+            {
+                if (LegTorsoTag == null)
+                    return;
+                if (TagMatrixOffsets.ContainsKey(LegTorsoTag))
+                    TagMatrixOffsets[LegTorsoTag] = value;
+                else
+                    TagMatrixOffsets.Add(LegTorsoTag, value);
+            }
+        }
+
+        public Matrix4 TorsoHeadMatrix
+        {
+            get
+            {
+                if (TorsoHeadTag == null || !TagMatrixOffsets.ContainsKey(TorsoHeadTag))
+                    return Matrix4.Identity;
+
+                return TagMatrixOffsets[TorsoHeadTag];
+            }
+
+            set
+            {
+                if (TorsoHeadTag == null)
+                    return;
+                if (TagMatrixOffsets.ContainsKey(TorsoHeadTag))
+                    TagMatrixOffsets[TorsoHeadTag] = value;
+                else
+                    TagMatrixOffsets.Add(TorsoHeadTag, value);
+            }
+        }
+
+        protected Tag LegTorsoTag = null;
+        protected Tag TorsoHeadTag = null;
+
+        public CharacterInstance(Character c) : base(c)
+        {
+            Component head = null;
+
+            foreach(Component component in c.Componenets)
+            {
+                if (component.PartType == ComponentType.Torso)
+                    torsoComponent = component;
+               
+                if (component.PartType == ComponentType.Legs)
+                    legComponent = component;
+               
+                if (component.PartType == ComponentType.Head)
+                    head = component;
+            }
+
+            if (torsoComponent != null)
+            {
+                foreach(Tag tag in legComponent.Tags)
+                {
+                    if (torsoComponent.FindTag(tag.Name) != null)
+                    {
+                        LegTorsoTag = tag;
+                        break;
+                    }
+                }
+
+                if (LegTorsoTag == null)
+                {
+                    LegTorsoTag= legComponent.SearchTag("torso");
+                    if (LegTorsoTag == null)
+                        LegTorsoTag = legComponent.SearchTag("upper");
+                }
+            }
+
+            if (head != null)
+            {
+                foreach (Tag tag in torsoComponent.Tags)
+                {
+                    if (head.FindTag(tag.Name) != null)
+                    {
+                        TorsoHeadTag = tag;
+                        break;
+                    }
+                }
+
+                if (TorsoHeadTag == null)
+                    TorsoHeadTag = legComponent.SearchTag("head");
+            }
+        }
+
+        public void AttatchWeapon ( ModelTree tree )
+        {
+            Component attatchComponent = null;
+            Tag attachTag = null;
+
+            if (torsoComponent != null)
+            {
+                attachTag = torsoComponent.SearchTag("weapon");
+                if (attachTag != null)
+                    attatchComponent = torsoComponent;
+            }
+
+            if (attatchComponent == null && legComponent != null)
+            {
+                attachTag = legComponent.SearchTag("weapon");
+                if (attachTag != null)
+                    attatchComponent = legComponent;
+            }
+
+            if (attatchComponent != null && attachTag != null)
+                AttatchItem(attatchComponent, attachTag, tree);
+        }
+      
+        public bool SetTorsoSequence(string name)
+        {
+            if (torsoComponent == null)
+                return false;
+
+            return SetAnimationTracker(torsoComponent,model.FindSequence("torso", name));
         }
 
         public bool SetLegSequence(string name)
         {
-            AnimationSequence sequence = character.FindSequence("legs", name);
-            if (sequence == null)
-            {
-                legSequence = null;
+            if (legComponent == null)
                 return false;
-            }
 
-            legSequence = new AnimationTracker(sequence);
-            legSequence.AnimationEnded += new AnimationTracker.SequenceEvent(legSequence_AnimationEnded);
-            legSequence.AnimationLooped += new AnimationTracker.SequenceEvent(legSequence_AnimationLooped);
-            if (FrameChanged != null)
-                legSequence.FrameChanged += new AnimationTracker.SequenceEvent(legSequence_FrameChanged);
-            return true;
-        }
-
-        void legSequence_FrameChanged(AnimationTracker sender, string name)
-        {
-            if (FrameChanged != null)
-                FrameChanged(this, sender.ThisFrame, ComponentType.Legs);
-        }
-
-        void legSequence_AnimationLooped(AnimationTracker sender, string name)
-        {
-            if (AnimationLooped != null)
-                AnimationLooped(this, name, ComponentType.Legs);
-        }
-
-        void legSequence_AnimationEnded(AnimationTracker sender, string name)
-        {
-            if (AnimationEnded != null)
-                AnimationEnded(this, name, ComponentType.Legs);
+            return SetAnimationTracker(legComponent, model.FindSequence("legs", name));
         }
     }
 }

@@ -50,7 +50,7 @@ namespace MD3
         public Component[] Componenets = null;
     }
 
-    public class Character
+    public class ModelTree
     {
         public Component[] Componenets = null;
 
@@ -58,19 +58,15 @@ namespace MD3
 
         public String Name = string.Empty;
 
-        public Gender Gender = Gender.Unknown;
-        public Vector3 HeadOffset = Vector3.Zero;
-        public string Footsetps = string.Empty;
-
-        public Dictionary<string,List<AnimationSequence>> Sequences;
+        public Dictionary<string, List<AnimationSequence>> Sequences;
 
         public List<Skin> Skins = new List<Skin>();
 
-        protected Dictionary<string, Dictionary<string,AnimationSequence>> SequenceCache;
+        protected Dictionary<string, Dictionary<string, AnimationSequence>> SequenceCache;
 
         internal ConnectedComponent RootNode;
 
-        public Skin GetSkin ( string name )
+        public Skin GetSkin(string name)
         {
             foreach (Skin skin in Skins)
             {
@@ -83,7 +79,7 @@ namespace MD3
             return s;
         }
 
-        public bool SkinExists ( string name )
+        public bool SkinExists(string name)
         {
             foreach (Skin skin in Skins)
             {
@@ -94,7 +90,7 @@ namespace MD3
             return false;
         }
 
-        public Skin SkinFromSurfs ()
+        public Skin SkinFromSurfs()
         {
             if (SkinExists("from_surfs"))
                 return GetSkin("from_surfs");
@@ -105,10 +101,11 @@ namespace MD3
             {
                 skin.Surfaces.Add(component.Name, new Dictionary<string, string>());
 
-                Dictionary<string,string> comps = skin.Surfaces[component.Name];
+                Dictionary<string, string> comps = skin.Surfaces[component.Name];
 
                 foreach (Mesh mesh in component.Meshes)
                 {
+                    string texture = string.Empty;
                     if (mesh.ShaderFiles.Length > 0)
                         comps.Add(mesh.Name, mesh.ShaderFiles[0]);
                     else
@@ -120,9 +117,9 @@ namespace MD3
             return skin;
         }
 
-        public Component FindComponent ( string name )
+        public Component FindComponent(string name)
         {
-            foreach ( Component comp in Componenets )
+            foreach (Component comp in Componenets)
             {
                 if (comp.FileName == name)
                     return comp;
@@ -131,12 +128,12 @@ namespace MD3
             return null;
         }
 
-        public Component FindComponent ( int LOD, ComponentType part )
+        public Component FindComponent(int LOD, ComponentType part)
         {
             if (LOD >= LODs.Length || LOD < 0)
                 return null;
 
-            foreach(Component comp in LODs[LOD].Componenets)
+            foreach (Component comp in LODs[LOD].Componenets)
             {
                 if (comp.PartType == part)
                     return comp;
@@ -144,18 +141,18 @@ namespace MD3
             return null;
         }
 
-        public AnimationSequence FindSequence ( string part, string name )
+        public AnimationSequence FindSequence(string part, string name)
         {
             if (SequenceCache == null)
             {
-                SequenceCache = new Dictionary<string, Dictionary<string,AnimationSequence>>();
-                foreach (KeyValuePair<string,List<AnimationSequence>> partSeq in Sequences)
+                SequenceCache = new Dictionary<string, Dictionary<string, AnimationSequence>>();
+                foreach (KeyValuePair<string, List<AnimationSequence>> partSeq in Sequences)
                 {
                     if (!SequenceCache.ContainsKey(partSeq.Key))
                         SequenceCache.Add(partSeq.Key, new Dictionary<string, AnimationSequence>());
 
                     Dictionary<string, AnimationSequence> seqs = SequenceCache[partSeq.Key];
-                    foreach(AnimationSequence seq in partSeq.Value)
+                    foreach (AnimationSequence seq in partSeq.Value)
                     {
                         if (!seqs.ContainsKey(seq.Name))
                             seqs.Add(seq.Name, seq);
@@ -171,5 +168,39 @@ namespace MD3
 
             return SequenceCache[part][name];
         }
+
+        public Component SearchComponent ( string name )
+        {
+            foreach (Component c in Componenets)
+            {
+                if (c.Name.ToLower().Contains(name.ToLower()))
+                    return c;
+            }
+
+            return null;
+        }
+
+        public Tag FindTagInRoot ( string name )
+        {
+            if (RootNode == null)
+                return null;
+
+            return RootNode.Part.FindTag(name);
+        }
+
+        public Component GetRootComponent ()
+        {
+            if (RootNode == null)
+                return null;
+
+            return RootNode.Part;
+        }
+    }
+
+    public class Character : ModelTree
+    {
+        public Gender Gender = Gender.Unknown;
+        public Vector3 HeadOffset = Vector3.Zero;
+        public string Footsetps = string.Empty;
     }
 }
