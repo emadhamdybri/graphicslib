@@ -11,7 +11,8 @@ namespace Utilities.Paths
 
         public static void AddPath ( string path )
         {
-            SearchPaths.Add(path);
+            if (Directory.Exists(path))
+                SearchPaths.Add(path);
         }
 
         public static string FindFile(string name)
