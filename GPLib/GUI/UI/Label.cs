@@ -6,10 +6,11 @@ using System.Text;
 using OpenTK;
 using OpenTK.Graphics;
 
+using GUI;
 
 namespace GUI.UI
 {
-    public class Label : Item
+    public class Label : Pannel
     {
         public enum TextAlignment
         {
@@ -56,8 +57,6 @@ namespace GUI.UI
 
         public Font Typeface = Screen.DefaultFont;
         public Color TypeColor = Color.White;
-        public Color FrameColor = Color.Transparent;
-        public Color BackgroundColor = Color.Transparent;
 
         protected RectangleF bounds = RectangleF.Empty;
 
@@ -78,47 +77,31 @@ namespace GUI.UI
 
         protected virtual void ComputeBounds ()
         {
-            bounds = new RectangleF(Position.X, Screen.ScreenY - Position.Y, Size.X, Size.Y);
+            if (Size == Vector2.Zero)
+            {
+                Screen.Printer.Begin();
+                TextExtents extents = Screen.Printer.Measure(Text, Typeface);
+                Screen.Printer.End();
+
+                Size = new Vector2(extents.BoundingBox.Width + 2, extents.BoundingBox.Height + 2);
+            }
+            Vector2 pos = GetAbsolutPosition();
+            bounds = new RectangleF(pos.X + 1, Screen.ScreenY - pos.Y - Size.Y, Size.X, Size.Y);
         }
 
         protected override void OnPaint()
         {
             base.OnPaint();
 
-            GL.PushMatrix();
-            if (BackgroundColor != Color.Transparent)
-            {
-                GL.Color4(BackgroundColor);
-                GL.Begin(BeginMode.Quads);
-
-                GL.Normal3(0, 0, 1);
-                GL.Vertex2(Position.X, Position.Y);
-                GL.Vertex2(Position.X+Size.X, Position.Y);
-                GL.Vertex2(Position.X + Size.X, Position.Y + Size.Y);
-                GL.Vertex2(Position.X, Position.Y + Size.Y);
-                GL.End();
-
-                GL.Translate(0, 0, Item.DepthShift);
-            }
-
-            if (FrameColor != Color.Transparent)
-            {
-                GL.Color4(FrameColor);
-                GL.Begin(BeginMode.LineLoop);
-                GL.Vertex2(Position.X, Position.Y);
-                GL.Vertex2(Position.X + Size.X, Position.Y);
-                GL.Vertex2(Position.X + Size.X, Position.Y + Size.Y);
-                GL.Vertex2(Position.X, Position.Y + Size.Y);
-                GL.End();
-            }
+            GUIRenderer.Renderer.RenderPannelFrame(this);
 
             if (bounds == RectangleF.Empty)
                 ComputeBounds();
 
+            GL.Enable(EnableCap.Texture2D);
             Screen.Printer.Begin();
             Screen.Printer.Print(Text, Typeface, TypeColor, bounds, OpenTK.Graphics.TextPrinterOptions.Default, alignment);
             Screen.Printer.End();
-            GL.PopMatrix();
         }
     }
 }

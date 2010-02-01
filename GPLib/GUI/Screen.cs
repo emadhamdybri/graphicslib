@@ -11,15 +11,34 @@ namespace GUI
     public class Screen : Item
     {
         public static float ScreenY = 0;
+        public static float ZStart = -1;
 
         public static Font DefaultFont = new Font(FontFamily.GenericSerif, 10);
         public static OpenTK.Graphics.TextPrinter Printer = new OpenTK.Graphics.TextPrinter();
 
-        public override void Resize(ResizeEventArgs args)
+        public Screen() : base()
         {
-            base.Resize(args);
-            Size = new Vector2(args.Size);
-            ScreenY = args.Size.Y;
+            AnchorLeft = false;
+            AnchorTop = false;
+            AnchorRight = false;
+            AnchorBottom = false;
+        }
+
+        public void Resize(int X, int Y)
+        {
+            ScreenY = Y;
+            Vector2 size = new Vector2(X, Y);
+            ResizeEventArgs args = new ResizeEventArgs(size, size-Size);
+            Size = size;
+            Resize(args);
+        }
+
+        public override void Draw ()
+        {
+            GL.PushMatrix();
+            GL.Translate(0, 0, ZStart);
+            base.Draw();
+            GL.PopMatrix();
         }
     }
 }
