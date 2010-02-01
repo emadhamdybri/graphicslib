@@ -12,6 +12,8 @@ using Drawables.Cameras;
 
 using Project23Client;
 
+using Utilities.Paths;
+
 namespace Project23
 {
     class VisualPlayer

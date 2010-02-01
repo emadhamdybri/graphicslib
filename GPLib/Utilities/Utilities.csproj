@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileIOBinUtils.cs" />
+    <Compile Include="ResourceManager.cs" />
     <Compile Include="TextUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

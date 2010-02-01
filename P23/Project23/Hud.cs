@@ -10,6 +10,7 @@ using Drawables.Textures;
 
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using Utilities.Paths;
 
 namespace Project23
 {

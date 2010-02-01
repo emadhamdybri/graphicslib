@@ -9,6 +9,8 @@ using OpenTK.Graphics.OpenGL;
 using Drawables.Textures;
 using Math3D;
 
+using Utilities.Paths;
+
 namespace Project23
 {
     class Cloud
