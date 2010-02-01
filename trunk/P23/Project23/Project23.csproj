@@ -105,7 +105,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource1.resx</DependentUpon>
     </Compile>
-    <Compile Include="ResourceManager.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TopCam.cs" />
     <Compile Include="Visual.cs" />
@@ -121,6 +120,10 @@
     <ProjectReference Include="..\..\GPLib\Math\Math3D.csproj">
       <Project>{0BC4671F-FF72-4D3E-9889-44382F6C64F2}</Project>
       <Name>Math3D</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GPLib\Utilities\Utilities.csproj">
+      <Project>{1CD2C5DC-F417-41D6-9704-CCC0FB501BF3}</Project>
+      <Name>Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameClient\GameClient.csproj">
       <Project>{1F5E5A59-5A45-4646-9D17-D3603CF7061B}</Project>

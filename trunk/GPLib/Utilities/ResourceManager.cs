@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Project23
+namespace Utilities.Paths
 {
-    class ResourceManager
+    public class ResourceManager
     {
         public static List<string> SearchPaths = new List<string>();
 
