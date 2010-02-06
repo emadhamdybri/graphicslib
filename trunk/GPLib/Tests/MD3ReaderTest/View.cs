@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using MD3;
 
 using OpenTK;
-using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
 using Drawables.DisplayLists;
 using Math3D;
@@ -23,8 +23,6 @@ namespace MD3ReaderTest
         CharacterInstance instance;
 
         ModelTree weapon;
-        AnimatedInstance weaponInstance;
-
 
         Vector3 offset = new Vector3(0, 0, 5);
         Vector2 rotation = new Vector2(60, 30);
@@ -257,7 +255,8 @@ namespace MD3ReaderTest
             GL.LoadIdentity();
             float aspect = (float)glControl1.Width / (float)glControl1.Height;
 
-            Glu.Perspective(45, aspect, 1f, 1000f);
+            Matrix4 mat = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f), aspect, 1f, 1000f);
+            GL.MultMatrix(ref mat);
             GL.MatrixMode(MatrixMode.Modelview);
         }
 

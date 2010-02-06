@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using Utilities.FileIO;
 
 using OpenTK;
-using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
 namespace Cal3d
 {
