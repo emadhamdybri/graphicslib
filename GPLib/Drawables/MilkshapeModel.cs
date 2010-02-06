@@ -145,7 +145,7 @@ namespace MilkhapeModel
 
     class MilkshapeKeyframe
     {
-        public int Joint;
+        public int Joint = 0;
         public float time;
         public Vector3 Paramater = Vector3.Zero;
     }

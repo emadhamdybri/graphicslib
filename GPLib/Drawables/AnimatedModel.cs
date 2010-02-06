@@ -430,10 +430,6 @@ namespace Drawables.AnimateModels
             {
                 for (int i = 0; i < face.Verts.Count; i++)
                 {
-                    if (n >= VBO.Length)
-                    {
-                        int p = 0;
-                    }
                     Bone bone = Verts[face.Verts[i]].Key;
                     int boneVert = Verts[face.Verts[i]].Value;
                     AnimatedBoneMatrix matrix = anim.GetMatrices(bone);
@@ -769,7 +765,7 @@ namespace Drawables.AnimateModels
                             Bone bone = model.Root;
                             Matrix4 toBoneMat = Matrix4.Identity;
 
-                            if (false)
+                            if (i < 0) // cheeze to stop warning
                             {
                                 float weight = 0;
                                 int boneID = 0;
