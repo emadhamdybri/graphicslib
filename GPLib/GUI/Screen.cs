@@ -30,7 +30,8 @@ namespace GUI
             Vector2 size = new Vector2(X, Y);
             ResizeEventArgs args = new ResizeEventArgs(size, size-Size);
             Size = size;
-            Resize(args);
+            foreach (Item item in Children)
+                item.Resize(args);
         }
 
         public override void Draw ()
