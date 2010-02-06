@@ -33,9 +33,9 @@ namespace GUI
         public static bool DrawDebugOutlines = false;
 
         public bool AnchorLeft = true;
-        public bool AnchorTop = true;
+        public bool AnchorTop = false;
         public bool AnchorRight = false;
-        public bool AnchorBottom = false;
+        public bool AnchorBottom = true;
 
         protected bool canFocus = false;
 
@@ -91,6 +91,8 @@ namespace GUI
 
         public virtual void Resize (ResizeEventArgs args)
         {
+            Vector2 oldSize = new Vector2(Size);
+
             if (Size != Vector2.Zero && Parrent != null && (AnchorBottom || AnchorTop || AnchorLeft || AnchorRight))
             {
                 if (AnchorLeft && AnchorRight) // we are stretchy in X
@@ -112,10 +114,11 @@ namespace GUI
             if (Size.X < 0)
                 Size.X = 0;
             if (Size.Y < 0)
-                Size.Y = 0; 
+                Size.Y = 0;
             
+            ResizeEventArgs childArgs = new ResizeEventArgs(Size,Size-oldSize);
             foreach (Item item in Children)
-                item.Resize(args);
+                item.Resize(childArgs);
         }
 
         protected virtual void OnPaint()
