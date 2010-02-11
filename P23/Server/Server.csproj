@@ -50,11 +50,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Components\Host\Host.csproj">
+    <ProjectReference Include="..\..\Common\Host\Host.csproj">
       <Project>{2EE0E321-3FC6-4B3A-9F13-C34B8B49D7B5}</Project>
       <Name>Host</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Components\ServerConfigurator\ServerConfigurator.csproj">
+    <ProjectReference Include="..\..\Common\ServerConfigurator\ServerConfigurator.csproj">
       <Project>{CA9368CE-BC6D-4028-9FF8-99F012201DC6}</Project>
       <Name>ServerConfigurator</Name>
     </ProjectReference>
