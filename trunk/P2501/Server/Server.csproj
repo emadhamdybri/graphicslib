@@ -8,7 +8,7 @@
     <ProjectGuid>{1A9B8887-1292-4F4A-BFFC-5290F794A898}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Project24Server</RootNamespace>
+    <RootNamespace>Project2501Server</RootNamespace>
     <AssemblyName>Server</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 using Messages;
 
-namespace Project23Server
+namespace Project2501Server
 {
     public class Client : System.Object
     {
