@@ -10,9 +10,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simulation", "..\Simulation
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lidgren.Network", "..\lidgren-network\Lidgren.Network\Lidgren.Network.csproj", "{BA202214-F6F8-4853-BCC9-CA4F13C5F479}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "..\Components\Client\Client.csproj", "{416EE5A4-4061-4AAC-B00F-132FB4C19513}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "..\..\Common\Client\Client.csproj", "{416EE5A4-4061-4AAC-B00F-132FB4C19513}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Host", "..\Components\Host\Host.csproj", "{2EE0E321-3FC6-4B3A-9F13-C34B8B49D7B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Host", "..\..\Common\Host\Host.csproj", "{2EE0E321-3FC6-4B3A-9F13-C34B8B49D7B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messages", "..\Messages\Messages.csproj", "{74ABA191-489F-47F6-9982-94C764B67F83}"
 EndProject
@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math3D", "..\..\GPLib\Math\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "..\..\GPLib\Utilities\Utilities.csproj", "{1CD2C5DC-F417-41D6-9704-CCC0FB501BF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConfigurator", "..\Components\ServerConfigurator\ServerConfigurator.csproj", "{CA9368CE-BC6D-4028-9FF8-99F012201DC6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerConfigurator", "..\..\Common\ServerConfigurator\ServerConfigurator.csproj", "{CA9368CE-BC6D-4028-9FF8-99F012201DC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
