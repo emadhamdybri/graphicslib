@@ -13,7 +13,7 @@ using Simulation;
 
 using Lidgren.Network;
 
-namespace Project23Server
+namespace Project2501Server
 {
     public partial class Server
     {
