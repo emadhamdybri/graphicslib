@@ -23,7 +23,7 @@
 		$query = "SELECT ID, Hostname, ServerName, Description, Groupname FROM list";
 		$result = SQLGet($query);
 		
-		$count = mysql_num_rows($result);
+		$count = mysql_num_rows($result); 
 		echo $count . "\r\n";
 		for ($i = 0; $i < $count; $i += 1)
 		{
@@ -89,17 +89,61 @@
 				return;
 		}
 		
-		 SetDBFieldForKey("ID", $id, "list", "Groupname", $group);
+		SetDBFieldForKey("ID", $id, "list", "Groupname", $group);
 		 
-		 echo $id;
+		echo $id;
 	}
 	
-	function 	UpdateHost()
+	function UpdateHost()
 	{
+		$id = GetInput("id");
+		$ip = $_SERVER['REMOTE_ADDR'];	
+		
+		if (!$id)
+		{
+			 echo "err";
+			 return;
+		}
+		
+		$hostIP = GetDBFieldForKey ( "ID", $id, "list", "IP" );
+
+		if (!$hostIP || $hostIP != $ip)
+		{
+			 echo "err";
+			 return;
+		}
+		
+		$now = gmdate("Y-m-d H:i:s", time());
+		SetDBFieldForKey("ID", $id, "list", "UpdateTime", $now);
+		
+		echo $id;
 	}
 	
 	function RemoveHost()
 	{
+		$id = GetInput("id");
+		$ip = $_SERVER['REMOTE_ADDR'];	
+		
+		if (!$id)
+		{
+			 echo "err";
+			 return;
+		}
+		
+		$hostIP = GetDBFieldForKey ( "ID", $id, "list", "IP" );
+
+		if (!$hostIP || $hostIP != $ip)
+		{
+			 echo "err";
+			 return;
+		}
+		
+		$query = "REMOVE FROM list WHERE ID=$id";
+		
+		if (!SQLSet($query))
+			echo "err"
+		else
+			echo "ok";
 	}
 	
 	header('Content-Type: text/plain');
