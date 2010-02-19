@@ -71,6 +71,18 @@
 			echo "err";
 			return;
 		}
+		
+		// find this server
+		
+		$query = "SELECT ID FROM list WHERE IP='$ip' AND Hostport='$port'";
+		$result = SQLGet($query);
+		if ($result)
+		{
+				$id = GetQueryResult($result);
+				$query = "REMOVE FROM list WHERE ID=$id";
+		
+				SQLSet($query);
+		}
 				
 		$random = rand();
 		$now = gmdate("Y-m-d H:i:s", time());
@@ -146,6 +158,13 @@
 			echo "ok";
 	}
 	
+	function CheckOlds()
+	{
+		$now = gmdate("Y-m-d H:i:s", time());
+		$query = "REMOVE FROM list WHERE UpdateTime > DATE_SUB(CURDATE(), INTERVAL 1 HOUR)";
+		SQLSet($query);
+	}
+	
 	header('Content-Type: text/plain');
 	
 	if (!defined('CONFIGURATION'))
@@ -166,4 +185,6 @@
 		UpdateHost();
 	else if ($action == 'removehost')
 		RemoveHost();
+		
+		CheckOlds();
 ?>

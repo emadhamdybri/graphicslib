@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `list` (
   `ServerName` tinytext,
   `Description` tinytext,
   `Groupname` tinytext,
-  `UpdateTime` datetime DEFAULT NULL,
+  `TimeStamp` bigint(20) default NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID` (`ID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;

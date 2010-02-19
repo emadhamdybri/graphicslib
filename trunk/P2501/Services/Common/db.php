@@ -39,6 +39,14 @@
 		return $list;
 	}
 	
+	function  ( $result, $field )
+	{
+		if ($result && mysql_num_rows($result) > 0)
+			return mysql_fetch_array($result)[0];
+	
+		return FALSE;
+	}
+	
 	function GetDBFieldForKey ( $keyName, $key, $db, $field )
 	{
 		$query = "SELECT " . $field . " FROM ". $db ." WHERE " . $keyName . "='" .$key . "'";
