@@ -92,6 +92,11 @@ namespace ServerConfigurator
             return string.Empty;
         }
 
+        public bool ItemExists ( string name )
+        {
+            return items.ContainsKey(name);
+        }
+
         public void SetItem ( string name, string value )
         {
             if (items.ContainsKey(name))
