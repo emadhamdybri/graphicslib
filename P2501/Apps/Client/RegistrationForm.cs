@@ -8,8 +8,15 @@ using System.Web;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
+using System.Threading;
 
-namespace Client
+using Clients;
+using Lidgren.Network;
+
+using Auth;
+
+namespace P2501Client
 {
     public partial class RegistrationForm : Form
     {
@@ -56,6 +63,7 @@ namespace Client
         {
             PassError.Visible = Password.Text != PassVerify.Text;
         }
+
         private void Email_TextChanged(object sender, EventArgs e)
         {
             CheckOK();
@@ -94,15 +102,24 @@ namespace Client
         {
             bool avail = true;
 
+            WaitBox box = new WaitBox("Checking Availability");
+            box.Show(this);
+            box.Update("Contacting server");
+
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://www.awesomelaser.com/p2501/Auth/callsigncheck.php?name=" + HttpUtility.UrlEncode(Callsign.Text));
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            box.Update("Reading response");
             Stream resStream = response.GetResponseStream();
             StreamReader reader = new StreamReader(resStream);
             string ret = reader.ReadToEnd();
             reader.Close();
             resStream.Close();
 
+            box.Update("Checking name");
             avail = ret == "OK";
+
+            box.Close();
 
             if (!avail)
             {
@@ -118,6 +135,104 @@ namespace Client
         {
             if (!CheckName())
             {
+                DialogResult = DialogResult.None;
+                return;
+            }
+
+            // do the registration
+            WaitBox box = new WaitBox("Registering Account");
+            box.Show();
+            box.Update(10, "Contacting secure host");
+
+            CryptoClient client = new CryptoClient("www.awesomelaser.com", 4111);
+
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
+            int timeout = 120;
+
+            bool done = false;
+            bool connected = false;
+
+            while (!done)
+            {
+                if (!connected && client.IsConnected)
+                    box.Update(20, "Connection established");
+                if (connected && !client.IsConnected)
+                {
+                    client.Kill();
+                    box.Close();
+                    MessageBox.Show("The registration server could not be contacted");
+                    DialogResult = DialogResult.None;
+                    return;
+                }
+
+                NetBuffer buffer = client.GetPentMessage();
+                while (buffer != null)
+                {
+                    int name = buffer.ReadInt32();
+
+                    if (name == AuthMessage.Hail)
+                    {
+                        RequestAdd msg = new RequestAdd();
+                        msg.email = Email.Text;
+                        msg.password = Password.Text;
+                        msg.callsign = Callsign.Text;
+
+                        box.Update(75, "Registering account");
+                        client.SendMessage(msg.Pack(), msg.Channel());
+                    }
+                    else if (name == AuthMessage.AddOK)
+                    {
+                        box.Update(100, "Registration complete");
+                        client.Kill();
+                        done = true;
+                    }
+                    else if (name == AuthMessage.AddBadCallsign)
+                    {
+                        client.Kill();
+                        box.Close();
+                        MessageBox.Show("The name " + Callsign.Text + " was not available");
+                        Callsign.Text = string.Empty;
+                        Callsign.Select();
+                        return;
+                    }
+                    else if (name == AuthMessage.AddBadEmail)
+                    {
+                        client.Kill();
+                        box.Close();
+                        MessageBox.Show("The email " + Email.Text + " is already registered");
+                        Email.Text = string.Empty;
+                        Email.Select();
+                        return;
+                    }
+                    else
+                    {
+                        done = true;
+                        connected = false;
+                    }
+
+                    if (!done)
+                        buffer = client.GetPentMessage();
+                    else
+                        buffer = null;
+                }
+
+                if (timer.ElapsedMilliseconds / 1000 > timeout)
+                {
+                    done = true;
+                    connected = false;
+                }
+                Application.DoEvents();
+                Thread.Sleep(100);
+            }
+            client.Kill();
+            box.Close();
+
+            if (!connected)
+            {
+                box.Close();
+                MessageBox.Show("The registration server could not be contacted");
                 DialogResult = DialogResult.None;
                 return;
             }
