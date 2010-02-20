@@ -29,24 +29,28 @@
         private void InitializeComponent()
         {
             this.LoginGroup = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.Username = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.Password = new System.Windows.Forms.TextBox();
+            this.RegisterButton = new System.Windows.Forms.Button();
             this.LoginButton = new System.Windows.Forms.Button();
+            this.Password = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.Username = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.NewsBrowser = new System.Windows.Forms.WebBrowser();
             this.CallsignsGroup = new System.Windows.Forms.GroupBox();
-            this.CharacterList = new System.Windows.Forms.ListBox();
-            this.RegisterButton = new System.Windows.Forms.Button();
             this.NewCharacter = new System.Windows.Forms.Button();
+            this.CharacterList = new System.Windows.Forms.ListBox();
             this.GamesGroup = new System.Windows.Forms.GroupBox();
-            this.Play = new System.Windows.Forms.Button();
-            this.Options = new System.Windows.Forms.Button();
-            this.ServerList = new System.Windows.Forms.TreeView();
             this.ServerInfo = new System.Windows.Forms.TextBox();
+            this.ServerList = new System.Windows.Forms.TreeView();
+            this.Options = new System.Windows.Forms.Button();
+            this.Play = new System.Windows.Forms.Button();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.LoginGroup.SuspendLayout();
             this.CallsignsGroup.SuspendLayout();
             this.GamesGroup.SuspendLayout();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // LoginGroup
@@ -64,14 +68,42 @@
             this.LoginGroup.TabStop = false;
             this.LoginGroup.Text = "Login";
             // 
-            // label1
+            // RegisterButton
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(55, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Username";
+            this.RegisterButton.Location = new System.Drawing.Point(91, 106);
+            this.RegisterButton.Name = "RegisterButton";
+            this.RegisterButton.Size = new System.Drawing.Size(75, 23);
+            this.RegisterButton.TabIndex = 5;
+            this.RegisterButton.Text = "Register";
+            this.RegisterButton.UseVisualStyleBackColor = true;
+            this.RegisterButton.Click += new System.EventHandler(this.RegisterButton_Click);
+            // 
+            // LoginButton
+            // 
+            this.LoginButton.Location = new System.Drawing.Point(10, 106);
+            this.LoginButton.Name = "LoginButton";
+            this.LoginButton.Size = new System.Drawing.Size(75, 23);
+            this.LoginButton.TabIndex = 4;
+            this.LoginButton.Text = "Login";
+            this.LoginButton.UseVisualStyleBackColor = true;
+            // 
+            // Password
+            // 
+            this.Password.Location = new System.Drawing.Point(10, 80);
+            this.Password.Name = "Password";
+            this.Password.PasswordChar = '*';
+            this.Password.Size = new System.Drawing.Size(184, 20);
+            this.Password.TabIndex = 3;
+            this.Password.TextChanged += new System.EventHandler(this.Password_TextChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(10, 64);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(53, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Password";
             // 
             // Username
             // 
@@ -83,41 +115,24 @@
             this.Username.SelectedIndexChanged += new System.EventHandler(this.Username_SelectedIndexChanged);
             this.Username.TextUpdate += new System.EventHandler(this.Username_TextUpdate);
             // 
-            // label2
+            // label1
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(10, 64);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(53, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Password";
-            // 
-            // Password
-            // 
-            this.Password.Location = new System.Drawing.Point(10, 80);
-            this.Password.Name = "Password";
-            this.Password.PasswordChar = '*';
-            this.Password.Size = new System.Drawing.Size(184, 20);
-            this.Password.TabIndex = 3;
-            this.Password.TextChanged += new System.EventHandler(this.Password_TextChanged);
-            // 
-            // LoginButton
-            // 
-            this.LoginButton.Location = new System.Drawing.Point(10, 106);
-            this.LoginButton.Name = "LoginButton";
-            this.LoginButton.Size = new System.Drawing.Size(75, 23);
-            this.LoginButton.TabIndex = 4;
-            this.LoginButton.Text = "Login";
-            this.LoginButton.UseVisualStyleBackColor = true;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(55, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Username";
             // 
             // NewsBrowser
             // 
-            this.NewsBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.NewsBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.NewsBrowser.Location = new System.Drawing.Point(218, 12);
+            this.NewsBrowser.Location = new System.Drawing.Point(3, 3);
             this.NewsBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this.NewsBrowser.Name = "NewsBrowser";
-            this.NewsBrowser.Size = new System.Drawing.Size(335, 140);
+            this.NewsBrowser.Size = new System.Drawing.Size(304, 176);
             this.NewsBrowser.TabIndex = 1;
             // 
             // CallsignsGroup
@@ -128,10 +143,20 @@
             this.CallsignsGroup.Controls.Add(this.CharacterList);
             this.CallsignsGroup.Location = new System.Drawing.Point(12, 167);
             this.CallsignsGroup.Name = "CallsignsGroup";
-            this.CallsignsGroup.Size = new System.Drawing.Size(200, 168);
+            this.CallsignsGroup.Size = new System.Drawing.Size(200, 209);
             this.CallsignsGroup.TabIndex = 2;
             this.CallsignsGroup.TabStop = false;
             this.CallsignsGroup.Text = "Callsigns";
+            // 
+            // NewCharacter
+            // 
+            this.NewCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.NewCharacter.Location = new System.Drawing.Point(10, 171);
+            this.NewCharacter.Name = "NewCharacter";
+            this.NewCharacter.Size = new System.Drawing.Size(75, 23);
+            this.NewCharacter.TabIndex = 1;
+            this.NewCharacter.Text = "New...";
+            this.NewCharacter.UseVisualStyleBackColor = true;
             // 
             // CharacterList
             // 
@@ -140,28 +165,8 @@
             this.CharacterList.FormattingEnabled = true;
             this.CharacterList.Location = new System.Drawing.Point(10, 18);
             this.CharacterList.Name = "CharacterList";
-            this.CharacterList.Size = new System.Drawing.Size(175, 108);
+            this.CharacterList.Size = new System.Drawing.Size(175, 147);
             this.CharacterList.TabIndex = 0;
-            // 
-            // RegisterButton
-            // 
-            this.RegisterButton.Location = new System.Drawing.Point(91, 106);
-            this.RegisterButton.Name = "RegisterButton";
-            this.RegisterButton.Size = new System.Drawing.Size(75, 23);
-            this.RegisterButton.TabIndex = 5;
-            this.RegisterButton.Text = "Register";
-            this.RegisterButton.UseVisualStyleBackColor = true;
-            this.RegisterButton.Click += new System.EventHandler(this.RegisterButton_Click);
-            // 
-            // NewCharacter
-            // 
-            this.NewCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.NewCharacter.Location = new System.Drawing.Point(10, 130);
-            this.NewCharacter.Name = "NewCharacter";
-            this.NewCharacter.Size = new System.Drawing.Size(75, 23);
-            this.NewCharacter.TabIndex = 1;
-            this.NewCharacter.Text = "New...";
-            this.NewCharacter.UseVisualStyleBackColor = true;
             // 
             // GamesGroup
             // 
@@ -172,32 +177,23 @@
             this.GamesGroup.Controls.Add(this.ServerList);
             this.GamesGroup.Controls.Add(this.Options);
             this.GamesGroup.Controls.Add(this.Play);
-            this.GamesGroup.Location = new System.Drawing.Point(218, 167);
+            this.GamesGroup.Location = new System.Drawing.Point(3, 3);
             this.GamesGroup.Name = "GamesGroup";
-            this.GamesGroup.Size = new System.Drawing.Size(335, 168);
+            this.GamesGroup.Size = new System.Drawing.Size(304, 175);
             this.GamesGroup.TabIndex = 3;
             this.GamesGroup.TabStop = false;
             this.GamesGroup.Text = "Servers";
             // 
-            // Play
+            // ServerInfo
             // 
-            this.Play.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Play.Location = new System.Drawing.Point(254, 139);
-            this.Play.Name = "Play";
-            this.Play.Size = new System.Drawing.Size(75, 23);
-            this.Play.TabIndex = 0;
-            this.Play.Text = "Play";
-            this.Play.UseVisualStyleBackColor = true;
-            // 
-            // Options
-            // 
-            this.Options.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Options.Location = new System.Drawing.Point(6, 139);
-            this.Options.Name = "Options";
-            this.Options.Size = new System.Drawing.Size(75, 23);
-            this.Options.TabIndex = 1;
-            this.Options.Text = "Options...";
-            this.Options.UseVisualStyleBackColor = true;
+            this.ServerInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.ServerInfo.Location = new System.Drawing.Point(188, 19);
+            this.ServerInfo.Multiline = true;
+            this.ServerInfo.Name = "ServerInfo";
+            this.ServerInfo.ReadOnly = true;
+            this.ServerInfo.Size = new System.Drawing.Size(110, 114);
+            this.ServerInfo.TabIndex = 3;
             // 
             // ServerList
             // 
@@ -206,28 +202,56 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.ServerList.Location = new System.Drawing.Point(6, 19);
             this.ServerList.Name = "ServerList";
-            this.ServerList.Size = new System.Drawing.Size(207, 107);
+            this.ServerList.Size = new System.Drawing.Size(176, 114);
             this.ServerList.TabIndex = 2;
             // 
-            // ServerInfo
+            // Options
             // 
-            this.ServerInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.Options.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Options.Location = new System.Drawing.Point(6, 146);
+            this.Options.Name = "Options";
+            this.Options.Size = new System.Drawing.Size(75, 23);
+            this.Options.TabIndex = 1;
+            this.Options.Text = "Options...";
+            this.Options.UseVisualStyleBackColor = true;
+            // 
+            // Play
+            // 
+            this.Play.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Play.Location = new System.Drawing.Point(223, 146);
+            this.Play.Name = "Play";
+            this.Play.Size = new System.Drawing.Size(75, 23);
+            this.Play.TabIndex = 0;
+            this.Play.Text = "Play";
+            this.Play.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.ServerInfo.Location = new System.Drawing.Point(219, 19);
-            this.ServerInfo.Multiline = true;
-            this.ServerInfo.Name = "ServerInfo";
-            this.ServerInfo.ReadOnly = true;
-            this.ServerInfo.Size = new System.Drawing.Size(110, 107);
-            this.ServerInfo.TabIndex = 3;
+            this.splitContainer1.Location = new System.Drawing.Point(218, 12);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.NewsBrowser);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.GamesGroup);
+            this.splitContainer1.Size = new System.Drawing.Size(310, 364);
+            this.splitContainer1.SplitterDistance = 182;
+            this.splitContainer1.TabIndex = 4;
             // 
             // StartupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(565, 347);
-            this.Controls.Add(this.GamesGroup);
+            this.ClientSize = new System.Drawing.Size(540, 388);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.CallsignsGroup);
-            this.Controls.Add(this.NewsBrowser);
             this.Controls.Add(this.LoginGroup);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(500, 350);
@@ -239,6 +263,9 @@
             this.CallsignsGroup.ResumeLayout(false);
             this.GamesGroup.ResumeLayout(false);
             this.GamesGroup.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -261,6 +288,7 @@
         private System.Windows.Forms.Button Play;
         private System.Windows.Forms.TextBox ServerInfo;
         private System.Windows.Forms.TreeView ServerList;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
 

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client.csproj", "{5854ECD6-A478-462C-82E8-291308A07FE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P2501Client", "P2501Client.csproj", "{5854ECD6-A478-462C-82E8-291308A07FE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

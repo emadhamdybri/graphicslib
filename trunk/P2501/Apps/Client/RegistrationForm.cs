@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
+using System.Net;
+using System.Web;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -35,7 +37,7 @@ namespace Client
         {
             OK.Enabled = false;
 
-            if (Email.Text == string.Empty || !Email.Text.Contains('@'))
+            if (Email.Text == string.Empty || !Email.Text.Contains("@"))
                 return;
 
             if (Password.Text == string.Empty || PassVerify.Text == string.Empty || Password.Text != PassVerify.Text)
@@ -84,19 +86,37 @@ namespace Client
 
         private void Check_Click(object sender, EventArgs e)
         {
-            // check availability
-            if (false)
+          if (CheckName())
+              MessageBox.Show("The name " + Callsign.Text + " is currently available");
+        }
+
+        private bool CheckName ()
+        {
+            bool avail = true;
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://www.awesomelaser.com/p2501/Auth/callsigncheck.php?name=" + HttpUtility.UrlEncode(Callsign.Text));
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream resStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(resStream);
+            string ret = reader.ReadToEnd();
+            reader.Close();
+            resStream.Close();
+
+            avail = ret == "OK";
+
+            if (!avail)
             {
                 MessageBox.Show("The name " + Callsign.Text + " is not available");
                 Callsign.Text = string.Empty;
                 Callsign.Select();
             }
+
+            return avail;
         }
 
         private void OK_Click(object sender, EventArgs e)
         {
-            Check_Click(sender,e);
-            if (Callsign.Text == string.Empty)
+            if (!CheckName())
             {
                 DialogResult = DialogResult.None;
                 return;
