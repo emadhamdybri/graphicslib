@@ -39,10 +39,13 @@
 		return $list;
 	}
 	
-	function  ( $result, $field )
+	function GetQueryResult ( $result )
 	{
 		if ($result && mysql_num_rows($result) > 0)
-			return mysql_fetch_array($result)[0];
+		{
+			$nub = mysql_fetch_array($result);
+			return $nub[0];
+		}
 	
 		return FALSE;
 	}
