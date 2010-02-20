@@ -1,4 +1,4 @@
-﻿namespace Client
+﻿namespace P2501Client
 {
     partial class RegistrationForm
     {

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Client
+namespace P2501Client
 {
     public partial class StartupForm : Form
     {
