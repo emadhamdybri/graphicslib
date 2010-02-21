@@ -1,7 +1,6 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth", "Auth.csproj", "{1C56DCD5-5144-46E2-B868-765553F84CCA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthServer", "AuthServer.csproj", "{1C56DCD5-5144-46E2-B868-765553F84CCA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Host", "..\..\..\Common\Host\Host.csproj", "{2EE0E321-3FC6-4B3A-9F13-C34B8B49D7B5}"
 EndProject
