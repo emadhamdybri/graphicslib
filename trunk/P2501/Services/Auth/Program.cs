@@ -9,7 +9,7 @@ namespace AuthServer
     {
         static void Main(string[] args)
         {
-            new AuthServer(args[0]).Run();
+            new AuthHost(args[0]).Run();
         }
     }
 }
