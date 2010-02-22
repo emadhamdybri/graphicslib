@@ -227,6 +227,9 @@ namespace Clients
 
         public virtual void Kill()
         {
+            if (client == null)
+                return;
+
             lock (client)
             {
                 lock (PendingSends)
