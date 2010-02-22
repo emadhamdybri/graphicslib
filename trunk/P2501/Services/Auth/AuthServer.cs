@@ -155,11 +155,9 @@ namespace AuthServer
             foreach (byte b in inputHash)
                 inputHashString += b.ToString("x2");
 
-            string encodedEmail = HttpUtility.UrlEncode(data.email);
-
             String query = String.Format("INSERT INTO users (EMail, PassHash, Verified, Token) VALUES (@email,@hash,0,@token)");
             MySqlCommand command = new MySqlCommand(query, database);
-            command.Parameters.Add(new MySqlParameter("@email", data.email)); //encodedEmail));
+            command.Parameters.Add(new MySqlParameter("@email", data.email));
             command.Parameters.Add(new MySqlParameter("@hash", inputHashString));
             command.Parameters.Add(new MySqlParameter("@token", token));
 
@@ -229,7 +227,7 @@ namespace AuthServer
             checkDatabase();
             List<UInt64> characterList = new List<UInt64>();
 
-            String query = String.Format("SELECT ID, Callsign FROM characters WHERE UID is @id");
+            String query = String.Format("SELECT ID, Callsign FROM characters WHERE UID=@id");
             MySqlCommand command = new MySqlCommand(query, database);
             command.Parameters.Add(new MySqlParameter("@id", id));
 
@@ -284,7 +282,7 @@ namespace AuthServer
 
             String query = String.Format("SELECT ID FROM users WHERE EMail=@email");
             MySqlCommand command = new MySqlCommand(query, database);
-            command.Parameters.Add(new MySqlParameter("@email", email));//HttpUtility.UrlEncode(email)));
+            command.Parameters.Add(new MySqlParameter("@email", email));
 
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -324,7 +322,7 @@ namespace AuthServer
 
             String query = String.Format("SELECT ID, PassHash FROM users WHERE EMail=@email");
             MySqlCommand command = new MySqlCommand(query, database);
-            command.Parameters.Add(new MySqlParameter("@email", HttpUtility.UrlEncode(email)));
+            command.Parameters.Add(new MySqlParameter("@email", email));
 
             MySqlDataReader reader = command.ExecuteReader();
 
