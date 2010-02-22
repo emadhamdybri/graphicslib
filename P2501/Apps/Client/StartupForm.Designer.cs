@@ -41,10 +41,10 @@
             this.CallsignList = new System.Windows.Forms.ListBox();
             this.GamesGroup = new System.Windows.Forms.GroupBox();
             this.ServerInfo = new System.Windows.Forms.TextBox();
-            this.ServerList = new System.Windows.Forms.TreeView();
             this.Options = new System.Windows.Forms.Button();
             this.Play = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.ServerList = new System.Windows.Forms.TreeView();
             this.LoginGroup.SuspendLayout();
             this.CallsignsGroup.SuspendLayout();
             this.GamesGroup.SuspendLayout();
@@ -196,16 +196,6 @@
             this.ServerInfo.Size = new System.Drawing.Size(110, 114);
             this.ServerInfo.TabIndex = 3;
             // 
-            // ServerList
-            // 
-            this.ServerList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.ServerList.Location = new System.Drawing.Point(6, 19);
-            this.ServerList.Name = "ServerList";
-            this.ServerList.Size = new System.Drawing.Size(176, 114);
-            this.ServerList.TabIndex = 2;
-            // 
             // Options
             // 
             this.Options.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -246,6 +236,16 @@
             this.splitContainer1.SplitterDistance = 182;
             this.splitContainer1.TabIndex = 4;
             // 
+            // ServerList
+            // 
+            this.ServerList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.ServerList.Location = new System.Drawing.Point(6, 19);
+            this.ServerList.Name = "ServerList";
+            this.ServerList.Size = new System.Drawing.Size(176, 114);
+            this.ServerList.TabIndex = 2;
+            // 
             // StartupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -259,6 +259,7 @@
             this.Name = "StartupForm";
             this.Text = "Projekt 2501";
             this.Load += new System.EventHandler(this.StartupForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StartupForm_FormClosing);
             this.LoginGroup.ResumeLayout(false);
             this.LoginGroup.PerformLayout();
             this.CallsignsGroup.ResumeLayout(false);
@@ -288,8 +289,8 @@
         private System.Windows.Forms.Button Options;
         private System.Windows.Forms.Button Play;
         private System.Windows.Forms.TextBox ServerInfo;
-        private System.Windows.Forms.TreeView ServerList;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.TreeView ServerList;
     }
 }
 
