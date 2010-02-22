@@ -38,7 +38,7 @@
             this.NewsBrowser = new System.Windows.Forms.WebBrowser();
             this.CallsignsGroup = new System.Windows.Forms.GroupBox();
             this.NewCharacter = new System.Windows.Forms.Button();
-            this.CharacterList = new System.Windows.Forms.ListBox();
+            this.CallsignList = new System.Windows.Forms.ListBox();
             this.GamesGroup = new System.Windows.Forms.GroupBox();
             this.ServerInfo = new System.Windows.Forms.TextBox();
             this.ServerList = new System.Windows.Forms.TreeView();
@@ -86,6 +86,7 @@
             this.LoginButton.TabIndex = 4;
             this.LoginButton.Text = "Login";
             this.LoginButton.UseVisualStyleBackColor = true;
+            this.LoginButton.Click += new System.EventHandler(this.LoginButton_Click);
             // 
             // Password
             // 
@@ -140,7 +141,7 @@
             this.CallsignsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
             this.CallsignsGroup.Controls.Add(this.NewCharacter);
-            this.CallsignsGroup.Controls.Add(this.CharacterList);
+            this.CallsignsGroup.Controls.Add(this.CallsignList);
             this.CallsignsGroup.Location = new System.Drawing.Point(12, 167);
             this.CallsignsGroup.Name = "CallsignsGroup";
             this.CallsignsGroup.Size = new System.Drawing.Size(200, 209);
@@ -158,15 +159,15 @@
             this.NewCharacter.Text = "New...";
             this.NewCharacter.UseVisualStyleBackColor = true;
             // 
-            // CharacterList
+            // CallsignList
             // 
-            this.CharacterList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.CallsignList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)));
-            this.CharacterList.FormattingEnabled = true;
-            this.CharacterList.Location = new System.Drawing.Point(10, 18);
-            this.CharacterList.Name = "CharacterList";
-            this.CharacterList.Size = new System.Drawing.Size(175, 147);
-            this.CharacterList.TabIndex = 0;
+            this.CallsignList.FormattingEnabled = true;
+            this.CallsignList.Location = new System.Drawing.Point(10, 18);
+            this.CallsignList.Name = "CallsignList";
+            this.CallsignList.Size = new System.Drawing.Size(175, 147);
+            this.CallsignList.TabIndex = 0;
             // 
             // GamesGroup
             // 
@@ -282,7 +283,7 @@
         private System.Windows.Forms.WebBrowser NewsBrowser;
         private System.Windows.Forms.GroupBox CallsignsGroup;
         private System.Windows.Forms.Button NewCharacter;
-        private System.Windows.Forms.ListBox CharacterList;
+        private System.Windows.Forms.ListBox CallsignList;
         private System.Windows.Forms.GroupBox GamesGroup;
         private System.Windows.Forms.Button Options;
         private System.Windows.Forms.Button Play;

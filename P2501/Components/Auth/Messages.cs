@@ -45,7 +45,7 @@ namespace Auth
 
         public RequestAuth()
         {
-            Name = AuthMessage.RequestAdd;
+            Name = AuthMessage.RequestAuth;
         }
 
         public override NetBuffer Pack()
@@ -88,6 +88,7 @@ namespace Auth
         {
             NetBuffer buffer = base.Pack();
             buffer.Write(ID);
+            buffer.Write(Token);
             return buffer;
         }
 
@@ -97,6 +98,7 @@ namespace Auth
                 return false;
 
             ID = buffer.ReadUInt64();
+            Token = buffer.ReadUInt64();
             return true;
         }
     }

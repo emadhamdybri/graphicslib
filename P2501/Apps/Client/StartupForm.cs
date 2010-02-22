@@ -11,7 +11,8 @@ namespace P2501Client
 {
     public partial class StartupForm : Form
     {
-        bool logedIn = false;
+        UInt64 UID = 0;
+        UInt64 Token = 0;
 
         public StartupForm()
         {
@@ -27,8 +28,8 @@ namespace P2501Client
 
         protected void UpdateUIStates ()
         {
-            CallsignsGroup.Enabled = logedIn;
-            GamesGroup.Enabled = logedIn;
+            CallsignsGroup.Enabled = Token != 0;
+            GamesGroup.Enabled = Token != 0;
 
             Password.Enabled = Username.Text != string.Empty;
 
@@ -58,6 +59,60 @@ namespace P2501Client
                 Username.Text = form.AccountName;
             }
             UpdateUIStates();
+        }
+
+        protected class CharaterListItem
+        {
+            public string Name = string.Empty;
+            public UInt64 UID = 0;
+
+            public CharaterListItem ( string n, UInt64 id )
+            {
+                Name = n;
+                UID = id;
+            }
+
+            public override string ToString()
+            {
+                return Name;
+            }
+        }
+        private void LoginButton_Click(object sender, EventArgs e)
+        {
+            if (UID != 0)
+            {
+                CallsignList.Items.Clear();
+                UID = 0;
+                Token = 0;
+                LoginButton.Text = "Login";
+                return;
+            }
+
+            Login login = new Login();
+            UID = 0;
+            Token = 0;
+            if (login.Connect(Username.Text,Password.Text))
+            {
+                UID = login.UID;
+                Token = login.Token;
+
+                UpdateUIStates();
+                LoginButton.Text = "Logout";
+                
+                // get characters
+                Dictionary<UInt64, string> list = login.GetCharacterList();
+                if (list != null)
+                {
+                    CallsignList.Items.Clear();
+
+                    foreach (KeyValuePair<UInt64, string> character in list)
+                        CallsignList.Items.Add(new CharaterListItem(character.Value, character.Key));
+                }
+
+                // get list
+            }
+            else
+                MessageBox.Show("Login failure");
         }
     }
 }
