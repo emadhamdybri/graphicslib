@@ -144,7 +144,8 @@ namespace P2501Client
             box.Show();
             box.Update(10, "Contacting secure host");
 
-            CryptoClient client = new CryptoClient("www.awesomelaser.com", 4111);
+           // CryptoClient client = new CryptoClient("www.awesomelaser.com", 4111);
+            CryptoClient client = new CryptoClient("localhost", 4111);
 
             Stopwatch timer = new Stopwatch();
             timer.Start();
@@ -153,6 +154,7 @@ namespace P2501Client
 
             bool done = false;
             bool connected = false;
+            bool worked = false;
 
             while (!done)
             {
@@ -187,6 +189,7 @@ namespace P2501Client
                         box.Update(100, "Registration complete");
                         client.Kill();
                         done = true;
+                        worked = true;
                     }
                     else if (name == AuthMessage.AddBadCallsign)
                     {
@@ -195,6 +198,7 @@ namespace P2501Client
                         MessageBox.Show("The name " + Callsign.Text + " was not available");
                         Callsign.Text = string.Empty;
                         Callsign.Select();
+                        DialogResult = DialogResult.None;
                         return;
                     }
                     else if (name == AuthMessage.AddBadEmail)
@@ -204,6 +208,7 @@ namespace P2501Client
                         MessageBox.Show("The email " + Email.Text + " is already registered");
                         Email.Text = string.Empty;
                         Email.Select();
+                        DialogResult = DialogResult.None;
                         return;
                     }
                     else
@@ -229,7 +234,7 @@ namespace P2501Client
             client.Kill();
             box.Close();
 
-            if (!connected)
+            if (!worked)
             {
                 box.Close();
                 MessageBox.Show("The registration server could not be contacted");
