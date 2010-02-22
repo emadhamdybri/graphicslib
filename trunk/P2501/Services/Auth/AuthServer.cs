@@ -102,6 +102,8 @@ namespace AuthServer
                         AuthUser(message);
                     else if (message.Name == AuthMessage.RequestCharacterList)
                         CharacterList(message);
+                    else if (message.Name == AuthMessage.RequestAddCharacter)
+                        AddCharacter(message);
 
                     message = host.GetPentMessage();
                 }
@@ -122,6 +124,35 @@ namespace AuthServer
             host.SendMessage(user, message.Pack(), message.Channel());
         }
 
+        protected void AddCharacter ( Message msg )
+        {
+            RequestAddCharacter data = new RequestAddCharacter();
+            data.Unpack(ref msg.Data);
+
+            if (data.callsign == string.Empty || data.callsign.Length < 2 || CharacterExists(data.callsign))
+            {
+                SendSingleCode(msg.Sender, AuthMessage.CharacterAddBadName);
+                return;
+            }
+
+            UInt64 id = GetID(msg.Sender);
+            if (id == 0)
+            {
+                SendSingleCode(msg.Sender, AuthMessage.CharacterAddBadNoAuth);
+                return;
+            }
+
+            checkDatabase();
+            String query = String.Format("INSERT INTO characters (UID, Callsign) VALUES (@uid,@callsign)");
+            MySqlCommand command = new MySqlCommand(query, database);
+            command.Parameters.Add(new MySqlParameter("@uid", id));
+            command.Parameters.Add(new MySqlParameter("@callsign", data.callsign));
+
+            command.ExecuteNonQuery();
+
+            SendSingleCode(msg.Sender, AuthMessage.CharacterAddOK);
+        }
+
         protected void AddUser ( Message msg )
         {
             RequestAdd data = new RequestAdd();
@@ -133,7 +164,7 @@ namespace AuthServer
                 return;
             }
 
-            if (data.callsign == string.Empty || data.callsign.Length < 2 || CharacterExists(data.email))
+            if (data.callsign == string.Empty || data.callsign.Length < 2 || CharacterExists(data.callsign))
             {
                 SendSingleCode(msg.Sender, AuthMessage.AddBadCallsign);
                 return;

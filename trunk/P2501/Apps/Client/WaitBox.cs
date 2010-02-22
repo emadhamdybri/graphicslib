@@ -19,6 +19,9 @@ namespace P2501Client
 
         public void Update ( int val, string status )
         {
+            if (!this.Visible)
+                this.Show();
+
             progressBar1.Visible = true;
             progressBar1.Value = val;
             StatusLine.Text = status;
@@ -27,6 +30,9 @@ namespace P2501Client
 
         public void Update(string status)
         {
+            if (!this.Visible)
+                this.Show();
+
             progressBar1.Visible = false;
             StatusLine.Text = status;
             Update();

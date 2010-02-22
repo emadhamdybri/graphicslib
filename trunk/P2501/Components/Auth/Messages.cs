@@ -38,6 +38,31 @@ namespace Auth
         }
     }
 
+    public class RequestAddCharacter : AuthMessage
+    {
+        public string callsign = string.Empty;
+
+        public RequestAddCharacter()
+        {
+            Name = AuthMessage.RequestAddCharacter;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(callsign);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            callsign = buffer.ReadString();
+            return true;
+        }
+    }
     public class RequestAuth : AuthMessage
     {
         public string email = string.Empty;
