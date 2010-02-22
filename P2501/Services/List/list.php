@@ -42,6 +42,8 @@
 	
 	function AddHost()
 	{
+		$now = time();
+
 		$host = GetInput("host");
 		$name = GetInput("name");
 		$description = GetInput("desc");
@@ -75,19 +77,22 @@
 		// find this server
 		
 		$query = "SELECT ID FROM list WHERE IP='$ip' AND Hostport='$port'";
-		$result = SQLGet($query);
-		if ($result)
-		{
-				$id = GetQueryResult($result);
-				$query = "REMOVE FROM list WHERE ID=$id";
-		
-				SQLSet($query);
+		$id = GetQueryResult(SQLGet($query));
+		if ($id)
+		{				
+				$query = "UPDATE list SET Hostname='$host', IP='$ip', HostPort='$port', ServerName='$name', Description='$description', Groupname='$group', TimeStamp=$now WHERE ID=$id";
+				if (!SQLSet($query))
+				{
+						echo "dberr";
+						return;
+				}
+				echo $id;
+				return;
 		}
 				
 		$random = rand();
-		$now = gmdate("Y-m-d H:i:s", time());
 		
-		$query = "INSERT INTO list (Hostname, IP, HostPort, ServerName, Description, Groupname, UpdateTime) VALUES ('$host', '$ip', '$port', '$name', '$description', '$random', '$now')";
+		$query = "INSERT INTO list (Hostname, IP, HostPort, ServerName, Description, Groupname, TimeStamp) VALUES ('$host', '$ip', '$port', '$name', '$description', '$random', $now)";
 		if (!SQLSet($query))
 		{
 				echo "dberr";
@@ -125,9 +130,8 @@
 			 return;
 		}
 		
-		$now = gmdate("Y-m-d H:i:s", time());
-		SetDBFieldForKey("ID", $id, "list", "UpdateTime", $now);
-		
+		SetDBFieldForKey("ID", $id, "list", "TimeStamp", time());
+	
 		echo $id;
 	}
 	
@@ -150,18 +154,18 @@
 			 return;
 		}
 		
-		$query = "REMOVE FROM list WHERE ID=$id";
+		$query = "DELETE FROM list WHERE ID=$id";
 		
 		if (!SQLSet($query))
-			echo "err"
+			echo "err";
 		else
 			echo "ok";
 	}
 	
 	function CheckOlds()
 	{
-		$now = gmdate("Y-m-d H:i:s", time());
-		$query = "REMOVE FROM list WHERE UpdateTime > DATE_SUB(CURDATE(), INTERVAL 1 HOUR)";
+		$then = time()-18000;
+		$query = "DELETE FROM list WHERE TimeStamp < $then";
 		SQLSet($query);
 	}
 	
