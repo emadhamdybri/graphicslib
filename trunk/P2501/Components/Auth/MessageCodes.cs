@@ -12,11 +12,6 @@ namespace Auth
 {
     public class AuthMessage
     {
-        public static void Send ( NetConnection user, AuthMessage message )
-        {
-            user.SendMessage(message.Pack(), message.Channel());
-        }
-
         public static int Hail = 100;
         public static int Error = 0;
         

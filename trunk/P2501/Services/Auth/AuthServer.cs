@@ -5,6 +5,7 @@ using System.Text;
 using System.Data;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Web;
 
 using Hosts;
 using ServerConfigurator;
@@ -55,6 +56,8 @@ namespace AuthServer
             }
             if (database != null)
                 database.ChangeDatabase(config.GetItem("AuthDatabase"));
+            else
+                Console.WriteLine("Connection to db failed");
 
             int port = 4111;
             if (config.ItemExists("AuthServePort"))
@@ -78,9 +81,7 @@ namespace AuthServer
                 {
                     ConnectedUsers.Add(connection, 0);
 
-                    NetBuffer msg = new NetBuffer();
-                    msg.Write(AuthMessage.Hail);
-                    connection.SendMessage(msg, NetChannel.ReliableInOrder1);
+                    SendSingleCode(connection,AuthMessage.Hail);
                     connection = host.GetPentConnection();
                 }
 
@@ -113,7 +114,12 @@ namespace AuthServer
         {
             NetBuffer buffer = new NetBuffer();
             buffer.Write(code);
-            user.SendMessage(buffer, NetChannel.ReliableInOrder1);
+            host.SendMessage(user, buffer, NetChannel.ReliableInOrder1);
+        }
+
+        protected void Send ( NetConnection user, AuthMessage message )
+        {
+            host.SendMessage(user, message.Pack(), message.Channel());
         }
 
         protected void AddUser ( Message msg )
@@ -149,15 +155,17 @@ namespace AuthServer
             foreach (byte b in inputHash)
                 inputHashString += b.ToString("x2");
 
-            String query = String.Format("INSERT INTO users (Email, PassHash, Verified, Token) VALUES ('@email','@hash',0,'@token')");
+            string encodedEmail = HttpUtility.UrlEncode(data.email);
+
+            String query = String.Format("INSERT INTO users (EMail, PassHash, Verified, Token) VALUES (@email,@hash,0,@token)");
             MySqlCommand command = new MySqlCommand(query, database);
-            command.Parameters.Add(new MySqlParameter("@email", data.email));
+            command.Parameters.Add(new MySqlParameter("@email", data.email)); //encodedEmail));
             command.Parameters.Add(new MySqlParameter("@hash", inputHashString));
             command.Parameters.Add(new MySqlParameter("@token", token));
 
             command.ExecuteNonQuery();
 
-            query = String.Format("SELECT ID FROM users WHERE Token is @token");
+            query = String.Format("SELECT ID FROM users WHERE Token=@token");
             command = new MySqlCommand(query, database);
             command.Parameters.Add(new MySqlParameter("@token", token));
 
@@ -174,7 +182,7 @@ namespace AuthServer
                 return;
             }
 
-            query = String.Format("INSERT INTO characters (UID, Callsign) VALUES ('@uid','@callsign')");
+            query = String.Format("INSERT INTO characters (UID, Callsign) VALUES (@uid,@callsign)");
             command = new MySqlCommand(query, database);
             command.Parameters.Add(new MySqlParameter("@uid", id));
             command.Parameters.Add(new MySqlParameter("@callsign", data.callsign));
@@ -198,7 +206,7 @@ namespace AuthServer
 
             ConnectedUsers[msg.Sender] = ID;
 
-            AuthMessage.Send(msg.Sender, new AuthOK(ID, GenerateToken(ID)));
+            Send(msg.Sender, new AuthOK(ID, GenerateToken(ID)));
         }
 
         protected UInt64 GetID ( NetConnection con )
@@ -232,7 +240,7 @@ namespace AuthServer
                 list.Characters.Add(new CharacterList.CharacterInfo(reader.GetString(1), reader.GetUInt64(0)));
             reader.Close();
 
-            AuthMessage.Send(msg.Sender, list);
+            Send(msg.Sender, list);
         }
 
         protected void checkDatabase()
@@ -274,9 +282,9 @@ namespace AuthServer
             checkDatabase();
             List<UInt64> characterList = new List<UInt64>();
 
-            String query = String.Format("SELECT ID FROM users WHERE Email is @email");
+            String query = String.Format("SELECT ID FROM users WHERE EMail=@email");
             MySqlCommand command = new MySqlCommand(query, database);
-            command.Parameters.Add(new MySqlParameter("@email", email));
+            command.Parameters.Add(new MySqlParameter("@email", email));//HttpUtility.UrlEncode(email)));
 
             MySqlDataReader reader = command.ExecuteReader();
 
@@ -294,7 +302,7 @@ namespace AuthServer
             checkDatabase();
             List<UInt64> characterList = new List<UInt64>();
 
-            String query = String.Format("SELECT ID FROM characters WHERE Callsign is @character");
+            String query = String.Format("SELECT ID FROM characters WHERE Callsign=@character");
             MySqlCommand command = new MySqlCommand(query, database);
             command.Parameters.Add(new MySqlParameter("@character", character));
 
@@ -314,9 +322,9 @@ namespace AuthServer
             checkDatabase();
             List<UInt64> characterList = new List<UInt64>();
 
-            String query = String.Format("SELECT ID, PassHash FROM users WHERE Email is @email");
+            String query = String.Format("SELECT ID, PassHash FROM users WHERE EMail=@email");
             MySqlCommand command = new MySqlCommand(query, database);
-            command.Parameters.Add(new MySqlParameter("@email", email));
+            command.Parameters.Add(new MySqlParameter("@email", HttpUtility.UrlEncode(email)));
 
             MySqlDataReader reader = command.ExecuteReader();
 
