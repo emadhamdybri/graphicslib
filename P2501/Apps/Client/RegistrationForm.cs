@@ -100,24 +100,11 @@ namespace P2501Client
 
         private bool CheckName ()
         {
-            bool avail = true;
-
             WaitBox box = new WaitBox("Checking Availability");
             box.Show(this);
             box.Update("Contacting server");
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://www.awesomelaser.com/p2501/Auth/callsigncheck.php?name=" + HttpUtility.UrlEncode(Callsign.Text));
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-            box.Update("Reading response");
-            Stream resStream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(resStream);
-            string ret = reader.ReadToEnd();
-            reader.Close();
-            resStream.Close();
-
-            box.Update("Checking name");
-            avail = ret == "OK";
+            bool avail = Login.CheckName(Callsign.Text);
 
             box.Close();
 

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text;
-
+using System.Net;
+using System.Web;
 using System.Diagnostics;
 using System.Threading;
+using System.IO;
 
 using Clients;
 using Lidgren.Network;
@@ -111,13 +113,76 @@ namespace P2501Client
             return false;
         }
 
+        static public bool CheckName ( string name )
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://www.awesomelaser.com/p2501/Auth/callsigncheck.php?name=" + HttpUtility.UrlEncode(name));
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            Stream resStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(resStream);
+            string ret = reader.ReadToEnd();
+            reader.Close();
+            resStream.Close();
+
+            return ret == "OK";
+        }
+
+        public bool AddCharacter ( string name )
+        {
+            if (client == null || !CheckName(name))
+                return false;
+
+            WaitBox box = new WaitBox("Adding Callsign");
+            box.Update("Contacting Server");
+
+            RequestAddCharacter data = new RequestAddCharacter();
+            data.callsign = name;
+            client.SendMessage(data.Pack(), data.Channel());
+           
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
+            int timeout = 30;
+
+            while (timer.ElapsedMilliseconds / 1000 < timeout)
+            {
+                NetBuffer buffer = client.GetPentMessage();
+                while (buffer != null)
+                {
+                    int msgCode = buffer.ReadInt32();
+
+                    if (msgCode == AuthMessage.CharacterAddOK)
+                    {
+                        client.Kill();
+                        client = null;
+                        box.Close();
+                        return true;
+                    }
+                    else
+                    {
+                        box.Close();
+                        client.Kill();
+                        client = null;
+                        return false;      
+                    }
+                    buffer = client.GetPentMessage();
+                }
+                Application.DoEvents();
+                Thread.Sleep(100);
+            }
+            box.Close();
+            client.Kill();
+            client = null;
+            return false;
+        }
+
         public Dictionary<UInt64,string> GetCharacterList ()
         {
             if (client == null)
                 return null;
 
             WaitBox box = new WaitBox("Callsigns");
-            box.Update(20, "Requesting list");
+            box.Update("Requesting list");
             NetBuffer buffer = new NetBuffer();
             buffer.Write(AuthMessage.RequestCharacterList);
             client.SendMessage(buffer, NetChannel.ReliableInOrder1);
@@ -146,9 +211,15 @@ namespace P2501Client
 
                         client.Kill();
                         client = null;
-                        box.Update(100, "List Complete");
                         box.Close();
                         return list;
+                    }
+                    else
+                    {
+                        box.Close();
+                        client.Kill();
+                        client = null;
+                        return null;      
                     }
                     buffer = client.GetPentMessage();
                 } 

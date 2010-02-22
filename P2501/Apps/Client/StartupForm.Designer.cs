@@ -158,6 +158,7 @@
             this.NewCharacter.TabIndex = 1;
             this.NewCharacter.Text = "New...";
             this.NewCharacter.UseVisualStyleBackColor = true;
+            this.NewCharacter.Click += new System.EventHandler(this.NewCharacter_Click);
             // 
             // CallsignList
             // 

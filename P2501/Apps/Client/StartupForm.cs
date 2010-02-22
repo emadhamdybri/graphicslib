@@ -65,7 +65,10 @@ namespace P2501Client
             else
                 Password.Enabled = false;
 
-            LoginButton.Enabled = Username.Text != string.Empty && Password.Text != string.Empty && Password.Enabled;
+            if (Token == 0)
+                LoginButton.Enabled = Username.Text != string.Empty && Password.Text != string.Empty && Password.Enabled;
+            else
+                LoginButton.Enabled = true;
 
             Username.Enabled = Token == 0;
             RegisterButton.Enabled = Token == 0;
@@ -112,6 +115,7 @@ namespace P2501Client
                 return Name;
             }
         }
+
         private void LoginButton_Click(object sender, EventArgs e)
         {
             if (UID != 0)
@@ -122,20 +126,25 @@ namespace P2501Client
                 LoginButton.Text = "Login";
                 gameList.Kill();
                 gameList = null;
+                UpdateUIStates();
                 return;
             }
+            Login();
+            
+        }
 
+        protected void Login ()
+        {
             Login login = new Login();
             UID = 0;
             Token = 0;
-            if (login.Connect(Username.Text,Password.Text))
+            if (login.Connect(Username.Text, Password.Text))
             {
                 UID = login.UID;
                 Token = login.Token;
 
-                UpdateUIStates();
                 LoginButton.Text = "Logout";
-                
+
                 // get characters
                 Dictionary<UInt64, string> list = login.GetCharacterList();
                 if (list != null)
@@ -152,6 +161,8 @@ namespace P2501Client
             }
             else
                 MessageBox.Show("Login failure");
+
+            UpdateUIStates();
         }
 
         private void StartupForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -163,6 +174,12 @@ namespace P2501Client
 
             gameList = null;
             timer = null;
+        }
+
+        private void NewCharacter_Click(object sender, EventArgs e)
+        {
+            if (new CharacterInfoForm(string.Empty,Username.Text, Password.Text).ShowDialog() == DialogResult.OK)
+                Login();
         }
     }
 }
