@@ -14,6 +14,10 @@ namespace P2501Client
         UInt64 UID = 0;
         UInt64 Token = 0;
 
+        GameList gameList = null;
+
+        Timer timer;
+
         public StartupForm()
         {
             InitializeComponent();
@@ -24,6 +28,31 @@ namespace P2501Client
             NewsBrowser.Navigate("http://www.awesomelaser.com/p2501/news.html");
 
             UpdateUIStates();
+
+            timer = new Timer();
+            timer.Interval = 15000;
+            timer.Tick += new EventHandler(timer_Tick);
+            timer.Start();
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            if (gameList == null || !gameList.Dirty)
+                return;
+
+            List<string> list = gameList.GetGameServers();
+
+            ServerList.Nodes.Clear();
+
+            TreeNode node = ServerList.Nodes.Add("Alpha Zone Servers");
+
+            foreach ( string item in list )
+            {
+                string[] nugs = item.Split('\t');
+                node.Nodes.Add(nugs[1]).Tag = item;
+            }
+
+            ServerList.ExpandAll();
         }
 
         protected void UpdateUIStates ()
@@ -31,9 +60,15 @@ namespace P2501Client
             CallsignsGroup.Enabled = Token != 0;
             GamesGroup.Enabled = Token != 0;
 
-            Password.Enabled = Username.Text != string.Empty;
+            if (Token == 0)
+                Password.Enabled = Username.Text != string.Empty;
+            else
+                Password.Enabled = false;
 
             LoginButton.Enabled = Username.Text != string.Empty && Password.Text != string.Empty && Password.Enabled;
+
+            Username.Enabled = Token == 0;
+            RegisterButton.Enabled = Token == 0;
         }
 
         private void Username_SelectedIndexChanged(object sender, EventArgs e)
@@ -85,6 +120,8 @@ namespace P2501Client
                 UID = 0;
                 Token = 0;
                 LoginButton.Text = "Login";
+                gameList.Kill();
+                gameList = null;
                 return;
             }
 
@@ -109,10 +146,23 @@ namespace P2501Client
                         CallsignList.Items.Add(new CharaterListItem(character.Value, character.Key));
                 }
 
-                // get list
+                if (gameList != null)
+                    gameList.Kill();
+                gameList = new GameList(UID);
             }
             else
                 MessageBox.Show("Login failure");
+        }
+
+        private void StartupForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (gameList != null)
+                gameList.Kill();
+            if (timer != null)
+                timer.Stop();
+
+            gameList = null;
+            timer = null;
         }
     }
 }
