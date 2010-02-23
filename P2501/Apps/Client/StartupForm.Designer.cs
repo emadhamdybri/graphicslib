@@ -28,6 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.ColumnHeader PreferedServer;
+            System.Windows.Forms.ColumnHeader PreferedDescription;
+            System.Windows.Forms.ColumnHeader PreferedPlayers;
+            System.Windows.Forms.ColumnHeader PreferedHost;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StartupForm));
             this.LoginGroup = new System.Windows.Forms.GroupBox();
             this.RegisterButton = new System.Windows.Forms.Button();
             this.LoginButton = new System.Windows.Forms.Button();
@@ -40,17 +46,27 @@
             this.NewCharacter = new System.Windows.Forms.Button();
             this.CallsignList = new System.Windows.Forms.ListBox();
             this.GamesGroup = new System.Windows.Forms.GroupBox();
-            this.ServerInfo = new System.Windows.Forms.TextBox();
             this.Options = new System.Windows.Forms.Button();
             this.Play = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.ServerList = new System.Windows.Forms.TreeView();
+            this.ServerTabs = new System.Windows.Forms.TabControl();
+            this.PreferedTab = new System.Windows.Forms.TabPage();
+            this.CommunityTab = new System.Windows.Forms.TabPage();
+            this.LeagueTab = new System.Windows.Forms.TabPage();
+            this.PreferedList = new System.Windows.Forms.ListView();
+            this.ServerListIcons = new System.Windows.Forms.ImageList(this.components);
+            PreferedServer = new System.Windows.Forms.ColumnHeader();
+            PreferedDescription = new System.Windows.Forms.ColumnHeader();
+            PreferedPlayers = new System.Windows.Forms.ColumnHeader();
+            PreferedHost = new System.Windows.Forms.ColumnHeader();
             this.LoginGroup.SuspendLayout();
             this.CallsignsGroup.SuspendLayout();
             this.GamesGroup.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.ServerTabs.SuspendLayout();
+            this.PreferedTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // LoginGroup
@@ -133,7 +149,7 @@
             this.NewsBrowser.Location = new System.Drawing.Point(3, 3);
             this.NewsBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this.NewsBrowser.Name = "NewsBrowser";
-            this.NewsBrowser.Size = new System.Drawing.Size(304, 176);
+            this.NewsBrowser.Size = new System.Drawing.Size(402, 189);
             this.NewsBrowser.TabIndex = 1;
             // 
             // CallsignsGroup
@@ -144,7 +160,7 @@
             this.CallsignsGroup.Controls.Add(this.CallsignList);
             this.CallsignsGroup.Location = new System.Drawing.Point(12, 167);
             this.CallsignsGroup.Name = "CallsignsGroup";
-            this.CallsignsGroup.Size = new System.Drawing.Size(200, 209);
+            this.CallsignsGroup.Size = new System.Drawing.Size(200, 349);
             this.CallsignsGroup.TabIndex = 2;
             this.CallsignsGroup.TabStop = false;
             this.CallsignsGroup.Text = "Callsigns";
@@ -152,7 +168,7 @@
             // NewCharacter
             // 
             this.NewCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.NewCharacter.Location = new System.Drawing.Point(10, 171);
+            this.NewCharacter.Location = new System.Drawing.Point(10, 311);
             this.NewCharacter.Name = "NewCharacter";
             this.NewCharacter.Size = new System.Drawing.Size(75, 23);
             this.NewCharacter.TabIndex = 1;
@@ -167,7 +183,7 @@
             this.CallsignList.FormattingEnabled = true;
             this.CallsignList.Location = new System.Drawing.Point(10, 18);
             this.CallsignList.Name = "CallsignList";
-            this.CallsignList.Size = new System.Drawing.Size(175, 147);
+            this.CallsignList.Size = new System.Drawing.Size(175, 277);
             this.CallsignList.TabIndex = 0;
             // 
             // GamesGroup
@@ -175,32 +191,20 @@
             this.GamesGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.GamesGroup.Controls.Add(this.ServerInfo);
-            this.GamesGroup.Controls.Add(this.ServerList);
+            this.GamesGroup.Controls.Add(this.ServerTabs);
             this.GamesGroup.Controls.Add(this.Options);
             this.GamesGroup.Controls.Add(this.Play);
             this.GamesGroup.Location = new System.Drawing.Point(3, 3);
             this.GamesGroup.Name = "GamesGroup";
-            this.GamesGroup.Size = new System.Drawing.Size(304, 175);
+            this.GamesGroup.Size = new System.Drawing.Size(402, 290);
             this.GamesGroup.TabIndex = 3;
             this.GamesGroup.TabStop = false;
             this.GamesGroup.Text = "Servers";
             // 
-            // ServerInfo
-            // 
-            this.ServerInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.ServerInfo.Location = new System.Drawing.Point(188, 19);
-            this.ServerInfo.Multiline = true;
-            this.ServerInfo.Name = "ServerInfo";
-            this.ServerInfo.ReadOnly = true;
-            this.ServerInfo.Size = new System.Drawing.Size(110, 114);
-            this.ServerInfo.TabIndex = 3;
-            // 
             // Options
             // 
             this.Options.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Options.Location = new System.Drawing.Point(6, 146);
+            this.Options.Location = new System.Drawing.Point(6, 253);
             this.Options.Name = "Options";
             this.Options.Size = new System.Drawing.Size(75, 23);
             this.Options.TabIndex = 1;
@@ -210,7 +214,7 @@
             // Play
             // 
             this.Play.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Play.Location = new System.Drawing.Point(223, 146);
+            this.Play.Location = new System.Drawing.Point(321, 253);
             this.Play.Name = "Play";
             this.Play.Size = new System.Drawing.Size(75, 23);
             this.Play.TabIndex = 0;
@@ -233,30 +237,120 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.GamesGroup);
-            this.splitContainer1.Size = new System.Drawing.Size(310, 364);
-            this.splitContainer1.SplitterDistance = 182;
+            this.splitContainer1.Size = new System.Drawing.Size(408, 504);
+            this.splitContainer1.SplitterDistance = 199;
             this.splitContainer1.TabIndex = 4;
             // 
-            // ServerList
+            // ServerTabs
             // 
-            this.ServerList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.ServerTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.ServerList.Location = new System.Drawing.Point(6, 19);
-            this.ServerList.Name = "ServerList";
-            this.ServerList.Size = new System.Drawing.Size(176, 114);
-            this.ServerList.TabIndex = 2;
+            this.ServerTabs.Controls.Add(this.PreferedTab);
+            this.ServerTabs.Controls.Add(this.CommunityTab);
+            this.ServerTabs.Controls.Add(this.LeagueTab);
+            this.ServerTabs.ImageList = this.ServerListIcons;
+            this.ServerTabs.Location = new System.Drawing.Point(6, 19);
+            this.ServerTabs.Name = "ServerTabs";
+            this.ServerTabs.SelectedIndex = 0;
+            this.ServerTabs.Size = new System.Drawing.Size(390, 228);
+            this.ServerTabs.TabIndex = 2;
+            // 
+            // PreferedTab
+            // 
+            this.PreferedTab.Controls.Add(this.PreferedList);
+            this.PreferedTab.ImageIndex = 0;
+            this.PreferedTab.Location = new System.Drawing.Point(4, 31);
+            this.PreferedTab.Name = "PreferedTab";
+            this.PreferedTab.Padding = new System.Windows.Forms.Padding(3);
+            this.PreferedTab.Size = new System.Drawing.Size(382, 193);
+            this.PreferedTab.TabIndex = 0;
+            this.PreferedTab.Text = "Prefered";
+            this.PreferedTab.UseVisualStyleBackColor = true;
+            // 
+            // CommunityTab
+            // 
+            this.CommunityTab.ImageIndex = 2;
+            this.CommunityTab.Location = new System.Drawing.Point(4, 31);
+            this.CommunityTab.Name = "CommunityTab";
+            this.CommunityTab.Padding = new System.Windows.Forms.Padding(3);
+            this.CommunityTab.Size = new System.Drawing.Size(327, 193);
+            this.CommunityTab.TabIndex = 1;
+            this.CommunityTab.Text = "Community";
+            this.CommunityTab.UseVisualStyleBackColor = true;
+            // 
+            // LeagueTab
+            // 
+            this.LeagueTab.ImageIndex = 4;
+            this.LeagueTab.Location = new System.Drawing.Point(4, 31);
+            this.LeagueTab.Name = "LeagueTab";
+            this.LeagueTab.Size = new System.Drawing.Size(327, 193);
+            this.LeagueTab.TabIndex = 2;
+            this.LeagueTab.Text = "League";
+            this.LeagueTab.UseVisualStyleBackColor = true;
+            // 
+            // PreferedList
+            // 
+            this.PreferedList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.PreferedList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            PreferedServer,
+            PreferedDescription,
+            PreferedPlayers,
+            PreferedHost});
+            this.PreferedList.FullRowSelect = true;
+            this.PreferedList.GridLines = true;
+            this.PreferedList.LargeImageList = this.ServerListIcons;
+            this.PreferedList.Location = new System.Drawing.Point(0, 0);
+            this.PreferedList.Name = "PreferedList";
+            this.PreferedList.Size = new System.Drawing.Size(379, 188);
+            this.PreferedList.SmallImageList = this.ServerListIcons;
+            this.PreferedList.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.PreferedList.TabIndex = 0;
+            this.PreferedList.UseCompatibleStateImageBehavior = false;
+            this.PreferedList.View = System.Windows.Forms.View.Details;
+            // 
+            // PreferedServer
+            // 
+            PreferedServer.Text = "Name";
+            PreferedServer.Width = 83;
+            // 
+            // PreferedDescription
+            // 
+            PreferedDescription.Text = "Description";
+            PreferedDescription.Width = 140;
+            // 
+            // PreferedPlayers
+            // 
+            PreferedPlayers.Text = "Players";
+            PreferedPlayers.Width = 49;
+            // 
+            // PreferedHost
+            // 
+            PreferedHost.Text = "Host";
+            PreferedHost.Width = 48;
+            // 
+            // ServerListIcons
+            // 
+            this.ServerListIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ServerListIcons.ImageStream")));
+            this.ServerListIcons.TransparentColor = System.Drawing.Color.Transparent;
+            this.ServerListIcons.Images.SetKeyName(0, "agt_action_success.png");
+            this.ServerListIcons.Images.SetKeyName(1, "add_group.png");
+            this.ServerListIcons.Images.SetKeyName(2, "agt_forum.png");
+            this.ServerListIcons.Images.SetKeyName(3, "bookmark_add.png");
+            this.ServerListIcons.Images.SetKeyName(4, "xclock.png");
             // 
             // StartupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(540, 388);
+            this.ClientSize = new System.Drawing.Size(638, 528);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.CallsignsGroup);
             this.Controls.Add(this.LoginGroup);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(500, 350);
+            this.MinimumSize = new System.Drawing.Size(550, 350);
             this.Name = "StartupForm";
             this.Text = "Projekt 2501";
             this.Load += new System.EventHandler(this.StartupForm_Load);
@@ -265,10 +359,11 @@
             this.LoginGroup.PerformLayout();
             this.CallsignsGroup.ResumeLayout(false);
             this.GamesGroup.ResumeLayout(false);
-            this.GamesGroup.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
+            this.ServerTabs.ResumeLayout(false);
+            this.PreferedTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -289,9 +384,13 @@
         private System.Windows.Forms.GroupBox GamesGroup;
         private System.Windows.Forms.Button Options;
         private System.Windows.Forms.Button Play;
-        private System.Windows.Forms.TextBox ServerInfo;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TreeView ServerList;
+        private System.Windows.Forms.TabControl ServerTabs;
+        private System.Windows.Forms.TabPage PreferedTab;
+        private System.Windows.Forms.ListView PreferedList;
+        private System.Windows.Forms.TabPage CommunityTab;
+        private System.Windows.Forms.TabPage LeagueTab;
+        private System.Windows.Forms.ImageList ServerListIcons;
     }
 }
 

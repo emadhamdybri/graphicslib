@@ -40,19 +40,46 @@ namespace P2501Client
             if (gameList == null || !gameList.Dirty)
                 return;
 
-            List<string> list = gameList.GetGameServers();
+            List<GameList.ListedServer> list = gameList.GetGameServers();
 
-            ServerList.Nodes.Clear();
+            PreferedList.Items.Clear();
 
-            TreeNode node = ServerList.Nodes.Add("Alpha Zone Servers");
-
-            foreach ( string item in list )
+            foreach(GameList.ListedServer item in list)
             {
-                string[] nugs = item.Split('\t');
-                node.Nodes.Add(nugs[1]).Tag = item;
+                int image = 0;
+                if (item.Group == "NULL")
+                    image = 1;
+
+                AddServerToList(item, PreferedList, image);
             }
 
-            ServerList.ExpandAll();
+        }
+
+        public void AddServerToList ( GameList.ListedServer server, ListView view, int image )
+        {
+            string groupName = server.Group;
+            if (groupName == "NULL")
+                groupName = "Open";
+
+            ListViewGroup group = null;
+            foreach ( ListViewGroup g in view.Groups )
+            {
+                if (g.Name == groupName)
+                    group = g;
+            }
+            if (group == null)
+            {
+                group = new ListViewGroup(groupName, groupName);
+                view.Groups.Add(group);
+            }
+
+            string[] labels = new string[] {server.Name,server.Description,"0",server.Host};
+
+            ListViewItem item = new ListViewItem(labels, image, group);
+            item.ToolTipText = "connection: unknown";
+            item.Tag = server;
+
+            view.Items.Add(item);
         }
 
         protected void UpdateUIStates ()
