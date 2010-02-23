@@ -9,11 +9,20 @@ using System.Threading;
 
 namespace P2501Client
 {
-    class GameList : IDisposable
+    public class GameList : IDisposable
     {
+
+        public class ListedServer
+        {
+            public string Name = string.Empty;
+            public string Host = string.Empty;
+            public string Description = string.Empty;
+            public string Group = string.Empty;
+        }
+
         UInt64 UID = 0;
 
-        List<string> GameServers = new List<string>();
+        List<ListedServer> GameServers = new List<ListedServer>();
         bool dirty = false;
 
         Thread worker = null;
@@ -68,7 +77,19 @@ namespace P2501Client
 
                 int count = int.Parse(reader.ReadLine());
                 for (int i = 0; i < count; i++)
-                    GameServers.Add(reader.ReadLine());
+                {
+                    ListedServer server = new ListedServer();
+                    string[] nugs = reader.ReadLine().Split('\t');
+
+                    if (nugs.Length == 0)
+                        break;
+                    server.Host = nugs[0];
+                    server.Name = nugs[1];
+                    server.Description = nugs[2];
+                    server.Group = nugs[3];
+
+                    GameServers.Add(server);
+                }
 
                 dirty = true;
             }
@@ -76,12 +97,12 @@ namespace P2501Client
             Thread.Sleep(120 * 1000);
         }
 
-        public List<string> GetGameServers ()
+        public List<ListedServer> GetGameServers()
         {
-            List<string> newList = new List<string>();
+            List<ListedServer> newList = new List<ListedServer>();
             lock(GameServers)
             {
-                foreach (string g in GameServers)
+                foreach (ListedServer g in GameServers)
                     newList.Add(g);
                
                 dirty = false;
