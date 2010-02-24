@@ -126,6 +126,11 @@ namespace AuthServer
 
         protected void AddCharacter ( Message msg )
         {
+            int characterLimit = config.GetInt("characterLimit"); ;
+
+            if (characterLimit == 0)
+                characterLimit = 4;
+
             RequestAddCharacter data = new RequestAddCharacter();
             data.Unpack(ref msg.Data);
 
@@ -139,6 +144,12 @@ namespace AuthServer
             if (id == 0)
             {
                 SendSingleCode(msg.Sender, AuthMessage.CharacterAddBadNoAuth);
+                return;
+            }
+
+            if (CharacterCount(id) >= characterLimit)
+            {
+                SendSingleCode(msg.Sender, AuthMessage.CharacterAddBadTooMany);
                 return;
             }
 
@@ -270,6 +281,24 @@ namespace AuthServer
             reader.Close();
 
             Send(msg.Sender, list);
+        }
+
+        protected int CharacterCount( UInt64 UID )
+        {
+            checkDatabase();
+      
+            String query = String.Format("SELECT ID FROM characters WHERE UID=@id");
+            MySqlCommand command = new MySqlCommand(query, database);
+            command.Parameters.Add(new MySqlParameter("@id", UID));
+
+            MySqlDataReader reader = command.ExecuteReader();
+
+            int count = 0;
+            while (reader.Read())
+                count++;
+            reader.Close();
+
+            return count;
         }
 
         protected void checkDatabase()

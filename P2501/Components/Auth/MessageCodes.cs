@@ -42,6 +42,7 @@ namespace Auth
         public static int CharacterAddBadNoAuth = 620;
         public static int CharacterAddBadName = 630;
         public static int CharacterAddBadBan = 640;
+        public static int CharacterAddBadTooMany = 650;
 
         public static int RequestDelCharacter = 700;
         public static int CharacterDelOK = 710;
