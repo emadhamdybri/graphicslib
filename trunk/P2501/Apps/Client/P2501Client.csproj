@@ -55,6 +55,7 @@
     <Compile Include="CharacterInfoForm.Designer.cs">
       <DependentUpon>CharacterInfoForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClientPrefs.cs" />
     <Compile Include="GameList.cs" />
     <Compile Include="Login.cs" />
     <Compile Include="RegistrationForm.cs">

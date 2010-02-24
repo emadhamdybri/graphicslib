@@ -18,9 +18,13 @@ namespace P2501Client
 
         Timer timer;
 
+        ClientPrefs prefs;
+
         public StartupForm()
         {
             InitializeComponent();
+
+            prefs = ClientPrefs.Read(ClientPrefs.GetDefaultPrefsFile());
         }
 
         private void StartupForm_Load(object sender, EventArgs e)
@@ -28,6 +32,11 @@ namespace P2501Client
             NewsBrowser.Navigate("http://www.awesomelaser.com/p2501/news.html");
 
             UpdateUIStates();
+
+            foreach (string name in prefs.Accounts)
+                Username.Items.Add(name);
+
+            Username.SelectedIndex = 0;
 
             timer = new Timer();
             timer.Interval = 15000;
@@ -52,7 +61,6 @@ namespace P2501Client
 
                 AddServerToList(item, PreferedList, image);
             }
-
         }
 
         public void AddServerToList ( GameList.ListedServer server, ListView view, int image )
@@ -158,6 +166,15 @@ namespace P2501Client
             }
             Login();
             
+            if (Token != 0)
+            {
+                if (!prefs.Accounts.Contains(Username.Text))
+                {
+                    prefs.Accounts.Add(Username.Text);
+                    Username.Items.Add(Username.Text);
+                    prefs.Write();
+                }
+            }
         }
 
         protected void Login ()
@@ -207,6 +224,18 @@ namespace P2501Client
         {
             if (new CharacterInfoForm(string.Empty,Username.Text, Password.Text).ShowDialog() == DialogResult.OK)
                 Login();
+        }
+
+        private void Play_Click(object sender, EventArgs e)
+        {
+            prefs.Write();
+            
+            ListView serverList = null;
+
+            if (ServerTabs.SelectedTab == PreferedTab)
+                serverList = PreferedList;
+          //  else if (ServerTabs.SelectedTab == CommunityTab)
+            //    serverList = ComunityList;
         }
     }
 }

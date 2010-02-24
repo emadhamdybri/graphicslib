@@ -46,15 +46,15 @@
             this.NewCharacter = new System.Windows.Forms.Button();
             this.CallsignList = new System.Windows.Forms.ListBox();
             this.GamesGroup = new System.Windows.Forms.GroupBox();
+            this.ServerTabs = new System.Windows.Forms.TabControl();
+            this.PreferedTab = new System.Windows.Forms.TabPage();
+            this.PreferedList = new System.Windows.Forms.ListView();
+            this.ServerListIcons = new System.Windows.Forms.ImageList(this.components);
+            this.CommunityTab = new System.Windows.Forms.TabPage();
+            this.LeagueTab = new System.Windows.Forms.TabPage();
             this.Options = new System.Windows.Forms.Button();
             this.Play = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.ServerTabs = new System.Windows.Forms.TabControl();
-            this.PreferedTab = new System.Windows.Forms.TabPage();
-            this.CommunityTab = new System.Windows.Forms.TabPage();
-            this.LeagueTab = new System.Windows.Forms.TabPage();
-            this.PreferedList = new System.Windows.Forms.ListView();
-            this.ServerListIcons = new System.Windows.Forms.ImageList(this.components);
             PreferedServer = new System.Windows.Forms.ColumnHeader();
             PreferedDescription = new System.Windows.Forms.ColumnHeader();
             PreferedPlayers = new System.Windows.Forms.ColumnHeader();
@@ -62,12 +62,32 @@
             this.LoginGroup.SuspendLayout();
             this.CallsignsGroup.SuspendLayout();
             this.GamesGroup.SuspendLayout();
+            this.ServerTabs.SuspendLayout();
+            this.PreferedTab.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.ServerTabs.SuspendLayout();
-            this.PreferedTab.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // PreferedServer
+            // 
+            PreferedServer.Text = "Name";
+            PreferedServer.Width = 83;
+            // 
+            // PreferedDescription
+            // 
+            PreferedDescription.Text = "Description";
+            PreferedDescription.Width = 140;
+            // 
+            // PreferedPlayers
+            // 
+            PreferedPlayers.Text = "Players";
+            PreferedPlayers.Width = 49;
+            // 
+            // PreferedHost
+            // 
+            PreferedHost.Text = "Host";
+            PreferedHost.Width = 48;
             // 
             // LoginGroup
             // 
@@ -201,46 +221,6 @@
             this.GamesGroup.TabStop = false;
             this.GamesGroup.Text = "Servers";
             // 
-            // Options
-            // 
-            this.Options.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Options.Location = new System.Drawing.Point(6, 253);
-            this.Options.Name = "Options";
-            this.Options.Size = new System.Drawing.Size(75, 23);
-            this.Options.TabIndex = 1;
-            this.Options.Text = "Options...";
-            this.Options.UseVisualStyleBackColor = true;
-            // 
-            // Play
-            // 
-            this.Play.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Play.Location = new System.Drawing.Point(321, 253);
-            this.Play.Name = "Play";
-            this.Play.Size = new System.Drawing.Size(75, 23);
-            this.Play.TabIndex = 0;
-            this.Play.Text = "Play";
-            this.Play.UseVisualStyleBackColor = true;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(218, 12);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.NewsBrowser);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.GamesGroup);
-            this.splitContainer1.Size = new System.Drawing.Size(408, 504);
-            this.splitContainer1.SplitterDistance = 199;
-            this.splitContainer1.TabIndex = 4;
-            // 
             // ServerTabs
             // 
             this.ServerTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -268,27 +248,6 @@
             this.PreferedTab.Text = "Prefered";
             this.PreferedTab.UseVisualStyleBackColor = true;
             // 
-            // CommunityTab
-            // 
-            this.CommunityTab.ImageIndex = 2;
-            this.CommunityTab.Location = new System.Drawing.Point(4, 31);
-            this.CommunityTab.Name = "CommunityTab";
-            this.CommunityTab.Padding = new System.Windows.Forms.Padding(3);
-            this.CommunityTab.Size = new System.Drawing.Size(327, 193);
-            this.CommunityTab.TabIndex = 1;
-            this.CommunityTab.Text = "Community";
-            this.CommunityTab.UseVisualStyleBackColor = true;
-            // 
-            // LeagueTab
-            // 
-            this.LeagueTab.ImageIndex = 4;
-            this.LeagueTab.Location = new System.Drawing.Point(4, 31);
-            this.LeagueTab.Name = "LeagueTab";
-            this.LeagueTab.Size = new System.Drawing.Size(327, 193);
-            this.LeagueTab.TabIndex = 2;
-            this.LeagueTab.Text = "League";
-            this.LeagueTab.UseVisualStyleBackColor = true;
-            // 
             // PreferedList
             // 
             this.PreferedList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -311,26 +270,6 @@
             this.PreferedList.UseCompatibleStateImageBehavior = false;
             this.PreferedList.View = System.Windows.Forms.View.Details;
             // 
-            // PreferedServer
-            // 
-            PreferedServer.Text = "Name";
-            PreferedServer.Width = 83;
-            // 
-            // PreferedDescription
-            // 
-            PreferedDescription.Text = "Description";
-            PreferedDescription.Width = 140;
-            // 
-            // PreferedPlayers
-            // 
-            PreferedPlayers.Text = "Players";
-            PreferedPlayers.Width = 49;
-            // 
-            // PreferedHost
-            // 
-            PreferedHost.Text = "Host";
-            PreferedHost.Width = 48;
-            // 
             // ServerListIcons
             // 
             this.ServerListIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ServerListIcons.ImageStream")));
@@ -340,6 +279,68 @@
             this.ServerListIcons.Images.SetKeyName(2, "agt_forum.png");
             this.ServerListIcons.Images.SetKeyName(3, "bookmark_add.png");
             this.ServerListIcons.Images.SetKeyName(4, "xclock.png");
+            // 
+            // CommunityTab
+            // 
+            this.CommunityTab.ImageIndex = 2;
+            this.CommunityTab.Location = new System.Drawing.Point(4, 31);
+            this.CommunityTab.Name = "CommunityTab";
+            this.CommunityTab.Padding = new System.Windows.Forms.Padding(3);
+            this.CommunityTab.Size = new System.Drawing.Size(382, 193);
+            this.CommunityTab.TabIndex = 1;
+            this.CommunityTab.Text = "Community";
+            this.CommunityTab.UseVisualStyleBackColor = true;
+            // 
+            // LeagueTab
+            // 
+            this.LeagueTab.ImageIndex = 4;
+            this.LeagueTab.Location = new System.Drawing.Point(4, 31);
+            this.LeagueTab.Name = "LeagueTab";
+            this.LeagueTab.Size = new System.Drawing.Size(382, 193);
+            this.LeagueTab.TabIndex = 2;
+            this.LeagueTab.Text = "League";
+            this.LeagueTab.UseVisualStyleBackColor = true;
+            // 
+            // Options
+            // 
+            this.Options.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Options.Location = new System.Drawing.Point(6, 253);
+            this.Options.Name = "Options";
+            this.Options.Size = new System.Drawing.Size(75, 23);
+            this.Options.TabIndex = 1;
+            this.Options.Text = "Options...";
+            this.Options.UseVisualStyleBackColor = true;
+            // 
+            // Play
+            // 
+            this.Play.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Play.Location = new System.Drawing.Point(321, 253);
+            this.Play.Name = "Play";
+            this.Play.Size = new System.Drawing.Size(75, 23);
+            this.Play.TabIndex = 0;
+            this.Play.Text = "Play";
+            this.Play.UseVisualStyleBackColor = true;
+            this.Play.Click += new System.EventHandler(this.Play_Click);
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(218, 12);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.NewsBrowser);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.GamesGroup);
+            this.splitContainer1.Size = new System.Drawing.Size(408, 504);
+            this.splitContainer1.SplitterDistance = 199;
+            this.splitContainer1.TabIndex = 4;
             // 
             // StartupForm
             // 
@@ -359,11 +360,11 @@
             this.LoginGroup.PerformLayout();
             this.CallsignsGroup.ResumeLayout(false);
             this.GamesGroup.ResumeLayout(false);
+            this.ServerTabs.ResumeLayout(false);
+            this.PreferedTab.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
-            this.ServerTabs.ResumeLayout(false);
-            this.PreferedTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
