@@ -11,8 +11,10 @@ namespace P2501Client
 {
     public partial class StartupForm : Form
     {
-        UInt64 UID = 0;
-        UInt64 Token = 0;
+        public UInt64 UID = 0;
+        public UInt64 Token = 0;
+        public UInt64 CharacterID = 0;
+        public string ConnectHost = string.Empty;
 
         GameList gameList = null;
 
@@ -107,6 +109,21 @@ namespace P2501Client
 
             Username.Enabled = Token == 0;
             RegisterButton.Enabled = Token == 0;
+
+            Play.Enabled = false;
+
+            if (Token != 0 && CallsignList.SelectedItem != null)
+            {
+                ListView serverList = null;
+
+                if (ServerTabs.SelectedTab == PreferedTab)
+                    serverList = PreferedList;
+                else if (ServerTabs.SelectedTab == CommunityTab)
+                    serverList = CommunityList;
+
+                if (serverList != null)
+                    Play.Enabled = serverList.SelectedItems.Count > 0;
+            }
         }
 
         private void Username_SelectedIndexChanged(object sender, EventArgs e)
@@ -137,12 +154,12 @@ namespace P2501Client
         protected class CharaterListItem
         {
             public string Name = string.Empty;
-            public UInt64 UID = 0;
+            public UInt64 CID = 0;
 
             public CharaterListItem ( string n, UInt64 id )
             {
                 Name = n;
-                UID = id;
+                CID = id;
             }
 
             public override string ToString()
@@ -198,10 +215,15 @@ namespace P2501Client
                     foreach (KeyValuePair<UInt64, string> character in list)
                         CallsignList.Items.Add(new CharaterListItem(character.Value, character.Key));
                 }
+                WaitBox box = new WaitBox("Servers");
+                box.Show();
+                box.Update("Fetching servers");
 
                 if (gameList != null)
                     gameList.Kill();
                 gameList = new GameList(UID);
+                timer_Tick(this, EventArgs.Empty);
+                box.Close();
             }
             else
                 MessageBox.Show("Login failure");
@@ -234,8 +256,31 @@ namespace P2501Client
 
             if (ServerTabs.SelectedTab == PreferedTab)
                 serverList = PreferedList;
-          //  else if (ServerTabs.SelectedTab == CommunityTab)
-            //    serverList = ComunityList;
+            else if (ServerTabs.SelectedTab == CommunityTab)
+                serverList = CommunityList;
+
+            if (serverList == null || serverList.SelectedItems.Count == 0)
+                return;
+
+            GameList.ListedServer host = serverList.SelectedItems[0].Tag as GameList.ListedServer;
+            if (host == null || CallsignList.SelectedItem == null)
+                return;
+
+            CharacterID = ((CharaterListItem)CallsignList.SelectedItem).CID;
+            ConnectHost = host.Host;
+
+            DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void CommunityList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateUIStates();
+        }
+
+        private void PreferedList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateUIStates();
         }
     }
 }

@@ -11,7 +11,6 @@ namespace P2501Client
 {
     public class GameList : IDisposable
     {
-
         public class ListedServer
         {
             public string Name = string.Empty;
@@ -59,11 +58,18 @@ namespace P2501Client
         {
             UID = id;
 
+            Update();
             worker = new Thread(new ThreadStart(Poll));
             worker.Start();
         }
 
         void Poll ()
+        {
+            Thread.Sleep(120 * 1000);
+            Update();
+        }
+
+        protected void Update ()
         {
             lock (GameServers)
             {
@@ -93,8 +99,6 @@ namespace P2501Client
 
                 dirty = true;
             }
-
-            Thread.Sleep(120 * 1000);
         }
 
         public List<ListedServer> GetGameServers()

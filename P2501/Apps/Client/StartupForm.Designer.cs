@@ -33,6 +33,14 @@
             System.Windows.Forms.ColumnHeader PreferedDescription;
             System.Windows.Forms.ColumnHeader PreferedPlayers;
             System.Windows.Forms.ColumnHeader PreferedHost;
+            System.Windows.Forms.ColumnHeader columnHeader1;
+            System.Windows.Forms.ColumnHeader columnHeader2;
+            System.Windows.Forms.ColumnHeader columnHeader3;
+            System.Windows.Forms.ColumnHeader columnHeader4;
+            System.Windows.Forms.ColumnHeader columnHeader5;
+            System.Windows.Forms.ColumnHeader columnHeader6;
+            System.Windows.Forms.ColumnHeader columnHeader7;
+            System.Windows.Forms.ColumnHeader columnHeader8;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StartupForm));
             this.LoginGroup = new System.Windows.Forms.GroupBox();
             this.RegisterButton = new System.Windows.Forms.Button();
@@ -51,6 +59,7 @@
             this.PreferedList = new System.Windows.Forms.ListView();
             this.ServerListIcons = new System.Windows.Forms.ImageList(this.components);
             this.CommunityTab = new System.Windows.Forms.TabPage();
+            this.CommunityList = new System.Windows.Forms.ListView();
             this.LeagueTab = new System.Windows.Forms.TabPage();
             this.Options = new System.Windows.Forms.Button();
             this.Play = new System.Windows.Forms.Button();
@@ -59,11 +68,20 @@
             PreferedDescription = new System.Windows.Forms.ColumnHeader();
             PreferedPlayers = new System.Windows.Forms.ColumnHeader();
             PreferedHost = new System.Windows.Forms.ColumnHeader();
+            columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            columnHeader4 = new System.Windows.Forms.ColumnHeader();
+            columnHeader5 = new System.Windows.Forms.ColumnHeader();
+            columnHeader6 = new System.Windows.Forms.ColumnHeader();
+            columnHeader7 = new System.Windows.Forms.ColumnHeader();
+            columnHeader8 = new System.Windows.Forms.ColumnHeader();
             this.LoginGroup.SuspendLayout();
             this.CallsignsGroup.SuspendLayout();
             this.GamesGroup.SuspendLayout();
             this.ServerTabs.SuspendLayout();
             this.PreferedTab.SuspendLayout();
+            this.CommunityTab.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -88,6 +106,46 @@
             // 
             PreferedHost.Text = "Host";
             PreferedHost.Width = 48;
+            // 
+            // columnHeader1
+            // 
+            columnHeader1.Text = "Name";
+            columnHeader1.Width = 83;
+            // 
+            // columnHeader2
+            // 
+            columnHeader2.Text = "Description";
+            columnHeader2.Width = 140;
+            // 
+            // columnHeader3
+            // 
+            columnHeader3.Text = "Players";
+            columnHeader3.Width = 49;
+            // 
+            // columnHeader4
+            // 
+            columnHeader4.Text = "Host";
+            columnHeader4.Width = 48;
+            // 
+            // columnHeader5
+            // 
+            columnHeader5.Text = "Name";
+            columnHeader5.Width = 83;
+            // 
+            // columnHeader6
+            // 
+            columnHeader6.Text = "Description";
+            columnHeader6.Width = 140;
+            // 
+            // columnHeader7
+            // 
+            columnHeader7.Text = "Players";
+            columnHeader7.Width = 49;
+            // 
+            // columnHeader8
+            // 
+            columnHeader8.Text = "Host";
+            columnHeader8.Width = 48;
             // 
             // LoginGroup
             // 
@@ -260,6 +318,7 @@
             PreferedHost});
             this.PreferedList.FullRowSelect = true;
             this.PreferedList.GridLines = true;
+            this.PreferedList.HideSelection = false;
             this.PreferedList.LargeImageList = this.ServerListIcons;
             this.PreferedList.Location = new System.Drawing.Point(0, 0);
             this.PreferedList.Name = "PreferedList";
@@ -269,6 +328,7 @@
             this.PreferedList.TabIndex = 0;
             this.PreferedList.UseCompatibleStateImageBehavior = false;
             this.PreferedList.View = System.Windows.Forms.View.Details;
+            this.PreferedList.SelectedIndexChanged += new System.EventHandler(this.PreferedList_SelectedIndexChanged);
             // 
             // ServerListIcons
             // 
@@ -282,6 +342,7 @@
             // 
             // CommunityTab
             // 
+            this.CommunityTab.Controls.Add(this.CommunityList);
             this.CommunityTab.ImageIndex = 2;
             this.CommunityTab.Location = new System.Drawing.Point(4, 31);
             this.CommunityTab.Name = "CommunityTab";
@@ -290,6 +351,30 @@
             this.CommunityTab.TabIndex = 1;
             this.CommunityTab.Text = "Community";
             this.CommunityTab.UseVisualStyleBackColor = true;
+            // 
+            // CommunityList
+            // 
+            this.CommunityList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.CommunityList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            columnHeader5,
+            columnHeader6,
+            columnHeader7,
+            columnHeader8});
+            this.CommunityList.FullRowSelect = true;
+            this.CommunityList.GridLines = true;
+            this.CommunityList.HideSelection = false;
+            this.CommunityList.LargeImageList = this.ServerListIcons;
+            this.CommunityList.Location = new System.Drawing.Point(0, 0);
+            this.CommunityList.Name = "CommunityList";
+            this.CommunityList.Size = new System.Drawing.Size(379, 188);
+            this.CommunityList.SmallImageList = this.ServerListIcons;
+            this.CommunityList.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.CommunityList.TabIndex = 1;
+            this.CommunityList.UseCompatibleStateImageBehavior = false;
+            this.CommunityList.View = System.Windows.Forms.View.Details;
+            this.CommunityList.SelectedIndexChanged += new System.EventHandler(this.CommunityList_SelectedIndexChanged);
             // 
             // LeagueTab
             // 
@@ -362,6 +447,7 @@
             this.GamesGroup.ResumeLayout(false);
             this.ServerTabs.ResumeLayout(false);
             this.PreferedTab.ResumeLayout(false);
+            this.CommunityTab.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
@@ -392,6 +478,7 @@
         private System.Windows.Forms.TabPage CommunityTab;
         private System.Windows.Forms.TabPage LeagueTab;
         private System.Windows.Forms.ImageList ServerListIcons;
+        private System.Windows.Forms.ListView CommunityList;
     }
 }
 

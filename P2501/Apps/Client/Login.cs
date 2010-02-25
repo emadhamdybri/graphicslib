@@ -182,6 +182,7 @@ namespace P2501Client
                 return null;
 
             WaitBox box = new WaitBox("Callsigns");
+            box.Show();
             box.Update("Requesting list");
             NetBuffer buffer = new NetBuffer();
             buffer.Write(AuthMessage.RequestCharacterList);
