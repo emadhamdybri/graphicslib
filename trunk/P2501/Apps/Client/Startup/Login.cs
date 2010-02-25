@@ -165,7 +165,7 @@ namespace P2501Client
                         client = null;
                         return false;      
                     }
-                    buffer = client.GetPentMessage();
+                   // buffer = client.GetPentMessage();
                 }
                 Application.DoEvents();
                 Thread.Sleep(100);
@@ -222,7 +222,7 @@ namespace P2501Client
                         client = null;
                         return null;      
                     }
-                    buffer = client.GetPentMessage();
+                   // buffer = client.GetPentMessage();
                 } 
                 Application.DoEvents();
                 Thread.Sleep(100);

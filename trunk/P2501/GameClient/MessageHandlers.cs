@@ -6,7 +6,7 @@ using System.Text;
 using Messages;
 using Simulation;
 
-namespace Project23Client
+namespace P2501GameClient
 {
     public partial class GameClient
     {
@@ -163,11 +163,9 @@ namespace Project23Client
             if (msg == null)
                 return;
 
-            bool playerExisted = true;
             Player player = sim.FindPlayer(msg.PlayerID);
             if (player == null)
             {
-                playerExisted = false;
                 player = sim.NewPlayer();
                 player.ID = msg.PlayerID;
                 sim.AddPlayer(player);
@@ -185,7 +183,7 @@ namespace Project23Client
                 return;
 
             if (ChatReceivedEvent != null)
-                ChatReceivedEvent(this, msg.Channel, msg.From, msg.Message);
+                ChatReceivedEvent(this, msg.ChatChannel, msg.From, msg.Message);
         }
 
         protected void CallAllowSpawn ()

@@ -38,6 +38,11 @@ namespace Messages
         }
     }
 
+    public class MessageProtcoll
+    {
+        public static int Version = 1;
+    }
+
     public class MessageClass
     {
         public Int32 Name = -1;
@@ -490,7 +495,7 @@ namespace Messages
 
     public class ChatMessage : MessageClass
     {
-        public string Channel = string.Empty;
+        public string ChatChannel = string.Empty;
         public string From = string.Empty;
         public string Message = string.Empty;
 
@@ -502,7 +507,7 @@ namespace Messages
         public override NetBuffer Pack()
         {
             NetBuffer buffer = base.Pack();
-            buffer.Write(Channel);
+            buffer.Write(ChatChannel);
             buffer.Write(From);
             buffer.Write(Message);
             return buffer;
@@ -513,7 +518,7 @@ namespace Messages
             if (!base.Unpack(ref buffer))
                 return false;
 
-            Channel = buffer.ReadString();
+            ChatChannel = buffer.ReadString();
             From = buffer.ReadString();
             Message = buffer.ReadString();
            return true;

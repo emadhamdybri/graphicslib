@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenTK, Version=0.9.9.5, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\GPLib\opentk\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -49,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game.cs" />
     <Compile Include="Startup\CharacterInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,6 +117,7 @@
     <Compile Include="Startup\WaitBox.Designer.cs">
       <DependentUpon>WaitBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Visual.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Client\Client.csproj">
@@ -125,6 +131,10 @@
     <ProjectReference Include="..\..\Components\Auth\Auth.csproj">
       <Project>{569385E8-A102-4C6B-B87C-C3C48E675B3F}</Project>
       <Name>Auth</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GameClient\GameClient.csproj">
+      <Project>{1F5E5A59-5A45-4646-9D17-D3603CF7061B}</Project>
+      <Name>GameClient</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

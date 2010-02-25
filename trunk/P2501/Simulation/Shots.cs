@@ -15,7 +15,7 @@ namespace Simulation
         public double Lifetime = 10.0;
 
         ObjectState lastBounce = new ObjectState();
-        double lastBounceTime = 0;
+       // double lastBounceTime = 0;
 
         internal Shot(Sim s)
             : base(s)
