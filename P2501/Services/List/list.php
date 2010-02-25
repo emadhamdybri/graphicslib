@@ -47,8 +47,9 @@
 		$host = GetInput("host");
 		$name = GetInput("name");
 		$description = GetInput("desc");
-		$group = GetInput("group");
-		
+		$key = GetInput("key");
+		$type = GetInput("type");
+	
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$port = explode(":",$host);
 		if (count($port) > 1)
@@ -62,9 +63,23 @@
 		if (!$name)
 			$name = $host;
 			
-		if (!$group)
-			$group = "NULL";
-			
+		if (!$key)
+			$group = "Community";
+		else
+		{
+			$query = "SELECT GroupName FROM authKeys WHERE AuthKey='$key'";
+			$groupName = GetQueryResult(SQLGet($query));
+			if (!$groupName)
+				$group = "Community";
+			else
+				$group = $groupName;
+		}
+		
+		if (!$type || $type != "verified")
+			$group = $group . " Open";
+		else
+			$group = $group . " Registered";
+
 		if (!$description)
 			$description = "NULL";
 			
