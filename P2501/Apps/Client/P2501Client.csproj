@@ -49,30 +49,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CharacterInfoForm.cs">
+    <Compile Include="Startup\CharacterInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CharacterInfoForm.Designer.cs">
+    <Compile Include="Startup\CharacterInfoForm.Designer.cs">
       <DependentUpon>CharacterInfoForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ClientPrefs.cs" />
-    <Compile Include="GameList.cs" />
-    <Compile Include="Login.cs" />
-    <Compile Include="RegistrationForm.cs">
+    <Compile Include="Startup\ClientPrefs.cs" />
+    <Compile Include="Startup\GameList.cs" />
+    <Compile Include="Startup\Login.cs" />
+    <Compile Include="Startup\RegistrationForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RegistrationForm.Designer.cs">
+    <Compile Include="Startup\RegistrationForm.Designer.cs">
       <DependentUpon>RegistrationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="StartupForm.cs">
+    <Compile Include="Startup\StartupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="StartupForm.Designer.cs">
+    <Compile Include="Startup\StartupForm.Designer.cs">
       <DependentUpon>StartupForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CharacterInfoForm.resx">
+    <EmbeddedResource Include="Startup\CharacterInfoForm.resx">
       <DependentUpon>CharacterInfoForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -81,15 +81,15 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="RegistrationForm.resx">
+    <EmbeddedResource Include="Startup\RegistrationForm.resx">
       <DependentUpon>RegistrationForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="StartupForm.resx">
+    <EmbeddedResource Include="Startup\StartupForm.resx">
       <DependentUpon>StartupForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="WaitBox.resx">
+    <EmbeddedResource Include="Startup\WaitBox.resx">
       <DependentUpon>WaitBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -106,15 +106,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="WaitBox.cs">
+    <Compile Include="Startup\WaitBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WaitBox.Designer.cs">
+    <Compile Include="Startup\WaitBox.Designer.cs">
       <DependentUpon>WaitBox.cs</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Client\Client.csproj">
@@ -129,9 +126,6 @@
       <Project>{569385E8-A102-4C6B-B87C-C3C48E675B3F}</Project>
       <Name>Auth</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Startup\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
