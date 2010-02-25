@@ -92,6 +92,23 @@ namespace ServerConfigurator
             return string.Empty;
         }
 
+        public int GetInt ( string name )
+        {
+            if (!ItemExists(name))
+                return 0;
+
+            int val = 0;
+            try
+            {
+                int.TryParse(GetItem(name), out val);
+            }
+            catch (System.Exception ex)
+            {
+            	
+            }
+            return val;
+        }
+
         public bool ItemExists ( string name )
         {
             return items.ContainsKey(name);
