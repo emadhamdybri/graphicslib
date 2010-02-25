@@ -20,7 +20,7 @@ namespace Clients
         static int CRYPTO_SECRET_MESSAGE = 2;
         static int CRYPTO_SECRET_VERIFY = 3;
         static int CRYPTO_ACCEPT = 4;
-        static int CRYPTO_DENY = 5;
+     //   static int CRYPTO_DENY = 5;
 
         public CryptoClient() : base()
         {
