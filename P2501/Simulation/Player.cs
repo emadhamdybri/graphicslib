@@ -30,7 +30,7 @@ namespace Simulation
         float intendedAngle = 0;
         Vector2 intendedSpeed = new Vector2(0,0);
         float forAftSpeed = 0;
-        float sideSpeed = 0;
+       // float sideSpeed = 0;
 
         public PlayerStatus Status = PlayerStatus.Connecting;
 

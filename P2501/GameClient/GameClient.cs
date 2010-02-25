@@ -8,7 +8,7 @@ using Clients;
 using Messages;
 using Lidgren.Network;
 
-namespace Project23Client
+namespace P2501GameClient
 {
     public delegate void MessageHandler(MessageClass message);
 
@@ -201,7 +201,7 @@ namespace Project23Client
                 ChatSentEvent(this, channel, ThisPlayer.Callsign, message);
 
             ChatMessage msg = new ChatMessage();
-            msg.Channel = channel;
+            msg.ChatChannel = channel;
             msg.Message = message;
             client.SendMessage(msg.Pack(), msg.Channel());
         }
