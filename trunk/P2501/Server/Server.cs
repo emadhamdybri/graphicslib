@@ -19,7 +19,12 @@ namespace Project2501Server
         public NetConnection Connection;
         public Simulation.Player Player = null;
 
-        public String Username = String.Empty;
+        public UInt64 UID = 0;
+        public UInt64 CID = 0;
+        public UInt64 Token = 0;
+
+        public bool Checked = false;
+        public bool Verified = false;
 
         public Client ( NetConnection connection )
         {
@@ -40,6 +45,7 @@ namespace Project2501Server
         Sim sim = new Sim();
         Host host;
 
+        protected TokenChecker tokenChecker = null;
         public bool SaveMessages = true;
 
         MessageMapper messageMapper = new MessageMapper();
@@ -62,6 +68,8 @@ namespace Project2501Server
             timer.Start();
             host = new Host(port);
             sim.Init();
+
+            tokenChecker = new TokenChecker();
 
             host.Connect += new MonitoringEvent(host_Message);
             host.Disconnect += new MonitoringEvent(host_Message);
@@ -95,6 +103,7 @@ namespace Project2501Server
                 ServerThread.Abort();
             host.Kill();
             ServerThread = null;
+            tokenChecker.Kill();
         }
 
         void sim_PlayerStatusChanged(object sender, PlayerEventArgs args)
@@ -175,7 +184,29 @@ namespace Project2501Server
                 msg = host.GetPentMessage();
             }
 
+            TokenChecker.Job job = tokenChecker.GetFinishedJob();
+            while (job != null)
+            {
+                ProcessTokenJob(job);
+                job = tokenChecker.GetFinishedJob();
+            }
+
             sim.Update(lastUpdateTime);
+        }
+
+        protected void ProcessTokenJob ( TokenChecker.Job job )
+        {
+            Client client = job.Tag as Client;
+            if (client == null)
+                return;
+
+            client.Checked = job.Checked;
+            client.Verified = job.Verified;
+            client.Player.Callsign = job.Callsign;
+            if (!client.Checked)
+                DisconnectPlayer(client.Connection);
+            else
+                FinishLogin(client);
         }
 
         public String PopHostMessage ( )
