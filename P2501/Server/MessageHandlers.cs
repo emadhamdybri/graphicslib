@@ -9,8 +9,6 @@ using Hosts;
 using Simulation;
 using Messages;
 
-using Simulation;
-
 using Lidgren.Network;
 
 namespace Project2501Server
@@ -18,6 +16,7 @@ namespace Project2501Server
     public partial class Server
     {
         Dictionary<Type, MessageHandler> messageHandlers = new Dictionary<Type, MessageHandler>();
+        Dictionary<int, MessageHandler> messageCodeHandlers = new Dictionary<int, MessageHandler>();
 
         protected void InitMessageHandlers()
         {
@@ -36,11 +35,32 @@ namespace Project2501Server
 
             Client client = Clients[msg.Sender];
 
-            MessageClass message = messageMapper.MessageFromID(msg.Name);
-            message.Unpack(ref msg.Data);
+            if (msg.Name != MessageClass.Login)
+            {
+                if (!client.Checked || client.UID == 0)
+                    return;
+            }
 
-            if (messageHandlers.ContainsKey(message.GetType()))
-                messageHandlers[message.GetType()](client, message);
+            MessageClass message = messageMapper.MessageFromID(msg.Name);
+            if (message != null)
+            {
+                message.Unpack(ref msg.Data);
+
+                if (messageHandlers.ContainsKey(message.GetType()))
+                    messageHandlers[message.GetType()](client, message);
+                else if (messageCodeHandlers.ContainsKey(msg.Name))
+                    messageCodeHandlers[msg.Name](client, message);
+            }
+            else
+            {
+                if (messageCodeHandlers.ContainsKey(msg.Name))
+                    messageCodeHandlers[msg.Name](client, MessageClass.NoDataMessage(msg.Name));
+            }
+        }
+
+        protected void Send (Client client, MessageClass message)
+        {
+            host.SendMessage(client.Connection, message.Pack(), message.Channel());
         }
 
         protected void PingHandler(Client client, MessageClass message)
@@ -51,7 +71,7 @@ namespace Project2501Server
 
             Pong pong = new Pong();
             pong.ID = msg.ID;
-            host.SendMessage(client.Connection, pong.Pack(), pong.Channel());
+            Send(client, pong);
         }
 
         protected void LoginHandler(Client client, MessageClass message)
@@ -60,23 +80,20 @@ namespace Project2501Server
             if (login == null)
                 return;
 
-            client.Username = login.username;
+            client.UID = login.UID;
+            client.CID = login.CID;
+            client.Token = login.Token;
 
-            ServerVersInfo vers = new ServerVersInfo();
-            host.SendMessage(client.Connection, vers.Pack(), vers.Channel());
+            tokenChecker.AddJob(login.UID, login.Token, login.CID, client);
+        }
 
-            MapInfo map = new MapInfo();
-            map.Map = sim.Map;
-            host.SendMessage(client.Connection, map.Pack(), map.Channel());
+        protected void FinishLogin ( Client client )
+        {
+            LoginAccept accept = new LoginAccept();
+            accept.Callsign = client.Player.Callsign;
+            accept.PlayerID = client.Player.ID;
 
-            foreach( Player player in sim.Players)
-            {
-                PlayerInfo info = new PlayerInfo(player);
-                host.SendMessage(client.Connection, info.Pack(), info.Channel());
-            }
-
-            PlayerListDone done = new PlayerListDone();
-            host.SendMessage(client.Connection, done.Pack(), done.Channel());
+            Send(client, accept);
         }
 
         protected void PlayerJoinHandler(Client client, MessageClass message)
@@ -102,10 +119,10 @@ namespace Project2501Server
             accept.Callsign = client.Player.Callsign;
             accept.PlayerID = client.Player.ID;
 
-            host.SendMessage(client.Connection, accept.Pack(), accept.Channel());
+            Send(client, accept);
 
             AllowSpawn spawn = new AllowSpawn();
-            host.SendMessage(client.Connection, spawn.Pack(), spawn.Channel());
+            Send(client, spawn);
         }
 
         protected void ChatMessageHandler(Client client, MessageClass message)
@@ -136,7 +153,7 @@ namespace Project2501Server
             TheTimeIsNow time = new TheTimeIsNow();
             time.ID = msg.ID;
             time.Time = Now();
-            host.SendMessage(client.Connection, time.Pack(), time.Channel());
+            Send(client, time);
         }
     }
 }

@@ -52,6 +52,14 @@ namespace Messages
             return buffer.ReadInt32();
         }
 
+        public static MessageClass NoDataMessage( Int32 name )
+        {
+            Temp.Name = name;
+            return Temp;
+        }
+
+        private static MessageClass Temp = new MessageClass();
+
         public virtual NetBuffer Pack ()
         {
             NetBuffer buffer = new NetBuffer();
@@ -148,31 +156,36 @@ namespace Messages
             return state;
         }
 
-        public static int Ping = 1;
-        public static int Pong = 2;
+        public static int Ping = 10;
+        public static int Pong = 20;
 
-        public static int Hail = 10;
-        public static int Disconnect = 11;
+        public static int Hail = 100;
+        public static int Disconnect = 110;
+        public static int WhatTimeIsIt = 180;
+        public static int TheTimeIsNow = 185;
 
-        public static int Login = 20;
-        public static int ServerVersInfo = 30;
+        public static int Login = 200;
+        public static int LoginAccept = 210;
+        public static int InstanceSelect = 220;
 
-        public static int PlayerInfo = 40;
-        public static int PlayerListDone = 41;
-        public static int PlayerJoin = 42;
-        public static int PlayerJoinAccept = 43;
+        public static int RequestServerVersInfo = 300;
+        public static int ServerVersInfo = 305;
+        public static int RequestInstanceList = 350;
+        public static int InstanceList = 355;
 
-        public static int RequestMapInfo = 50;
-        public static int MapInfo = 51;
+        public static int PlayerInfo = 400;
+        public static int PlayerListDone = 410;
+        public static int PlayerJoin = 420;
+        public static int PlayerJoinAccept = 430;
 
-        public static int ChatMessage = 60;
+        public static int RequestMapInfo = 500;
+        public static int MapInfo = 510;
 
-        public static int AllowSpawn = 70;
-        public static int RequestSpawn = 71;
-        public static int PlayerSpawn = 72;
+        public static int ChatMessage = 600;
 
-        public static int WhatTimeIsIt = 80;
-        public static int TheTimeIsNow = 81;
+        public static int AllowSpawn = 700;
+        public static int RequestSpawn = 710;
+        public static int PlayerSpawn = 720;
     }
 
     public class Ping : MessageClass
@@ -271,8 +284,9 @@ namespace Messages
 
     public class Login : MessageClass
     {
-        public String username = string.Empty;
-        public String token = string.Empty;
+        public UInt64 UID = 0;
+        public UInt64 Token = 0;
+        public UInt64 CID = 0;
 
         public Login()
         {
@@ -282,8 +296,9 @@ namespace Messages
         public override NetBuffer Pack()
         {
             NetBuffer buffer = base.Pack();
-            buffer.Write(username);
-            buffer.Write(token);
+            buffer.Write(UID);
+            buffer.Write(Token);
+            buffer.Write(CID);
             return buffer;
         }
 
@@ -292,15 +307,49 @@ namespace Messages
             if (!base.Unpack(ref buffer))
                 return false;
 
-            username = buffer.ReadString();
-            token = buffer.ReadString();
+            UID = buffer.ReadUInt64();
+            Token = buffer.ReadUInt64();
+            CID = buffer.ReadUInt64();
+            return true;
+        }
+    }
+
+    public class LoginAccept : MessageClass
+    {
+        public UInt64 PlayerID = 0;
+        public String Callsign = string.Empty;
+
+        public LoginAccept()
+        {
+            Name = MessageClass.LoginAccept;
+        }
+
+        public override NetBuffer Pack()
+        {
+            NetBuffer buffer = base.Pack();
+            buffer.Write(PlayerID);
+            buffer.Write(Callsign);
+            return buffer;
+        }
+
+        public override bool Unpack(ref NetBuffer buffer)
+        {
+            if (!base.Unpack(ref buffer))
+                return false;
+
+            PlayerID = buffer.ReadUInt64();
+            Callsign = buffer.ReadString();
             return true;
         }
     }
 
     public class ServerVersInfo : MessageClass
     {
-        public int Vers = 1;
+        public int Major = 0;
+        public int Minor = 0;
+        public int Rev = 0;
+
+        public int Protocoll = MessageProtcoll.Version;
 
         public ServerVersInfo()
         {
@@ -310,7 +359,10 @@ namespace Messages
         public override NetBuffer Pack()
         {
             NetBuffer buffer = base.Pack();
-            buffer.Write(Vers);
+            buffer.Write(Major);
+            buffer.Write(Minor);
+            buffer.Write(Rev);
+            buffer.Write(Protocoll);
             return buffer;
         }
 
@@ -319,7 +371,10 @@ namespace Messages
             if (!base.Unpack(ref buffer))
                 return false;
 
-            Vers = buffer.ReadInt32();
+            Major = buffer.ReadInt32();
+            Minor = buffer.ReadInt32();
+            Rev = buffer.ReadInt32();
+            Protocoll = buffer.ReadInt32();
             return true;
         }
     }
