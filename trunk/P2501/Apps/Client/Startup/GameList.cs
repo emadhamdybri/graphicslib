@@ -97,6 +97,8 @@ namespace P2501Client
                     GameServers.Add(server);
                 }
 
+                reader.Close();
+                stream.Close();
                 dirty = true;
             }
         }
