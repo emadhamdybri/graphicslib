@@ -25,6 +25,8 @@ namespace AuthServer
 
         Dictionary<NetConnection, UInt64> ConnectedUsers = new Dictionary<NetConnection, UInt64>();
 
+        protected Emailer emailer = null;
+
         public AuthHost(string configFile)
         {
             FileInfo file = new FileInfo(configFile);
@@ -38,12 +40,17 @@ namespace AuthServer
             string connStr = String.Format("server={0};user id={1}; password={2}; database=mysql; pooling=false",
             config.GetItem("AuthDatabaseHost"), config.GetItem("AuthDatabaseUser"), config.GetItem("AuthDatabasePassword"));
 
+            if (!config.ItemExists("SMTPServer"))
+                emailer = new Emailer();
+            else
+                emailer = new Emailer(config.GetItem("SMTPServer"));
+
             database = new MySqlConnection(connStr);
             try
             {
                 database.Open();
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
                 database.Close();
                 database = null;
@@ -70,46 +77,69 @@ namespace AuthServer
         {
             Init();
 
-            if (database == null)
-                return;
-
-            bool done = false;
-            while (!done)
+            if (database != null)
             {
-                NetConnection connection = host.GetPentConnection();
-                while (connection != null)
+                bool done = false;
+                while (!done)
                 {
-                    ConnectedUsers.Add(connection, 0);
+                    NetConnection connection = host.GetPentConnection();
+                    while (connection != null)
+                    {
+                        ConnectedUsers.Add(connection, 0);
 
-                    SendSingleCode(connection,AuthMessage.Hail);
-                    connection = host.GetPentConnection();
-                }
+                        SendSingleCode(connection, AuthMessage.Hail);
+                        connection = host.GetPentConnection();
+                    }
 
-                connection = host.GetPentDisconnection();
-                while (connection != null)
-                {
-                    ConnectedUsers.Remove(connection);
                     connection = host.GetPentDisconnection();
+                    while (connection != null)
+                    {
+                        ConnectedUsers.Remove(connection);
+                        connection = host.GetPentDisconnection();
+                    }
+
+                    Message message = host.GetPentMessage();
+
+                    while (message != null)
+                    {
+                        if (message.Name == AuthMessage.RequestAdd)
+                            AddUser(message);
+                        else if (message.Name == AuthMessage.RequestAuth)
+                            AuthUser(message);
+                        else if (message.Name == AuthMessage.RequestCharacterList)
+                            CharacterList(message);
+                        else if (message.Name == AuthMessage.RequestAddCharacter)
+                            AddCharacter(message);
+
+                        message = host.GetPentMessage();
+                    }
+
+                    Thread.Sleep(100);
                 }
-
-                Message message = host.GetPentMessage();
-
-                while (message != null)
-                {
-                    if (message.Name == AuthMessage.RequestAdd)
-                        AddUser(message);
-                    else if (message.Name == AuthMessage.RequestAuth)
-                        AuthUser(message);
-                    else if (message.Name == AuthMessage.RequestCharacterList)
-                        CharacterList(message);
-                    else if (message.Name == AuthMessage.RequestAddCharacter)
-                        AddCharacter(message);
-
-                    message = host.GetPentMessage();
-                }
-
-                Thread.Sleep(100);
             }
+            emailer.Kill();
+            emailer = null;
+        }
+
+        protected void SendVerifyEmail(string email, string key, UInt64 id)
+        {
+            string from = "auth@awesomelaser.com";
+            if (config.ItemExists("AuthMailFrom"))
+                from = config.GetItem("AuthMailFrom");
+
+            string subject = "Project2501 Registration";
+            if (config.ItemExists("AuthMailSubject"))
+                subject = config.GetItem("AuthMailSubject");
+
+            string body = "<html><head></head><body>Thank you for registering the account $EMAIL.<br/>Please click this link <a href=\"http://www.awesomelaser.com/p2501/Auth/webauth.php?action=verify&id=$ID&token=$TOKEN\">http://www.awesomelaser.com/p2501/Auth/webauth.php?action=verify&id=$ID&token=$TOKEN</a> to verify your account and get access to more servers.</body></html>";
+            if (config.ItemExists("AuthMailBody"))
+                body = config.GetItem("AuthMailBody");
+
+            body = body.Replace("$EMAIL", email);
+            body = body.Replace("&ID", id.ToString());
+            body = body.Replace("$TOKEN", key);
+
+            emailer.AddJob(from, email, subject, body, null);
         }
 
         protected void SendSingleCode ( NetConnection user, int code)
@@ -197,7 +227,7 @@ namespace AuthServer
             foreach (byte b in inputHash)
                 inputHashString += b.ToString("x2");
 
-            String query = String.Format("INSERT INTO users (EMail, PassHash, Verified, Token) VALUES (@email,@hash,0,@token)");
+            String query = String.Format("INSERT INTO users (EMail, PassHash, Verified, Auth) VALUES (@email,@hash,0,@token)");
             MySqlCommand command = new MySqlCommand(query, database);
             command.Parameters.Add(new MySqlParameter("@email", data.email));
             command.Parameters.Add(new MySqlParameter("@hash", inputHashString));
@@ -205,7 +235,7 @@ namespace AuthServer
 
             command.ExecuteNonQuery();
 
-            query = String.Format("SELECT ID FROM users WHERE Token=@token");
+            query = String.Format("SELECT ID FROM users WHERE Auth=@token");
             command = new MySqlCommand(query, database);
             command.Parameters.Add(new MySqlParameter("@token", token));
 
@@ -230,6 +260,8 @@ namespace AuthServer
             command.ExecuteNonQuery();
 
             SendSingleCode(msg.Sender,AuthMessage.AddOK);
+
+            SendVerifyEmail(data.email, token.ToString(), id);
         }
 
         protected void AuthUser ( Message msg )
@@ -246,7 +278,8 @@ namespace AuthServer
 
             ConnectedUsers[msg.Sender] = ID;
 
-            Send(msg.Sender, new AuthOK(ID, GenerateToken(ID)));
+            string ip = msg.Sender.RemoteEndpoint.Address.ToString();
+            Send(msg.Sender, new AuthOK(ID, GenerateToken(ID,ip)));
         }
 
         protected UInt64 GetID ( NetConnection con )
@@ -320,15 +353,16 @@ namespace AuthServer
             config.Save();
         }
 
-        protected UInt64 GenerateToken ( UInt64 UID )
+        protected UInt64 GenerateToken ( UInt64 UID, string ip )
         {
             Random rand = new Random();
             UInt64 token = (UInt64)rand.Next();
 
-            String query = String.Format("UPDATE users SET Token=@Token WHERE ID=@UID");
+            String query = String.Format("UPDATE users SET Token=@Token, IP=@IP WHERE ID=@UID");
             MySqlCommand  command = new MySqlCommand(query, database);
             command.Parameters.Add(new MySqlParameter("@UID", UID));
             command.Parameters.Add(new MySqlParameter("@Token", token));
+            command.Parameters.Add(new MySqlParameter("@IP", ip));
 
             command.ExecuteNonQuery();
 

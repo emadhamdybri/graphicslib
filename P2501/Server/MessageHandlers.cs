@@ -84,7 +84,7 @@ namespace Project2501Server
             client.CID = login.CID;
             client.Token = login.Token;
 
-            tokenChecker.AddJob(login.UID, login.Token, login.CID, client);
+            tokenChecker.AddJob(login.UID, login.Token, login.CID,client.Connection.RemoteEndpoint.Address.ToString(), client);
         }
 
         protected void FinishLogin ( Client client )
