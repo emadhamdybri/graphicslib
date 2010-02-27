@@ -2,34 +2,20 @@
 	include_once('config.php');
 	include_once('../Common/db.php');
 	
-	function ListDBConnect()
+	function AuthDBConnect()
 	{
-		global $config_listDB_hostname;
-		global $config_listDB_username;
-		global $config_listDB_password;
-		global $config_listDB_database;
+		global $config_authDB_hostname;
+		global $config_authDB_username;
+		global $config_authDB_password;
+		global $config_authDB_database;
 
-		$db = mysql_pconnect($config_listDB_hostname,$config_listDB_username,$config_listDB_password);
+		$db = mysql_pconnect($config_authDB_hostname,$config_authDB_username,$config_authDB_password);
 		if (!$db)
 			die("ERROR: Unable to conenct to database.\n");
 		else
-			$result = mysql_select_db($config_listDB_database);
+			$result = mysql_select_db($config_authDB_database);
 
 		return $result;
-	}
-	
-	function ViewList()
-	{
-		$query = "SELECT ID, Hostname, ServerName, Description, Groupname FROM list";
-		$result = SQLGet($query);
-		
-		$count = mysql_num_rows($result); 
-		echo $count . "\r\n";
-		for ($i = 0; $i < $count; $i += 1)
-		{
-			$row = mysql_fetch_array($result);
-			echo $row[1] ."\t". $row[2] ."\t". $row[3] ."\t". $row[4] ."\r\n";
-		}
 	}
 	
 	function GetInput ( $var )
@@ -39,152 +25,66 @@
 			 
 		return Sanitize($_REQUEST[$var]);
 	}
-	
-	function AddHost()
-	{
-		$host = GetInput("host");
-		$name = GetInput("name");
-		$description = GetInput("desc");
-		$group = GetInput("group");
-		
-		$ip = $_SERVER['REMOTE_ADDR'];
-		$port = explode(":",$host);
-		if (count($port) > 1)
-			$port = $port[1];
-		else
-		{
-			$port = 2501;
-			$host = $host . ":2501";
-		}
-		
-		if (!$name)
-			$name = $host;
-			
-		if (!$group)
-			$group = "NULL";
-			
-		if (!$description)
-			$description = "NULL";
-			
-		if (!$host)
-		{
-			echo "err";
-			return;
-		}
-		
-		// find this server
-		
-		$query = "SELECT ID FROM list WHERE IP='$ip' AND Hostport='$port'";
-		$result = SQLGet($query);
-		if ($result)
-		{
-				$id = GetQueryResult($result);
-				$query = "REMOVE FROM list WHERE ID=$id";
-		
-				SQLSet($query);
-		}
-				
-		$random = rand();
-		$now = gmdate("Y-m-d H:i:s", time());
-		
-		$query = "INSERT INTO list (Hostname, IP, HostPort, ServerName, Description, Groupname, UpdateTime) VALUES ('$host', '$ip', '$port', '$name', '$description', '$random', '$now')";
-		if (!SQLSet($query))
-		{
-				echo "dberr";
-				return;
-		}
-		
-		$id = GetDBFieldForKey ( "Groupname", $random, "list", "ID" );
-		if (!$id)
-		{
-				echo "dberr";
-				return;
-		}
-		
-		SetDBFieldForKey("ID", $id, "list", "Groupname", $group);
-		 
-		echo $id;
-	}
-	
-	function UpdateHost()
-	{
-		$id = GetInput("id");
-		$ip = $_SERVER['REMOTE_ADDR'];	
-		
-		if (!$id)
-		{
-			 echo "err";
-			 return;
-		}
-		
-		$hostIP = GetDBFieldForKey ( "ID", $id, "list", "IP" );
 
-		if (!$hostIP || $hostIP != $ip)
-		{
-			 echo "err";
-			 return;
-		}
-		
-		$now = gmdate("Y-m-d H:i:s", time());
-		SetDBFieldForKey("ID", $id, "list", "UpdateTime", $now);
-		
-		echo $id;
-	}
-	
-	function RemoveHost()
-	{
-		$id = GetInput("id");
-		$ip = $_SERVER['REMOTE_ADDR'];	
-		
-		if (!$id)
-		{
-			 echo "err";
-			 return;
-		}
-		
-		$hostIP = GetDBFieldForKey ( "ID", $id, "list", "IP" );
-
-		if (!$hostIP || $hostIP != $ip)
-		{
-			 echo "err";
-			 return;
-		}
-		
-		$query = "REMOVE FROM list WHERE ID=$id";
-		
-		if (!SQLSet($query))
-			echo "err"
-		else
-			echo "ok";
-	}
-	
-	function CheckOlds()
-	{
-		$now = gmdate("Y-m-d H:i:s", time());
-		$query = "REMOVE FROM list WHERE UpdateTime > DATE_SUB(CURDATE(), INTERVAL 1 HOUR)";
-		SQLSet($query);
-	}
-	
 	header('Content-Type: text/plain');
 	
 	if (!defined('CONFIGURATION'))
 		die("ERROR: Unable to load configuration.\n");
 		
-	$db = ListDBConnect();
+	$db = AuthDBConnect();
 
-	 if (array_key_exists('action',$_REQUEST))                         
-		$action = $_REQUEST['action'];
+	$uid = GetInput("uid");
+	$cid = GetInput("cid");
+	$token = GetInput("token");
+	$ip = GetInput("ip");
+	
+	$callsign = false;
+	$verified = false;
+	
+	if ($uid && $cid && $token && $ip)
+	{
+		$query = "SELECT IP, Token, Verified FROM users WHERE ID=$uid";
+		$result = SQLGet($query);
+		if ($result)
+		{
+			$count = mysql_num_rows($result); 
+			if ($count > 0)
+			{
+				$row = mysql_fetch_array($result);
+				if ($row[0] == $ip)
+				{
+					if ($row[1] == $token)
+					{
+						$verified = $row[2] != 0;
+						
+						$query = "SELECT Callsign FROM characters WHERE ID=$cid AND UID=$uid";
+						$result = SQLGet($query);
+						
+						if ($result)
+						{
+							$count = mysql_num_rows($result); 
+							if ($count > 0)
+							{
+								$row = mysql_fetch_array($result);
+								$callsign = $row[0];
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	if (!$callsign)
+		echo "bad\r\n";
 	else
-		$action = '';
-		
-	if ($action == 'viewlist')
-		ViewList();
-	else if ($action == 'addhost')
-		AddHost();
-	else if ($action == 'updatehost')
-		UpdateHost();
-	else if ($action == 'removehost')
-		RemoveHost();
-		
-		CheckOlds();
+	{
+		echo "ok\r\n";
+		if ($verified)
+			echo "verified\r\n";
+		else
+			echo "unverified\r\n";
+		echo $callsign . "\r\n";
+	}
+					
 ?>

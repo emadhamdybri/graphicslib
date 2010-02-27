@@ -16,6 +16,7 @@ namespace Project2501Server
             public UInt64 UID = 0;
             public UInt64 CID = 0;
             public UInt64 Token = 0;
+            public String IP = string.Empty;
 
             public bool Checked = false;
             public bool Verified = false;
@@ -75,7 +76,7 @@ namespace Project2501Server
                     job.Checked = false;
                     job.Verified = false;
 
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://www.awesomelaser.com/p2501/Auth/authceck.php?uid=" + job.UID.ToString() + "&token=" + job.Token.ToString() + "&cid=" + job.CID.ToString());
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://www.awesomelaser.com/p2501/Auth/authceck.php?uid=" + job.UID.ToString() + "&token=" + job.Token.ToString() + "&cid=" + job.CID.ToString() + "&ip=" + HttpUtility.UrlEncode(job.IP));
                     HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
                     Stream stream = response.GetResponseStream();
@@ -106,12 +107,13 @@ namespace Project2501Server
             }
         }
 
-        public void AddJob ( UInt64 UID, UInt64 Token, UInt64 CID, object tag )
+        public void AddJob ( UInt64 UID, UInt64 Token, UInt64 CID, string IP, object tag )
         {
             Job job = new Job();
             job.UID = UID;
             job.CID = CID;
             job.Token = Token;
+            job.IP = IP;
             job.Tag = tag;
 
             lock(PendingJobs)
