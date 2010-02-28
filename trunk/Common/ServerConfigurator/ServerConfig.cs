@@ -102,7 +102,7 @@ namespace ServerConfigurator
             {
                 int.TryParse(GetItem(name), out val);
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
             	
             }
