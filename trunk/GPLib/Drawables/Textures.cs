@@ -228,6 +228,27 @@ namespace Drawables.Textures
             GL.End();
         }
 
+        public void Draw(float width, float height, float ppu)
+        {
+            Bind();
+            GL.Begin(BeginMode.Quads);
+
+            GL.Normal3(0, 0, 1);
+            GL.TexCoord2(0, (height*ppu)/Height);
+            GL.Vertex2(0, 0);
+
+            GL.TexCoord2((width * ppu) / Width, (height * ppu) / Height);
+            GL.Vertex2(width, 0);
+
+            GL.TexCoord2((width * ppu) / Width, 0);
+            GL.Vertex2(width, height);
+
+            GL.TexCoord2(0, 0);
+            GL.Vertex2(0, height);
+
+            GL.End();
+        }
+
 
         public void DrawAtWidth ( float newWidth )
         {
