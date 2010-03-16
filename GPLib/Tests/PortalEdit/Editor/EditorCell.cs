@@ -214,9 +214,14 @@ namespace PortalEdit
             float highestPoint = Math.Max(geo.UpperZ[0], geo.UpperZ[1]);
             float lowestPoint = Math.Min(geo.LowerZ[0], geo.LowerZ[1]);
 
-            float lightmapX = geo.Lightmap.Map.Width / geo.Lightmap.UnitSize;
-            float lightmapY = geo.Lightmap.Map.Height / geo.Lightmap.UnitSize;
+            float lightmapX = 1;
+            float lightmapY = 1;
 
+            if (geo.Lightmap.Map != null)
+            {
+                lightmapX = geo.Lightmap.Map.Width / geo.Lightmap.UnitSize;
+                lightmapY = geo.Lightmap.Map.Height / geo.Lightmap.UnitSize;
+            }
             float edgeDistance = cell.EdgeDistance(edge);
 
             float EPU = edgeDistance / lightmapX;
@@ -390,8 +395,13 @@ namespace PortalEdit
 
             Vector2 minPoint = cell.FindMinXY();
 
-            float lightmapX = lightmap.Map.Width /lightmap.UnitSize;
-            float lightmapY = lightmap.Map.Height / lightmap.UnitSize;
+            float lightmapX = 1; 
+            float lightmapY = 1; 
+            if (lightmap.Map != null)
+            {
+                lightmapX = lightmap.Map.Width / lightmap.UnitSize;
+                lightmapY = lightmap.Map.Height / lightmap.UnitSize;
+            }
 
             CellVert start = cell.Verts[cell.Edges[0].Start];
             if (floor)
