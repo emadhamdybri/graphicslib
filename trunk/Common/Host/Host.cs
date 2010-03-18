@@ -36,6 +36,8 @@ namespace Hosts
     public delegate void MonitoringEvent(object sender, MonitoringEventArgs args);
     public delegate void AllowEvent(object sender, NetConnection connection, out bool allow, out String reason);
 
+    public delegate int GetMaxConnectionsCallback(object sender );
+
     public class Host
     {
         public event MonitoringEvent Connect;
@@ -43,6 +45,8 @@ namespace Hosts
         public event MonitoringEvent DebugMessage;
         public event MonitoringEvent Quiting;
         public event AllowEvent AllowConnection;
+
+        public GetMaxConnectionsCallback MaxConnections;
 
         public static NetChannel GeneralChannel = NetChannel.ReliableInOrder1;
 
@@ -79,15 +83,12 @@ namespace Hosts
             Init(2501);
         }
 
-        protected virtual int GetConnections ()
-        {
-            return 128;
-        }
-
         protected virtual void Init (int port)
         {
             netConfig = new NetConfiguration("GameApp");
-            netConfig.MaxConnections = GetConnections();
+            netConfig.MaxConnections = 128;
+            if (MaxConnections != null)
+                netConfig.MaxConnections = MaxConnections(this);
             netConfig.Port = port;
 
             netThread = new Thread(new ThreadStart(Run));
