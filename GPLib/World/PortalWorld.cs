@@ -12,6 +12,7 @@ using Math3D;
 
 namespace World
 {
+    [Serializable]
     public class CellVert
     {
         public Vector3 Bottom;
@@ -41,6 +42,7 @@ namespace World
         }
     }
 
+    [Serializable]
     public enum CellEdgeType
     {
         Unknown,
@@ -48,6 +50,7 @@ namespace World
         Portal,
     }
 
+    [Serializable]
     public class CellID
     {
         public static CellID Empty = new CellID(string.Empty,string.Empty);
@@ -63,6 +66,7 @@ namespace World
         }
     }
 
+    [Serializable]
     public class CellMaterialInfo
     {
         public static CellMaterialInfo Empty = new CellMaterialInfo();
@@ -90,6 +94,7 @@ namespace World
         }
     }
 
+    [Serializable]
     public class PortalDestination
     {
         [System.Xml.Serialization.XmlIgnoreAttribute]
@@ -143,6 +148,7 @@ namespace World
         }
     }
 
+    [Serializable]
     public class LightmapInfo
     {
         public float UnitSize = 8;
@@ -153,6 +159,7 @@ namespace World
         public String ID = String.Empty;
     }
 
+    [Serializable]
     public class CellWallGeometry
     {
         public bool Vizable = true;
@@ -168,6 +175,7 @@ namespace World
         public LightmapInfo Lightmap = new LightmapInfo();
     }
 
+    [Serializable]
     public class CellEdge
     {
         public bool Vizable = true;
@@ -201,6 +209,7 @@ namespace World
         }
     }
 
+    [Serializable]
     public class Cell
     {
         [System.Xml.Serialization.XmlIgnoreAttribute]
@@ -498,6 +507,7 @@ namespace World
         }
     }
 
+    [Serializable]
     public class CellGroup
     {
         public string Name = string.Empty;
@@ -562,6 +572,7 @@ namespace World
         }
     }
 
+    [Serializable]
     public class PortalMapAttribute
     {
         public PortalMapAttribute() { }
@@ -575,6 +586,7 @@ namespace World
         public string Value = string.Empty;
     }
 
+    [Serializable]
     public class PortalMapAttributes
     {
         public List<PortalMapAttribute> AttributeList = new List<PortalMapAttribute>();
@@ -635,6 +647,7 @@ namespace World
         }
     }
 
+    [Serializable]
     public class ObjectInstance
     {
         public String ObjectType = String.Empty;
@@ -651,12 +664,14 @@ namespace World
         }
     }
 
+    [Serializable]
     public enum LightType
     {
         PointLight,
         Spotlight,
     }
 
+    [Serializable]
     public class LightInstance
     {
         public Vector3 Position = new Vector3(0, 0, 1);
@@ -675,12 +690,14 @@ namespace World
         }
     }
 
+    [Serializable]
     public class LightmapBitmap
     {
         public string ID = string.Empty;
         public Byte[] buffer;
     }
 
+    [Serializable]
     public class PortalWorld
     {
         [System.Xml.Serialization.XmlIgnoreAttribute]
@@ -988,25 +1005,46 @@ namespace World
             if (!file.Exists)
                 return null;
 
+            PortalWorld world = Read(file.OpenRead(), false);
+            if (world == null)
+                world = Read(file.OpenRead(), true);
+
+            return world;
+        }
+
+        public static PortalWorld Read(Stream stream, bool compressed)
+        {
             XmlSerializer XML = new XmlSerializer(typeof(PortalWorld));
 
             PortalWorld map = null;
-            FileStream fileStream = file.OpenRead();
-            try
+            if (!compressed)
             {
-                map = (PortalWorld)XML.Deserialize(fileStream);
+                try
+                {
+                    map = (PortalWorld)XML.Deserialize(stream);
+                }
+                catch (System.Exception ex)
+                {
+                    stream.Close();
+                    return null;
+                }
             }
-            catch (System.Exception ex)
+            else
             {
-                fileStream.Close();
-                fileStream = file.OpenRead();
-
-                GZipStream compressionStream = new GZipStream(fileStream, CompressionMode.Decompress);
-                map = (PortalWorld)XML.Deserialize(compressionStream);
-                compressionStream.Close();
+                try
+                {
+                    GZipStream compressionStream = new GZipStream(stream, CompressionMode.Decompress);
+                    map = (PortalWorld)XML.Deserialize(compressionStream);
+                    compressionStream.Close();
+                }
+                catch (System.Exception ex)
+                {
+                    stream.Close();
+                    return null;
+                }
             }
 
-            fileStream.Close();
+            stream.Close();
 
             if (map != null)
             {
@@ -1023,6 +1061,22 @@ namespace World
         }
 
         public bool Write(FileInfo file, bool compress)
+        {
+            if (file.Exists)
+            {
+                try
+                {
+                    file.Delete();
+                }
+                catch (System.Exception ex)
+                {
+
+                }
+            }
+            return Write(file.OpenWrite(), compress);
+        }
+
+        public bool Write(Stream stream, bool compress)
         {
             XmlSerializer XML = new XmlSerializer(typeof(PortalWorld));
 
@@ -1043,30 +1097,18 @@ namespace World
 
             writeMap.StoreLightmaps();
 
-            if (file.Exists)
-            {
-                try
-                {
-                    file.Delete();
-                }
-                catch (System.Exception ex)
-                {
-                	
-                }
-            }
             try
             {
-                FileStream fileStream = file.OpenWrite();
                 if (compress)
                 {
-                    GZipStream compression = new GZipStream(fileStream, CompressionMode.Compress);
+                    GZipStream compression = new GZipStream(stream, CompressionMode.Compress);
                     XML.Serialize(compression, writeMap);
                     compression.Close();
                 }
                 else
-                    XML.Serialize(fileStream, writeMap);
+                    XML.Serialize(stream, writeMap);
 
-                fileStream.Close();
+                stream.Close();
             }
             catch (System.Exception ex)
             {
