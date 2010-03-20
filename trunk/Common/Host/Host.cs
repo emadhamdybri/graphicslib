@@ -300,6 +300,8 @@ namespace Hosts
                                 server.SendToAll(send.message, send.channel);
                             else
                                 server.SendMessage(send.message, send.to, send.channel);
+
+                           // send.message.Reset();
                         }
                     }
                 }
