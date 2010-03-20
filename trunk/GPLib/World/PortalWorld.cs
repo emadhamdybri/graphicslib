@@ -975,6 +975,25 @@ namespace World
             return cells;
         }
 
+        public void FlushLightmaps ()
+        {
+            Lightmaps.Clear();
+            foreach (CellGroup group in CellGroups)
+            {
+                foreach (Cell cell in group.Cells)
+                {
+                    cell.FloorLightmap = null;
+                    cell.RoofLightmap = null;
+
+                    foreach (CellEdge edge in cell.Edges)
+                    {
+                        foreach (CellWallGeometry geo in edge.Geometry)
+                            geo.Lightmap.Map = null;
+                    }
+                }
+            }
+        }
+
         public void RebindCells()
         {
             foreach (CellGroup group in CellGroups)
@@ -1021,7 +1040,9 @@ namespace World
             {
                 try
                 {
-                    map = (PortalWorld)XML.Deserialize(stream);
+                    StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+                    map = (PortalWorld)XML.Deserialize(reader);
+                    reader.Close();
                 }
                 catch (System.Exception ex)
                 {
@@ -1073,7 +1094,10 @@ namespace World
 
                 }
             }
-            return Write(file.OpenWrite(), compress);
+            FileStream fs = file.OpenWrite();
+            bool ret = Write(fs, compress);
+            fs.Close();
+            return ret;
         }
 
         public bool Write(Stream stream, bool compress)
@@ -1106,9 +1130,11 @@ namespace World
                     compression.Close();
                 }
                 else
-                    XML.Serialize(stream, writeMap);
-
-                stream.Close();
+                {
+                    StreamWriter writer = new StreamWriter(stream);
+                    XML.Serialize(writer, writeMap);
+                    writer.Close();
+                }
             }
             catch (System.Exception ex)
             {
