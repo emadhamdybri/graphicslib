@@ -205,7 +205,7 @@ namespace World
             EdgeType = e.EdgeType;
             foreach (PortalDestination dest in e.Destinations)
                 Destinations.Add(new PortalDestination(dest));
-            Normal = new Vector2(e.Normal);
+            Normal = new Vector2(e.Normal.X, e.Normal.Y);
         }
     }
 
@@ -447,7 +447,7 @@ namespace World
             if (t > 1.0f)
                 t = 1.0f;
 
-            Vector2 closest = new Vector2(Verts[edge.Start].Bottom) + t * dir;
+            Vector2 closest = new Vector2(Verts[edge.Start].Bottom.X,Verts[edge.Start].Bottom.Y) + t * dir;
 
             Vector2 d = center - closest;
 
@@ -474,7 +474,7 @@ namespace World
         public Vector2 FindMinXY ( )
         {
             // find the lower left
-            Vector2 v = new Vector2(FloorPoint(0));
+            Vector2 v = new Vector2(FloorPoint(0).X, FloorPoint(0).Y);
             for (int i = 1; i < Verts.Count; i++)
             {
                 if (Verts[i].Bottom.X < v.X)
@@ -492,7 +492,7 @@ namespace World
         public Vector2 FindMaxXY()
         {
             // find the lower left
-            Vector2 v = new Vector2(FloorPoint(0));
+            Vector2 v = new Vector2(FloorPoint(0).X, FloorPoint(0).Y);
             for (int i = 1; i < Verts.Count; i++)
             {
                 if (Verts[i].Bottom.X > v.X)
@@ -1033,6 +1033,9 @@ namespace World
 
         public static PortalWorld Read(Stream stream, bool compressed)
         {
+            if (stream == null)
+                return null;
+
             XmlSerializer XML = new XmlSerializer(typeof(PortalWorld));
 
             PortalWorld map = null;
@@ -1044,7 +1047,7 @@ namespace World
                     map = (PortalWorld)XML.Deserialize(reader);
                     reader.Close();
                 }
-                catch (System.Exception ex)
+                catch (System.Exception /*ex*/)
                 {
                     stream.Close();
                     return null;
@@ -1058,7 +1061,7 @@ namespace World
                     map = (PortalWorld)XML.Deserialize(compressionStream);
                     compressionStream.Close();
                 }
-                catch (System.Exception ex)
+                catch (System.Exception /*ex*/)
                 {
                     stream.Close();
                     return null;
@@ -1089,7 +1092,7 @@ namespace World
                 {
                     file.Delete();
                 }
-                catch (System.Exception ex)
+                catch (System.Exception /*ex*/)
                 {
 
                 }
@@ -1136,7 +1139,7 @@ namespace World
                     writer.Close();
                 }
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
                 return false;
             }
