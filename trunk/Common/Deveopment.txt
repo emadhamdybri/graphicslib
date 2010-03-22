@@ -1,0 +1,11 @@
+++Commiting++
+
+==Repository==
+The repository for the code base can be found at http://code.google.com/p/opencombat/
+
+==Developer License Transfer==
+By committing works (art, code, info, etc..) to the project code-base, the developer is IN GOOD AND VALUABLE CONSIDERATION, giving the project maintainer(Jeffery Myers) and its successor a non-exclusive, irrevocable, unrestricted rights to the work as they see fit. This includes rights to modify, distribute, transfer, re-license, and claim copyright over the copy of the work that is submitted. These rights are granted in perpetuity, and contain all rights (whether now known or hereinafter invented), title, and interest, throughout the world, including any copyrights and renewals or extensions thereto.
+
+The original author of the work retains full rights to there own copy of the work, and works derived from the original work, and may do with them as they see fit. This includes rights to modify, distribute, transfer, re-license the work as they wish, treating it as separate entity from the original work. If the work is a derived work from another licensed work then that original works license shall also be in effect.
+
+The original author and/or submitters agrees to not bring suit or claim, against the project maintainer(s) or successors for rights of the original submitted work.
