@@ -197,7 +197,7 @@ namespace MD3ReaderTest
             AnimationSequence torsoSelect = null;
             AnimationSequence legSelet = null;
 
-            if (character.Sequences.ContainsKey("torso"))
+            if (character != null && character.Sequences.ContainsKey("torso"))
             {
                 foreach (AnimationSequence seq in character.Sequences["torso"])
                 {
@@ -207,7 +207,7 @@ namespace MD3ReaderTest
                 }
             }
 
-            if (character.Sequences.ContainsKey("legs"))
+            if (character != null && character.Sequences.ContainsKey("legs"))
             {
                 foreach (AnimationSequence seq in character.Sequences["legs"])
                 {
