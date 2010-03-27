@@ -626,6 +626,17 @@ namespace World
             return foundItems.ToArray();
         }
 
+        public bool FindAttributeWithValue ( string name, string val )
+        {
+            foreach (PortalMapAttribute item in AttributeList)
+            {
+                if (item.Name == name)
+                    if (item.Value == val)
+                        return true;
+            }
+            return false;
+        }
+
         public void Add(string name, string value)
         {
             foreach (PortalMapAttribute item in AttributeList)
