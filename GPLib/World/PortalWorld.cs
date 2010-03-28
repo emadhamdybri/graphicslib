@@ -698,6 +698,7 @@ namespace World
     {
         PointLight,
         Spotlight,
+        VectorLight,
     }
 
     [Serializable]
@@ -715,7 +716,9 @@ namespace World
             string name = "Point";
             if (Type == LightType.Spotlight)
                 name = "Spot";
-            return name + "(" + Position.ToString() + ")";
+            if (Type == LightType.VectorLight)
+                name = "Vector";
+            return name + " (" + Position.ToString() + ")";
         }
     }
 
