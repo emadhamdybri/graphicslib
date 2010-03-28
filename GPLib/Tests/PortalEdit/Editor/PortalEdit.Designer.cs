@@ -16,6 +16,7 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 namespace PortalEdit
 {
     partial class EditFrame
@@ -64,23 +65,11 @@ namespace PortalEdit
             this.EditZMinus = new System.Windows.Forms.TextBox();
             this.ZMinusLabel = new System.Windows.Forms.Label();
             this.MapEditToolsPanel = new System.Windows.Forms.Panel();
-            this.MapRadioPanel = new FormControls.ImageRadioPanel();
-            this.LightingModeButton = new System.Windows.Forms.Button();
-            this.EditVertButton = new System.Windows.Forms.Button();
-            this.SelectButton = new System.Windows.Forms.Button();
-            this.DrawButton = new System.Windows.Forms.Button();
             this.MapZoomPanel = new System.Windows.Forms.Panel();
             this.ResetZoom = new System.Windows.Forms.Button();
             this.MapZoomOut = new System.Windows.Forms.Button();
             this.MapZoomIn = new System.Windows.Forms.Button();
             this.MapView = new System.Windows.Forms.PictureBox();
-            this.ViewCheckPanel = new FormControls.ImageCheckPanel();
-            this.ShowUnderlay = new System.Windows.Forms.Button();
-            this.ShowPortals = new System.Windows.Forms.Button();
-            this.ShowCellEdges = new System.Windows.Forms.Button();
-            this.ViewRadioPanel = new FormControls.ImageRadioPanel();
-            this.CellFillMode = new System.Windows.Forms.Button();
-            this.CellSelectButton = new System.Windows.Forms.Button();
             this.GLView = new OpenTK.GLControl();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -182,6 +171,21 @@ namespace PortalEdit
             this.duplicateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LightInfo = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.LightItemType = new System.Windows.Forms.ComboBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.LightPosX = new System.Windows.Forms.NumericUpDown();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.LightPosZ = new System.Windows.Forms.NumericUpDown();
+            this.LightPosY = new System.Windows.Forms.NumericUpDown();
+            this.label15 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.LightVecX = new System.Windows.Forms.NumericUpDown();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.LightVecZ = new System.Windows.Forms.NumericUpDown();
+            this.LightVecY = new System.Windows.Forms.NumericUpDown();
+            this.label19 = new System.Windows.Forms.Label();
             this.AmbientLabel = new System.Windows.Forms.Label();
             this.MinRad = new System.Windows.Forms.NumericUpDown();
             this.AmbientLevel = new System.Windows.Forms.NumericUpDown();
@@ -193,6 +197,20 @@ namespace PortalEdit
             this.NewLight = new System.Windows.Forms.ToolStripMenuItem();
             this.RemoveLight = new System.Windows.Forms.ToolStripMenuItem();
             this.DefaultImages = new System.Windows.Forms.ImageList(this.components);
+            this.MapRadioPanel = new PortalEdit.ImageRadioPanel();
+            this.LightingModeButton = new System.Windows.Forms.Button();
+            this.EditVertButton = new System.Windows.Forms.Button();
+            this.SelectButton = new System.Windows.Forms.Button();
+            this.DrawButton = new System.Windows.Forms.Button();
+            this.ViewCheckPanel = new PortalEdit.ImageCheckPanel();
+            this.ShowUnderlay = new System.Windows.Forms.Button();
+            this.ShowPortals = new System.Windows.Forms.Button();
+            this.ShowCellEdges = new System.Windows.Forms.Button();
+            this.ViewRadioPanel = new PortalEdit.ImageRadioPanel();
+            this.CellFillMode = new System.Windows.Forms.Button();
+            this.CellSelectButton = new System.Windows.Forms.Button();
+            this.label20 = new System.Windows.Forms.Label();
+            this.SpotCone = new System.Windows.Forms.NumericUpDown();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -201,11 +219,8 @@ namespace PortalEdit
             ((System.ComponentModel.ISupportInitialize)(this.HideBelowZ)).BeginInit();
             this.DepthEditPanel.SuspendLayout();
             this.MapEditToolsPanel.SuspendLayout();
-            this.MapRadioPanel.SuspendLayout();
             this.MapZoomPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapView)).BeginInit();
-            this.ViewCheckPanel.SuspendLayout();
-            this.ViewRadioPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.GroupRightMouseMenu.SuspendLayout();
@@ -235,10 +250,22 @@ namespace PortalEdit
             this.ObjectListMenuStrip.SuspendLayout();
             this.LightInfo.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LightPosX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LightPosZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LightPosY)).BeginInit();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LightVecX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LightVecZ)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LightVecY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinRad)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AmbientLevel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LightIntensity)).BeginInit();
             this.LightListRMM.SuspendLayout();
+            this.MapRadioPanel.SuspendLayout();
+            this.ViewCheckPanel.SuspendLayout();
+            this.ViewRadioPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SpotCone)).BeginInit();
             this.SuspendLayout();
             // 
             // MainContainer
@@ -264,8 +291,8 @@ namespace PortalEdit
             this.MainContainer.Panel2.Controls.Add(this.ViewRadioPanel);
             this.MainContainer.Panel2.Controls.Add(this.GLView);
             this.MainContainer.Panel2MinSize = 120;
-            this.MainContainer.Size = new System.Drawing.Size(838, 513);
-            this.MainContainer.SplitterDistance = 418;
+            this.MainContainer.Size = new System.Drawing.Size(843, 586);
+            this.MainContainer.SplitterDistance = 420;
             this.MainContainer.TabIndex = 0;
             // 
             // panel1
@@ -445,68 +472,8 @@ namespace PortalEdit
             this.MapEditToolsPanel.Controls.Add(this.MapZoomPanel);
             this.MapEditToolsPanel.Location = new System.Drawing.Point(3, 3);
             this.MapEditToolsPanel.Name = "MapEditToolsPanel";
-            this.MapEditToolsPanel.Size = new System.Drawing.Size(403, 29);
+            this.MapEditToolsPanel.Size = new System.Drawing.Size(405, 29);
             this.MapEditToolsPanel.TabIndex = 5;
-            // 
-            // MapRadioPanel
-            // 
-            this.MapRadioPanel.Controls.Add(this.LightingModeButton);
-            this.MapRadioPanel.Controls.Add(this.EditVertButton);
-            this.MapRadioPanel.Controls.Add(this.SelectButton);
-            this.MapRadioPanel.Controls.Add(this.DrawButton);
-            this.MapRadioPanel.HighlightBGColor = System.Drawing.Color.DarkGoldenrod;
-            this.MapRadioPanel.HighlightColor = System.Drawing.Color.AliceBlue;
-            this.MapRadioPanel.Location = new System.Drawing.Point(3, 0);
-            this.MapRadioPanel.Name = "MapRadioPanel";
-            this.MapRadioPanel.SelectedItem = null;
-            this.MapRadioPanel.Size = new System.Drawing.Size(114, 26);
-            this.MapRadioPanel.TabIndex = 3;
-            this.MapRadioPanel.TagsAreValues = false;
-            // 
-            // LightingModeButton
-            // 
-            this.LightingModeButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.LightingModeButton.Image = ((System.Drawing.Image)(resources.GetObject("LightingModeButton.Image")));
-            this.LightingModeButton.Location = new System.Drawing.Point(83, 1);
-            this.LightingModeButton.Name = "LightingModeButton";
-            this.LightingModeButton.Size = new System.Drawing.Size(25, 23);
-            this.LightingModeButton.TabIndex = 4;
-            this.LightingModeButton.Tag = PortalEdit.MapEditMode.EditLightMode;
-            this.LightingModeButton.UseVisualStyleBackColor = true;
-            // 
-            // EditVertButton
-            // 
-            this.EditVertButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.EditVertButton.Image = ((System.Drawing.Image)(resources.GetObject("EditVertButton.Image")));
-            this.EditVertButton.Location = new System.Drawing.Point(55, 1);
-            this.EditVertButton.Name = "EditVertButton";
-            this.EditVertButton.Size = new System.Drawing.Size(25, 23);
-            this.EditVertButton.TabIndex = 3;
-            this.EditVertButton.Tag = PortalEdit.MapEditMode.EditVertMode;
-            this.EditVertButton.UseVisualStyleBackColor = true;
-            // 
-            // SelectButton
-            // 
-            this.SelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.SelectButton.Image = ((System.Drawing.Image)(resources.GetObject("SelectButton.Image")));
-            this.SelectButton.Location = new System.Drawing.Point(29, 1);
-            this.SelectButton.Name = "SelectButton";
-            this.SelectButton.Size = new System.Drawing.Size(25, 23);
-            this.SelectButton.TabIndex = 2;
-            this.SelectButton.Tag = PortalEdit.MapEditMode.SelectMode;
-            this.SelectButton.UseVisualStyleBackColor = true;
-            // 
-            // DrawButton
-            // 
-            this.DrawButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.DrawButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.DrawButton.Image = ((System.Drawing.Image)(resources.GetObject("DrawButton.Image")));
-            this.DrawButton.Location = new System.Drawing.Point(3, 1);
-            this.DrawButton.Name = "DrawButton";
-            this.DrawButton.Size = new System.Drawing.Size(25, 23);
-            this.DrawButton.TabIndex = 1;
-            this.DrawButton.Tag = PortalEdit.MapEditMode.DrawMode;
-            this.DrawButton.UseVisualStyleBackColor = true;
             // 
             // MapZoomPanel
             // 
@@ -514,7 +481,7 @@ namespace PortalEdit
             this.MapZoomPanel.Controls.Add(this.ResetZoom);
             this.MapZoomPanel.Controls.Add(this.MapZoomOut);
             this.MapZoomPanel.Controls.Add(this.MapZoomIn);
-            this.MapZoomPanel.Location = new System.Drawing.Point(296, 0);
+            this.MapZoomPanel.Location = new System.Drawing.Point(298, 0);
             this.MapZoomPanel.Name = "MapZoomPanel";
             this.MapZoomPanel.Size = new System.Drawing.Size(100, 25);
             this.MapZoomPanel.TabIndex = 4;
@@ -557,92 +524,9 @@ namespace PortalEdit
             this.MapView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.MapView.Location = new System.Drawing.Point(3, 109);
             this.MapView.Name = "MapView";
-            this.MapView.Size = new System.Drawing.Size(407, 399);
+            this.MapView.Size = new System.Drawing.Size(409, 472);
             this.MapView.TabIndex = 0;
             this.MapView.TabStop = false;
-            // 
-            // ViewCheckPanel
-            // 
-            this.ViewCheckPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.ViewCheckPanel.Controls.Add(this.ShowUnderlay);
-            this.ViewCheckPanel.Controls.Add(this.ShowPortals);
-            this.ViewCheckPanel.Controls.Add(this.ShowCellEdges);
-            this.ViewCheckPanel.HighlightBGColor = System.Drawing.Color.CadetBlue;
-            this.ViewCheckPanel.HighlightColor = System.Drawing.Color.BlueViolet;
-            this.ViewCheckPanel.Location = new System.Drawing.Point(3, 3);
-            this.ViewCheckPanel.Name = "ViewCheckPanel";
-            this.ViewCheckPanel.SelectedItem = null;
-            this.ViewCheckPanel.Size = new System.Drawing.Size(400, 37);
-            this.ViewCheckPanel.TabIndex = 0;
-            // 
-            // ShowUnderlay
-            // 
-            this.ShowUnderlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShowUnderlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowUnderlay.Image = ((System.Drawing.Image)(resources.GetObject("ShowUnderlay.Image")));
-            this.ShowUnderlay.Location = new System.Drawing.Point(353, 1);
-            this.ShowUnderlay.Name = "ShowUnderlay";
-            this.ShowUnderlay.Size = new System.Drawing.Size(36, 36);
-            this.ShowUnderlay.TabIndex = 2;
-            this.ShowUnderlay.UseVisualStyleBackColor = true;
-            // 
-            // ShowPortals
-            // 
-            this.ShowPortals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowPortals.Image = ((System.Drawing.Image)(resources.GetObject("ShowPortals.Image")));
-            this.ShowPortals.Location = new System.Drawing.Point(37, 0);
-            this.ShowPortals.Name = "ShowPortals";
-            this.ShowPortals.Size = new System.Drawing.Size(36, 36);
-            this.ShowPortals.TabIndex = 1;
-            this.ShowPortals.UseVisualStyleBackColor = true;
-            // 
-            // ShowCellEdges
-            // 
-            this.ShowCellEdges.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowCellEdges.Image = ((System.Drawing.Image)(resources.GetObject("ShowCellEdges.Image")));
-            this.ShowCellEdges.Location = new System.Drawing.Point(0, 0);
-            this.ShowCellEdges.Name = "ShowCellEdges";
-            this.ShowCellEdges.Size = new System.Drawing.Size(36, 36);
-            this.ShowCellEdges.TabIndex = 0;
-            this.ShowCellEdges.UseVisualStyleBackColor = true;
-            // 
-            // ViewRadioPanel
-            // 
-            this.ViewRadioPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.ViewRadioPanel.Controls.Add(this.CellFillMode);
-            this.ViewRadioPanel.Controls.Add(this.CellSelectButton);
-            this.ViewRadioPanel.HighlightBGColor = System.Drawing.Color.DarkGoldenrod;
-            this.ViewRadioPanel.HighlightColor = System.Drawing.Color.AliceBlue;
-            this.ViewRadioPanel.Location = new System.Drawing.Point(3, 45);
-            this.ViewRadioPanel.Name = "ViewRadioPanel";
-            this.ViewRadioPanel.SelectedItem = null;
-            this.ViewRadioPanel.Size = new System.Drawing.Size(354, 26);
-            this.ViewRadioPanel.TabIndex = 4;
-            this.ViewRadioPanel.TagsAreValues = false;
-            // 
-            // CellFillMode
-            // 
-            this.CellFillMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CellFillMode.Image = ((System.Drawing.Image)(resources.GetObject("CellFillMode.Image")));
-            this.CellFillMode.Location = new System.Drawing.Point(34, 1);
-            this.CellFillMode.Name = "CellFillMode";
-            this.CellFillMode.Size = new System.Drawing.Size(25, 23);
-            this.CellFillMode.TabIndex = 3;
-            this.CellFillMode.Tag = PortalEdit.ViewEditMode.Paint;
-            this.CellFillMode.UseVisualStyleBackColor = true;
-            // 
-            // CellSelectButton
-            // 
-            this.CellSelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CellSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("CellSelectButton.Image")));
-            this.CellSelectButton.Location = new System.Drawing.Point(3, 1);
-            this.CellSelectButton.Name = "CellSelectButton";
-            this.CellSelectButton.Size = new System.Drawing.Size(25, 23);
-            this.CellSelectButton.TabIndex = 2;
-            this.CellSelectButton.Tag = PortalEdit.ViewEditMode.Select;
-            this.CellSelectButton.UseVisualStyleBackColor = true;
             // 
             // GLView
             // 
@@ -653,7 +537,7 @@ namespace PortalEdit
             this.GLView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.GLView.Location = new System.Drawing.Point(3, 77);
             this.GLView.Name = "GLView";
-            this.GLView.Size = new System.Drawing.Size(408, 427);
+            this.GLView.Size = new System.Drawing.Size(411, 500);
             this.GLView.TabIndex = 0;
             this.GLView.VSync = false;
             // 
@@ -665,7 +549,7 @@ namespace PortalEdit
             this.toolsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1106, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1111, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -891,9 +775,9 @@ namespace PortalEdit
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MousePositionStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 543);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 616);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1106, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1111, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -953,7 +837,7 @@ namespace PortalEdit
             this.SidebarSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.SidebarSplitter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.SidebarSplitter.Location = new System.Drawing.Point(844, 27);
+            this.SidebarSplitter.Location = new System.Drawing.Point(849, 27);
             this.SidebarSplitter.Name = "SidebarSplitter";
             this.SidebarSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -964,8 +848,8 @@ namespace PortalEdit
             // SidebarSplitter.Panel2
             // 
             this.SidebarSplitter.Panel2.Controls.Add(this.CellTabControl);
-            this.SidebarSplitter.Size = new System.Drawing.Size(262, 509);
-            this.SidebarSplitter.SplitterDistance = 170;
+            this.SidebarSplitter.Size = new System.Drawing.Size(262, 582);
+            this.SidebarSplitter.SplitterDistance = 194;
             this.SidebarSplitter.TabIndex = 12;
             // 
             // MapTree
@@ -980,7 +864,7 @@ namespace PortalEdit
             this.MapTree.Location = new System.Drawing.Point(3, 3);
             this.MapTree.Name = "MapTree";
             this.MapTree.SelectedImageIndex = 0;
-            this.MapTree.Size = new System.Drawing.Size(254, 162);
+            this.MapTree.Size = new System.Drawing.Size(254, 186);
             this.MapTree.TabIndex = 7;
             this.MapTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MapTree_AfterSelect);
             this.MapTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.MapTree_NodeMouseClick);
@@ -1023,7 +907,7 @@ namespace PortalEdit
             this.CellTabControl.Multiline = true;
             this.CellTabControl.Name = "CellTabControl";
             this.CellTabControl.SelectedIndex = 0;
-            this.CellTabControl.Size = new System.Drawing.Size(254, 331);
+            this.CellTabControl.Size = new System.Drawing.Size(254, 380);
             this.CellTabControl.TabIndex = 11;
             // 
             // CellInfo
@@ -1038,7 +922,7 @@ namespace PortalEdit
             this.CellInfo.Location = new System.Drawing.Point(4, 49);
             this.CellInfo.Name = "CellInfo";
             this.CellInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.CellInfo.Size = new System.Drawing.Size(246, 278);
+            this.CellInfo.Size = new System.Drawing.Size(246, 327);
             this.CellInfo.TabIndex = 0;
             this.CellInfo.Text = "Cell";
             this.CellInfo.UseVisualStyleBackColor = true;
@@ -1121,7 +1005,7 @@ namespace PortalEdit
             this.VertInfo.Location = new System.Drawing.Point(4, 49);
             this.VertInfo.Name = "VertInfo";
             this.VertInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.VertInfo.Size = new System.Drawing.Size(246, 278);
+            this.VertInfo.Size = new System.Drawing.Size(246, 327);
             this.VertInfo.TabIndex = 1;
             this.VertInfo.Text = "Verts";
             this.VertInfo.UseVisualStyleBackColor = true;
@@ -1130,7 +1014,7 @@ namespace PortalEdit
             // 
             this.CellInfoZIsInc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.CellInfoZIsInc.AutoSize = true;
-            this.CellInfoZIsInc.Location = new System.Drawing.Point(3, 387);
+            this.CellInfoZIsInc.Location = new System.Drawing.Point(3, 699);
             this.CellInfoZIsInc.Name = "CellInfoZIsInc";
             this.CellInfoZIsInc.Size = new System.Drawing.Size(139, 17);
             this.CellInfoZIsInc.TabIndex = 2;
@@ -1161,7 +1045,7 @@ namespace PortalEdit
             this.CellVertList.RowHeadersWidth = 4;
             this.CellVertList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.CellVertList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.CellVertList.Size = new System.Drawing.Size(191, 314);
+            this.CellVertList.Size = new System.Drawing.Size(191, 626);
             this.CellVertList.TabIndex = 0;
             this.CellVertList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellVertList_CellValueChanged);
             this.CellVertList.SelectionChanged += new System.EventHandler(this.CellVertList_SelectionChanged);
@@ -1236,7 +1120,7 @@ namespace PortalEdit
             this.EdgeInfo.Controls.Add(this.CellEdgeList);
             this.EdgeInfo.Location = new System.Drawing.Point(4, 49);
             this.EdgeInfo.Name = "EdgeInfo";
-            this.EdgeInfo.Size = new System.Drawing.Size(246, 278);
+            this.EdgeInfo.Size = new System.Drawing.Size(246, 327);
             this.EdgeInfo.TabIndex = 2;
             this.EdgeInfo.Text = "Edges";
             this.EdgeInfo.UseVisualStyleBackColor = true;
@@ -1261,7 +1145,7 @@ namespace PortalEdit
             this.CellEdgeList.RowHeadersWidth = 4;
             this.CellEdgeList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.CellEdgeList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.CellEdgeList.Size = new System.Drawing.Size(191, 320);
+            this.CellEdgeList.Size = new System.Drawing.Size(191, 632);
             this.CellEdgeList.TabIndex = 1;
             this.CellEdgeList.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.CellEdgeList_CellValueChanged);
             // 
@@ -1304,7 +1188,7 @@ namespace PortalEdit
             this.FaceInfo.Controls.Add(this.FaceMatInfo);
             this.FaceInfo.Location = new System.Drawing.Point(4, 49);
             this.FaceInfo.Name = "FaceInfo";
-            this.FaceInfo.Size = new System.Drawing.Size(246, 278);
+            this.FaceInfo.Size = new System.Drawing.Size(246, 327);
             this.FaceInfo.TabIndex = 3;
             this.FaceInfo.Text = "Face";
             this.FaceInfo.UseVisualStyleBackColor = true;
@@ -1313,7 +1197,7 @@ namespace PortalEdit
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(86, 270);
+            this.label6.Location = new System.Drawing.Point(86, 582);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(14, 13);
             this.label6.TabIndex = 10;
@@ -1323,7 +1207,7 @@ namespace PortalEdit
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 270);
+            this.label7.Location = new System.Drawing.Point(3, 582);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(15, 13);
             this.label7.TabIndex = 9;
@@ -1338,7 +1222,7 @@ namespace PortalEdit
             0,
             0,
             196608});
-            this.VScale.Location = new System.Drawing.Point(106, 268);
+            this.VScale.Location = new System.Drawing.Point(106, 580);
             this.VScale.Minimum = new decimal(new int[] {
             100,
             0,
@@ -1358,7 +1242,7 @@ namespace PortalEdit
             0,
             0,
             196608});
-            this.UScale.Location = new System.Drawing.Point(24, 268);
+            this.UScale.Location = new System.Drawing.Point(24, 580);
             this.UScale.Minimum = new decimal(new int[] {
             100,
             0,
@@ -1373,7 +1257,7 @@ namespace PortalEdit
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 252);
+            this.label8.Location = new System.Drawing.Point(3, 564);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(45, 13);
             this.label8.TabIndex = 6;
@@ -1383,7 +1267,7 @@ namespace PortalEdit
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(86, 219);
+            this.label5.Location = new System.Drawing.Point(86, 531);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(14, 13);
             this.label5.TabIndex = 5;
@@ -1393,7 +1277,7 @@ namespace PortalEdit
             // 
             this.ULabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ULabel.AutoSize = true;
-            this.ULabel.Location = new System.Drawing.Point(3, 219);
+            this.ULabel.Location = new System.Drawing.Point(3, 531);
             this.ULabel.Name = "ULabel";
             this.ULabel.Size = new System.Drawing.Size(15, 13);
             this.ULabel.TabIndex = 4;
@@ -1408,7 +1292,7 @@ namespace PortalEdit
             0,
             0,
             196608});
-            this.VShift.Location = new System.Drawing.Point(106, 217);
+            this.VShift.Location = new System.Drawing.Point(106, 529);
             this.VShift.Maximum = new decimal(new int[] {
             1,
             0,
@@ -1433,7 +1317,7 @@ namespace PortalEdit
             0,
             0,
             196608});
-            this.UShift.Location = new System.Drawing.Point(24, 217);
+            this.UShift.Location = new System.Drawing.Point(24, 529);
             this.UShift.Maximum = new decimal(new int[] {
             1,
             0,
@@ -1453,7 +1337,7 @@ namespace PortalEdit
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 201);
+            this.label4.Location = new System.Drawing.Point(3, 513);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(46, 13);
             this.label4.TabIndex = 1;
@@ -1468,7 +1352,7 @@ namespace PortalEdit
             this.FaceMatInfo.Multiline = true;
             this.FaceMatInfo.Name = "FaceMatInfo";
             this.FaceMatInfo.ReadOnly = true;
-            this.FaceMatInfo.Size = new System.Drawing.Size(195, 194);
+            this.FaceMatInfo.Size = new System.Drawing.Size(195, 506);
             this.FaceMatInfo.TabIndex = 0;
             // 
             // TextureInfo
@@ -1478,7 +1362,7 @@ namespace PortalEdit
             this.TextureInfo.Controls.Add(this.TextureList);
             this.TextureInfo.Location = new System.Drawing.Point(4, 49);
             this.TextureInfo.Name = "TextureInfo";
-            this.TextureInfo.Size = new System.Drawing.Size(246, 278);
+            this.TextureInfo.Size = new System.Drawing.Size(246, 327);
             this.TextureInfo.TabIndex = 4;
             this.TextureInfo.Text = "Textures";
             this.TextureInfo.UseVisualStyleBackColor = true;
@@ -1527,7 +1411,7 @@ namespace PortalEdit
             this.ObjectInfo.Controls.Add(this.ObjectList);
             this.ObjectInfo.Location = new System.Drawing.Point(4, 49);
             this.ObjectInfo.Name = "ObjectInfo";
-            this.ObjectInfo.Size = new System.Drawing.Size(246, 278);
+            this.ObjectInfo.Size = new System.Drawing.Size(246, 327);
             this.ObjectInfo.TabIndex = 5;
             this.ObjectInfo.Text = "Objects";
             this.ObjectInfo.UseVisualStyleBackColor = true;
@@ -1689,7 +1573,7 @@ namespace PortalEdit
             this.LightInfo.Controls.Add(this.LightList);
             this.LightInfo.Location = new System.Drawing.Point(4, 49);
             this.LightInfo.Name = "LightInfo";
-            this.LightInfo.Size = new System.Drawing.Size(246, 278);
+            this.LightInfo.Size = new System.Drawing.Size(246, 327);
             this.LightInfo.TabIndex = 6;
             this.LightInfo.Text = "Lights";
             this.LightInfo.UseVisualStyleBackColor = true;
@@ -1698,16 +1582,280 @@ namespace PortalEdit
             // 
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.label20);
+            this.panel2.Controls.Add(this.SpotCone);
+            this.panel2.Controls.Add(this.LightItemType);
+            this.panel2.Controls.Add(this.groupBox1);
+            this.panel2.Controls.Add(this.groupBox2);
             this.panel2.Controls.Add(this.AmbientLabel);
             this.panel2.Controls.Add(this.MinRad);
             this.panel2.Controls.Add(this.AmbientLevel);
             this.panel2.Controls.Add(this.label13);
             this.panel2.Controls.Add(this.label12);
             this.panel2.Controls.Add(this.LightIntensity);
-            this.panel2.Location = new System.Drawing.Point(3, 210);
+            this.panel2.Location = new System.Drawing.Point(3, 114);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(243, 65);
+            this.panel2.Size = new System.Drawing.Size(243, 210);
             this.panel2.TabIndex = 7;
+            // 
+            // LightItemType
+            // 
+            this.LightItemType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.LightItemType.FormattingEnabled = true;
+            this.LightItemType.Items.AddRange(new object[] {
+            "Point Light",
+            "Spot Light",
+            "Vector Light"});
+            this.LightItemType.Location = new System.Drawing.Point(128, 36);
+            this.LightItemType.Name = "LightItemType";
+            this.LightItemType.Size = new System.Drawing.Size(106, 21);
+            this.LightItemType.TabIndex = 15;
+            this.LightItemType.SelectedIndexChanged += new System.EventHandler(this.LightType_SelectedIndexChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.LightPosX);
+            this.groupBox1.Controls.Add(this.label14);
+            this.groupBox1.Controls.Add(this.label16);
+            this.groupBox1.Controls.Add(this.LightPosZ);
+            this.groupBox1.Controls.Add(this.LightPosY);
+            this.groupBox1.Controls.Add(this.label15);
+            this.groupBox1.Location = new System.Drawing.Point(1, 60);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(239, 48);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Position";
+            // 
+            // LightPosX
+            // 
+            this.LightPosX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.LightPosX.DecimalPlaces = 2;
+            this.LightPosX.Increment = new decimal(new int[] {
+            25,
+            0,
+            0,
+            131072});
+            this.LightPosX.Location = new System.Drawing.Point(22, 20);
+            this.LightPosX.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.LightPosX.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
+            this.LightPosX.Name = "LightPosX";
+            this.LightPosX.Size = new System.Drawing.Size(56, 20);
+            this.LightPosX.TabIndex = 7;
+            this.LightPosX.ValueChanged += new System.EventHandler(this.LightPos_ValueChanged);
+            // 
+            // label14
+            // 
+            this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(157, 24);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(14, 13);
+            this.label14.TabIndex = 12;
+            this.label14.Text = "Z";
+            // 
+            // label16
+            // 
+            this.label16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(4, 24);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(14, 13);
+            this.label16.TabIndex = 8;
+            this.label16.Text = "X";
+            // 
+            // LightPosZ
+            // 
+            this.LightPosZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.LightPosZ.DecimalPlaces = 2;
+            this.LightPosZ.Increment = new decimal(new int[] {
+            25,
+            0,
+            0,
+            131072});
+            this.LightPosZ.Location = new System.Drawing.Point(177, 20);
+            this.LightPosZ.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.LightPosZ.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
+            this.LightPosZ.Name = "LightPosZ";
+            this.LightPosZ.Size = new System.Drawing.Size(56, 20);
+            this.LightPosZ.TabIndex = 11;
+            this.LightPosZ.ValueChanged += new System.EventHandler(this.LightPos_ValueChanged);
+            // 
+            // LightPosY
+            // 
+            this.LightPosY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.LightPosY.DecimalPlaces = 2;
+            this.LightPosY.Increment = new decimal(new int[] {
+            25,
+            0,
+            0,
+            131072});
+            this.LightPosY.Location = new System.Drawing.Point(98, 20);
+            this.LightPosY.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.LightPosY.Minimum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            -2147483648});
+            this.LightPosY.Name = "LightPosY";
+            this.LightPosY.Size = new System.Drawing.Size(56, 20);
+            this.LightPosY.TabIndex = 9;
+            this.LightPosY.ValueChanged += new System.EventHandler(this.LightPos_ValueChanged);
+            // 
+            // label15
+            // 
+            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(80, 24);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(14, 13);
+            this.label15.TabIndex = 10;
+            this.label15.Text = "Y";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.LightVecX);
+            this.groupBox2.Controls.Add(this.label17);
+            this.groupBox2.Controls.Add(this.label18);
+            this.groupBox2.Controls.Add(this.LightVecZ);
+            this.groupBox2.Controls.Add(this.LightVecY);
+            this.groupBox2.Controls.Add(this.label19);
+            this.groupBox2.Location = new System.Drawing.Point(1, 114);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(238, 48);
+            this.groupBox2.TabIndex = 14;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Vector";
+            // 
+            // LightVecX
+            // 
+            this.LightVecX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.LightVecX.DecimalPlaces = 2;
+            this.LightVecX.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.LightVecX.Location = new System.Drawing.Point(22, 20);
+            this.LightVecX.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.LightVecX.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            this.LightVecX.Name = "LightVecX";
+            this.LightVecX.Size = new System.Drawing.Size(56, 20);
+            this.LightVecX.TabIndex = 7;
+            this.LightVecX.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            this.LightVecX.ValueChanged += new System.EventHandler(this.LightVec_ValueChanged);
+            // 
+            // label17
+            // 
+            this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(157, 24);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(14, 13);
+            this.label17.TabIndex = 12;
+            this.label17.Text = "Z";
+            // 
+            // label18
+            // 
+            this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(4, 24);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(14, 13);
+            this.label18.TabIndex = 8;
+            this.label18.Text = "X";
+            // 
+            // LightVecZ
+            // 
+            this.LightVecZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.LightVecZ.DecimalPlaces = 2;
+            this.LightVecZ.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.LightVecZ.Location = new System.Drawing.Point(177, 20);
+            this.LightVecZ.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.LightVecZ.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            this.LightVecZ.Name = "LightVecZ";
+            this.LightVecZ.Size = new System.Drawing.Size(56, 20);
+            this.LightVecZ.TabIndex = 11;
+            this.LightVecZ.ValueChanged += new System.EventHandler(this.LightVec_ValueChanged);
+            // 
+            // LightVecY
+            // 
+            this.LightVecY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.LightVecY.DecimalPlaces = 2;
+            this.LightVecY.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
+            this.LightVecY.Location = new System.Drawing.Point(98, 20);
+            this.LightVecY.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.LightVecY.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            this.LightVecY.Name = "LightVecY";
+            this.LightVecY.Size = new System.Drawing.Size(56, 20);
+            this.LightVecY.TabIndex = 9;
+            this.LightVecY.ValueChanged += new System.EventHandler(this.LightVec_ValueChanged);
+            // 
+            // label19
+            // 
+            this.label19.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(80, 24);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(14, 13);
+            this.label19.TabIndex = 10;
+            this.label19.Text = "Y";
             // 
             // AmbientLabel
             // 
@@ -1802,10 +1950,10 @@ namespace PortalEdit
             this.LightList.ContextMenuStrip = this.LightListRMM;
             this.LightList.HideSelection = false;
             this.LightList.LabelWrap = false;
-            this.LightList.Location = new System.Drawing.Point(0, 0);
+            this.LightList.Location = new System.Drawing.Point(3, 3);
             this.LightList.MultiSelect = false;
             this.LightList.Name = "LightList";
-            this.LightList.Size = new System.Drawing.Size(246, 204);
+            this.LightList.Size = new System.Drawing.Size(246, 105);
             this.LightList.TabIndex = 2;
             this.LightList.UseCompatibleStateImageBehavior = false;
             this.LightList.View = System.Windows.Forms.View.List;
@@ -1840,11 +1988,177 @@ namespace PortalEdit
             this.DefaultImages.Images.SetKeyName(0, "Grid.png");
             this.DefaultImages.Images.SetKeyName(1, "Folder - Pictures.png");
             // 
+            // MapRadioPanel
+            // 
+            this.MapRadioPanel.Controls.Add(this.LightingModeButton);
+            this.MapRadioPanel.Controls.Add(this.EditVertButton);
+            this.MapRadioPanel.Controls.Add(this.SelectButton);
+            this.MapRadioPanel.Controls.Add(this.DrawButton);
+            this.MapRadioPanel.HighlightBGColor = System.Drawing.Color.DarkGoldenrod;
+            this.MapRadioPanel.HighlightColor = System.Drawing.Color.AliceBlue;
+            this.MapRadioPanel.Location = new System.Drawing.Point(3, 0);
+            this.MapRadioPanel.Name = "MapRadioPanel";
+            this.MapRadioPanel.SelectedItem = null;
+            this.MapRadioPanel.Size = new System.Drawing.Size(114, 26);
+            this.MapRadioPanel.TabIndex = 3;
+            this.MapRadioPanel.TagsAreValues = false;
+            // 
+            // LightingModeButton
+            // 
+            this.LightingModeButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.LightingModeButton.Image = ((System.Drawing.Image)(resources.GetObject("LightingModeButton.Image")));
+            this.LightingModeButton.Location = new System.Drawing.Point(83, 1);
+            this.LightingModeButton.Name = "LightingModeButton";
+            this.LightingModeButton.Size = new System.Drawing.Size(25, 23);
+            this.LightingModeButton.TabIndex = 4;
+            this.LightingModeButton.Tag = PortalEdit.MapEditMode.EditLightMode;
+            this.LightingModeButton.UseVisualStyleBackColor = true;
+            // 
+            // EditVertButton
+            // 
+            this.EditVertButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.EditVertButton.Image = ((System.Drawing.Image)(resources.GetObject("EditVertButton.Image")));
+            this.EditVertButton.Location = new System.Drawing.Point(55, 1);
+            this.EditVertButton.Name = "EditVertButton";
+            this.EditVertButton.Size = new System.Drawing.Size(25, 23);
+            this.EditVertButton.TabIndex = 3;
+            this.EditVertButton.Tag = PortalEdit.MapEditMode.EditVertMode;
+            this.EditVertButton.UseVisualStyleBackColor = true;
+            // 
+            // SelectButton
+            // 
+            this.SelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.SelectButton.Image = ((System.Drawing.Image)(resources.GetObject("SelectButton.Image")));
+            this.SelectButton.Location = new System.Drawing.Point(29, 1);
+            this.SelectButton.Name = "SelectButton";
+            this.SelectButton.Size = new System.Drawing.Size(25, 23);
+            this.SelectButton.TabIndex = 2;
+            this.SelectButton.Tag = PortalEdit.MapEditMode.SelectMode;
+            this.SelectButton.UseVisualStyleBackColor = true;
+            // 
+            // DrawButton
+            // 
+            this.DrawButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.DrawButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.DrawButton.Image = ((System.Drawing.Image)(resources.GetObject("DrawButton.Image")));
+            this.DrawButton.Location = new System.Drawing.Point(3, 1);
+            this.DrawButton.Name = "DrawButton";
+            this.DrawButton.Size = new System.Drawing.Size(25, 23);
+            this.DrawButton.TabIndex = 1;
+            this.DrawButton.Tag = PortalEdit.MapEditMode.DrawMode;
+            this.DrawButton.UseVisualStyleBackColor = true;
+            // 
+            // ViewCheckPanel
+            // 
+            this.ViewCheckPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.ViewCheckPanel.Controls.Add(this.ShowUnderlay);
+            this.ViewCheckPanel.Controls.Add(this.ShowPortals);
+            this.ViewCheckPanel.Controls.Add(this.ShowCellEdges);
+            this.ViewCheckPanel.HighlightBGColor = System.Drawing.Color.CadetBlue;
+            this.ViewCheckPanel.HighlightColor = System.Drawing.Color.BlueViolet;
+            this.ViewCheckPanel.Location = new System.Drawing.Point(3, 3);
+            this.ViewCheckPanel.Name = "ViewCheckPanel";
+            this.ViewCheckPanel.SelectedItem = null;
+            this.ViewCheckPanel.Size = new System.Drawing.Size(403, 37);
+            this.ViewCheckPanel.TabIndex = 0;
+            // 
+            // ShowUnderlay
+            // 
+            this.ShowUnderlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ShowUnderlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ShowUnderlay.Image = ((System.Drawing.Image)(resources.GetObject("ShowUnderlay.Image")));
+            this.ShowUnderlay.Location = new System.Drawing.Point(356, 1);
+            this.ShowUnderlay.Name = "ShowUnderlay";
+            this.ShowUnderlay.Size = new System.Drawing.Size(36, 36);
+            this.ShowUnderlay.TabIndex = 2;
+            this.ShowUnderlay.UseVisualStyleBackColor = true;
+            // 
+            // ShowPortals
+            // 
+            this.ShowPortals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ShowPortals.Image = ((System.Drawing.Image)(resources.GetObject("ShowPortals.Image")));
+            this.ShowPortals.Location = new System.Drawing.Point(37, 0);
+            this.ShowPortals.Name = "ShowPortals";
+            this.ShowPortals.Size = new System.Drawing.Size(36, 36);
+            this.ShowPortals.TabIndex = 1;
+            this.ShowPortals.UseVisualStyleBackColor = true;
+            // 
+            // ShowCellEdges
+            // 
+            this.ShowCellEdges.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ShowCellEdges.Image = ((System.Drawing.Image)(resources.GetObject("ShowCellEdges.Image")));
+            this.ShowCellEdges.Location = new System.Drawing.Point(0, 0);
+            this.ShowCellEdges.Name = "ShowCellEdges";
+            this.ShowCellEdges.Size = new System.Drawing.Size(36, 36);
+            this.ShowCellEdges.TabIndex = 0;
+            this.ShowCellEdges.UseVisualStyleBackColor = true;
+            // 
+            // ViewRadioPanel
+            // 
+            this.ViewRadioPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.ViewRadioPanel.Controls.Add(this.CellFillMode);
+            this.ViewRadioPanel.Controls.Add(this.CellSelectButton);
+            this.ViewRadioPanel.HighlightBGColor = System.Drawing.Color.DarkGoldenrod;
+            this.ViewRadioPanel.HighlightColor = System.Drawing.Color.AliceBlue;
+            this.ViewRadioPanel.Location = new System.Drawing.Point(3, 45);
+            this.ViewRadioPanel.Name = "ViewRadioPanel";
+            this.ViewRadioPanel.SelectedItem = null;
+            this.ViewRadioPanel.Size = new System.Drawing.Size(357, 26);
+            this.ViewRadioPanel.TabIndex = 4;
+            this.ViewRadioPanel.TagsAreValues = false;
+            // 
+            // CellFillMode
+            // 
+            this.CellFillMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CellFillMode.Image = ((System.Drawing.Image)(resources.GetObject("CellFillMode.Image")));
+            this.CellFillMode.Location = new System.Drawing.Point(34, 1);
+            this.CellFillMode.Name = "CellFillMode";
+            this.CellFillMode.Size = new System.Drawing.Size(25, 23);
+            this.CellFillMode.TabIndex = 3;
+            this.CellFillMode.Tag = PortalEdit.ViewEditMode.Paint;
+            this.CellFillMode.UseVisualStyleBackColor = true;
+            // 
+            // CellSelectButton
+            // 
+            this.CellSelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CellSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("CellSelectButton.Image")));
+            this.CellSelectButton.Location = new System.Drawing.Point(3, 1);
+            this.CellSelectButton.Name = "CellSelectButton";
+            this.CellSelectButton.Size = new System.Drawing.Size(25, 23);
+            this.CellSelectButton.TabIndex = 2;
+            this.CellSelectButton.Tag = PortalEdit.ViewEditMode.Select;
+            this.CellSelectButton.UseVisualStyleBackColor = true;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(5, 178);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(29, 13);
+            this.label20.TabIndex = 16;
+            this.label20.Text = "Spot";
+            // 
+            // SpotCone
+            // 
+            this.SpotCone.DecimalPlaces = 2;
+            this.SpotCone.Location = new System.Drawing.Point(40, 176);
+            this.SpotCone.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
+            this.SpotCone.Name = "SpotCone";
+            this.SpotCone.Size = new System.Drawing.Size(65, 20);
+            this.SpotCone.TabIndex = 17;
+            this.SpotCone.ValueChanged += new System.EventHandler(this.SpotCone_ValueChanged);
+            // 
             // EditFrame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1106, 565);
+            this.ClientSize = new System.Drawing.Size(1111, 638);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.MainContainer);
             this.Controls.Add(this.SidebarSplitter);
@@ -1864,11 +2178,8 @@ namespace PortalEdit
             this.DepthEditPanel.ResumeLayout(false);
             this.DepthEditPanel.PerformLayout();
             this.MapEditToolsPanel.ResumeLayout(false);
-            this.MapRadioPanel.ResumeLayout(false);
             this.MapZoomPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MapView)).EndInit();
-            this.ViewCheckPanel.ResumeLayout(false);
-            this.ViewRadioPanel.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -1906,10 +2217,24 @@ namespace PortalEdit
             this.LightInfo.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LightPosX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LightPosZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LightPosY)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.LightVecX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LightVecZ)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LightVecY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinRad)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AmbientLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LightIntensity)).EndInit();
             this.LightListRMM.ResumeLayout(false);
+            this.MapRadioPanel.ResumeLayout(false);
+            this.ViewCheckPanel.ResumeLayout(false);
+            this.ViewRadioPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.SpotCone)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1929,15 +2254,15 @@ namespace PortalEdit
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Button DrawButton;
         private System.Windows.Forms.Button SelectButton;
-        private FormControls.ImageRadioPanel MapRadioPanel;
+        private ImageRadioPanel MapRadioPanel;
         private System.Windows.Forms.Panel MapZoomPanel;
         private System.Windows.Forms.Button MapZoomIn;
         private System.Windows.Forms.Button MapZoomOut;
-        private FormControls.ImageRadioPanel ViewRadioPanel;
+        private ImageRadioPanel ViewRadioPanel;
         private System.Windows.Forms.Button CellFillMode;
         private System.Windows.Forms.Button CellSelectButton;
         private System.Windows.Forms.ImageList MapTreeIcons;
-        private FormControls.ImageCheckPanel ViewCheckPanel;
+        private ImageCheckPanel ViewCheckPanel;
         private System.Windows.Forms.Button ShowCellEdges;
         private System.Windows.Forms.Button ShowPortals;
         private System.Windows.Forms.Panel MapEditToolsPanel;
@@ -2062,6 +2387,23 @@ namespace PortalEdit
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Panel panel2;
         public System.Windows.Forms.ListView LightList;
+        private System.Windows.Forms.ComboBox LightItemType;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.NumericUpDown LightPosX;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.NumericUpDown LightPosZ;
+        private System.Windows.Forms.NumericUpDown LightPosY;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.NumericUpDown LightVecX;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.NumericUpDown LightVecZ;
+        private System.Windows.Forms.NumericUpDown LightVecY;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.NumericUpDown SpotCone;
     }
 }
 

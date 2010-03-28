@@ -28,7 +28,6 @@ using System.Diagnostics;
 
 using OpenTK;
 using OpenTK.Graphics;
-using FormControls;
 using Drawables.DisplayLists;
 using Drawables.Textures;
 using Math3D;
@@ -48,7 +47,7 @@ namespace PortalEdit
             InitializeComponent();
 
             MapRadioPanel.TagsAreValues = true;
-            MapRadioPanel.SelectionChanged += new FormControls.ImageRadioPanel.SelectionChangedEvent(MapRadioPanel_SelectionChanged);
+            MapRadioPanel.SelectionChanged += new ImageRadioPanel.SelectionChangedEvent(MapRadioPanel_SelectionChanged);
 
             ViewRadioPanel.TagsAreValues = true;
             ViewRadioPanel.SelectionChanged += new ImageRadioPanel.SelectionChangedEvent(ViewRadioPanel_SelectionChanged);
@@ -72,7 +71,7 @@ namespace PortalEdit
             undoToolStripMenuItem.Text = "Undo " + Undo.System.Description;
         }
 
-        void MapRadioPanel_SelectionChanged(object sender, FormControls.ImageRadioPanel.SelectionChangedEventArgs e)
+        void MapRadioPanel_SelectionChanged(object sender, ImageRadioPanel.SelectionChangedEventArgs e)
         {
             if (editor == null)
                 return;
@@ -1180,8 +1179,9 @@ namespace PortalEdit
             if (editor == null)
                 return;
 
+            int i = 0;
             foreach (LightInstance light in editor.map.Lights)
-                LightList.Items.Add(light.ToString()).Tag = light;
+                LightList.Items.Add((i++).ToString()).Tag = light;
 
             loadingUI = true;
             AmbientLevel.Value = (decimal)editor.map.AmbientLight;
@@ -1231,6 +1231,18 @@ namespace PortalEdit
 
                     MinRad.Value = (Decimal)light.MinRadius;
                     LightIntensity.Value = (Decimal)light.Inensity;
+
+                    LightItemType.SelectedIndex = (int)light.Type;
+
+                    LightPosX.Value = (Decimal)light.Position.X;
+                    LightPosY.Value = (Decimal)light.Position.Y;
+                    LightPosZ.Value = (Decimal)light.Position.Z;
+
+                    LightVecX.Value = (Decimal)light.Direction.X;
+                    LightVecY.Value = (Decimal)light.Direction.Y;
+                    LightVecZ.Value = (Decimal)light.Direction.Z;
+
+                    SpotCone.Value = (Decimal)light.cone;
                 }
             }
 
@@ -1266,6 +1278,80 @@ namespace PortalEdit
                     Editor.SetDirty();
                     light.Inensity = (float)LightIntensity.Value;
 
+                    Invalidate(true);
+                }
+            }
+        }
+
+        private void LightPos_ValueChanged(object sender, EventArgs e)
+        {
+            if (loadingUI)
+                return;
+
+            if (LightList.SelectedItems.Count > 0)
+            {
+                LightInstance light = (LightInstance)LightList.SelectedItems[0].Tag;
+                if (light != null)
+                {
+                    Editor.SetDirty();
+                    light.Position.X = (float)LightPosX.Value;
+                    light.Position.Y = (float)LightPosY.Value;
+                    light.Position.Z = (float)LightPosZ.Value;
+
+                    Invalidate(true);
+                }
+            }
+        }
+
+        private void LightVec_ValueChanged(object sender, EventArgs e)
+        {
+            if (loadingUI)
+                return;
+
+            if (LightList.SelectedItems.Count > 0)
+            {
+                LightInstance light = (LightInstance)LightList.SelectedItems[0].Tag;
+                if (light != null)
+                {
+                    Editor.SetDirty();
+                    light.Direction.X = (float)LightVecX.Value;
+                    light.Direction.Y = (float)LightVecY.Value;
+                    light.Direction.Z = (float)LightVecZ.Value;
+
+                    Invalidate(true);
+                }
+            }
+        }
+
+        private void LightType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (loadingUI)
+                return;
+
+            if (LightList.SelectedItems.Count > 0)
+            {
+                LightInstance light = (LightInstance)LightList.SelectedItems[0].Tag;
+                if (light != null)
+                {
+                    Editor.SetDirty();
+                    light.Type = (LightType)Enum.ToObject(typeof(LightType), LightItemType.SelectedIndex);
+                    Invalidate(true);
+                }
+            }
+        }
+
+        private void SpotCone_ValueChanged(object sender, EventArgs e)
+        {
+            if (loadingUI)
+                return;
+
+            if (LightList.SelectedItems.Count > 0)
+            {
+                LightInstance light = (LightInstance)LightList.SelectedItems[0].Tag;
+                if (light != null)
+                {
+                    Editor.SetDirty();
+                    light.cone = (float)SpotCone.Value;
                     Invalidate(true);
                 }
             }
