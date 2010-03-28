@@ -777,8 +777,10 @@ namespace PortalEdit
                 {
                     for (int i = 2; i < cell.Verts.Count; i++)
                     {
-                        model.AddTriangle(cell.Verts[0].Bottom, cell.Verts[i - 1].Bottom, cell.Verts[i].Bottom);
-                        model.AddTriangle(cell.RoofPoint(0), cell.RoofPoint(i), cell.RoofPoint(i - 1));
+                        if (cell.FloorVizable)
+                            model.AddTriangle(cell.Verts[0].Bottom, cell.Verts[i - 1].Bottom, cell.Verts[i].Bottom);
+                        if (cell.RoofVizable) 
+                            model.AddTriangle(cell.RoofPoint(0), cell.RoofPoint(i), cell.RoofPoint(i - 1));
                     }
 
                     foreach (CellEdge edge in cell.Edges)
@@ -788,8 +790,11 @@ namespace PortalEdit
 
                         foreach (CellWallGeometry geo in edge.Geometry)
                         {
-                            model.AddTriangle(ep.X,ep.Y,geo.LowerZ[1], sp.X,sp.Y,geo.LowerZ[0], sp.X,sp.Y,geo.UpperZ[0]);
-                            model.AddTriangle(ep.X, ep.Y, geo.LowerZ[1], sp.X, sp.Y, geo.UpperZ[0], ep.X, ep.Y, geo.UpperZ[1]);
+                            if (geo.Vizable)
+                            {
+                                model.AddTriangle(ep.X, ep.Y, geo.LowerZ[1], sp.X, sp.Y, geo.LowerZ[0], sp.X, sp.Y, geo.UpperZ[0]);
+                                model.AddTriangle(ep.X, ep.Y, geo.LowerZ[1], sp.X, sp.Y, geo.UpperZ[0], ep.X, ep.Y, geo.UpperZ[1]);
+                            }
                         }
                     }
                 }
@@ -808,7 +813,7 @@ namespace PortalEdit
         {
             float attenuation = 1;
 
-            if (distance > light.MinRadius)
+            if (light.Type != LightType.VectorLight && distance > light.MinRadius)
             {
                 float scaler = distance - light.MinRadius;
                 attenuation = (1f / (distance * distance)) * light.Inensity;
@@ -826,7 +831,19 @@ namespace PortalEdit
             Color returnColor = Color.FromArgb(initalColor.A,initalColor.R,initalColor.G,initalColor.B);
             foreach (LightInstance light in map.Lights)
             {
-                Vector3 vecToLight = VectorHelper3.Subtract(pos,light.Position);
+                Vector3 vecToLight = Vector3.Zero;
+
+                if (light.Type == LightType.VectorLight)
+                    vecToLight = light.Direction * 100f;
+                else
+                {
+                    vecToLight = VectorHelper3.Subtract(pos, light.Position);
+                    if (light.Type == LightType.Spotlight)
+                    {
+                        if (Vector3.Dot(vecToLight, light.Direction) < Math.Cos(MathHelper.DegreesToRadians(light.cone)))
+                            continue;
+                    }
+                }
 
                 float mag = vecToLight.Length;
                 vecToLight.Normalize();
@@ -1047,7 +1064,7 @@ namespace PortalEdit
                     progress.ProgressText.Text = "Floor for cell " + cellCount.ToString();
                     progress.Update();
                     BuildLightmapForCellFloor(cell);
-
+                    
                     progress.Progress.PerformStep();
                     progress.ProgressText.Text = "Roof for cell " + cellCount.ToString();
                     progress.Update();

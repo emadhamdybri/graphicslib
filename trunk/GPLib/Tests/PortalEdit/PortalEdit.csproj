@@ -63,18 +63,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=0.9.9.2, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\opentk\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.Compatibility, Version=0.9.9.2, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\opentk\Binaries\OpenTK\Release\OpenTK.Compatibility.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.GLControl, Version=0.9.9.2, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\opentk\Binaries\OpenTK\Release\OpenTK.GLControl.dll</HintPath>
-    </Reference>
+    <Reference Include="OpenTK, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
+    <Reference Include="OpenTK.Compatibility, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
+    <Reference Include="OpenTK.GLControl, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -121,6 +112,12 @@
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Editor\EditorCell.cs" />
     <Compile Include="Editor\MRU.cs" />
+    <Compile Include="ImageCheckPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ImageRadioPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Views\MapRenderer.cs" />
     <Compile Include="Views\MapViewRenderer.cs" />
     <Compile Include="Editor\PortalEdit.cs">
@@ -190,10 +187,6 @@
     <ProjectReference Include="..\..\Drawables\Drawables.csproj">
       <Project>{71452148-876E-4B8E-9244-A8F014CF72E6}</Project>
       <Name>Drawables</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Forms\FormControls\FormControls.csproj">
-      <Project>{063456CE-22FC-4FDD-B1CF-828205AA695D}</Project>
-      <Name>FormControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Math\Math3D.csproj">
       <Project>{0BC4671F-FF72-4D3E-9889-44382F6C64F2}</Project>
