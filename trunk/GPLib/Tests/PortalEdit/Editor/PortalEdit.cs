@@ -1356,5 +1356,15 @@ namespace PortalEdit
                 }
             }
         }
+
+        private void CellAttListAdd_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CellAttListRemove_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
