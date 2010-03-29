@@ -65,11 +65,23 @@ namespace PortalEdit
             this.EditZMinus = new System.Windows.Forms.TextBox();
             this.ZMinusLabel = new System.Windows.Forms.Label();
             this.MapEditToolsPanel = new System.Windows.Forms.Panel();
+            this.MapRadioPanel = new PortalEdit.ImageRadioPanel();
+            this.LightingModeButton = new System.Windows.Forms.Button();
+            this.EditVertButton = new System.Windows.Forms.Button();
+            this.SelectButton = new System.Windows.Forms.Button();
+            this.DrawButton = new System.Windows.Forms.Button();
             this.MapZoomPanel = new System.Windows.Forms.Panel();
             this.ResetZoom = new System.Windows.Forms.Button();
             this.MapZoomOut = new System.Windows.Forms.Button();
             this.MapZoomIn = new System.Windows.Forms.Button();
             this.MapView = new System.Windows.Forms.PictureBox();
+            this.ViewCheckPanel = new PortalEdit.ImageCheckPanel();
+            this.ShowUnderlay = new System.Windows.Forms.Button();
+            this.ShowPortals = new System.Windows.Forms.Button();
+            this.ShowCellEdges = new System.Windows.Forms.Button();
+            this.ViewRadioPanel = new PortalEdit.ImageRadioPanel();
+            this.CellFillMode = new System.Windows.Forms.Button();
+            this.CellSelectButton = new System.Windows.Forms.Button();
             this.GLView = new OpenTK.GLControl();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -171,6 +183,8 @@ namespace PortalEdit
             this.duplicateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.LightInfo = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label20 = new System.Windows.Forms.Label();
+            this.SpotCone = new System.Windows.Forms.NumericUpDown();
             this.LightItemType = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.LightPosX = new System.Windows.Forms.NumericUpDown();
@@ -197,20 +211,12 @@ namespace PortalEdit
             this.NewLight = new System.Windows.Forms.ToolStripMenuItem();
             this.RemoveLight = new System.Windows.Forms.ToolStripMenuItem();
             this.DefaultImages = new System.Windows.Forms.ImageList(this.components);
-            this.MapRadioPanel = new PortalEdit.ImageRadioPanel();
-            this.LightingModeButton = new System.Windows.Forms.Button();
-            this.EditVertButton = new System.Windows.Forms.Button();
-            this.SelectButton = new System.Windows.Forms.Button();
-            this.DrawButton = new System.Windows.Forms.Button();
-            this.ViewCheckPanel = new PortalEdit.ImageCheckPanel();
-            this.ShowUnderlay = new System.Windows.Forms.Button();
-            this.ShowPortals = new System.Windows.Forms.Button();
-            this.ShowCellEdges = new System.Windows.Forms.Button();
-            this.ViewRadioPanel = new PortalEdit.ImageRadioPanel();
-            this.CellFillMode = new System.Windows.Forms.Button();
-            this.CellSelectButton = new System.Windows.Forms.Button();
-            this.label20 = new System.Windows.Forms.Label();
-            this.SpotCone = new System.Windows.Forms.NumericUpDown();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.CellAttributeList = new System.Windows.Forms.ListView();
+            this.CellAttListName = new System.Windows.Forms.ColumnHeader();
+            this.CellAttListValue = new System.Windows.Forms.ColumnHeader();
+            this.CellAttListRemove = new System.Windows.Forms.Button();
+            this.CellAttListAdd = new System.Windows.Forms.Button();
             this.MainContainer.Panel1.SuspendLayout();
             this.MainContainer.Panel2.SuspendLayout();
             this.MainContainer.SuspendLayout();
@@ -219,8 +225,11 @@ namespace PortalEdit
             ((System.ComponentModel.ISupportInitialize)(this.HideBelowZ)).BeginInit();
             this.DepthEditPanel.SuspendLayout();
             this.MapEditToolsPanel.SuspendLayout();
+            this.MapRadioPanel.SuspendLayout();
             this.MapZoomPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapView)).BeginInit();
+            this.ViewCheckPanel.SuspendLayout();
+            this.ViewRadioPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.GroupRightMouseMenu.SuspendLayout();
@@ -250,6 +259,7 @@ namespace PortalEdit
             this.ObjectListMenuStrip.SuspendLayout();
             this.LightInfo.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SpotCone)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LightPosX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LightPosZ)).BeginInit();
@@ -262,10 +272,7 @@ namespace PortalEdit
             ((System.ComponentModel.ISupportInitialize)(this.AmbientLevel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LightIntensity)).BeginInit();
             this.LightListRMM.SuspendLayout();
-            this.MapRadioPanel.SuspendLayout();
-            this.ViewCheckPanel.SuspendLayout();
-            this.ViewRadioPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.SpotCone)).BeginInit();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainContainer
@@ -475,6 +482,66 @@ namespace PortalEdit
             this.MapEditToolsPanel.Size = new System.Drawing.Size(405, 29);
             this.MapEditToolsPanel.TabIndex = 5;
             // 
+            // MapRadioPanel
+            // 
+            this.MapRadioPanel.Controls.Add(this.LightingModeButton);
+            this.MapRadioPanel.Controls.Add(this.EditVertButton);
+            this.MapRadioPanel.Controls.Add(this.SelectButton);
+            this.MapRadioPanel.Controls.Add(this.DrawButton);
+            this.MapRadioPanel.HighlightBGColor = System.Drawing.Color.DarkGoldenrod;
+            this.MapRadioPanel.HighlightColor = System.Drawing.Color.AliceBlue;
+            this.MapRadioPanel.Location = new System.Drawing.Point(3, 0);
+            this.MapRadioPanel.Name = "MapRadioPanel";
+            this.MapRadioPanel.SelectedItem = null;
+            this.MapRadioPanel.Size = new System.Drawing.Size(114, 26);
+            this.MapRadioPanel.TabIndex = 3;
+            this.MapRadioPanel.TagsAreValues = false;
+            // 
+            // LightingModeButton
+            // 
+            this.LightingModeButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.LightingModeButton.Image = ((System.Drawing.Image)(resources.GetObject("LightingModeButton.Image")));
+            this.LightingModeButton.Location = new System.Drawing.Point(83, 1);
+            this.LightingModeButton.Name = "LightingModeButton";
+            this.LightingModeButton.Size = new System.Drawing.Size(25, 23);
+            this.LightingModeButton.TabIndex = 4;
+            this.LightingModeButton.Tag = PortalEdit.MapEditMode.EditLightMode;
+            this.LightingModeButton.UseVisualStyleBackColor = true;
+            // 
+            // EditVertButton
+            // 
+            this.EditVertButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.EditVertButton.Image = ((System.Drawing.Image)(resources.GetObject("EditVertButton.Image")));
+            this.EditVertButton.Location = new System.Drawing.Point(55, 1);
+            this.EditVertButton.Name = "EditVertButton";
+            this.EditVertButton.Size = new System.Drawing.Size(25, 23);
+            this.EditVertButton.TabIndex = 3;
+            this.EditVertButton.Tag = PortalEdit.MapEditMode.EditVertMode;
+            this.EditVertButton.UseVisualStyleBackColor = true;
+            // 
+            // SelectButton
+            // 
+            this.SelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.SelectButton.Image = ((System.Drawing.Image)(resources.GetObject("SelectButton.Image")));
+            this.SelectButton.Location = new System.Drawing.Point(29, 1);
+            this.SelectButton.Name = "SelectButton";
+            this.SelectButton.Size = new System.Drawing.Size(25, 23);
+            this.SelectButton.TabIndex = 2;
+            this.SelectButton.Tag = PortalEdit.MapEditMode.SelectMode;
+            this.SelectButton.UseVisualStyleBackColor = true;
+            // 
+            // DrawButton
+            // 
+            this.DrawButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.DrawButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.DrawButton.Image = ((System.Drawing.Image)(resources.GetObject("DrawButton.Image")));
+            this.DrawButton.Location = new System.Drawing.Point(3, 1);
+            this.DrawButton.Name = "DrawButton";
+            this.DrawButton.Size = new System.Drawing.Size(25, 23);
+            this.DrawButton.TabIndex = 1;
+            this.DrawButton.Tag = PortalEdit.MapEditMode.DrawMode;
+            this.DrawButton.UseVisualStyleBackColor = true;
+            // 
             // MapZoomPanel
             // 
             this.MapZoomPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -527,6 +594,89 @@ namespace PortalEdit
             this.MapView.Size = new System.Drawing.Size(409, 472);
             this.MapView.TabIndex = 0;
             this.MapView.TabStop = false;
+            // 
+            // ViewCheckPanel
+            // 
+            this.ViewCheckPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.ViewCheckPanel.Controls.Add(this.ShowUnderlay);
+            this.ViewCheckPanel.Controls.Add(this.ShowPortals);
+            this.ViewCheckPanel.Controls.Add(this.ShowCellEdges);
+            this.ViewCheckPanel.HighlightBGColor = System.Drawing.Color.CadetBlue;
+            this.ViewCheckPanel.HighlightColor = System.Drawing.Color.BlueViolet;
+            this.ViewCheckPanel.Location = new System.Drawing.Point(3, 3);
+            this.ViewCheckPanel.Name = "ViewCheckPanel";
+            this.ViewCheckPanel.SelectedItem = null;
+            this.ViewCheckPanel.Size = new System.Drawing.Size(403, 37);
+            this.ViewCheckPanel.TabIndex = 0;
+            // 
+            // ShowUnderlay
+            // 
+            this.ShowUnderlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ShowUnderlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ShowUnderlay.Image = ((System.Drawing.Image)(resources.GetObject("ShowUnderlay.Image")));
+            this.ShowUnderlay.Location = new System.Drawing.Point(356, 1);
+            this.ShowUnderlay.Name = "ShowUnderlay";
+            this.ShowUnderlay.Size = new System.Drawing.Size(36, 36);
+            this.ShowUnderlay.TabIndex = 2;
+            this.ShowUnderlay.UseVisualStyleBackColor = true;
+            // 
+            // ShowPortals
+            // 
+            this.ShowPortals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ShowPortals.Image = ((System.Drawing.Image)(resources.GetObject("ShowPortals.Image")));
+            this.ShowPortals.Location = new System.Drawing.Point(37, 0);
+            this.ShowPortals.Name = "ShowPortals";
+            this.ShowPortals.Size = new System.Drawing.Size(36, 36);
+            this.ShowPortals.TabIndex = 1;
+            this.ShowPortals.UseVisualStyleBackColor = true;
+            // 
+            // ShowCellEdges
+            // 
+            this.ShowCellEdges.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ShowCellEdges.Image = ((System.Drawing.Image)(resources.GetObject("ShowCellEdges.Image")));
+            this.ShowCellEdges.Location = new System.Drawing.Point(0, 0);
+            this.ShowCellEdges.Name = "ShowCellEdges";
+            this.ShowCellEdges.Size = new System.Drawing.Size(36, 36);
+            this.ShowCellEdges.TabIndex = 0;
+            this.ShowCellEdges.UseVisualStyleBackColor = true;
+            // 
+            // ViewRadioPanel
+            // 
+            this.ViewRadioPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.ViewRadioPanel.Controls.Add(this.CellFillMode);
+            this.ViewRadioPanel.Controls.Add(this.CellSelectButton);
+            this.ViewRadioPanel.HighlightBGColor = System.Drawing.Color.DarkGoldenrod;
+            this.ViewRadioPanel.HighlightColor = System.Drawing.Color.AliceBlue;
+            this.ViewRadioPanel.Location = new System.Drawing.Point(3, 45);
+            this.ViewRadioPanel.Name = "ViewRadioPanel";
+            this.ViewRadioPanel.SelectedItem = null;
+            this.ViewRadioPanel.Size = new System.Drawing.Size(357, 26);
+            this.ViewRadioPanel.TabIndex = 4;
+            this.ViewRadioPanel.TagsAreValues = false;
+            // 
+            // CellFillMode
+            // 
+            this.CellFillMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CellFillMode.Image = ((System.Drawing.Image)(resources.GetObject("CellFillMode.Image")));
+            this.CellFillMode.Location = new System.Drawing.Point(34, 1);
+            this.CellFillMode.Name = "CellFillMode";
+            this.CellFillMode.Size = new System.Drawing.Size(25, 23);
+            this.CellFillMode.TabIndex = 3;
+            this.CellFillMode.Tag = PortalEdit.ViewEditMode.Paint;
+            this.CellFillMode.UseVisualStyleBackColor = true;
+            // 
+            // CellSelectButton
+            // 
+            this.CellSelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CellSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("CellSelectButton.Image")));
+            this.CellSelectButton.Location = new System.Drawing.Point(3, 1);
+            this.CellSelectButton.Name = "CellSelectButton";
+            this.CellSelectButton.Size = new System.Drawing.Size(25, 23);
+            this.CellSelectButton.TabIndex = 2;
+            this.CellSelectButton.Tag = PortalEdit.ViewEditMode.Select;
+            this.CellSelectButton.UseVisualStyleBackColor = true;
             // 
             // GLView
             // 
@@ -912,6 +1062,7 @@ namespace PortalEdit
             // 
             // CellInfo
             // 
+            this.CellInfo.Controls.Add(this.groupBox3);
             this.CellInfo.Controls.Add(this.RoofVis);
             this.CellInfo.Controls.Add(this.FloorViz);
             this.CellInfo.Controls.Add(this.SetCellToPreset);
@@ -1598,6 +1749,29 @@ namespace PortalEdit
             this.panel2.Size = new System.Drawing.Size(243, 210);
             this.panel2.TabIndex = 7;
             // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(5, 178);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(29, 13);
+            this.label20.TabIndex = 16;
+            this.label20.Text = "Spot";
+            // 
+            // SpotCone
+            // 
+            this.SpotCone.DecimalPlaces = 2;
+            this.SpotCone.Location = new System.Drawing.Point(40, 176);
+            this.SpotCone.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
+            this.SpotCone.Name = "SpotCone";
+            this.SpotCone.Size = new System.Drawing.Size(65, 20);
+            this.SpotCone.TabIndex = 17;
+            this.SpotCone.ValueChanged += new System.EventHandler(this.SpotCone_ValueChanged);
+            // 
             // LightItemType
             // 
             this.LightItemType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -1988,171 +2162,66 @@ namespace PortalEdit
             this.DefaultImages.Images.SetKeyName(0, "Grid.png");
             this.DefaultImages.Images.SetKeyName(1, "Folder - Pictures.png");
             // 
-            // MapRadioPanel
+            // groupBox3
             // 
-            this.MapRadioPanel.Controls.Add(this.LightingModeButton);
-            this.MapRadioPanel.Controls.Add(this.EditVertButton);
-            this.MapRadioPanel.Controls.Add(this.SelectButton);
-            this.MapRadioPanel.Controls.Add(this.DrawButton);
-            this.MapRadioPanel.HighlightBGColor = System.Drawing.Color.DarkGoldenrod;
-            this.MapRadioPanel.HighlightColor = System.Drawing.Color.AliceBlue;
-            this.MapRadioPanel.Location = new System.Drawing.Point(3, 0);
-            this.MapRadioPanel.Name = "MapRadioPanel";
-            this.MapRadioPanel.SelectedItem = null;
-            this.MapRadioPanel.Size = new System.Drawing.Size(114, 26);
-            this.MapRadioPanel.TabIndex = 3;
-            this.MapRadioPanel.TagsAreValues = false;
-            // 
-            // LightingModeButton
-            // 
-            this.LightingModeButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.LightingModeButton.Image = ((System.Drawing.Image)(resources.GetObject("LightingModeButton.Image")));
-            this.LightingModeButton.Location = new System.Drawing.Point(83, 1);
-            this.LightingModeButton.Name = "LightingModeButton";
-            this.LightingModeButton.Size = new System.Drawing.Size(25, 23);
-            this.LightingModeButton.TabIndex = 4;
-            this.LightingModeButton.Tag = PortalEdit.MapEditMode.EditLightMode;
-            this.LightingModeButton.UseVisualStyleBackColor = true;
-            // 
-            // EditVertButton
-            // 
-            this.EditVertButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.EditVertButton.Image = ((System.Drawing.Image)(resources.GetObject("EditVertButton.Image")));
-            this.EditVertButton.Location = new System.Drawing.Point(55, 1);
-            this.EditVertButton.Name = "EditVertButton";
-            this.EditVertButton.Size = new System.Drawing.Size(25, 23);
-            this.EditVertButton.TabIndex = 3;
-            this.EditVertButton.Tag = PortalEdit.MapEditMode.EditVertMode;
-            this.EditVertButton.UseVisualStyleBackColor = true;
-            // 
-            // SelectButton
-            // 
-            this.SelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.SelectButton.Image = ((System.Drawing.Image)(resources.GetObject("SelectButton.Image")));
-            this.SelectButton.Location = new System.Drawing.Point(29, 1);
-            this.SelectButton.Name = "SelectButton";
-            this.SelectButton.Size = new System.Drawing.Size(25, 23);
-            this.SelectButton.TabIndex = 2;
-            this.SelectButton.Tag = PortalEdit.MapEditMode.SelectMode;
-            this.SelectButton.UseVisualStyleBackColor = true;
-            // 
-            // DrawButton
-            // 
-            this.DrawButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.DrawButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.DrawButton.Image = ((System.Drawing.Image)(resources.GetObject("DrawButton.Image")));
-            this.DrawButton.Location = new System.Drawing.Point(3, 1);
-            this.DrawButton.Name = "DrawButton";
-            this.DrawButton.Size = new System.Drawing.Size(25, 23);
-            this.DrawButton.TabIndex = 1;
-            this.DrawButton.Tag = PortalEdit.MapEditMode.DrawMode;
-            this.DrawButton.UseVisualStyleBackColor = true;
-            // 
-            // ViewCheckPanel
-            // 
-            this.ViewCheckPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.ViewCheckPanel.Controls.Add(this.ShowUnderlay);
-            this.ViewCheckPanel.Controls.Add(this.ShowPortals);
-            this.ViewCheckPanel.Controls.Add(this.ShowCellEdges);
-            this.ViewCheckPanel.HighlightBGColor = System.Drawing.Color.CadetBlue;
-            this.ViewCheckPanel.HighlightColor = System.Drawing.Color.BlueViolet;
-            this.ViewCheckPanel.Location = new System.Drawing.Point(3, 3);
-            this.ViewCheckPanel.Name = "ViewCheckPanel";
-            this.ViewCheckPanel.SelectedItem = null;
-            this.ViewCheckPanel.Size = new System.Drawing.Size(403, 37);
-            this.ViewCheckPanel.TabIndex = 0;
+            this.groupBox3.Controls.Add(this.CellAttListAdd);
+            this.groupBox3.Controls.Add(this.CellAttListRemove);
+            this.groupBox3.Controls.Add(this.CellAttributeList);
+            this.groupBox3.Location = new System.Drawing.Point(6, 147);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(234, 174);
+            this.groupBox3.TabIndex = 9;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Attributes";
             // 
-            // ShowUnderlay
+            // CellAttributeList
             // 
-            this.ShowUnderlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShowUnderlay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowUnderlay.Image = ((System.Drawing.Image)(resources.GetObject("ShowUnderlay.Image")));
-            this.ShowUnderlay.Location = new System.Drawing.Point(356, 1);
-            this.ShowUnderlay.Name = "ShowUnderlay";
-            this.ShowUnderlay.Size = new System.Drawing.Size(36, 36);
-            this.ShowUnderlay.TabIndex = 2;
-            this.ShowUnderlay.UseVisualStyleBackColor = true;
-            // 
-            // ShowPortals
-            // 
-            this.ShowPortals.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowPortals.Image = ((System.Drawing.Image)(resources.GetObject("ShowPortals.Image")));
-            this.ShowPortals.Location = new System.Drawing.Point(37, 0);
-            this.ShowPortals.Name = "ShowPortals";
-            this.ShowPortals.Size = new System.Drawing.Size(36, 36);
-            this.ShowPortals.TabIndex = 1;
-            this.ShowPortals.UseVisualStyleBackColor = true;
-            // 
-            // ShowCellEdges
-            // 
-            this.ShowCellEdges.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ShowCellEdges.Image = ((System.Drawing.Image)(resources.GetObject("ShowCellEdges.Image")));
-            this.ShowCellEdges.Location = new System.Drawing.Point(0, 0);
-            this.ShowCellEdges.Name = "ShowCellEdges";
-            this.ShowCellEdges.Size = new System.Drawing.Size(36, 36);
-            this.ShowCellEdges.TabIndex = 0;
-            this.ShowCellEdges.UseVisualStyleBackColor = true;
-            // 
-            // ViewRadioPanel
-            // 
-            this.ViewRadioPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.CellAttributeList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.ViewRadioPanel.Controls.Add(this.CellFillMode);
-            this.ViewRadioPanel.Controls.Add(this.CellSelectButton);
-            this.ViewRadioPanel.HighlightBGColor = System.Drawing.Color.DarkGoldenrod;
-            this.ViewRadioPanel.HighlightColor = System.Drawing.Color.AliceBlue;
-            this.ViewRadioPanel.Location = new System.Drawing.Point(3, 45);
-            this.ViewRadioPanel.Name = "ViewRadioPanel";
-            this.ViewRadioPanel.SelectedItem = null;
-            this.ViewRadioPanel.Size = new System.Drawing.Size(357, 26);
-            this.ViewRadioPanel.TabIndex = 4;
-            this.ViewRadioPanel.TagsAreValues = false;
+            this.CellAttributeList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.CellAttListName,
+            this.CellAttListValue});
+            this.CellAttributeList.GridLines = true;
+            this.CellAttributeList.Location = new System.Drawing.Point(7, 19);
+            this.CellAttributeList.Name = "CellAttributeList";
+            this.CellAttributeList.Size = new System.Drawing.Size(222, 110);
+            this.CellAttributeList.TabIndex = 0;
+            this.CellAttributeList.UseCompatibleStateImageBehavior = false;
+            this.CellAttributeList.View = System.Windows.Forms.View.Details;
             // 
-            // CellFillMode
+            // CellAttListName
             // 
-            this.CellFillMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CellFillMode.Image = ((System.Drawing.Image)(resources.GetObject("CellFillMode.Image")));
-            this.CellFillMode.Location = new System.Drawing.Point(34, 1);
-            this.CellFillMode.Name = "CellFillMode";
-            this.CellFillMode.Size = new System.Drawing.Size(25, 23);
-            this.CellFillMode.TabIndex = 3;
-            this.CellFillMode.Tag = PortalEdit.ViewEditMode.Paint;
-            this.CellFillMode.UseVisualStyleBackColor = true;
+            this.CellAttListName.Text = "Name";
+            this.CellAttListName.Width = 107;
             // 
-            // CellSelectButton
+            // CellAttListValue
             // 
-            this.CellSelectButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CellSelectButton.Image = ((System.Drawing.Image)(resources.GetObject("CellSelectButton.Image")));
-            this.CellSelectButton.Location = new System.Drawing.Point(3, 1);
-            this.CellSelectButton.Name = "CellSelectButton";
-            this.CellSelectButton.Size = new System.Drawing.Size(25, 23);
-            this.CellSelectButton.TabIndex = 2;
-            this.CellSelectButton.Tag = PortalEdit.ViewEditMode.Select;
-            this.CellSelectButton.UseVisualStyleBackColor = true;
+            this.CellAttListValue.Text = "Value";
+            this.CellAttListValue.Width = 106;
             // 
-            // label20
+            // CellAttListRemove
             // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(5, 178);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(29, 13);
-            this.label20.TabIndex = 16;
-            this.label20.Text = "Spot";
+            this.CellAttListRemove.Location = new System.Drawing.Point(12, 135);
+            this.CellAttListRemove.Name = "CellAttListRemove";
+            this.CellAttListRemove.Size = new System.Drawing.Size(75, 23);
+            this.CellAttListRemove.TabIndex = 1;
+            this.CellAttListRemove.Text = "Remove";
+            this.CellAttListRemove.UseVisualStyleBackColor = true;
+            this.CellAttListRemove.Click += new System.EventHandler(this.CellAttListRemove_Click);
             // 
-            // SpotCone
+            // CellAttListAdd
             // 
-            this.SpotCone.DecimalPlaces = 2;
-            this.SpotCone.Location = new System.Drawing.Point(40, 176);
-            this.SpotCone.Maximum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            0});
-            this.SpotCone.Name = "SpotCone";
-            this.SpotCone.Size = new System.Drawing.Size(65, 20);
-            this.SpotCone.TabIndex = 17;
-            this.SpotCone.ValueChanged += new System.EventHandler(this.SpotCone_ValueChanged);
+            this.CellAttListAdd.Location = new System.Drawing.Point(153, 135);
+            this.CellAttListAdd.Name = "CellAttListAdd";
+            this.CellAttListAdd.Size = new System.Drawing.Size(75, 23);
+            this.CellAttListAdd.TabIndex = 2;
+            this.CellAttListAdd.Text = "Add";
+            this.CellAttListAdd.UseVisualStyleBackColor = true;
+            this.CellAttListAdd.Click += new System.EventHandler(this.CellAttListAdd_Click);
             // 
             // EditFrame
             // 
@@ -2178,8 +2247,11 @@ namespace PortalEdit
             this.DepthEditPanel.ResumeLayout(false);
             this.DepthEditPanel.PerformLayout();
             this.MapEditToolsPanel.ResumeLayout(false);
+            this.MapRadioPanel.ResumeLayout(false);
             this.MapZoomPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MapView)).EndInit();
+            this.ViewCheckPanel.ResumeLayout(false);
+            this.ViewRadioPanel.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -2217,6 +2289,7 @@ namespace PortalEdit
             this.LightInfo.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SpotCone)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LightPosX)).EndInit();
@@ -2231,10 +2304,7 @@ namespace PortalEdit
             ((System.ComponentModel.ISupportInitialize)(this.AmbientLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LightIntensity)).EndInit();
             this.LightListRMM.ResumeLayout(false);
-            this.MapRadioPanel.ResumeLayout(false);
-            this.ViewCheckPanel.ResumeLayout(false);
-            this.ViewRadioPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.SpotCone)).EndInit();
+            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2404,6 +2474,12 @@ namespace PortalEdit
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.NumericUpDown SpotCone;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.ListView CellAttributeList;
+        private System.Windows.Forms.ColumnHeader CellAttListName;
+        private System.Windows.Forms.Button CellAttListAdd;
+        private System.Windows.Forms.Button CellAttListRemove;
+        private System.Windows.Forms.ColumnHeader CellAttListValue;
     }
 }
 
