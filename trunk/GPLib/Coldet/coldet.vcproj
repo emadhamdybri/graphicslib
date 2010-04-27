@@ -404,7 +404,7 @@
 			MinFrameworkVersion="131072"
 		/>
 		<AssemblyReference
-			RelativePath="..\..\..\..\..\..\..\Program Files\OpenTK\1.0\Binaries\OpenTK\Release\OpenTK.dll"
+			RelativePath="..\..\..\..\..\..\..\..\Program Files\OpenTK\1.0\Binaries\OpenTK\Release\OpenTK.dll"
 			AssemblyName="OpenTK, Version=1.0.0.201, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
