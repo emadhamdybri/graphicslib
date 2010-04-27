@@ -161,6 +161,9 @@ namespace GUIGameWindow
 
         protected override void OnResize(EventArgs e)
         {
+            if (!Loaded)
+                return;
+
             glControl1.Location = new Point(0, 0);
             glControl1.Size = this.Size;
             SetViewPort();
