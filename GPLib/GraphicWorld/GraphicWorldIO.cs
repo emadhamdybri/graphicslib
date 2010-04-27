@@ -26,7 +26,7 @@ using System.Xml.Serialization;
 
 using World;
 using Drawables.Materials;
-using Drawables.Models;
+using Drawables.StaticModels;
 
 namespace GraphicWorlds
 {
@@ -60,13 +60,13 @@ namespace GraphicWorlds
 
                 fs = meshTemp.OpenRead();
                 StreamReader sr = new StreamReader(fs);
-                XmlSerializer xml = new XmlSerializer(typeof(List<Model>));
-                List < Model > models = (List<Model>)xml.Deserialize(sr);
+                XmlSerializer xml = new XmlSerializer(typeof(List<StaticModel>));
+                List<StaticModel> models = (List<StaticModel>)xml.Deserialize(sr);
                 sr.Close();
                 fs.Close();
 
-                world.models = new Dictionary<string, Model>();
-                foreach (Model m in models)
+                world.models = new Dictionary<string, StaticModel>();
+                foreach (StaticModel m in models)
                     world.models[m.name] = m;
             }
 
@@ -114,10 +114,10 @@ namespace GraphicWorlds
                 FileInfo meshTemp = new FileInfo(Path.GetTempFileName());
                 FileStream fs = meshTemp.OpenWrite();
                 StreamWriter sw = new StreamWriter(fs);
-                XmlSerializer xml = new XmlSerializer(typeof(List<Model>));
-                List<Model> models = new List<Model>();
-                
-                foreach (KeyValuePair<string,Model> m in world.models)
+                XmlSerializer xml = new XmlSerializer(typeof(List<StaticModel>));
+                List<StaticModel> models = new List<StaticModel>();
+
+                foreach (KeyValuePair<string, StaticModel> m in world.models)
                     models.Add(m.Value);
 
                 xml.Serialize(sw,models);

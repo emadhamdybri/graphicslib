@@ -58,10 +58,10 @@ namespace GraphicWorlds
                 groundMaterial.Invalidate();
 
             if (world.groundMaterialName != string.Empty)
-                groundMaterial = MaterialSystem.system.getMaterial(world.groundMaterialName);
+                groundMaterial = MaterialSystem.system.GetMaterial(world.groundMaterialName);
 
             if (groundMaterial == null)
-                groundMaterial = MaterialSystem.system.getMaterial(new Material(Color.ForestGreen));
+                groundMaterial = MaterialSystem.system.GetMaterial(new Material(Color.ForestGreen));
 
             if (world.groundUVSize > 0)
                 uvScale = 1f/world.groundUVSize;
@@ -72,9 +72,9 @@ namespace GraphicWorlds
             if (wallHeight > 0)
             {
                 if (world.wallMaterialName != string.Empty)
-                    wallMaterial = MaterialSystem.system.getMaterial(world.wallMaterialName);
+                    wallMaterial = MaterialSystem.system.GetMaterial(world.wallMaterialName);
                 if (wallMaterial == null)
-                    wallMaterial = MaterialSystem.system.getMaterial(new Material(Color.Brown));
+                    wallMaterial = MaterialSystem.system.GetMaterial(new Material(Color.Brown));
 
                 DrawablesSystem.system.addItem(wallMaterial, new ExecuteCallback(DrawGround), DrawablesSystem.FirstPass, wallList);
             }

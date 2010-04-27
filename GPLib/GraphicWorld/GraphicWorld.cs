@@ -22,7 +22,7 @@ using System.Drawing;
 
 using Drawables;
 using Drawables.Materials;
-using Drawables.Models;
+using Drawables.StaticModels;
 using Drawables.DisplayLists;
 using World;
 using Math3D;
@@ -34,7 +34,7 @@ namespace GraphicWorlds
     public class GraphicWorld
     {
         public Dictionary<string, Material> materials = new Dictionary<string,Material>();
-        public Dictionary<string, Model> models = new Dictionary<string,Model>();
+        public Dictionary<string, StaticModel> models = new Dictionary<string, StaticModel>();
         public ObjectWorld world = new ObjectWorld();
 
         GroundRenderer ground = new GroundRenderer();
@@ -95,7 +95,7 @@ namespace GraphicWorlds
                 foreach (KeyValuePair<string, Material> mat in materials)
                 {
                     mat.Value.Invalidate();
-                    newMats.Add(mat.Key, MaterialSystem.system.getMaterial(mat.Value));
+                    newMats.Add(mat.Key, MaterialSystem.system.GetMaterial(mat.Value));
                 }
                 materials = newMats;
             }
@@ -109,7 +109,7 @@ namespace GraphicWorlds
 
         public void SetBounds ( WorldObject obj )
         {
-            Model model = obj.tag as Model;
+            StaticModel model = obj.tag as StaticModel;
             if (model == null)
                 return;
 

@@ -27,7 +27,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
 using Drawables;
-using Drawables.Models;
+using Drawables.StaticModels;
 using Drawables.Materials;
 
 using Math3D;
@@ -39,14 +39,14 @@ namespace GraphicWorlds
         public Mesh mesh;
         public Material mat;
         public WorldObject obj;
-        public MeshOverride skin;
+      //  public MeshOverride skin;
 
-        public MeshMat (WorldObject _obj, Mesh _mesh, Material _mat, MeshOverride _skin)
+        public MeshMat (WorldObject _obj, Mesh _mesh, Material _mat /*, MeshOverride _skin*/)
         {
             obj = _obj;
             mesh = _mesh;
             mat = _mat;
-            skin = _skin;
+           // skin = _skin;
         }
     }
 
@@ -63,21 +63,13 @@ namespace GraphicWorlds
 
         public void AddCallbacks ( WorldObject obj )
         {
-            Model model = obj.tag as Model;
+            StaticModel model = obj.tag as StaticModel;
             if (model == null)
                 return;
 
-            MaterialOverride ovd = model.findSkin(obj.skin);
-            if (ovd != null)
-            {
-                foreach (Mesh m in model.meshes)
-                    DrawablesSystem.system.addItem(ovd.getMaterial(m.material), new ExecuteCallback(DrawObject), objectPass, new MeshMat(obj,m,m.material,ovd.findOverride(m.material.name)));
-            }
-            else
-            {
-                foreach (Mesh m in model.meshes)
-                    DrawablesSystem.system.addItem(m.material, new ExecuteCallback(DrawObject), objectPass, new MeshMat(obj,m,m.material,null));
-            }
+       
+            foreach (Mesh m in model.meshes)
+                DrawablesSystem.system.addItem(m.material, new ExecuteCallback(DrawObject), objectPass, new MeshMat(obj,m,m.material));
         }
 
         protected void TransformForObject ( WorldObject obj )
@@ -97,9 +89,9 @@ namespace GraphicWorlds
         {
             Matrix4 mat = Matrix4.Identity;
 
-            mat = Matrix4.Mult(mat, Matrix4.Translation(obj.postion));
+            mat = Matrix4.Mult(mat, Matrix4.CreateTranslation(obj.postion));
             mat = Matrix4.Mult(mat, Matrix4.Scale(obj.scale));
-            mat = Matrix4.Mult(mat, Matrix4.Rotate(new Vector3(0,0,1f),Trig.DegreeToRadian(obj.rotation.Z)));
+            mat = Matrix4.Mult(mat, Matrix4.CreateFromAxisAngle(new Vector3(0,0,1f),Trig.DegreeToRadian(obj.rotation.Z)));
 
             return mat;
         }
@@ -113,7 +105,7 @@ namespace GraphicWorlds
             if (meshMat == null)
                 return false;
 
-            Model model = meshMat.obj.tag as Model;
+            StaticModel model = meshMat.obj.tag as StaticModel;
             if (model == null)
                 return false;
 
@@ -124,10 +116,7 @@ namespace GraphicWorlds
 
             TransformForObject(meshMat.obj);
 
-            if (meshMat.skin == null)
-                model.draw(meshMat.mesh);
-            else            // there is a skin
-                model.draw(meshMat.mesh, meshMat.skin);
+            model.draw(meshMat.mesh);
 
             if (meshMat.obj.scaleSkinToSize)
             {
