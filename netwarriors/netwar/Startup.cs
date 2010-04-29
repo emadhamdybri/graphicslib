@@ -11,6 +11,8 @@ namespace netwar
 {
     public partial class Startup : Form
     {
+        public bool StartGame = false;
+
         public Startup()
         {
             InitializeComponent();
@@ -18,7 +20,8 @@ namespace netwar
 
         private void Play_Click(object sender, EventArgs e)
         {
-
+            StartGame = true;
+            this.Close();
         }
     }
 }

@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenTK, Version=1.0.0.201, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -48,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game.cs" />
     <Compile Include="Startup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +79,25 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Visual.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\GPLib\Drawables\Drawables.csproj">
+      <Project>{71452148-876E-4B8E-9244-A8F014CF72E6}</Project>
+      <Name>Drawables</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GPLib\Math\Math3D.csproj">
+      <Project>{0BC4671F-FF72-4D3E-9889-44382F6C64F2}</Project>
+      <Name>Math3D</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GPLib\Utilities\Utilities.csproj">
+      <Project>{1CD2C5DC-F417-41D6-9704-CCC0FB501BF3}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GPLib\World\World.csproj">
+      <Project>{D5EC63EC-B662-4C70-8C34-6E6AE3661D07}</Project>
+      <Name>World</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
