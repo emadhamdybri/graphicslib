@@ -13,9 +13,19 @@ namespace netwar
         [STAThread]
         static void Main()
         {
+            bool done = false;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Startup());
+            while (!done)
+            {
+                Startup form = new Startup();
+                Application.Run(form);
+
+                if (form.StartGame)
+                    done = new Game().Play();
+                else
+                    done = true;
+            }
         }
     }
 }
