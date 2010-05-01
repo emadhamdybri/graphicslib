@@ -20,5 +20,10 @@ namespace KingsReign
         {
             Application.Exit();
         }
+
+        private void GameWindow_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
