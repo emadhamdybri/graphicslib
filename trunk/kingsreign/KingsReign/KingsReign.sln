@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KingsReign", "KingsReign.csproj", "{23DCF346-E5F9-4222-8362-9A4579791448}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameObjects", "..\GameObjects\GameObjects.csproj", "{45CEC115-6410-494E-92C9-74A8B4E4C401}"
+EndProject
+Global
+	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
+		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{23DCF346-E5F9-4222-8362-9A4579791448}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23DCF346-E5F9-4222-8362-9A4579791448}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23DCF346-E5F9-4222-8362-9A4579791448}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23DCF346-E5F9-4222-8362-9A4579791448}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45CEC115-6410-494E-92C9-74A8B4E4C401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45CEC115-6410-494E-92C9-74A8B4E4C401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45CEC115-6410-494E-92C9-74A8B4E4C401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45CEC115-6410-494E-92C9-74A8B4E4C401}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
