@@ -1,0 +1,1 @@
+Much of that art in the game is reused from the Open source project "The Battle for Wesnoth" (http://www.wesnoth.org/), licensed under the GPL. This license can be found in the file wesnoth_license.txt
