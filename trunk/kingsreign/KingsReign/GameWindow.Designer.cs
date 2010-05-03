@@ -28,8 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Deployed", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Reserve Forces", System.Windows.Forms.HorizontalAlignment.Left);
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Deployed", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Reserve Forces", System.Windows.Forms.HorizontalAlignment.Left);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -37,32 +38,33 @@
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Spliter = new System.Windows.Forms.SplitContainer();
-            this.WorldViewCtl = new OpenTK.GLControl();
             this.ChatSpliter = new System.Windows.Forms.SplitContainer();
-            this.ChatType = new System.Windows.Forms.ComboBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.WorldViewCtl = new OpenTK.GLControl();
             this.ChatTabs = new System.Windows.Forms.TabControl();
             this.GeneralChatTab = new System.Windows.Forms.TabPage();
-            this.CombatLogTab = new System.Windows.Forms.TabPage();
-            this.EventLogTab = new System.Windows.Forms.TabPage();
             this.GeneralChat = new System.Windows.Forms.RichTextBox();
+            this.CombatLogTab = new System.Windows.Forms.TabPage();
             this.CombatLog = new System.Windows.Forms.RichTextBox();
+            this.EventLogTab = new System.Windows.Forms.TabPage();
             this.EventLog = new System.Windows.Forms.RichTextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.label4 = new System.Windows.Forms.Label();
-            this.StadingOrders = new System.Windows.Forms.ComboBox();
-            this.TurnIndicator = new System.Windows.Forms.PictureBox();
-            this.OpenTreasury = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.CurrentGold = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.CurrentLoyalty = new System.Windows.Forms.TextBox();
-            this.CapitalHealth = new System.Windows.Forms.ProgressBar();
-            this.label3 = new System.Windows.Forms.Label();
-            this.RepairCapital = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.ChatType = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.CapitalHealth = new System.Windows.Forms.ProgressBar();
+            this.CurrentLoyalty = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.CurrentGold = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.StadingOrders = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.listView1 = new System.Windows.Forms.ListView();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.RepairCapital = new System.Windows.Forms.Button();
+            this.OpenTreasury = new System.Windows.Forms.Button();
+            this.TurnIndicator = new System.Windows.Forms.PictureBox();
+            this.GameTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.Spliter.Panel1.SuspendLayout();
             this.Spliter.Panel2.SuspendLayout();
@@ -74,10 +76,10 @@
             this.GeneralChatTab.SuspendLayout();
             this.CombatLogTab.SuspendLayout();
             this.EventLogTab.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TurnIndicator)).BeginInit();
             this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TurnIndicator)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -87,7 +89,7 @@
             this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1091, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1063, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -104,19 +106,20 @@
             // findGameToolStripMenuItem
             // 
             this.findGameToolStripMenuItem.Name = "findGameToolStripMenuItem";
-            this.findGameToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.findGameToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.findGameToolStripMenuItem.Text = "Find Game";
+            this.findGameToolStripMenuItem.Click += new System.EventHandler(this.findGameToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(137, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -145,21 +148,9 @@
             this.Spliter.Panel2.Controls.Add(this.groupBox3);
             this.Spliter.Panel2.Controls.Add(this.groupBox2);
             this.Spliter.Panel2.Controls.Add(this.groupBox1);
-            this.Spliter.Size = new System.Drawing.Size(1091, 523);
-            this.Spliter.SplitterDistance = 852;
+            this.Spliter.Size = new System.Drawing.Size(1063, 556);
+            this.Spliter.SplitterDistance = 824;
             this.Spliter.TabIndex = 1;
-            // 
-            // WorldViewCtl
-            // 
-            this.WorldViewCtl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.WorldViewCtl.BackColor = System.Drawing.Color.Black;
-            this.WorldViewCtl.Location = new System.Drawing.Point(3, 3);
-            this.WorldViewCtl.Name = "WorldViewCtl";
-            this.WorldViewCtl.Size = new System.Drawing.Size(840, 364);
-            this.WorldViewCtl.TabIndex = 0;
-            this.WorldViewCtl.VSync = false;
             // 
             // ChatSpliter
             // 
@@ -179,32 +170,21 @@
             this.ChatSpliter.Panel2.Controls.Add(this.ChatTabs);
             this.ChatSpliter.Panel2.Controls.Add(this.textBox1);
             this.ChatSpliter.Panel2.Controls.Add(this.ChatType);
-            this.ChatSpliter.Size = new System.Drawing.Size(846, 520);
-            this.ChatSpliter.SplitterDistance = 370;
+            this.ChatSpliter.Size = new System.Drawing.Size(818, 553);
+            this.ChatSpliter.SplitterDistance = 393;
             this.ChatSpliter.TabIndex = 1;
             // 
-            // ChatType
+            // WorldViewCtl
             // 
-            this.ChatType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ChatType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ChatType.FormattingEnabled = true;
-            this.ChatType.Items.AddRange(new object[] {
-            "General",
-            "Pivate",
-            "Team"});
-            this.ChatType.Location = new System.Drawing.Point(3, 122);
-            this.ChatType.Name = "ChatType";
-            this.ChatType.Size = new System.Drawing.Size(121, 21);
-            this.ChatType.TabIndex = 0;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.WorldViewCtl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(130, 123);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(713, 20);
-            this.textBox1.TabIndex = 1;
+            this.WorldViewCtl.BackColor = System.Drawing.Color.Black;
+            this.WorldViewCtl.Location = new System.Drawing.Point(3, 3);
+            this.WorldViewCtl.Name = "WorldViewCtl";
+            this.WorldViewCtl.Size = new System.Drawing.Size(812, 387);
+            this.WorldViewCtl.TabIndex = 0;
+            this.WorldViewCtl.VSync = false;
             // 
             // ChatTabs
             // 
@@ -217,7 +197,7 @@
             this.ChatTabs.Location = new System.Drawing.Point(3, 0);
             this.ChatTabs.Name = "ChatTabs";
             this.ChatTabs.SelectedIndex = 0;
-            this.ChatTabs.Size = new System.Drawing.Size(840, 117);
+            this.ChatTabs.Size = new System.Drawing.Size(812, 127);
             this.ChatTabs.TabIndex = 2;
             // 
             // GeneralChatTab
@@ -226,31 +206,10 @@
             this.GeneralChatTab.Location = new System.Drawing.Point(4, 22);
             this.GeneralChatTab.Name = "GeneralChatTab";
             this.GeneralChatTab.Padding = new System.Windows.Forms.Padding(3);
-            this.GeneralChatTab.Size = new System.Drawing.Size(832, 91);
+            this.GeneralChatTab.Size = new System.Drawing.Size(804, 101);
             this.GeneralChatTab.TabIndex = 0;
             this.GeneralChatTab.Text = "General";
             this.GeneralChatTab.UseVisualStyleBackColor = true;
-            // 
-            // CombatLogTab
-            // 
-            this.CombatLogTab.Controls.Add(this.CombatLog);
-            this.CombatLogTab.Location = new System.Drawing.Point(4, 22);
-            this.CombatLogTab.Name = "CombatLogTab";
-            this.CombatLogTab.Padding = new System.Windows.Forms.Padding(3);
-            this.CombatLogTab.Size = new System.Drawing.Size(832, 91);
-            this.CombatLogTab.TabIndex = 1;
-            this.CombatLogTab.Text = "Combat";
-            this.CombatLogTab.UseVisualStyleBackColor = true;
-            // 
-            // EventLogTab
-            // 
-            this.EventLogTab.Controls.Add(this.EventLog);
-            this.EventLogTab.Location = new System.Drawing.Point(4, 22);
-            this.EventLogTab.Name = "EventLogTab";
-            this.EventLogTab.Size = new System.Drawing.Size(832, 91);
-            this.EventLogTab.TabIndex = 2;
-            this.EventLogTab.Text = "Events";
-            this.EventLogTab.UseVisualStyleBackColor = true;
             // 
             // GeneralChat
             // 
@@ -263,9 +222,20 @@
             this.GeneralChat.Location = new System.Drawing.Point(0, 0);
             this.GeneralChat.Name = "GeneralChat";
             this.GeneralChat.ReadOnly = true;
-            this.GeneralChat.Size = new System.Drawing.Size(832, 91);
+            this.GeneralChat.Size = new System.Drawing.Size(804, 101);
             this.GeneralChat.TabIndex = 0;
             this.GeneralChat.Text = "";
+            // 
+            // CombatLogTab
+            // 
+            this.CombatLogTab.Controls.Add(this.CombatLog);
+            this.CombatLogTab.Location = new System.Drawing.Point(4, 22);
+            this.CombatLogTab.Name = "CombatLogTab";
+            this.CombatLogTab.Padding = new System.Windows.Forms.Padding(3);
+            this.CombatLogTab.Size = new System.Drawing.Size(804, 101);
+            this.CombatLogTab.TabIndex = 1;
+            this.CombatLogTab.Text = "Combat";
+            this.CombatLogTab.UseVisualStyleBackColor = true;
             // 
             // CombatLog
             // 
@@ -274,9 +244,19 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.CombatLog.Location = new System.Drawing.Point(3, 3);
             this.CombatLog.Name = "CombatLog";
-            this.CombatLog.Size = new System.Drawing.Size(826, 88);
+            this.CombatLog.Size = new System.Drawing.Size(798, 98);
             this.CombatLog.TabIndex = 0;
             this.CombatLog.Text = "";
+            // 
+            // EventLogTab
+            // 
+            this.EventLogTab.Controls.Add(this.EventLog);
+            this.EventLogTab.Location = new System.Drawing.Point(4, 22);
+            this.EventLogTab.Name = "EventLogTab";
+            this.EventLogTab.Size = new System.Drawing.Size(804, 101);
+            this.EventLogTab.TabIndex = 2;
+            this.EventLogTab.Text = "Events";
+            this.EventLogTab.UseVisualStyleBackColor = true;
             // 
             // EventLog
             // 
@@ -285,9 +265,163 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.EventLog.Location = new System.Drawing.Point(3, 3);
             this.EventLog.Name = "EventLog";
-            this.EventLog.Size = new System.Drawing.Size(826, 85);
+            this.EventLog.Size = new System.Drawing.Size(798, 95);
             this.EventLog.TabIndex = 0;
             this.EventLog.Text = "";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox1.Location = new System.Drawing.Point(130, 133);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(685, 20);
+            this.textBox1.TabIndex = 1;
+            // 
+            // ChatType
+            // 
+            this.ChatType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ChatType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ChatType.FormattingEnabled = true;
+            this.ChatType.Items.AddRange(new object[] {
+            "General",
+            "Pivate",
+            "Team"});
+            this.ChatType.Location = new System.Drawing.Point(3, 132);
+            this.ChatType.Name = "ChatType";
+            this.ChatType.Size = new System.Drawing.Size(121, 21);
+            this.ChatType.TabIndex = 0;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.RepairCapital);
+            this.groupBox3.Controls.Add(this.label3);
+            this.groupBox3.Controls.Add(this.CapitalHealth);
+            this.groupBox3.Controls.Add(this.CurrentLoyalty);
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this.CurrentGold);
+            this.groupBox3.Controls.Add(this.label1);
+            this.groupBox3.Controls.Add(this.OpenTreasury);
+            this.groupBox3.Location = new System.Drawing.Point(4, 396);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(228, 157);
+            this.groupBox3.TabIndex = 3;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Realm";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 99);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(39, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Capital";
+            // 
+            // CapitalHealth
+            // 
+            this.CapitalHealth.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.CapitalHealth.Location = new System.Drawing.Point(51, 95);
+            this.CapitalHealth.Name = "CapitalHealth";
+            this.CapitalHealth.Size = new System.Drawing.Size(134, 23);
+            this.CapitalHealth.Step = 1;
+            this.CapitalHealth.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.CapitalHealth.TabIndex = 5;
+            // 
+            // CurrentLoyalty
+            // 
+            this.CurrentLoyalty.Location = new System.Drawing.Point(52, 51);
+            this.CurrentLoyalty.Name = "CurrentLoyalty";
+            this.CurrentLoyalty.ReadOnly = true;
+            this.CurrentLoyalty.Size = new System.Drawing.Size(112, 20);
+            this.CurrentLoyalty.TabIndex = 4;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 54);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(40, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Loyalty";
+            // 
+            // CurrentGold
+            // 
+            this.CurrentGold.Location = new System.Drawing.Point(52, 16);
+            this.CurrentGold.Name = "CurrentGold";
+            this.CurrentGold.ReadOnly = true;
+            this.CurrentGold.Size = new System.Drawing.Size(112, 20);
+            this.CurrentGold.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Gold";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.StadingOrders);
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.listView1);
+            this.groupBox2.Location = new System.Drawing.Point(4, 98);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(228, 292);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Forces";
+            // 
+            // StadingOrders
+            // 
+            this.StadingOrders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.StadingOrders.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.StadingOrders.FormattingEnabled = true;
+            this.StadingOrders.Items.AddRange(new object[] {
+            "None",
+            "Attack On Sight",
+            "Counter Attack Only"});
+            this.StadingOrders.Location = new System.Drawing.Point(92, 265);
+            this.StadingOrders.Name = "StadingOrders";
+            this.StadingOrders.Size = new System.Drawing.Size(124, 21);
+            this.StadingOrders.TabIndex = 2;
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(3, 268);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(83, 13);
+            this.label4.TabIndex = 1;
+            this.label4.Text = "Standing Orders";
+            // 
+            // listView1
+            // 
+            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            listViewGroup1.Header = "Deployed";
+            listViewGroup1.Name = "DeployedForces";
+            listViewGroup2.Header = "Reserve Forces";
+            listViewGroup2.Name = "ReserveForces";
+            this.listView1.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2});
+            this.listView1.Location = new System.Drawing.Point(6, 19);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(216, 240);
+            this.listView1.TabIndex = 0;
+            this.listView1.UseCompatibleStateImageBehavior = false;
             // 
             // groupBox1
             // 
@@ -301,139 +435,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Players";
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.StadingOrders);
-            this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.listView1);
-            this.groupBox2.Location = new System.Drawing.Point(4, 98);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(228, 259);
-            this.groupBox2.TabIndex = 2;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Forces";
-            // 
-            // listView1
-            // 
-            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            listViewGroup5.Header = "Deployed";
-            listViewGroup5.Name = "DeployedForces";
-            listViewGroup6.Header = "Reserve Forces";
-            listViewGroup6.Name = "ReserveForces";
-            this.listView1.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup5,
-            listViewGroup6});
-            this.listView1.Location = new System.Drawing.Point(6, 19);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(216, 207);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 235);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(83, 13);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Standing Orders";
-            // 
-            // StadingOrders
-            // 
-            this.StadingOrders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.StadingOrders.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.StadingOrders.FormattingEnabled = true;
-            this.StadingOrders.Items.AddRange(new object[] {
-            "None",
-            "Attack On Sight",
-            "Counter Attack Only"});
-            this.StadingOrders.Location = new System.Drawing.Point(92, 232);
-            this.StadingOrders.Name = "StadingOrders";
-            this.StadingOrders.Size = new System.Drawing.Size(124, 21);
-            this.StadingOrders.TabIndex = 2;
-            // 
-            // TurnIndicator
-            // 
-            this.TurnIndicator.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.TurnIndicator.Location = new System.Drawing.Point(6, 19);
-            this.TurnIndicator.Name = "TurnIndicator";
-            this.TurnIndicator.Size = new System.Drawing.Size(210, 44);
-            this.TurnIndicator.TabIndex = 0;
-            this.TurnIndicator.TabStop = false;
-            // 
-            // OpenTreasury
-            // 
-            this.OpenTreasury.BackgroundImage = global::KingsReign.Properties.Resources.money;
-            this.OpenTreasury.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.OpenTreasury.Location = new System.Drawing.Point(170, 14);
-            this.OpenTreasury.Name = "OpenTreasury";
-            this.OpenTreasury.Size = new System.Drawing.Size(52, 72);
-            this.OpenTreasury.TabIndex = 0;
-            this.OpenTreasury.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Gold";
-            // 
-            // CurrentGold
-            // 
-            this.CurrentGold.Location = new System.Drawing.Point(52, 16);
-            this.CurrentGold.Name = "CurrentGold";
-            this.CurrentGold.ReadOnly = true;
-            this.CurrentGold.Size = new System.Drawing.Size(112, 20);
-            this.CurrentGold.TabIndex = 2;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 54);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(40, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Loyalty";
-            // 
-            // CurrentLoyalty
-            // 
-            this.CurrentLoyalty.Location = new System.Drawing.Point(52, 51);
-            this.CurrentLoyalty.Name = "CurrentLoyalty";
-            this.CurrentLoyalty.ReadOnly = true;
-            this.CurrentLoyalty.Size = new System.Drawing.Size(112, 20);
-            this.CurrentLoyalty.TabIndex = 4;
-            // 
-            // CapitalHealth
-            // 
-            this.CapitalHealth.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.CapitalHealth.Location = new System.Drawing.Point(51, 95);
-            this.CapitalHealth.Name = "CapitalHealth";
-            this.CapitalHealth.Size = new System.Drawing.Size(134, 23);
-            this.CapitalHealth.Step = 1;
-            this.CapitalHealth.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.CapitalHealth.TabIndex = 5;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 99);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(39, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "Capital";
-            // 
             // RepairCapital
             // 
             this.RepairCapital.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
@@ -446,29 +447,35 @@
             this.RepairCapital.TabIndex = 7;
             this.RepairCapital.UseVisualStyleBackColor = true;
             // 
-            // groupBox3
+            // OpenTreasury
             // 
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.RepairCapital);
-            this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.CapitalHealth);
-            this.groupBox3.Controls.Add(this.CurrentLoyalty);
-            this.groupBox3.Controls.Add(this.label2);
-            this.groupBox3.Controls.Add(this.CurrentGold);
-            this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.OpenTreasury);
-            this.groupBox3.Location = new System.Drawing.Point(4, 363);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(228, 157);
-            this.groupBox3.TabIndex = 3;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Realm";
+            this.OpenTreasury.BackgroundImage = global::KingsReign.Properties.Resources.money;
+            this.OpenTreasury.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.OpenTreasury.Location = new System.Drawing.Point(170, 14);
+            this.OpenTreasury.Name = "OpenTreasury";
+            this.OpenTreasury.Size = new System.Drawing.Size(52, 72);
+            this.OpenTreasury.TabIndex = 0;
+            this.OpenTreasury.UseVisualStyleBackColor = true;
+            // 
+            // TurnIndicator
+            // 
+            this.TurnIndicator.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.TurnIndicator.Location = new System.Drawing.Point(6, 19);
+            this.TurnIndicator.Name = "TurnIndicator";
+            this.TurnIndicator.Size = new System.Drawing.Size(210, 44);
+            this.TurnIndicator.TabIndex = 0;
+            this.TurnIndicator.TabStop = false;
+            // 
+            // GameTimer
+            // 
+            this.GameTimer.Tick += new System.EventHandler(this.GameTimer_Tick);
             // 
             // GameWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1091, 547);
+            this.ClientSize = new System.Drawing.Size(1063, 580);
             this.Controls.Add(this.Spliter);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -488,12 +495,12 @@
             this.GeneralChatTab.ResumeLayout(false);
             this.CombatLogTab.ResumeLayout(false);
             this.EventLogTab.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TurnIndicator)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.TurnIndicator)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -534,6 +541,7 @@
         private System.Windows.Forms.TextBox CurrentGold;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button OpenTreasury;
+        private System.Windows.Forms.Timer GameTimer;
     }
 }
 
