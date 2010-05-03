@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{23DCF346-E5F9-4222-8362-9A4579791448}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -50,6 +50,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameClient.cs" />
+    <Compile Include="GameConnectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GameConnectionDialog.Designer.cs">
+      <DependentUpon>GameConnectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GameVisual.cs" />
     <Compile Include="GameWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -58,6 +66,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GameConnectionDialog.resx">
+      <DependentUpon>GameConnectionDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="GameWindow.resx">
       <DependentUpon>GameWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -86,6 +98,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\fix.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameObjects\GameObjects.csproj">
+      <Project>{45CEC115-6410-494E-92C9-74A8B4E4C401}</Project>
+      <Name>GameObjects</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
