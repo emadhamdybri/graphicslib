@@ -7,6 +7,8 @@ using System.Threading;
 using System.Text;
 using System.Windows.Forms;
 
+using GameObjects;
+
 namespace KingsReign
 {
     public partial class GameWindow : Form
