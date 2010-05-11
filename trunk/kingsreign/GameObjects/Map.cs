@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace GameObjects
 {
-    public class Capital
+    public class CapitalDefinition
     {
         public Point Location = Point.Empty;
         public RealmType Realm = RealmType.Unknown;
@@ -29,7 +29,7 @@ namespace GameObjects
         public int SectionsW = 0;
         public int SectionsH = 0;
 
-        public List<Capital> Capitals = new List<Capital>();
+        public List<CapitalDefinition> Capitals = new List<CapitalDefinition>();
         public List<Mine> Mines = new List<Mine>();
         public int StaringGold = -1;
 
@@ -113,8 +113,8 @@ namespace GameObjects
             cfg.SectionsH = imageCountH + 1;
             cfg.SectionsW = imageCountW + 1;
 
-            cfg.Capitals.Add(new Capital());
-            cfg.Capitals.Add(new Capital());
+            cfg.Capitals.Add(new CapitalDefinition());
+            cfg.Capitals.Add(new CapitalDefinition());
 
             cfg.Mines.Add(new Mine());
 
@@ -131,7 +131,7 @@ namespace GameObjects
         public Image TerrainMap;
         public FileInfo[] ImageMaps;
 
-        public Capital[] Capitals;
+        public CapitalDefinition[] Capitals;
         public Mine[] Mines;
 
         public int StaringGold = -1;
