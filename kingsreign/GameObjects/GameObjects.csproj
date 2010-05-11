@@ -46,8 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Castle.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Realm.cs" />
+    <Compile Include="Unit.cs" />
     <Compile Include="Units.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
