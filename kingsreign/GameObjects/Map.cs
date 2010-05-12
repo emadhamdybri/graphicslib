@@ -149,7 +149,7 @@ namespace GameObjects
 
         public static Color PlainsZone
         {
-            get { return Color.Green; }
+            get { return Color.Lime; }
         }
 
         public static Color DesertZone
@@ -169,7 +169,7 @@ namespace GameObjects
 
         public static Color IceZone
         {
-            get { return Color.Black; }
+            get { return Color.White; }
         }
 
         public static Color RiverZone
@@ -189,29 +189,43 @@ namespace GameObjects
             eIce,
         }
 
+        protected bool CompareColor ( Color c1, Color c2 )
+        {
+            return c1.R == c2.R && c1.G == c2.G && c1.B == c2.B;
+        }
+
         public TerrainType GetTerrain ( Point pos )
         {
-            if (TerrainMap as Bitmap == null)
+            Bitmap img = TerrainMap as Bitmap;
+            if (img == null)
                 return TerrainType.eUnpassable;
 
             // scale the position from world space to the terrain map
             Point imagePos = new Point((int)(pos.X * TerrainScaleX), (int)(pos.Y * TerrainScaleY));
 
-            Color pix = (TerrainMap as Bitmap).GetPixel(imagePos.X, imagePos.Y);
-            
-            if (pix == Map.SeaZone)
+            if (imagePos.X < 0 || imagePos.X >= TerrainMap.Width || imagePos.Y < 0 || imagePos.Y >= TerrainMap.Height)
+                return TerrainType.eUnpassable;
+
+            Color pix = img.GetPixel(imagePos.X, imagePos.Y);
+
+            Byte r = pix.R;
+            Byte g = pix.G;
+            Byte b = pix.B;
+            Byte a = pix.A;
+          
+            if (CompareColor(pix,Map.SeaZone))
                 return TerrainType.eSea;
-            else if (pix ==Map.RiverZone)
+            else if (CompareColor(pix,Map.RiverZone))
                 return TerrainType.eRiver;
-            else if (pix == Map.Forrest)
+            else if (CompareColor(pix,Map.Forrest))
                 return TerrainType.eForrest;
-            else if (pix == Map.PlainsZone)
+            else if (CompareColor(pix,Map.PlainsZone))
                 return TerrainType.eNormal;
-            else if (pix == Map.DesertZone)
+            else if (CompareColor(pix,Map.DesertZone))
                 return TerrainType.eSand;
-            else if (pix == Map.IceZone)
+            else if (CompareColor(pix,Map.IceZone))
                 return TerrainType.eIce;
-            else if (pix == Map.MountainZone)
+            else if (CompareColor(pix,Map.MountainZone))
                 return TerrainType.eMountains;
 
             return TerrainType.eUnpassable;
