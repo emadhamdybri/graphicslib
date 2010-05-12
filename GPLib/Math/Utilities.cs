@@ -509,5 +509,10 @@ namespace Math3D
         {
             return new Vector2((float)Math.Cos(Trig.DegreeToRadian(angle)), (float)Math.Sin(Trig.DegreeToRadian(angle)));
         }
+
+        public static Vector2 FromAngle(float angle, float radius)
+        {
+            return new Vector2((float)Math.Cos(Trig.DegreeToRadian(angle)) * radius, (float)Math.Sin(Trig.DegreeToRadian(angle))*radius);
+        }
     }
 }
