@@ -50,19 +50,19 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.ChatType = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.RepairCapital = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.CapitalHealth = new System.Windows.Forms.ProgressBar();
             this.CurrentLoyalty = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.CurrentGold = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.OpenTreasury = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.StadingOrders = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.RepairCapital = new System.Windows.Forms.Button();
-            this.OpenTreasury = new System.Windows.Forms.Button();
             this.TurnIndicator = new System.Windows.Forms.PictureBox();
             this.GameTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
@@ -106,20 +106,20 @@
             // findGameToolStripMenuItem
             // 
             this.findGameToolStripMenuItem.Name = "findGameToolStripMenuItem";
-            this.findGameToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.findGameToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.findGameToolStripMenuItem.Text = "Find Game";
             this.findGameToolStripMenuItem.Click += new System.EventHandler(this.findGameToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(137, 6);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -216,9 +216,8 @@
             this.GeneralChat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.GeneralChat.BackColor = System.Drawing.Color.Black;
-            this.GeneralChat.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.GeneralChat.ForeColor = System.Drawing.Color.White;
+            this.GeneralChat.BackColor = System.Drawing.SystemColors.Window;
+            this.GeneralChat.ForeColor = System.Drawing.SystemColors.WindowText;
             this.GeneralChat.Location = new System.Drawing.Point(0, 0);
             this.GeneralChat.Name = "GeneralChat";
             this.GeneralChat.ReadOnly = true;
@@ -310,6 +309,18 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Realm";
             // 
+            // RepairCapital
+            // 
+            this.RepairCapital.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.RepairCapital.BackgroundImage = global::KingsReign.Properties.Resources.fix;
+            this.RepairCapital.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.RepairCapital.Location = new System.Drawing.Point(191, 89);
+            this.RepairCapital.Name = "RepairCapital";
+            this.RepairCapital.Size = new System.Drawing.Size(31, 33);
+            this.RepairCapital.TabIndex = 7;
+            this.RepairCapital.UseVisualStyleBackColor = true;
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -363,6 +374,16 @@
             this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Gold";
+            // 
+            // OpenTreasury
+            // 
+            this.OpenTreasury.BackgroundImage = global::KingsReign.Properties.Resources.money;
+            this.OpenTreasury.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.OpenTreasury.Location = new System.Drawing.Point(170, 14);
+            this.OpenTreasury.Name = "OpenTreasury";
+            this.OpenTreasury.Size = new System.Drawing.Size(52, 72);
+            this.OpenTreasury.TabIndex = 0;
+            this.OpenTreasury.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -434,28 +455,6 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Players";
-            // 
-            // RepairCapital
-            // 
-            this.RepairCapital.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.RepairCapital.BackgroundImage = global::KingsReign.Properties.Resources.fix;
-            this.RepairCapital.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.RepairCapital.Location = new System.Drawing.Point(191, 89);
-            this.RepairCapital.Name = "RepairCapital";
-            this.RepairCapital.Size = new System.Drawing.Size(31, 33);
-            this.RepairCapital.TabIndex = 7;
-            this.RepairCapital.UseVisualStyleBackColor = true;
-            // 
-            // OpenTreasury
-            // 
-            this.OpenTreasury.BackgroundImage = global::KingsReign.Properties.Resources.money;
-            this.OpenTreasury.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.OpenTreasury.Location = new System.Drawing.Point(170, 14);
-            this.OpenTreasury.Name = "OpenTreasury";
-            this.OpenTreasury.Size = new System.Drawing.Size(52, 72);
-            this.OpenTreasury.TabIndex = 0;
-            this.OpenTreasury.UseVisualStyleBackColor = true;
             // 
             // TurnIndicator
             // 

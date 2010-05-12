@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.IO;
+using System.Diagnostics;
 
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -62,7 +63,11 @@ namespace KingsReign
 
         public Point SelectPoint = new Point(200, 200);
 
-        protected Texture Flag;
+        protected Texture Selction;
+
+        protected Texture BackgroundWater;
+        protected Texture Logo;
+        protected Dictionary<Map.TerrainType,Texture> TerrainFlagImages = new Dictionary<Map.TerrainType,Texture>();
         protected Texture MineImage;
         protected Color MineRingColor = Color.Goldenrod;
 
@@ -70,9 +75,15 @@ namespace KingsReign
         protected Dictionary<RealmType, Texture> CampImages = new Dictionary<RealmType, Texture>();
         protected Dictionary<RealmType, Color> RealmColors = new Dictionary<RealmType, Color>();
 
+        protected Stopwatch GraphicsTimer = new Stopwatch();
+
+        protected List<Point> FlagMarkers = new List<Point>();
+
         public GameVisual ( GLControl ctl )
         {
             Control = ctl;
+
+            GraphicsTimer.Start();
 
             SetupGL();
             Control.Paint += new System.Windows.Forms.PaintEventHandler(Control_Paint);
@@ -82,7 +93,10 @@ namespace KingsReign
 
         protected void LoadResources ()
         {
-            Flag = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-red.png"));
+            BackgroundWater = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/water.png"));
+            Logo = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/logo_color_600.png"));
+
+            Selction = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/illuminates-aura.png"));
             MineImage = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/mine.png"));
 
             RealmColors.Add(RealmType.Arlan, Color.OrangeRed);
@@ -96,6 +110,15 @@ namespace KingsReign
             RealmColors.Add(RealmType.Unknown, Color.DarkSlateGray);
             CastleImages.Add(RealmType.Unknown, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/human_castle_1.png")));
             CampImages.Add(RealmType.Unknown, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/small_camp_1.png")));
+
+            TerrainFlagImages.Add(GameObjects.Map.TerrainType.eUnpassable, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-red.png")));
+            TerrainFlagImages.Add(GameObjects.Map.TerrainType.eForrest, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-forest-green.png")));
+            TerrainFlagImages.Add(GameObjects.Map.TerrainType.eNormal, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-light-green.png")));
+            TerrainFlagImages.Add(GameObjects.Map.TerrainType.eSand, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-yellow.png")));
+            TerrainFlagImages.Add(GameObjects.Map.TerrainType.eRiver, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-teal.png")));
+            TerrainFlagImages.Add(GameObjects.Map.TerrainType.eSea, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-blue.png")));
+            TerrainFlagImages.Add(GameObjects.Map.TerrainType.eIce, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-white.png")));
+            TerrainFlagImages.Add(GameObjects.Map.TerrainType.eMountains, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-gray.png")));
         }
 
         public void SetClient ( GameClient client )
@@ -106,6 +129,11 @@ namespace KingsReign
                 Client.MapLoaded += new GameClient.MapLoadedEvent(Client_MapLoaded);
                 Client.Updated += new GameClient.UpdateEvent(Client_Updated);
             }
+        }
+
+        public void IdleUpdate ()
+        {
+            Draw();
         }
 
         void Client_Updated(GameClient sender)
@@ -209,6 +237,32 @@ namespace KingsReign
             GL.End();
         }
 
+        protected void FillScreen(Texture texture, Vector2 UVShift, float UVScale )
+        {
+            float screenCenterX = Control.Width / 2.0f;
+            float screenCenterY = Control.Height / 2.0f;
+
+            texture.Bind();
+
+            GL.Begin(BeginMode.Quads);
+
+            GL.Normal3(0, 0, 1);
+
+            GL.TexCoord2((-screenCenterX / texture.Width) * UVScale + UVShift.X, (-screenCenterY / texture.Height) * UVScale + UVShift.Y);
+            GL.Vertex2(-screenCenterX, -screenCenterY);
+
+            GL.TexCoord2((screenCenterX / texture.Width) * UVScale + UVShift.X, (-screenCenterY / texture.Height) * UVScale + UVShift.Y);
+            GL.Vertex2(screenCenterX, -screenCenterY);
+
+            GL.TexCoord2((screenCenterX / texture.Width) * UVScale + UVShift.X, (screenCenterY / texture.Height) * UVScale + UVShift.Y);
+            GL.Vertex2(screenCenterX, screenCenterY);
+
+            GL.TexCoord2((-screenCenterX / texture.Width ) * UVScale + UVShift.X, (screenCenterY / texture.Height) * UVScale + UVShift.Y);
+            GL.Vertex2(-screenCenterX, screenCenterY);
+
+            GL.End();
+        }
+
         protected void DrawImageCentered(Texture texture)
         {
             texture.Bind();
@@ -226,6 +280,30 @@ namespace KingsReign
 
             GL.TexCoord2(0, 1);
             GL.Vertex2(-texture.Width / 2, texture.Height / 2f);
+
+            GL.End();
+        }
+
+        protected void DrawImageCentered(Texture texture, float scale)
+        {
+            texture.Bind();
+            GL.Begin(BeginMode.Quads);
+
+            float width = texture.Width/2f * scale;
+            float height = texture.Height/2f * scale;
+
+            GL.Normal3(0, 0, 1);
+            GL.TexCoord2(0, 0);
+            GL.Vertex2(-width, -height);
+
+            GL.TexCoord2(1, 0);
+            GL.Vertex2(width, -height);
+
+            GL.TexCoord2(1, 1);
+            GL.Vertex2(width, height);
+
+            GL.TexCoord2(0, 1);
+            GL.Vertex2(-width, height);
 
             GL.End();
         }
@@ -248,9 +326,11 @@ namespace KingsReign
         protected void DrawSeletionMark ()
         {
             GL.PushMatrix();
-
-            GL.Translate(SelectPoint.X + Flag.Width / 2 , SelectPoint.Y - Flag.Height / 2 + 2, 0);
-            DrawImageCentered(Flag);
+            GL.Translate(SelectPoint.X, SelectPoint.Y, 0);
+            GL.Rotate(GraphicsTimer.ElapsedMilliseconds / 5f, 0f, 0f, 1f);
+            float scale = ((float)Math.Sin(GraphicsTimer.ElapsedMilliseconds / 500f) + 1.0f) * 0.5f;
+            scale = 0.5f + (scale * 0.125f);
+            DrawImageCentered(Selction, scale);
 
             GL.PopMatrix();
         }
@@ -260,6 +340,11 @@ namespace KingsReign
             int segments = 32;
             for (int i = 0; i < segments; i++)
                 GL.Vertex2(VectorHelper2.FromAngle(i * (360f / segments),radius));
+        }
+
+        public void MouseClick ( Point loc )
+        {
+            FlagMarkers.Add(loc);
         }
 
         protected void DrawPlace ( Point loc, Texture building, Color ring )
@@ -272,16 +357,17 @@ namespace KingsReign
 
             GL.Disable(EnableCap.Texture2D);
 
-            ScaleColorWithAlpha(ring, 0.4f, 0.25f);
+            ColorWithAlpha(ring, 0.5f);
+          //  GL.Translate(0, 0, 0.1f);
+            GL.Begin(BeginMode.Polygon);
+            CircleVerts(radius);
+            GL.End(); 
+            
+            ScaleColorWithAlpha(ring, 0.4f, 0.5f);
             GL.Begin(BeginMode.Polygon);
             CircleVerts(radius + border);
             GL.End();
 
-            ColorWithAlpha(ring, 0.5f);
-            GL.Translate(0, 0, 0.1f);
-            GL.Begin(BeginMode.Polygon);
-            CircleVerts(radius);
-            GL.End();
 
             GL.Translate(0, 0, 0.25f);
 
@@ -309,16 +395,39 @@ namespace KingsReign
                 DrawCastle(castle);
         }
 
+        protected void DrawFlags ()
+        {
+            foreach (Point p in FlagMarkers)
+            {
+                GL.PushMatrix();
+                Texture t = TerrainFlagImages[Client.WorldMap.GetTerrain(p)];
+                GL.Translate(p.X, p.Y-t.Height, 0);
+
+                DrawImage(t);
+
+                GL.PopMatrix();
+            }
+        }
+
         protected void DrawWorld ()
         {
+            GL.Translate(0, Control.Height, 0);
+            GL.Scale(1, -1, 1);
+            
+            float screenCenterX = Control.Width / 2.0f;
+            float screenCenterY = Control.Height / 2.0f;
+            float tide = GraphicsTimer.ElapsedMilliseconds / 2000f;
+            tide = (float)Math.Sin(tide) * 0.025f + 1.0f;
+
+            GL.PushMatrix();
+                GL.Translate(screenCenterX, screenCenterY, -25);
+                Vector2 uvShift = new Vector2(CameraPos.X / (float)BackgroundWater.Width, CameraPos.Y / (float)BackgroundWater.Height);
+
+                FillScreen(BackgroundWater, uvShift, tide);
+            GL.PopMatrix();
+
             if (Map != null)
             {
-                GL.Translate(0, Control.Height,0);
-                GL.Scale(1, -1, 1);
-
-                float screenCenterX = Control.Width / 2.0f;
-                float screenCenterY = Control.Height / 2.0f;
-
                 GL.Translate(-CameraPos.X + screenCenterX, -CameraPos.Y + screenCenterY, -20);
 
                 // matrix is now set for the world
@@ -341,11 +450,16 @@ namespace KingsReign
 
                 // effects layer;
                 GL.Translate(0, 0, 1);
+                DrawFlags();
 
                 // selectionLayer
                 GL.Translate(0, 0, 1);
                 DrawSeletionMark();
-
+            }
+            else
+            {
+                GL.Translate(screenCenterX, screenCenterY, -19);
+                DrawImageCentered(Logo);
             }
         }
 

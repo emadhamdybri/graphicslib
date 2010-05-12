@@ -40,13 +40,15 @@ namespace KingsReign
         private void GameWindow_Load(object sender, EventArgs e)
         {
             visual = new GameVisual(WorldViewCtl);
+            GameTimer.Start();
 
             WorldViewCtl.MouseDown += new MouseEventHandler(WorldViewCtl_MouseDown);
             WorldViewCtl.MouseUp += new MouseEventHandler(WorldViewCtl_MouseUp);
             WorldViewCtl.MouseMove += new MouseEventHandler(WorldViewCtl_MouseMove);
 
+            return;
+
             // automatically fire up a test game
-            GameTimer.Start();
             findGameToolStripMenuItem.Enabled = false;
             client = new GameClient();
             visual.SetClient(client);
@@ -75,6 +77,15 @@ namespace KingsReign
             {
                 Point p = new Point(e.X - WorldViewCtl.Width / 2, e.Y - WorldViewCtl.Height / 2);
                 visual.SelectPoint = new Point(visual.CameraPos.X + p.X, visual.CameraPos.Y + p.Y);
+
+                if (client != null)
+                {
+                    visual.MouseClick(visual.SelectPoint);
+                    EventLog.Text += "Click at " + visual.SelectPoint.ToString() + " is " + client.WorldMap.GetTerrain(visual.SelectPoint).ToString() + "\r\n";
+
+                    EventLog.Select(EventLog.Text.Length-1, EventLog.Text.Length);
+                    EventLog.ScrollToCaret();
+                }
             }
            
             lastMousePos = new Point(e.X, e.Y);
@@ -85,7 +96,6 @@ namespace KingsReign
             GameConnectionDialog dlog = new GameConnectionDialog();
             if (dlog.ShowDialog(this) == DialogResult.OK)
             {
-                GameTimer.Start();
                 findGameToolStripMenuItem.Enabled = false;
                 client = new GameClient();
                 visual.SetClient(client);
@@ -99,7 +109,6 @@ namespace KingsReign
         private void Stop ()
         {
             findGameToolStripMenuItem.Enabled = true;
-            GameTimer.Stop();
             if (client != null)
                 client.Kill();
 
@@ -113,6 +122,8 @@ namespace KingsReign
                if (!client.Update())
                    Stop();
            }
+           else if (visual != null)
+               visual.IdleUpdate();
         }
     }
 }

@@ -2,8 +2,8 @@
 <MapConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>Sample Map</Name>
   <Base />
-  <Width>3072</Width>
-  <Height>3072</Height>
+  <Width>2812</Width>
+  <Height>2824</Height>
   <SectionsW>3</SectionsW>
   <SectionsH>3</SectionsH>
   <Capitals>
