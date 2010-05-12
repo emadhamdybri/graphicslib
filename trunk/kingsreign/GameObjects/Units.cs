@@ -59,6 +59,8 @@ namespace GameObjects
         public int Experience = 0;
         public int Level = 0;
 
+        public Object Tag = null;
+
         public StationType Station = StationType.AtCastle;
 
         public Point Position = Point.Empty;
