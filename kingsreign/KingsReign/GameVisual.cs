@@ -16,6 +16,120 @@ using Math3D;
 
 namespace KingsReign
 {
+    public class UnitRenderer
+    {
+        protected static Texture GenericDead;
+
+        public enum AnimationState
+        {
+            Idle,
+            Moving,
+            Attacking,
+            Defending,
+            RangeAttacking,
+            RangeDefending,
+            Dead,
+        }
+
+        public static int FPS = 5;
+
+        public RealmType Rrealm = RealmType.Unknown;
+
+        protected Dictionary<AnimationState, List<Texture>> AnimationFrames = new Dictionary<AnimationState, List<Texture>>();
+
+        protected List<Texture> FindTextures ( string dir, string name )
+        {
+            List<Texture> textures = new List<Texture>();
+
+            FileInfo file = new FileInfo(ResourceManager.FindFile(Path.Combine(dir, name + ".png")));
+            if (file.Exists)
+                textures.Add(TextureSystem.system.GetTexture(file.FullName));
+            else
+            {
+                // see if there is one with a number
+                int i = 1;
+                while (true)
+                {
+                    file = new FileInfo(ResourceManager.FindFile(Path.Combine(dir, name + "_" + i.ToString() + ".png")));
+                    if (file.Exists)
+                    {
+                        textures.Add(TextureSystem.system.GetTexture(file.FullName));
+                        i++;
+                    }
+                    else
+                        break;
+                }
+            }
+
+            if (textures.Count == 0)
+                return null;
+
+            return textures;
+        }
+
+        public UnitRenderer ( string dir )
+        {
+            AnimationFrames.Add(AnimationState.Idle, FindTextures(dir, "idle"));
+            AnimationFrames.Add(AnimationState.Moving, FindTextures(dir, "move"));
+            AnimationFrames.Add(AnimationState.Attacking, FindTextures(dir, "attack"));
+            AnimationFrames.Add(AnimationState.Defending, FindTextures(dir, "defend"));
+            AnimationFrames.Add(AnimationState.RangeAttacking, FindTextures(dir, "ranged"));
+            AnimationFrames.Add(AnimationState.RangeDefending, FindTextures(dir, "ranged_defend"));
+            AnimationFrames.Add(AnimationState.Dead, FindTextures(dir, "die"));
+
+            if (GenericDead == null)
+                GenericDead = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/units/generic/die.png"));
+        }
+
+        protected Texture GetFrame ( AnimationState state, double time  )
+        {
+            List<Texture> l = AnimationFrames[state];
+
+            if (l.Count == 1)
+                return l[0];
+
+            double seqTime = (double)l.Count / (double)FPS;
+
+            int fullframes = (int)(time / seqTime);
+            double remainder = time - (fullframes * seqTime);
+
+            double frameTime = 1.0 / FPS;
+
+            int frame = (int)((remainder / seqTime) * l.Count-1);
+
+            return l[frame];
+        }
+
+        public void Render ( AnimationState state, double time )
+        {
+            Texture t;
+            if (AnimationFrames.ContainsKey(state))
+                t = GetFrame(state, time);
+            else
+            {
+                if (state == AnimationState.Dead)
+                    t = GenericDead;
+                else if (state == AnimationState.RangeDefending && AnimationFrames.ContainsKey(AnimationState.Defending))
+                    t = GetFrame(AnimationState.Defending, time);
+                else if (state == AnimationState.RangeAttacking && AnimationFrames.ContainsKey(AnimationState.Attacking))
+                    t = GetFrame(AnimationState.Attacking, time);
+                else
+                    t = GetFrame(AnimationState.Idle, time);
+            }
+
+            RenderUtils.DrawImageCentered(t);
+        }
+    }
+
+    public class UnitGraphicInstance
+    {
+        public UnitInstance Unit = null;
+        public UnitRenderer Renderer;
+
+        public UnitRenderer.AnimationState State = UnitRenderer.AnimationState.Idle;
+
+    }
+
     public class MapVisual
     {
         public List<Texture> WorldMapTextures = new List<Texture>();
@@ -206,37 +320,6 @@ namespace KingsReign
             GL.MatrixMode(MatrixMode.Modelview);
         }
 
-        protected void ColorWithAlpha ( Color color, float alpha )
-        {
-            GL.Color4(color.R / 256f, color.G / 256f, color.B / 256f, alpha);
-        }
-
-        protected void ScaleColorWithAlpha(Color color, float scale, float alpha)
-        {
-            GL.Color4(color.R / 256f * scale, color.G / 256f * scale, color.B / 256f * scale, alpha);
-        }
-
-        protected void DrawImage (Texture texture)
-        {
-            texture.Bind();
-            GL.Begin(BeginMode.Quads);
-
-            GL.Normal3(0, 0, 1);
-            GL.TexCoord2(0, 0);
-            GL.Vertex2(0, 0);
-
-            GL.TexCoord2(1, 0);
-            GL.Vertex2(texture.Width, 0);
-
-            GL.TexCoord2(1, 1);
-            GL.Vertex2(texture.Width, texture.Height);
-
-            GL.TexCoord2(0, 1);
-            GL.Vertex2(0, texture.Height);
-
-            GL.End();
-        }
-
         protected void FillScreen(Texture texture, Vector2 UVShift, float UVScale )
         {
             float screenCenterX = Control.Width / 2.0f;
@@ -263,51 +346,6 @@ namespace KingsReign
             GL.End();
         }
 
-        protected void DrawImageCentered(Texture texture)
-        {
-            texture.Bind();
-            GL.Begin(BeginMode.Quads);
-
-            GL.Normal3(0, 0, 1);
-            GL.TexCoord2(0, 0);
-            GL.Vertex2(-texture.Width / 2, -texture.Height / 2f);
-
-            GL.TexCoord2(1, 0);
-            GL.Vertex2(texture.Width / 2, -texture.Height / 2f);
-
-            GL.TexCoord2(1, 1);
-            GL.Vertex2(texture.Width / 2f, texture.Height / 2f);
-
-            GL.TexCoord2(0, 1);
-            GL.Vertex2(-texture.Width / 2, texture.Height / 2f);
-
-            GL.End();
-        }
-
-        protected void DrawImageCentered(Texture texture, float scale)
-        {
-            texture.Bind();
-            GL.Begin(BeginMode.Quads);
-
-            float width = texture.Width/2f * scale;
-            float height = texture.Height/2f * scale;
-
-            GL.Normal3(0, 0, 1);
-            GL.TexCoord2(0, 0);
-            GL.Vertex2(-width, -height);
-
-            GL.TexCoord2(1, 0);
-            GL.Vertex2(width, -height);
-
-            GL.TexCoord2(1, 1);
-            GL.Vertex2(width, height);
-
-            GL.TexCoord2(0, 1);
-            GL.Vertex2(-width, height);
-
-            GL.End();
-        }
-
         protected void DrawCenterMark ()
         {
             GL.Disable(EnableCap.Texture2D);
@@ -330,17 +368,11 @@ namespace KingsReign
             GL.Rotate(GraphicsTimer.ElapsedMilliseconds / 5f, 0f, 0f, 1f);
             float scale = ((float)Math.Sin(GraphicsTimer.ElapsedMilliseconds / 500f) + 1.0f) * 0.5f;
             scale = 0.5f + (scale * 0.125f);
-            DrawImageCentered(Selction, scale);
+            RenderUtils.DrawImageCentered(Selction, scale);
 
             GL.PopMatrix();
         }
 
-        protected void CircleVerts ( float radius )
-        {
-            int segments = 32;
-            for (int i = 0; i < segments; i++)
-                GL.Vertex2(VectorHelper2.FromAngle(i * (360f / segments),radius));
-        }
 
         public void MouseClick ( Point loc )
         {
@@ -357,15 +389,15 @@ namespace KingsReign
 
             GL.Disable(EnableCap.Texture2D);
 
-            ColorWithAlpha(ring, 0.5f);
+            RenderUtils.ColorWithAlpha(ring, 0.5f);
           //  GL.Translate(0, 0, 0.1f);
             GL.Begin(BeginMode.Polygon);
-            CircleVerts(radius);
-            GL.End(); 
-            
-            ScaleColorWithAlpha(ring, 0.4f, 0.5f);
+            RenderUtils.CircleVerts(radius);
+            GL.End();
+
+            RenderUtils.ScaleColorWithAlpha(ring, 0.4f, 0.5f);
             GL.Begin(BeginMode.Polygon);
-            CircleVerts(radius + border);
+            RenderUtils.CircleVerts(radius + border);
             GL.End();
 
 
@@ -373,7 +405,7 @@ namespace KingsReign
 
             GL.Color4(Color.White);
             GL.Enable(EnableCap.Texture2D);
-            DrawImageCentered(building);
+            RenderUtils.DrawImageCentered(building);
 
             GL.PopMatrix();
         }
@@ -403,7 +435,7 @@ namespace KingsReign
                 Texture t = TerrainFlagImages[Client.WorldMap.GetTerrain(p)];
                 GL.Translate(p.X, p.Y-t.Height, 0);
 
-                DrawImage(t);
+                RenderUtils.DrawImage(t);
 
                 GL.PopMatrix();
             }
@@ -437,7 +469,7 @@ namespace KingsReign
                 {
                     GL.PushMatrix();
                         GL.Translate(Map.WorldMapTexturePositions[i].X, Map.WorldMapTexturePositions[i].Y, 0);
-                        DrawImage(Map.WorldMapTextures[i]);
+                        RenderUtils.DrawImage(Map.WorldMapTextures[i]);
                     GL.PopMatrix();
                 }
 
@@ -459,7 +491,7 @@ namespace KingsReign
             else
             {
                 GL.Translate(screenCenterX, screenCenterY, -19);
-                DrawImageCentered(Logo);
+                RenderUtils.DrawImageCentered(Logo);
             }
         }
 
@@ -493,6 +525,93 @@ namespace KingsReign
             DrawOverlay();
 
             Control.SwapBuffers();
+        }
+    }
+
+    public class RenderUtils
+    {
+        public static void ColorWithAlpha(Color color, float alpha)
+        {
+            GL.Color4(color.R / 256f, color.G / 256f, color.B / 256f, alpha);
+        }
+
+        public static void ScaleColorWithAlpha(Color color, float scale, float alpha)
+        {
+            GL.Color4(color.R / 256f * scale, color.G / 256f * scale, color.B / 256f * scale, alpha);
+        }
+
+        public static void DrawImage(Texture texture)
+        {
+            texture.Bind();
+            GL.Begin(BeginMode.Quads);
+
+            GL.Normal3(0, 0, 1);
+            GL.TexCoord2(0, 0);
+            GL.Vertex2(0, 0);
+
+            GL.TexCoord2(1, 0);
+            GL.Vertex2(texture.Width, 0);
+
+            GL.TexCoord2(1, 1);
+            GL.Vertex2(texture.Width, texture.Height);
+
+            GL.TexCoord2(0, 1);
+            GL.Vertex2(0, texture.Height);
+
+            GL.End();
+        }
+
+        public static void CircleVerts(float radius)
+        {
+            int segments = 32;
+            for (int i = 0; i < segments; i++)
+                GL.Vertex2(VectorHelper2.FromAngle(i * (360f / segments), radius));
+        }
+
+
+        public static void DrawImageCentered(Texture texture)
+        {
+            texture.Bind();
+            GL.Begin(BeginMode.Quads);
+
+            GL.Normal3(0, 0, 1);
+            GL.TexCoord2(0, 0);
+            GL.Vertex2(-texture.Width / 2, -texture.Height / 2f);
+
+            GL.TexCoord2(1, 0);
+            GL.Vertex2(texture.Width / 2, -texture.Height / 2f);
+
+            GL.TexCoord2(1, 1);
+            GL.Vertex2(texture.Width / 2f, texture.Height / 2f);
+
+            GL.TexCoord2(0, 1);
+            GL.Vertex2(-texture.Width / 2, texture.Height / 2f);
+
+            GL.End();
+        }
+
+        public static void DrawImageCentered(Texture texture, float scale)
+        {
+            texture.Bind();
+            GL.Begin(BeginMode.Quads);
+
+            float width = texture.Width / 2f * scale;
+            float height = texture.Height / 2f * scale;
+
+            GL.Normal3(0, 0, 1);
+            GL.TexCoord2(0, 0);
+            GL.Vertex2(-width, -height);
+
+            GL.TexCoord2(1, 0);
+            GL.Vertex2(width, -height);
+
+            GL.TexCoord2(1, 1);
+            GL.Vertex2(width, height);
+
+            GL.TexCoord2(0, 1);
+            GL.Vertex2(-width, height);
+
+            GL.End();
         }
     }
 }
