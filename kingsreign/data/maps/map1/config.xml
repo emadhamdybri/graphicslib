@@ -7,20 +7,20 @@
   <SectionsW>3</SectionsW>
   <SectionsH>3</SectionsH>
   <Capitals>
-    <Capital>
+    <CapitalDefinition>
       <Location>
         <X>400</X>
         <Y>550</Y>
       </Location>
       <Realm>Glastonburry</Realm>
-    </Capital>
-    <Capital>
+    </CapitalDefinition>
+    <CapitalDefinition>
       <Location>
         <X>875</X>
         <Y>2292</Y>
       </Location>
       <Realm>Arlan</Realm>
-    </Capital>
+    </CapitalDefinition>
   </Capitals>
   <Mines>
     <Mine>

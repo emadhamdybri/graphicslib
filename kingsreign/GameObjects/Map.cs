@@ -131,13 +131,16 @@ namespace GameObjects
         public Image TerrainMap;
         public FileInfo[] ImageMaps;
 
-        public CapitalDefinition[] Capitals;
+        public Castle[] Capitals;
         public Mine[] Mines;
 
         public int StaringGold = -1;
 
         protected double TerrainScaleX = -1;
         protected double TerrainScaleY = -1;
+
+        public int XImages = -1;
+        public int YImages = -1;
 
         public static Color SeaZone
         {
@@ -245,7 +248,12 @@ namespace GameObjects
 
             map.Name = cfg.Name;
             map.Mines = cfg.Mines.ToArray();
-            map.Capitals = cfg.Capitals.ToArray();
+
+            List<Castle> c = new List<Castle>();
+            foreach (CapitalDefinition capdef in cfg.Capitals)
+                c.Add(new Castle(capdef));
+
+            map.Capitals = c.ToArray();
 
             map.TerrainMap = Bitmap.FromFile(Path.Combine(dir.FullName, "map.png"));
             if (map.TerrainMap == null)
@@ -262,6 +270,9 @@ namespace GameObjects
             }
 
             map.ImageMaps = fileList.ToArray();
+
+            map.XImages = cfg.SectionsW;
+            map.YImages = cfg.SectionsH;
 
             map.Init();
             return map;
