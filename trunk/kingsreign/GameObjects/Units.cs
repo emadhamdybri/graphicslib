@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Drawing;
 using System.Text;
 
 namespace GameObjects
@@ -43,6 +43,13 @@ namespace GameObjects
 
     public class UnitInstance
     {
+        public enum StationType
+        {
+            AtCastle,
+            AtCamp,
+            Deployed,
+        }
+
         public UnitDescriptor Descriptor = new UnitDescriptor();
 
         public int PlayerID = -1;
@@ -51,6 +58,11 @@ namespace GameObjects
         public float Damage = 0.0f;
         public int Experience = 0;
         public int Level = 0;
+
+        public StationType Station = StationType.AtCastle;
+
+        public Point Position = Point.Empty;
+        public Point Desination = Point.Empty;
 
         public static void Battle ( ref UnitInstance attacker, ref UnitInstance defender )
         {
