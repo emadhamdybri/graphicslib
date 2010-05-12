@@ -30,7 +30,7 @@ namespace Utilities.Paths
         public static void AddPath ( string path )
         {
             if (Directory.Exists(path))
-                SearchPaths.Add(path);
+                SearchPaths.Add(new DirectoryInfo(path).FullName);
         }
 
         public static string FindFile(string name)
