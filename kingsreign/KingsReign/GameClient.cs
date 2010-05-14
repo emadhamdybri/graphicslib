@@ -17,6 +17,10 @@ namespace KingsReign
         public delegate void UpdateEvent(GameClient sender);
         public event UpdateEvent Updated;
 
+        public delegate void UnitChangeEvent(GameClient sender, Player player, UnitInstance unit);
+        public event UnitChangeEvent UnitAdded;
+        public event UnitChangeEvent UnitChanged;
+
         public Map WorldMap;
 
         Dictionary<int, Player> Players = new Dictionary<int, Player>();

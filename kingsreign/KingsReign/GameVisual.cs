@@ -126,8 +126,29 @@ namespace KingsReign
         public UnitInstance Unit = null;
         public UnitRenderer Renderer;
 
-        public UnitRenderer.AnimationState State = UnitRenderer.AnimationState.Idle;
+        protected Stopwatch timer = new Stopwatch();
 
+        public UnitGraphicInstance ( UnitInstance unit, UnitRenderer rendrer )
+        {
+            Unit = unit;
+            Renderer = rendrer;
+            timer.Start();
+        }
+
+        public void Draw ()
+        {
+            UnitRenderer.AnimationState state = UnitRenderer.AnimationState.Idle;
+
+            if (Unit.Position != Unit.Desination)
+                state = UnitRenderer.AnimationState.Moving;
+            if (Unit.Damage >= 1.0f)
+                state = UnitRenderer.AnimationState.Dead;
+
+            GL.PushMatrix();
+            GL.Translate(Unit.Position.X, Unit.Position.Y, 0);
+            Renderer.Render(state, timer.ElapsedMilliseconds / 1000.0);
+            GL.PopMatrix();
+        }
     }
 
     public class MapVisual
