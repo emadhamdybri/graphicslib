@@ -1,0 +1,41 @@
+Wesnoth Team Colorizer Installation Instructions
+------------------------------------------------
+
+The sources are intended to be built using the GNU Compiler Collection. You
+will need to install the GNU C++ Compiler runtime and the libstdc++ development
+files.
+
+You'll also need the following libraries, with their development files
+in an accessible, standard location:
+
+- libpng 1.2.x
+- Boost >= 1.35 (assignment, foreach and integer header-only libraries)
+
+To compile, just do:
+
+  $ ./configure
+  $ make
+
+If anything fails, that means that either your system lacks the required
+development/runtime dependencies, or they are located at unusual places of your
+disk.
+
+To install:
+
+  $ make install
+
+Note that the default install prefix requires root privileges for installing.
+If you cannot acquire root privileges, you may change the installation prefix
+to a directory you can write to by passing --prefix=<dir> to the configure
+script. See configure --help for more build-time options.
+
+***
+
+If you still have problems building this software, drop me an e-mail at
+<shadowm2006@gmail.com> providing "[wesnoth-tc]" in the subject line. Quoting
+the complete error messages, or better yet, attaching the complete config.log
+is essential so I can have a clue of what's not working at your side.
+
+I don't have easy access to other compilers than GCC, but if you get wesnoth-tc
+working with them I'd appreciate a note about it and any additional steps
+required to build wesnoth-tc with it.
