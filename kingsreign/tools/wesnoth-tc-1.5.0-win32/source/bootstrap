@@ -1,0 +1,151 @@
+#!/bin/sh
+#
+#  Bootstrap script for autotools
+#  Copyright (C) 2008, 2009, 2010 by Ignacio R. Morelle <shadowm@wesnoth.org>
+#
+
+self=`basename $0`
+
+conf_mode='skip'
+configure_cmdline=''
+
+while [ -n "$1" ]; do
+	if [ "$conf_mode" = "reset" ]; then
+		configure_cmdline="$*"
+		break
+	elif [ "$1" = "--reconf" ] || [ "$1" = "--reconfigure" ] || [ "$1" = "-r" ]; then
+		conf_mode='update'
+	elif [ "$1" = "--conf" ] || [ "$1" = "--configure" ] || [ "$1" = "-c" ]; then
+		conf_mode='reset'
+	elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+		cat << END
+Prepares or updates the autotools build system for this package.
+
+Usage: $self -c CONFIGURE_OPTIONS
+  or:  $self -r
+
+Options:
+  -c, --conf, --configure      Generates and runs the configure script with any
+                                switches provided after this option.
+  -r, --reconf, --reconfigure  Regenerates and runs the configure script with
+                                the previously used command line when possible.
+  -h, --help                   This help text.
+
+END
+		exit 0
+	fi
+
+	shift
+done
+
+put_yes()
+{
+	printf 'yes\n'
+}
+put_no()
+{
+	printf 'no\n'
+}
+put_f()
+{
+	printf 'failed\n'
+}
+put_s()
+{
+	printf 'done\n'
+}
+
+do_ifelse()
+{
+	printf "$self: running ${1}... "
+	{
+		$* && put_s
+	} || {
+		put_f ; exit -1
+	}
+}
+
+do_ifelse_q()
+{
+	printf "$self: running ${1}\n"
+	$*
+	return $?
+}
+
+APPS=
+
+test_app()
+{
+	local app="$1"
+	local pkgname="$2"
+	local longname="$3"
+
+	printf "checking for $longname... "
+
+	local apppath=`which $app`
+	if [ "$?" -ne "0" ]; then
+		put_no
+		printf "Could not find $longname in PATH. Make sure you have\n"
+		printf "installed $pkgname before running $self.\n"
+		exit -1
+	fi
+	printf "$apppath\n"
+
+	eval _APPS_$app=$apppath
+}
+
+run_app()
+{
+	local app=$1
+	local varlocator='$'
+	varlocator=${varlocator}_APPS_$app
+	shift
+	eval do_ifelse $varlocator $@
+}
+
+printf 'checking whether a config cache exists already... '
+{
+	test -e config.cache && put_yes &&
+	{
+		printf 'removing config cache... '
+		rm -f config.cache 2> /dev/null
+		put_s
+	}
+} || put_no
+
+test_app aclocal automake 'GNU aclocal'
+test_app autoheader autoconf 'GNU autoheader'
+test_app automake automake 'GNU automake'
+test_app autoconf autoconf 'GNU autoconf'
+
+run_app aclocal -I m4 --install
+run_app autoheader
+run_app automake
+run_app autoconf
+
+configure_result=0
+
+if [ "$conf_mode" = "update" ]; then
+	if [ -e "./config.status" ]; then
+		echo "$self: updating build configuration... "
+		do_ifelse_q ./config.status --recheck && do_ifelse_q ./config.status
+		configure_result=$?
+	else
+		echo "$self: no previous configuration detected"
+		conf_mode=reset
+	fi
+fi
+
+if [ "$conf_mode" = "reset" ]; then
+	echo "$self: creating build configuration..."
+	do_ifelse_q ./configure ${configure_cmdline}
+	configure_result=$?
+fi
+
+printf '\n'
+if [ "$configure_result" -ne "0" ]; then
+	printf '*** Configure failed or interrupted ***\n'
+else
+	printf '*** Success ***\n'
+fi
+printf '\n'
