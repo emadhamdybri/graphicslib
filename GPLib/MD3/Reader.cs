@@ -148,7 +148,7 @@ namespace MD3
                            List<ConnectedComponent> connectedComponents = new List<ConnectedComponent>();
                            foreach (Component c in linkedComponents)
                            {
-                               if (c == node.Part || c == parrent)
+                               if (c == node.Part || c == parrent || (node.Part.PartType == ComponentType.Legs && c.PartType == ComponentType.Head))
                                    continue;
 
                                ConnectedComponent child = new ConnectedComponent();
@@ -190,7 +190,7 @@ namespace MD3
             character.RootNode = new ConnectedComponent();
             character.RootNode.Part = root;
 
-            linkTreeChildren(null,character.RootNode, componentsWithTags);
+           // linkTreeChildren(null,character.RootNode, componentsWithTags);
 
             // Balls, it's a jacked up model, connect torso to legs, and head to torso
             if (character.RootNode.Children.Count == 0)
@@ -331,6 +331,241 @@ namespace MD3
             fs.Close();
         }
 
+        protected static void ProcessQ3StdAnimLine ( Character character, int count, String tag, string[] nugs, ref int torsoStart, ref int legsOffset )
+        {
+            AnimationSequence seq = new AnimationSequence();
+            seq.StartFrame = int.Parse(tag);
+            int length = int.Parse(nugs[1]);
+
+            seq.EndFrame = seq.StartFrame + length - 1;
+
+            int loop = int.Parse(nugs[2]);
+            if (loop == 0 || length == 1)
+                seq.LoopPoint = seq.EndFrame;
+            else
+                seq.LoopPoint = seq.EndFrame - (loop - 1);
+
+            float fps = float.Parse(nugs[3]);
+            if (fps > 0)
+                seq.FPS = fps;
+
+            string name = string.Empty;
+            string part = "both";
+            if (nugs.Length > 6)
+                name = nugs[6];
+
+            if (name != string.Empty)
+            {
+                string[] seqParts = name.Split("_".ToCharArray());
+                if (seqParts.Length > 1)
+                {
+                    part = seqParts[0].ToLower();
+                    name = seqParts[1].ToLower();
+                }
+                else
+                    name = seqParts[0];
+            }
+            else
+            {
+                if (count < 6)
+                {
+                    part = "both";
+                    switch (count)
+                    {
+                        case 0:
+                            name = "death1";
+                            break;
+                        case 1:
+                            name = "dead1";
+                            break;
+                        case 2:
+                            name = "death2";
+                            break;
+                        case 3:
+                            name = "dead2";
+                            break;
+                        case 4:
+                            name = "death3";
+                            break;
+                        case 5:
+                            name = "dead3";
+                            break;
+                    }
+                }
+                else if (count < 13)
+                {
+                    part = "torso";
+                    switch (count)
+                    {
+                        case 6:
+                            name = "gesture";
+                            break;
+                        case 7:
+                            name = "attack";
+                            break;
+                        case 8:
+                            name = "attak2";
+                            break;
+                        case 9:
+                            name = "drop";
+                            break;
+                        case 10:
+                            name = "raise";
+                            break;
+                        case 11:
+                            name = "stand";
+                            break;
+                        case 12:
+                            name = "stand2";
+                            break;
+                    }
+                }
+                else
+                {
+                    part = "legs";
+
+                    switch (count)
+                    {
+                        case 13:
+                            name = "walkcr";
+                            break;
+                        case 14:
+                            name = "walk";
+                            break;
+                        case 15:
+                            name = "run";
+                            break;
+                        case 16:
+                            name = "back";
+                            break;
+                        case 17:
+                            name = "swim";
+                            break;
+                        case 18:
+                            name = "jump";
+                            break;
+                        case 19:
+                            name = "land";
+                            break;
+                        case 20:
+                            name = "jumpb";
+                            break;
+                        case 21:
+                            name = "landb";
+                            break;
+                        case 22:
+                            name = "idle";
+                            break;
+                        case 23:
+                            name = "idlecr";
+                            break;
+                        case 24:
+                            name = "turn";
+                            break;
+                    }
+                }
+            }
+
+            if (torsoStart < 0 && part == "torso")
+                torsoStart = seq.StartFrame;
+
+            if (legsOffset < 0 && part == "legs")
+            {
+                legsOffset = seq.StartFrame - torsoStart;
+            }
+
+            if (part == "legs")
+            {
+                seq.StartFrame -= legsOffset;
+                seq.LoopPoint -= legsOffset;
+                seq.EndFrame -= legsOffset;
+            }
+
+            seq.Name = name;
+            if (part == "both")
+            {
+                if (!character.Sequences.ContainsKey("torso"))
+                    character.Sequences.Add("torso", new List<AnimationSequence>());
+                if (!character.Sequences.ContainsKey("legs"))
+                    character.Sequences.Add("legs", new List<AnimationSequence>());
+
+                character.Sequences["torso"].Add(seq);
+                character.Sequences["legs"].Add(seq);
+            }
+            else
+            {
+                if (!character.Sequences.ContainsKey(part))
+                    character.Sequences.Add(part, new List<AnimationSequence>());
+
+                character.Sequences[part].Add(seq);
+            }
+        }
+
+        protected static void ProcessUTAnimLine(Character character, String tag, string[] rawNugs, ref int torsoStart, ref int legsOffset)
+        {
+            List<string> nugs = new List<string>();
+            foreach(string n in rawNugs)
+            {
+                if (n != string.Empty && n.Length > 0)
+                    nugs.Add(n);
+            }
+
+            AnimationSequence seq = new AnimationSequence();
+            seq.StartFrame = int.Parse(nugs[1]);
+            int length = int.Parse(nugs[2]);
+
+            seq.EndFrame = seq.StartFrame + length - 1;
+
+            int loop = int.Parse(nugs[4]);
+            if (loop == 0 || length == 1)
+                seq.LoopPoint = seq.EndFrame;
+            else
+                seq.LoopPoint = seq.EndFrame - (loop - 1);
+
+            float fps = float.Parse(nugs[3]);
+            if (fps > 0)
+                seq.FPS = fps;
+
+            string[] nameNugs = tag.Split("_".ToCharArray(), 2);
+            String name = nameNugs[1];
+            string part = nameNugs[0].ToLower();
+
+         /*   if (torsoStart < 0 && part == "torso")
+                torsoStart = seq.StartFrame;
+
+            if (legsOffset < 0 && part == "legs")
+            {
+                legsOffset = seq.StartFrame - torsoStart;
+            }
+
+            if (part == "legs")
+            {
+                seq.StartFrame -= legsOffset;
+                seq.LoopPoint -= legsOffset;
+                seq.EndFrame -= legsOffset;
+            } */
+
+            seq.Name = name;
+            if (part == "both")
+            {
+                if (!character.Sequences.ContainsKey("torso"))
+                    character.Sequences.Add("torso", new List<AnimationSequence>());
+                if (!character.Sequences.ContainsKey("legs"))
+                    character.Sequences.Add("legs", new List<AnimationSequence>());
+
+                character.Sequences["torso"].Add(seq);
+                character.Sequences["legs"].Add(seq);
+            }
+            else
+            {
+                if (!character.Sequences.ContainsKey(part))
+                    character.Sequences.Add(part, new List<AnimationSequence>());
+
+                character.Sequences[part].Add(seq);
+            }
+
+        }
+
         public static void ReadAnimationConfig ( Character character, FileInfo file )
         {
             if (!file.Exists)
@@ -348,6 +583,8 @@ namespace MD3
 
             int torsoStart = -1;
             int legsOffset = -1;
+
+            bool utConfig = false;
 
             while (line != null)
             {
@@ -369,174 +606,14 @@ namespace MD3
                         character.HeadOffset = new Vector3(float.Parse(nugs[1]), float.Parse(nugs[2]), float.Parse(nugs[3]));
                     else if (tag == "footsteps" && nugs.Length > 1)
                         character.Footsetps = nugs[1];
-                    else if (tag.Length > 0 && char.IsNumber(tag[0]) && nugs.Length > 3)
+                    else if (tag == "#include")
+                        utConfig = true;
+                    else if (tag.Length > 0 )
                     {
-                        AnimationSequence seq = new AnimationSequence();
-                        seq.StartFrame = int.Parse(tag);
-                        int length = int.Parse(nugs[1]);
-
-                        seq.EndFrame = seq.StartFrame + length - 1;
-
-                        int loop = int.Parse(nugs[2]);
-                        if (loop == 0 || length == 1)
-                            seq.LoopPoint = seq.EndFrame;
-                        else
-                            seq.LoopPoint = seq.EndFrame - (loop-1);
-
-                        float fps = float.Parse(nugs[3]);
-                        if (fps > 0)
-                            seq.FPS = fps;
-
-                        string name = string.Empty;
-                        string part = "both";
-                        if (nugs.Length > 6)
-                            name = nugs[6];
-
-                        if (name != string.Empty)
-                        {
-                            string[] seqParts = name.Split("_".ToCharArray());
-                            if (seqParts.Length > 1)
-                            {
-                                part = seqParts[0].ToLower();
-                                name = seqParts[1].ToLower();
-                            }
-                            else
-                               name = seqParts[0];
-                        }
-                        else
-                        {
-                            if (count < 6)
-                            {
-                                part = "both";
-                                switch (count)
-                                {
-                                    case 0:
-                                        name = "death1";
-                                        break;
-                                    case 1:
-                                        name = "dead1";
-                                        break;
-                                    case 2:
-                                        name = "death2";
-                                        break;
-                                    case 3:
-                                        name = "dead2";
-                                        break;
-                                    case 4:
-                                        name = "death3";
-                                        break;
-                                    case 5:
-                                        name = "dead3";
-                                        break; 
-                                }
-                            }
-                            else if (count < 13)
-                            {
-                                part = "torso";
-                                switch (count)
-                                {
-                                    case 6:
-                                        name = "gesture";
-                                        break;
-                                    case 7:
-                                        name = "attack";
-                                        break;
-                                    case 8:
-                                        name = "attak2";
-                                        break;
-                                    case 9:
-                                        name = "drop";
-                                        break;
-                                    case 10:
-                                        name = "raise";
-                                        break;
-                                    case 11:
-                                        name = "stand";
-                                        break;
-                                    case 12:
-                                        name = "stand2";
-                                        break;
-                                }
-                            }
-                            else
-                            {
-                                part = "legs";
-
-                                switch (count)
-                                {
-                                    case 13:
-                                        name = "walkcr";
-                                        break;
-                                    case 14:
-                                        name = "walk";
-                                        break;
-                                    case 15:
-                                        name = "run";
-                                        break;
-                                    case 16:
-                                        name = "back";
-                                        break;
-                                    case 17:
-                                        name = "swim";
-                                        break;
-                                    case 18:
-                                        name = "jump";
-                                        break;
-                                    case 19:
-                                        name = "land";
-                                        break;
-                                    case 20:
-                                        name = "jumpb";
-                                        break;
-                                    case 21:
-                                        name = "landb";
-                                        break;
-                                    case 22:
-                                        name = "idle";
-                                        break;
-                                    case 23:
-                                        name = "idlecr";
-                                        break;
-                                    case 24:
-                                        name = "turn";
-                                        break;
-                                }
-                            }
-                        }
-
-                        if (torsoStart < 0 && part == "torso")
-                            torsoStart = seq.StartFrame;
-
-                        if (legsOffset < 0 && part == "legs")
-                        {
-                            legsOffset = seq.StartFrame - torsoStart;
-                        }
-
-                        if (part == "legs")
-                        {
-                            seq.StartFrame -= legsOffset;
-                            seq.LoopPoint -= legsOffset;
-                            seq.EndFrame -= legsOffset;
-                        }
-
-                        seq.Name = name;
-                        if (part == "both")
-                        {
-                            if (!character.Sequences.ContainsKey("torso"))
-                                character.Sequences.Add("torso", new List<AnimationSequence>());
-                            if (!character.Sequences.ContainsKey("legs"))
-                                character.Sequences.Add("legs", new List<AnimationSequence>());
-
-                            character.Sequences["torso"].Add(seq);
-                            character.Sequences["legs"].Add(seq);
-                        }
-                        else
-                        {
-                            if (!character.Sequences.ContainsKey(part))
-                                character.Sequences.Add(part, new List<AnimationSequence>());
-
-                            character.Sequences[part].Add(seq);
-                        }
+                        if (!utConfig && char.IsNumber(tag[0]) && nugs.Length > 3)
+                            ProcessQ3StdAnimLine(character, count, tag, nugs, ref torsoStart, ref legsOffset);
+                        else if (utConfig && tag.Length > 2 && nugs.Length > 8)
+                            ProcessUTAnimLine(character, tag, nugs, ref torsoStart, ref legsOffset);
                         count++;
                     }
                 }

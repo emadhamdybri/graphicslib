@@ -153,6 +153,9 @@ namespace PortalEdit
 
         public List<string> ResourceDirs = new List<string>();
 
+
+        public int UVScale = 128;
+
         public static Settings Read(FileInfo file)
         {
             XmlSerializer XML = new XmlSerializer(typeof(Settings));

@@ -130,15 +130,29 @@ namespace PortalEdit
 
             string texture = String.Copy(frame.TextureList.SelectedNode.Tag.ToString());
 
+            CellMaterialInfo mat = null;
+
             if (e.edge < 0)
             {
                 if (e.floor)
-                    e.cell.FloorMaterial.Material = texture;
+                    mat = e.cell.FloorMaterial;
                 else if (e.roof)
-                    e.cell.RoofMaterial.Material = texture;
+                    mat = e.cell.RoofMaterial;
             }
             else
-                e.geo.Material.Material = texture;
+                mat = e.geo.Material;
+
+            if (mat != null)
+            {
+                mat.Material = texture;
+
+                // get the image info
+                Texture tex = EditorCell.GetGeoMaterial(mat).GetTexture();
+                float UScale = (float)tex.Width/(float)Settings.settings.UVScale;
+                float YScale = (float)tex.Height/(float)Settings.settings.UVScale;
+
+                mat.UVScale = new Vector2(UScale, YScale);
+            }
 
             EditorCell cell = (EditorCell)e.cell;
             cell.GenerateDisplayGeometry();
