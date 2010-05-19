@@ -5,6 +5,9 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
+using System.Xml;
+using System.Xml.Serialization;
+
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -16,11 +19,43 @@ using Math3D;
 
 namespace KingsReign
 {
+    public class AnimConfigItem
+    {
+        public UnitRenderer.AnimationState State = UnitRenderer.AnimationState.Idle;
+        public int FPS = 4;
+
+        public AnimConfigItem()
+        {}
+
+        public AnimConfigItem (  UnitRenderer.AnimationState s, int fps )
+        {
+            State = s;
+            FPS = fps;
+        }
+    }
+
+    public class AnimConfig
+    {
+        public int DefaultFPS = 4;
+        public List<AnimConfigItem> AnimFPS = new List<AnimConfigItem>();
+
+        public void LoadDefaults ()
+        {
+            AnimFPS.Add(new AnimConfigItem(UnitRenderer.AnimationState.Idle, DefaultFPS));
+            AnimFPS.Add(new AnimConfigItem(UnitRenderer.AnimationState.Moving, DefaultFPS));
+            AnimFPS.Add(new AnimConfigItem(UnitRenderer.AnimationState.Attacking, DefaultFPS));
+            AnimFPS.Add(new AnimConfigItem(UnitRenderer.AnimationState.Defending, DefaultFPS));
+            AnimFPS.Add(new AnimConfigItem(UnitRenderer.AnimationState.RangeAttacking, DefaultFPS));
+            AnimFPS.Add(new AnimConfigItem(UnitRenderer.AnimationState.RangeDefending, DefaultFPS));
+            AnimFPS.Add(new AnimConfigItem(UnitRenderer.AnimationState.Dead, DefaultFPS));
+        }
+    }
+
     public class UnitRenderer
     {
         protected static Texture GenericDead;
 
-        public static float UnitScale = 1.25f;
+        public static float UnitScale = 1.0f;
 
         public enum AnimationState
         {
@@ -33,11 +68,45 @@ namespace KingsReign
             Dead,
         }
 
-        public static int FPS = 4;
-
         public RealmType Rrealm = RealmType.Unknown;
 
         protected Dictionary<AnimationState, Dictionary<PlayerColor,List<Texture>>> AnimationFrames = new Dictionary<AnimationState, Dictionary<PlayerColor,List<Texture>>>();
+        protected Dictionary<AnimationState, int> FPSMap = new Dictionary<AnimationState, int>();
+
+         public UnitRenderer ( string dir )
+        {
+            AddAnimFrames(AnimationState.Idle, FindTextures(dir, "idle"));
+            AddAnimFrames(AnimationState.Moving, FindTextures(dir, "move"));
+            AddAnimFrames(AnimationState.Attacking, FindTextures(dir, "attack"));
+            AddAnimFrames(AnimationState.Defending, FindTextures(dir, "defend"));
+            AddAnimFrames(AnimationState.RangeAttacking, FindTextures(dir, "ranged"));
+            AddAnimFrames(AnimationState.RangeDefending, FindTextures(dir, "ranged_defend"));
+            AddAnimFrames(AnimationState.Dead, FindTextures(dir, "die"));
+
+            if (GenericDead == null)
+                GenericDead = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/units/generic/die.png"));
+
+            // look for an anim config, if not save one
+            AnimConfig config = new AnimConfig();
+
+            FileInfo file = new FileInfo(Path.Combine(ResourceManager.FindDirectory(dir), "anims.xml"));
+            if (file.Exists)
+            {
+                FileStream fs = file.OpenRead();
+                config = (AnimConfig) new XmlSerializer(typeof(AnimConfig)).Deserialize(fs);
+                fs.Close();
+            }
+            else
+            {
+                config.LoadDefaults();
+                FileStream fs = file.OpenWrite();
+                new XmlSerializer(typeof(AnimConfig)).Serialize(fs,config);
+                fs.Close();
+            }
+
+            foreach (AnimConfigItem item in config.AnimFPS)
+                FPSMap.Add(item.State, item.FPS);
+        }
 
         protected List<Texture> FindTexturesForColor ( string dir, string name )
         {
@@ -114,26 +183,14 @@ namespace KingsReign
                 AnimationFrames.Add(state, textures);
         }
 
-        public UnitRenderer ( string dir )
-        {
-            AddAnimFrames(AnimationState.Idle, FindTextures(dir, "idle"));
-            AddAnimFrames(AnimationState.Moving, FindTextures(dir, "move"));
-            AddAnimFrames(AnimationState.Attacking, FindTextures(dir, "attack"));
-            AddAnimFrames(AnimationState.Defending, FindTextures(dir, "defend"));
-            AddAnimFrames(AnimationState.RangeAttacking, FindTextures(dir, "ranged"));
-            AddAnimFrames(AnimationState.RangeDefending, FindTextures(dir, "ranged_defend"));
-            AddAnimFrames(AnimationState.Dead, FindTextures(dir, "die"));
-
-            if (GenericDead == null)
-                GenericDead = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/units/generic/die.png"));
-        }
-
         protected Texture GetFrame ( AnimationState state, PlayerColor color, double time )
         {
             List<Texture> l = AnimationFrames[state][color];
 
             if (l.Count == 1)
                 return l[0];
+
+            int FPS = FPSMap[state];
 
             double seqTime = (double)l.Count / (double)FPS;
 
@@ -145,7 +202,7 @@ namespace KingsReign
             int frame = (int)((remainder / seqTime) * l.Count);
 
             if (frame >= l.Count || frame < 0)
-                throw ("Bad Frame Math: WTF!");
+                throw new Exception("Bad Frame Math: WTF!");
 
             return l[frame];
         }
