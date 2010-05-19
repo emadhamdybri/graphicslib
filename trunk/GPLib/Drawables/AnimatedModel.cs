@@ -486,8 +486,8 @@ namespace Drawables.AnimateModels
 
             // Setup VBO state
             //    GL.EnableClientState(EnableCap.TextureCoordArray);
-            GL.EnableClientState(EnableCap.NormalArray);
-            GL.EnableClientState(EnableCap.VertexArray);
+            GL.EnableClientState(ArrayCap.NormalArray);
+            GL.EnableClientState(ArrayCap.VertexArray);
 
 
             GL.Color3(Material);
@@ -504,8 +504,8 @@ namespace Drawables.AnimateModels
             GL.DrawArrays(BeginMode.Triangles, 0, VBO.Length);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.DisableClientState(EnableCap.NormalArray);
-            GL.DisableClientState(EnableCap.VertexArray);
+            GL.DisableClientState(ArrayCap.NormalArray);
+            GL.DisableClientState(ArrayCap.VertexArray);
         }
 
         public void Draw(AnimationHandler anim)
