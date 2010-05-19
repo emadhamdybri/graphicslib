@@ -20,11 +20,24 @@ namespace GameObjects
         public int Attack = 0;
         public int Defense = 0;
 
+
+        public CombatStats()
+        {
+        }
+
+        public CombatStats ( int a, int d )
+        {
+            Attack = a;
+            Defense = d;
+        }
+
         public static CombatStats Empty = new CombatStats();
     }
 
     public class UnitDescriptor
     {
+        public string Name = string.Empty;
+
         public UnitType Type = UnitType.Unknown;
         public RealmType Realm = RealmType.Unknown;
 
@@ -52,7 +65,7 @@ namespace GameObjects
 
         public UnitDescriptor Descriptor = new UnitDescriptor();
 
-        public int PlayerID = -1;
+        public Player Player;
 
         public float Compliment = 1.0f;
         public float Damage = 0.0f;

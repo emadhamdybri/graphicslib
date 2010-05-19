@@ -5,12 +5,27 @@ using System.Text;
 
 namespace GameObjects
 {
+    public enum PlayerColor
+    {
+        Black,
+        Blue,
+        Brown,
+        Green,
+        Orange,
+        Purple,
+        Red,
+        Teal,
+        White,
+    }
+
     public class Player
     {
         public RealmType Realm = RealmType.Unknown;
 
         public string Name = string.Empty;
         public int UID = -1;
+
+        public PlayerColor Color = PlayerColor.Black;
 
         public int Gold = -1;
 
@@ -19,6 +34,6 @@ namespace GameObjects
 
         public List<UnitDescriptor> UnitTypes = new List<UnitDescriptor>();
 
-        public Dictionary<UnitType,UnitInstance> DeployedUnits = new Dictionary<UnitType,UnitInstance>();
+        public Dictionary<UnitType,List<UnitInstance>> DeployedUnits = new Dictionary<UnitType,List<UnitInstance>>();
     }
 }
