@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<AnimConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DefaultFPS>4</DefaultFPS>
+  <AnimFPS>
+    <AnimConfigItem>
+      <State>Idle</State>
+      <FPS>5</FPS>
+    </AnimConfigItem>
+    <AnimConfigItem>
+      <State>Moving</State>
+      <FPS>4</FPS>
+    </AnimConfigItem>
+    <AnimConfigItem>
+      <State>Attacking</State>
+      <FPS>4</FPS>
+    </AnimConfigItem>
+    <AnimConfigItem>
+      <State>Defending</State>
+      <FPS>4</FPS>
+    </AnimConfigItem>
+    <AnimConfigItem>
+      <State>RangeAttacking</State>
+      <FPS>4</FPS>
+    </AnimConfigItem>
+    <AnimConfigItem>
+      <State>RangeDefending</State>
+      <FPS>4</FPS>
+    </AnimConfigItem>
+    <AnimConfigItem>
+      <State>Dead</State>
+      <FPS>4</FPS>
+    </AnimConfigItem>
+  </AnimFPS>
+</AnimConfig>
