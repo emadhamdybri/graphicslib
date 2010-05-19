@@ -13,5 +13,6 @@ namespace GameObjects
         Suu,
         Kannan,
         Meltonia,
+        All,
     }
 }

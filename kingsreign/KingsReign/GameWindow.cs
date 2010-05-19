@@ -46,13 +46,15 @@ namespace KingsReign
             WorldViewCtl.MouseUp += new MouseEventHandler(WorldViewCtl_MouseUp);
             WorldViewCtl.MouseMove += new MouseEventHandler(WorldViewCtl_MouseMove);
 
-            return;
-
             // automatically fire up a test game
             findGameToolStripMenuItem.Enabled = false;
             client = new GameClient();
             visual.SetClient(client);
             client.InitHosted("map1");
+
+            client.SetupTestPlayer();
+
+            visual.CameraPos = client.Players[0].Castles[0].Location;
         }
 
         void WorldViewCtl_MouseUp(object sender, MouseEventArgs e)

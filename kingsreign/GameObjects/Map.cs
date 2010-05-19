@@ -46,7 +46,7 @@ namespace GameObjects
             {
                 cfg = (MapConfig)xml.Deserialize(sr);
             }
-            catch (System.Exception ex)
+            catch (System.Exception /*ex*/)
             {
                 return null;
             }

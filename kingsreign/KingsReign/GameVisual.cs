@@ -20,6 +20,8 @@ namespace KingsReign
     {
         protected static Texture GenericDead;
 
+        public static float UnitScale = 1.25f;
+
         public enum AnimationState
         {
             Idle,
@@ -31,29 +33,31 @@ namespace KingsReign
             Dead,
         }
 
-        public static int FPS = 5;
+        public static int FPS = 4;
 
         public RealmType Rrealm = RealmType.Unknown;
 
-        protected Dictionary<AnimationState, List<Texture>> AnimationFrames = new Dictionary<AnimationState, List<Texture>>();
+        protected Dictionary<AnimationState, Dictionary<PlayerColor,List<Texture>>> AnimationFrames = new Dictionary<AnimationState, Dictionary<PlayerColor,List<Texture>>>();
 
-        protected List<Texture> FindTextures ( string dir, string name )
+        protected List<Texture> FindTexturesForColor ( string dir, string name )
         {
             List<Texture> textures = new List<Texture>();
 
-            FileInfo file = new FileInfo(ResourceManager.FindFile(Path.Combine(dir, name + ".png")));
-            if (file.Exists)
-                textures.Add(TextureSystem.system.GetTexture(file.FullName));
+            string fname = ResourceManager.FindFile(Path.Combine(dir, name + ".png"));
+
+            if (fname != string.Empty)
+                textures.Add(TextureSystem.system.GetTexture(fname));
             else
             {
                 // see if there is one with a number
                 int i = 1;
                 while (true)
                 {
-                    file = new FileInfo(ResourceManager.FindFile(Path.Combine(dir, name + "_" + i.ToString() + ".png")));
-                    if (file.Exists)
+                    fname = ResourceManager.FindFile(Path.Combine(dir, name + "_" + i.ToString() + ".png"));
+
+                    if (fname != string.Empty)
                     {
-                        textures.Add(TextureSystem.system.GetTexture(file.FullName));
+                        textures.Add(TextureSystem.system.GetTexture(fname));
                         i++;
                     }
                     else
@@ -67,23 +71,66 @@ namespace KingsReign
             return textures;
         }
 
+        protected string GetColorDirName ( PlayerColor color, string root )
+        {
+            return root + "/" + color.ToString().ToLower();
+        }
+
+        protected List<Texture> GetColoredTextures (PlayerColor color, string root, string name )
+        {
+            List<Texture> anims = FindTexturesForColor(GetColorDirName(color, root), name);
+            if (anims == null || anims.Count == 0)
+                anims = FindTexturesForColor(root, name);
+
+            return anims;
+        }
+
+        protected void AddColorFrames ( Dictionary<PlayerColor, List<Texture>> anims, PlayerColor color, List<Texture> textures )
+        {
+            if (textures != null && textures.Count > 0)
+                anims.Add(color, textures);
+        }
+
+        protected Dictionary<PlayerColor,List<Texture>> FindTextures ( string dir, string name )
+        {
+            Dictionary<PlayerColor, List<Texture>> anims = new Dictionary<PlayerColor, List<Texture>>();
+
+            AddColorFrames(anims,PlayerColor.Black, GetColoredTextures(PlayerColor.Black, dir, name));
+            AddColorFrames(anims, PlayerColor.Blue, GetColoredTextures(PlayerColor.Blue, dir, name));
+            AddColorFrames(anims, PlayerColor.Brown, GetColoredTextures(PlayerColor.Brown, dir, name));
+            AddColorFrames(anims, PlayerColor.Green, GetColoredTextures(PlayerColor.Green, dir, name));
+            AddColorFrames(anims, PlayerColor.Orange, GetColoredTextures(PlayerColor.Orange, dir, name));
+            AddColorFrames(anims, PlayerColor.Purple, GetColoredTextures(PlayerColor.Purple, dir, name));
+            AddColorFrames(anims, PlayerColor.Red, GetColoredTextures(PlayerColor.Red, dir, name));
+            AddColorFrames(anims, PlayerColor.Teal, GetColoredTextures(PlayerColor.Teal, dir, name));
+            AddColorFrames(anims, PlayerColor.White, GetColoredTextures(PlayerColor.White, dir, name));
+
+            return anims;
+        }
+
+        void AddAnimFrames ( AnimationState state, Dictionary<PlayerColor,List<Texture>> textures )
+        {
+            if (textures != null && textures.Count > 0)
+                AnimationFrames.Add(state, textures);
+        }
+
         public UnitRenderer ( string dir )
         {
-            AnimationFrames.Add(AnimationState.Idle, FindTextures(dir, "idle"));
-            AnimationFrames.Add(AnimationState.Moving, FindTextures(dir, "move"));
-            AnimationFrames.Add(AnimationState.Attacking, FindTextures(dir, "attack"));
-            AnimationFrames.Add(AnimationState.Defending, FindTextures(dir, "defend"));
-            AnimationFrames.Add(AnimationState.RangeAttacking, FindTextures(dir, "ranged"));
-            AnimationFrames.Add(AnimationState.RangeDefending, FindTextures(dir, "ranged_defend"));
-            AnimationFrames.Add(AnimationState.Dead, FindTextures(dir, "die"));
+            AddAnimFrames(AnimationState.Idle, FindTextures(dir, "idle"));
+            AddAnimFrames(AnimationState.Moving, FindTextures(dir, "move"));
+            AddAnimFrames(AnimationState.Attacking, FindTextures(dir, "attack"));
+            AddAnimFrames(AnimationState.Defending, FindTextures(dir, "defend"));
+            AddAnimFrames(AnimationState.RangeAttacking, FindTextures(dir, "ranged"));
+            AddAnimFrames(AnimationState.RangeDefending, FindTextures(dir, "ranged_defend"));
+            AddAnimFrames(AnimationState.Dead, FindTextures(dir, "die"));
 
             if (GenericDead == null)
                 GenericDead = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/units/generic/die.png"));
         }
 
-        protected Texture GetFrame ( AnimationState state, double time  )
+        protected Texture GetFrame ( AnimationState state, PlayerColor color, double time )
         {
-            List<Texture> l = AnimationFrames[state];
+            List<Texture> l = AnimationFrames[state][color];
 
             if (l.Count == 1)
                 return l[0];
@@ -95,29 +142,32 @@ namespace KingsReign
 
             double frameTime = 1.0 / FPS;
 
-            int frame = (int)((remainder / seqTime) * l.Count-1);
+            int frame = (int)((remainder / seqTime) * l.Count);
+
+            if (frame >= l.Count || frame < 0)
+                throw ("Bad Frame Math: WTF!");
 
             return l[frame];
         }
 
-        public void Render ( AnimationState state, double time )
+        public void Render ( AnimationState state, PlayerColor color, double time )
         {
             Texture t;
             if (AnimationFrames.ContainsKey(state))
-                t = GetFrame(state, time);
+                t = GetFrame(state, color, time);
             else
             {
                 if (state == AnimationState.Dead)
                     t = GenericDead;
                 else if (state == AnimationState.RangeDefending && AnimationFrames.ContainsKey(AnimationState.Defending))
-                    t = GetFrame(AnimationState.Defending, time);
+                    t = GetFrame(AnimationState.Defending, color, time);
                 else if (state == AnimationState.RangeAttacking && AnimationFrames.ContainsKey(AnimationState.Attacking))
-                    t = GetFrame(AnimationState.Attacking, time);
+                    t = GetFrame(AnimationState.Attacking, color, time);
                 else
-                    t = GetFrame(AnimationState.Idle, time);
+                    t = GetFrame(AnimationState.Idle, color, time);
             }
 
-            RenderUtils.DrawImageCentered(t);
+            RenderUtils.DrawImageCentered(t, UnitScale);
         }
     }
 
@@ -146,7 +196,11 @@ namespace KingsReign
 
             GL.PushMatrix();
             GL.Translate(Unit.Position.X, Unit.Position.Y, 0);
-            Renderer.Render(state, timer.ElapsedMilliseconds / 1000.0);
+            if (Unit.Player != null)
+                Renderer.Render(state, Unit.Player.Color, timer.ElapsedMilliseconds / 1000.0);
+            else
+                Renderer.Render(state, PlayerColor.White, timer.ElapsedMilliseconds / 1000.0);
+
             GL.PopMatrix();
         }
     }
@@ -214,6 +268,8 @@ namespace KingsReign
 
         protected List<Point> FlagMarkers = new List<Point>();
 
+        protected Dictionary<string, UnitRenderer> UnitRenderers = new Dictionary<string, UnitRenderer>();
+
         public GameVisual ( GLControl ctl )
         {
             Control = ctl;
@@ -253,7 +309,7 @@ namespace KingsReign
             TerrainFlagImages.Add(GameObjects.Map.TerrainType.eRiver, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-teal.png")));
             TerrainFlagImages.Add(GameObjects.Map.TerrainType.eSea, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-blue.png")));
             TerrainFlagImages.Add(GameObjects.Map.TerrainType.eIce, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-white.png")));
-            TerrainFlagImages.Add(GameObjects.Map.TerrainType.eMountains, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-gray.png")));
+            TerrainFlagImages.Add(GameObjects.Map.TerrainType.eMountains, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/flag-gray.png")));            
         }
 
         public void SetClient ( GameClient client )
@@ -263,7 +319,19 @@ namespace KingsReign
             {
                 Client.MapLoaded += new GameClient.MapLoadedEvent(Client_MapLoaded);
                 Client.Updated += new GameClient.UpdateEvent(Client_Updated);
+                Client.UnitAdded += new GameClient.UnitChangeEvent(Client_UnitAdded);
             }
+        }
+
+        void Client_UnitAdded(GameClient sender, Player player, UnitInstance unit)
+        {
+            string unitGraphic = unit.Descriptor.GraphicType;
+            if (!UnitRenderers.ContainsKey(unitGraphic))
+                UnitRenderers.Add(unitGraphic,new UnitRenderer("images/units/" + unitGraphic));
+
+            UnitRenderer renderer = UnitRenderers[unitGraphic];
+            UnitGraphicInstance graphics = new UnitGraphicInstance(unit, renderer);
+            unit.Tag = graphics;
         }
 
         public void IdleUpdate ()
@@ -421,7 +489,6 @@ namespace KingsReign
             RenderUtils.CircleVerts(radius + border);
             GL.End();
 
-
             GL.Translate(0, 0, 0.25f);
 
             GL.Color4(Color.White);
@@ -459,6 +526,22 @@ namespace KingsReign
                 RenderUtils.DrawImage(t);
 
                 GL.PopMatrix();
+            }
+        }
+
+        protected void DrawArmies ()
+        {
+            foreach (Player player in Client.Players)
+            {
+                foreach (KeyValuePair<UnitType, List<UnitInstance>> unitList in player.DeployedUnits)
+                {
+                    foreach (UnitInstance unit in unitList.Value)
+                    {
+                        UnitGraphicInstance graphics = unit.Tag as UnitGraphicInstance;
+                        if (graphics != null)
+                            graphics.Draw();
+                    }
+                }
             }
         }
 
@@ -500,6 +583,7 @@ namespace KingsReign
 
                 // army layer
                 GL.Translate(0, 0, 1);
+                DrawArmies();
 
                 // effects layer;
                 GL.Translate(0, 0, 1);
