@@ -81,6 +81,7 @@ namespace PortalEdit
 
         protected void LoadSettings()
         {
+            loadingUI = true;
             DirectoryInfo AppSettingsDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"GPLib"));
             if (!AppSettingsDir.Exists)
                 AppSettingsDir.Create();
@@ -96,6 +97,7 @@ namespace PortalEdit
             Settings.settings.Write();
 
             SetupSettings();
+            loadingUI = false;
         }
 
         protected void SetupSettings ()
@@ -123,6 +125,8 @@ namespace PortalEdit
             ViewCheckPanel.ItemCheckChanged += new ImageCheckPanel.ItemCheckChangedEvent(ViewCheckPanel_ItemCheckChanged);
 
             LoadTextures();
+
+            UVScale.Value = (decimal)Settings.settings.UVScale;
 
             LoadEditorDepths();
        }
@@ -1365,6 +1369,15 @@ namespace PortalEdit
         private void CellAttListRemove_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void UVScale_ValueChanged(object sender, EventArgs e)
+        {
+            if (loadingUI)
+                return;
+
+            Settings.settings.UVScale = (int)UVScale.Value;
+            Settings.settings.Write();
         }
     }
 }
