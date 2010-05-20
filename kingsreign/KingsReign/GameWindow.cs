@@ -54,7 +54,7 @@ namespace KingsReign
 
             client.SetupTestPlayer();
 
-            visual.CameraPos = client.Players[0].Castles[0].Location;
+            visual.CameraPos = client.State.Players[0].Castles[0].Location;
         }
 
         void WorldViewCtl_MouseUp(object sender, MouseEventArgs e)
@@ -83,7 +83,7 @@ namespace KingsReign
                 if (client != null)
                 {
                     visual.MouseClick(visual.SelectPoint);
-                    EventLog.Text += "Click at " + visual.SelectPoint.ToString() + " is " + client.WorldMap.GetTerrain(visual.SelectPoint).ToString() + "\r\n";
+                    EventLog.Text += "Click at " + visual.SelectPoint.ToString() + " is " + client.State.WorldMap.GetTerrain(visual.SelectPoint).ToString() + "\r\n";
 
                     EventLog.Select(EventLog.Text.Length-1, EventLog.Text.Length);
                     EventLog.ScrollToCaret();

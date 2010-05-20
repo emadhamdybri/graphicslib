@@ -57,6 +57,7 @@
     <Compile Include="GameConnectionDialog.Designer.cs">
       <DependentUpon>GameConnectionDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="GameState.cs" />
     <Compile Include="GameVisual.cs" />
     <Compile Include="GameWindow.cs">
       <SubType>Form</SubType>

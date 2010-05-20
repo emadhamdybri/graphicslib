@@ -79,6 +79,16 @@ namespace GameObjects
         public Point Position = Point.Empty;
         public Point Desination = Point.Empty;
 
+        public static UnitInstance Muster ( Player player, Castle castle, UnitDescriptor desc )
+        {
+            UnitInstance unit = new UnitInstance();
+            unit.Descriptor = desc;
+            unit.Player = player;
+            unit.Position = castle.Location;
+
+            return unit;
+        }
+
         public static void Battle ( ref UnitInstance attacker, ref UnitInstance defender )
         {
 

@@ -22,13 +22,9 @@ namespace KingsReign
 
         public event UnitChangeEvent UnitAdded;
 
-        public Map WorldMap;
-
-        public List<UnitDescriptor> UnitDefs = new List<UnitDescriptor>();
-
-        public List<Player> Players = new List<Player>();
-
         protected UnitDescriptor Archers;
+
+        public GameState State = new GameState();
 
         public void LoadMap ( string file )
         {
@@ -36,10 +32,10 @@ namespace KingsReign
             if (!f.Exists)
                 return;
 
-            WorldMap = Map.LoadFromConfig(f);
+            State.WorldMap = Map.LoadFromConfig(f);
 
             if (MapLoaded != null)
-                MapLoaded(this, WorldMap);
+                MapLoaded(this, State.WorldMap);
         }
 
         public void LoadDefaultUnits ()
@@ -56,7 +52,7 @@ namespace KingsReign
             d.Health = 100;
             d.GraphicType = "archer";
             d.Upkeep = 0;
-            UnitDefs.Add(d);
+            State.UnitDefs.Add(d);
 
             // Infantry
             d = new UnitDescriptor();
@@ -70,7 +66,7 @@ namespace KingsReign
             d.Health = 200;
             d.GraphicType = "legion";
             d.Upkeep = 1;
-            UnitDefs.Add(d);
+            State.UnitDefs.Add(d);
             Archers = d;
 
             // Calvary
@@ -85,7 +81,7 @@ namespace KingsReign
             d.Health = 150;
             d.GraphicType = "calvary";
             d.Upkeep = 2;
-            UnitDefs.Add(d);
+            State.UnitDefs.Add(d);
 
             // Flyers
             d = new UnitDescriptor();
@@ -99,7 +95,7 @@ namespace KingsReign
             d.Health = 100;
             d.GraphicType = "flyers";
             d.Upkeep = 1;
-            UnitDefs.Add(d);
+            State.UnitDefs.Add(d);
 
             // mages
             d = new UnitDescriptor();
@@ -113,7 +109,7 @@ namespace KingsReign
             d.Health = 80;
             d.GraphicType = "mages";
             d.Upkeep = 4;
-            UnitDefs.Add(d);
+            State.UnitDefs.Add(d);
 
             // spy
             d = new UnitDescriptor();
@@ -127,35 +123,12 @@ namespace KingsReign
             d.Health = 65;
             d.GraphicType = "spy";
             d.Upkeep = 5;
-            UnitDefs.Add(d);
-        }
-
-        protected void SetPlayerRealmData ( Player player )
-        {
-            foreach (UnitDescriptor d in UnitDefs)
-            {
-                if (d.Realm == player.Realm || d.Realm == RealmType.All)
-                    player.UnitTypes.Add(d);
-            }
-
-            foreach (Castle c in WorldMap.Capitals)
-            {
-                if (c.Realm == player.Realm)
-                    player.Castles.Add(c);
-            }
+            State.UnitDefs.Add(d);
         }
 
         public void SetupTestPlayer ()
         {
-            Player p = new Player();
-            p.Name = "TestPlayer";
-            p.Gold = 1000000;
-            p.Realm = RealmType.Arlan;
-            p.Color = PlayerColor.Teal;
-            p.UID = 1;
-            SetPlayerRealmData(p);
-            Players.Add(p);
-
+            Player p = State.NewPlayer("TestPlayer", PlayerColor.Teal, RealmType.Arlan);
 
             UnitInstance unit = new UnitInstance();
             unit.Descriptor = Archers;
@@ -169,8 +142,6 @@ namespace KingsReign
         {
             LoadMap(ResourceManager.FindFile("maps/" + map +"/config.xml"));
             LoadDefaultUnits();
-
-
         }
 
         public void InitClient ( string host, int port )
