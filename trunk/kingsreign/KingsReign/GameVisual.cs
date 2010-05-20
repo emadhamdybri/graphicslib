@@ -55,6 +55,8 @@ namespace KingsReign
     {
         protected static Texture GenericDead;
 
+        protected static Dictionary<PlayerColor, Texture> UnitColorMarkers = new Dictionary<PlayerColor, Texture>();
+
         public static float UnitScale = 1.0f;
 
         public enum AnimationState
@@ -73,7 +75,7 @@ namespace KingsReign
         protected Dictionary<AnimationState, Dictionary<PlayerColor,List<Texture>>> AnimationFrames = new Dictionary<AnimationState, Dictionary<PlayerColor,List<Texture>>>();
         protected Dictionary<AnimationState, int> FPSMap = new Dictionary<AnimationState, int>();
 
-         public UnitRenderer ( string dir )
+        public UnitRenderer ( string dir )
         {
             AddAnimFrames(AnimationState.Idle, FindTextures(dir, "idle"));
             AddAnimFrames(AnimationState.Moving, FindTextures(dir, "move"));
@@ -85,6 +87,19 @@ namespace KingsReign
 
             if (GenericDead == null)
                 GenericDead = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/units/generic/die.png"));
+            
+            if (UnitColorMarkers.Count == 0)
+            {
+                UnitColorMarkers.Add(PlayerColor.Black, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/ui/team_markers/black.png")));
+                UnitColorMarkers.Add(PlayerColor.Blue, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/ui/team_markers/blue.png")));
+                UnitColorMarkers.Add(PlayerColor.Brown, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/ui/team_markers/brown.png")));
+                UnitColorMarkers.Add(PlayerColor.Green, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/ui/team_markers/green.png")));
+                UnitColorMarkers.Add(PlayerColor.Orange, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/ui/team_markers/orange.png")));
+                UnitColorMarkers.Add(PlayerColor.Purple, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/ui/team_markers/purple.png")));
+                UnitColorMarkers.Add(PlayerColor.Red, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/ui/team_markers/red.png")));
+                UnitColorMarkers.Add(PlayerColor.Teal, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/ui/team_markers/teal.png")));
+                UnitColorMarkers.Add(PlayerColor.White, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/ui/team_markers/white.png")));
+            }
 
             // look for an anim config, if not save one
             AnimConfig config = new AnimConfig();
@@ -209,6 +224,7 @@ namespace KingsReign
 
         public void Render ( AnimationState state, PlayerColor color, double time )
         {
+            // draw the frame
             Texture t;
             if (AnimationFrames.ContainsKey(state))
                 t = GetFrame(state, color, time);
@@ -225,6 +241,10 @@ namespace KingsReign
             }
 
             RenderUtils.DrawImageCentered(t, UnitScale);
+
+            // draw the color marker
+            if (color != PlayerColor.Unknown)
+                RenderUtils.DrawImageCentered(UnitColorMarkers[color], new Point(-t.Width / 4 - 8, -t.Height / 4 - 8),0.5f);
         }
     }
 
@@ -253,10 +273,52 @@ namespace KingsReign
 
             GL.PushMatrix();
             GL.Translate(Unit.Position.X, Unit.Position.Y, 0);
+            PlayerColor color = PlayerColor.White;
+
             if (Unit.Player != null)
-                Renderer.Render(state, Unit.Player.Color, timer.ElapsedMilliseconds / 1000.0);
-            else
-                Renderer.Render(state, PlayerColor.White, timer.ElapsedMilliseconds / 1000.0);
+                color = Unit.Player.Color;
+
+            Renderer.Render(state, color, timer.ElapsedMilliseconds / 1000.0);
+
+            GL.Disable(EnableCap.Texture2D);
+
+            float xPos = -30;
+            float width = 8;
+            float yPos = -12;
+            float height = 42;
+
+            RenderUtils.ScaleColorWithAlpha(GameVisual.PlayerColors[color], 0.5f, 0.75f);
+            GL.Begin(BeginMode.Quads);
+
+            GL.Vertex3(xPos, yPos, 0.1f);
+            GL.Vertex3(xPos + width, yPos, 0.1f);
+            GL.Vertex3(xPos + width, yPos+height, 0.1f);
+            GL.Vertex3(xPos, yPos + height, 0.1f);
+
+            RenderUtils.ScaleColorWithAlpha(GameVisual.PlayerColors[color], 1.1f, 0.85f);
+
+            float percentHight = height;
+            if (Unit.Damage > 0)
+                percentHight = height / Unit.Damage;
+
+            GL.Vertex3(xPos, yPos, 0.15f);
+            GL.Vertex3(xPos + width, yPos, 0.15f);
+            GL.Vertex3(xPos + width, yPos + percentHight, 0.15f);
+            GL.Vertex3(xPos, yPos + percentHight, 0.15f);
+
+            GL.End();
+
+            GL.Begin(BeginMode.LineLoop);
+            RenderUtils.ScaleColorWithAlpha(GameVisual.PlayerColors[color], 1.25f, 1f);
+            GL.Begin(BeginMode.Quads);
+
+            GL.Vertex3(xPos, yPos, 0.2f);
+            GL.Vertex3(xPos + width, yPos, 0.2f);
+            GL.Vertex3(xPos + width, yPos + height, 02f);
+            GL.Vertex3(xPos, yPos + height, 0.2f);
+            GL.End();
+
+            GL.Enable(EnableCap.Texture2D);
 
             GL.PopMatrix();
         }
@@ -319,7 +381,7 @@ namespace KingsReign
 
         protected Dictionary<RealmType, Texture> CastleImages = new Dictionary<RealmType, Texture>();
         protected Dictionary<RealmType, Texture> CampImages = new Dictionary<RealmType, Texture>();
-        protected Dictionary<RealmType, Color> RealmColors = new Dictionary<RealmType, Color>();
+        public static Dictionary<PlayerColor, Color> PlayerColors = new Dictionary<PlayerColor, Color>();
 
         protected Stopwatch GraphicsTimer = new Stopwatch();
 
@@ -347,15 +409,25 @@ namespace KingsReign
             Selction = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/misc/illuminates-aura.png"));
             MineImage = TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/mine.png"));
 
-            RealmColors.Add(RealmType.Arlan, Color.OrangeRed);
+            if (PlayerColors.Count == 0)
+            {
+                PlayerColors.Add(PlayerColor.Black, Color.Gray);
+                PlayerColors.Add(PlayerColor.Brown, Color.BurlyWood);
+                PlayerColors.Add(PlayerColor.Blue, Color.CadetBlue);
+                PlayerColors.Add(PlayerColor.Green, Color.ForestGreen);
+                PlayerColors.Add(PlayerColor.Orange, Color.Orange);
+                PlayerColors.Add(PlayerColor.Purple, Color.MediumPurple);
+                PlayerColors.Add(PlayerColor.Red, Color.Red);
+                PlayerColors.Add(PlayerColor.Teal, Color.Teal);
+                PlayerColors.Add(PlayerColor.White, Color.White);
+            }
+
             CastleImages.Add(RealmType.Arlan, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/human_castle_2.png")));
             CampImages.Add(RealmType.Arlan, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/small_camp_2.png")));
 
-            RealmColors.Add(RealmType.Glastonburry, Color.CornflowerBlue);
             CastleImages.Add(RealmType.Glastonburry, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/dwarven_castle_1.png")));
             CampImages.Add(RealmType.Glastonburry, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/fancy_camp_2.png")));
 
-            RealmColors.Add(RealmType.Unknown, Color.DarkSlateGray);
             CastleImages.Add(RealmType.Unknown, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/human_castle_1.png")));
             CampImages.Add(RealmType.Unknown, TextureSystem.system.GetTexture(ResourceManager.FindFile("images/places/small_camp_1.png")));
 
@@ -519,7 +591,6 @@ namespace KingsReign
             GL.PopMatrix();
         }
 
-
         public void MouseClick ( Point loc )
         {
             FlagMarkers.Add(loc);
@@ -557,18 +628,18 @@ namespace KingsReign
 
         protected void DrawCastle ( Castle castle)
         {
-            if (!CastleImages.ContainsKey(castle.Realm))
-                DrawPlace(castle.Location, CastleImages[RealmType.Unknown], RealmColors[RealmType.Unknown]);
-
-            DrawPlace(castle.Location, CastleImages[castle.Realm], RealmColors[castle.Realm]);
+            if (!CastleImages.ContainsKey(castle.Realm) || castle.Player == null)
+                DrawPlace(castle.Location, CastleImages[RealmType.Unknown], Color.WhiteSmoke);
+            else 
+                DrawPlace(castle.Location, CastleImages[castle.Realm], PlayerColors[castle.Player.Color]);
         }
 
         protected void DrawPlaces ()
         {
-            foreach (Mine mine in Client.WorldMap.Mines)
+            foreach (Mine mine in Client.State.WorldMap.Mines)
                 DrawPlace(mine.Location, MineImage, MineRingColor);
 
-            foreach (Castle castle in Client.WorldMap.Capitals)
+            foreach (Castle castle in Client.State.WorldMap.Capitals)
                 DrawCastle(castle);
         }
 
@@ -577,7 +648,7 @@ namespace KingsReign
             foreach (Point p in FlagMarkers)
             {
                 GL.PushMatrix();
-                Texture t = TerrainFlagImages[Client.WorldMap.GetTerrain(p)];
+                Texture t = TerrainFlagImages[Client.State.WorldMap.GetTerrain(p)];
                 GL.Translate(p.X, p.Y-t.Height, 0);
 
                 RenderUtils.DrawImage(t);
@@ -588,7 +659,7 @@ namespace KingsReign
 
         protected void DrawArmies ()
         {
-            foreach (Player player in Client.Players)
+            foreach (Player player in Client.State.Players)
             {
                 foreach (KeyValuePair<UnitType, List<UnitInstance>> unitList in player.DeployedUnits)
                 {
@@ -774,6 +845,19 @@ namespace KingsReign
             GL.Vertex2(-width, height);
 
             GL.End();
+        }
+
+        public static void DrawImageCentered(Texture texture, Point offset)
+        {
+            DrawImageCentered(texture, offset, 1.0f);
+        }
+
+        public static void DrawImageCentered(Texture texture, Point offset, float scale)
+        {
+            GL.PushMatrix();
+            GL.Translate(offset.X, offset.Y, 0.01);
+            DrawImageCentered(texture, scale);
+            GL.PopMatrix();
         }
     }
 }
