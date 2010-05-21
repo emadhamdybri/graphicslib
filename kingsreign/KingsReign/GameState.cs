@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Text;
 
 using GameObjects;
@@ -25,7 +25,40 @@ namespace KingsReign
 
         public PlayState State = PlayState.Stopped;
 
+        protected Stopwatch Timer = new Stopwatch();
         protected double BuildTime = 120.0;
+        protected double ClockOffset = 0;
+
+        protected double BuildStartTime = 0;
+
+        protected bool RemoteHosted = false;
+
+        public void Init ( bool remoteHosted )
+        {
+            RemoteHosted = remoteHosted;
+            Timer.Start();
+        }
+
+        protected double GetTime()
+        {
+            if (RemoteHosted)
+                return ClockOffset + Timer.ElapsedMilliseconds / 1000.0;
+            return Timer.ElapsedMilliseconds / 1000.0;
+        }
+
+        public void Update ()
+        {
+            if (State == PlayState.Build)
+            {
+
+            }
+        }
+
+        public void StartBuild ()
+        {
+            BuildStartTime = GetTime();
+            State == PlayState.Build;
+        }
 
         protected void SetPlayerRealmData(Player player)
         {
