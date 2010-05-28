@@ -14,6 +14,15 @@ namespace KingsReign
         public List<UnitDescriptor> UnitDefs = new List<UnitDescriptor>();
         public List<Player> Players = new List<Player>();
 
+        public delegate void EventHandler(object sender, EventArgs args);
+
+        public event EventHandler WaitEnd;
+        public event EventHandler BuildStart;
+        public event EventHandler BuildEnd;
+        public event EventHandler PlayStart;
+        public event EventHandler PlayEnd;
+
+
         public enum PlayState
         {
             Stopped,
@@ -48,16 +57,48 @@ namespace KingsReign
 
         public void Update ()
         {
+            double time = GetTime();
+            if (State == PlayState.Waiting)
+            {
+                bool allDone = true;
+                foreach(Player player in Players)
+                {
+                    if (player.State == PlayerState.Waiting)
+                        allDone = false;
+                }
+
+                if (allDone)
+                {
+                    if (WaitEnd != null)
+                        WaitEnd(this,EventArgs.Empty);
+                    StartBuild();
+                }
+            }
+
             if (State == PlayState.Build)
             {
+                if (time -BuildStartTime > BuildTime)
+                {
+                    if (BuildEnd != null)
+                        BuildEnd(this, EventArgs.Empty);
 
+                    State == PlayState.Play;
+                    foreach (Player player in Players)
+                        player.State = PlayerState.Playing;
+
+                    if (PlayStart != null)
+                        PlayStart(this, EventArgs.Empty);
+                }
             }
         }
 
         public void StartBuild ()
         {
             BuildStartTime = GetTime();
-            State == PlayState.Build;
+            State = PlayState.Build;
+
+            if (BuildStart != null)
+                BuildStart(this, EventArgs.Empty);
         }
 
         protected void SetPlayerRealmData(Player player)
