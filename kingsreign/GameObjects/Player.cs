@@ -19,6 +19,15 @@ namespace GameObjects
         Unknown,
     }
 
+    public enum PlayerState
+    {
+        Disconnected,
+        Waiting,
+        Ready,
+        Building,
+        Playing,
+    }
+
     public class Player
     {
         public delegate void UnitEventHandler(Player player, UnitInstance unit);
@@ -31,6 +40,8 @@ namespace GameObjects
 
         public string Name = string.Empty;
         public int UID = -1;
+
+        public PlayerState State = PlayerState.Disconnected;
 
         public PlayerColor Color = PlayerColor.Black;
 
@@ -83,7 +94,7 @@ namespace GameObjects
 
         public bool DeployUnit ( UnitInstance unit, Castle castle )
         {
-            if (!castle.StationedUnits.ContainsKey(unit.Descriptor.Type) || castle.StationedUnits[unit.Descriptor.Type].Count == null || !castle.StationedUnits[unit.Descriptor.Type].Contains(unit))
+            if (!castle.StationedUnits.ContainsKey(unit.Descriptor.Type) || castle.StationedUnits[unit.Descriptor.Type].Count == 0 || !castle.StationedUnits[unit.Descriptor.Type].Contains(unit))
                 return false;
            
             if (!DeployedUnits.ContainsKey(unit.Descriptor.Type) || DeployedUnits[unit.Descriptor.Type] == null)
