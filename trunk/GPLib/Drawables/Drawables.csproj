@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{71452148-876E-4B8E-9244-A8F014CF72E6}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimatedModel.cs" />
+    <Compile Include="Billboard.cs" />
     <Compile Include="Cal3d.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="DisplayLists.cs" />
